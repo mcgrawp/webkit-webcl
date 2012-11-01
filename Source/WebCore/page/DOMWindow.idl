@@ -200,6 +200,31 @@
 #if defined(ENABLE_WEB_TIMING) && ENABLE_WEB_TIMING
     [Replaceable] readonly attribute Performance performance;
 #endif
+#if defined(ENABLE_WEBCL)
+        //Check if JSCustomGetter needed ?
+        attribute [JSCustomGetter] WebCLConstructor WebCL;
+
+        attribute WebCLContextConstructor WebCLContext;
+        attribute WebCLBufferConstructor WebCLBuffer;
+
+        attribute WebCLCommandQueueConstructor WebCLCommandQueue;
+        attribute WebCLDeviceConstructor WebCLDevice;
+        attribute WebCLEventConstructor WebCLEvent;
+
+        //attribute WebCLExceptionConstructor WebCLException;
+        attribute WebCLImageConstructor WebCLImage;
+        //attribute WebCLImageDescriptorConstructor WebCLImageDescriptor;
+
+        attribute WebCLKernelConstructor WebCLKernel;
+        attribute WebCLMemoryObjectConstructor WebCLMemoryObject;
+
+        attribute WebCLProgramConstructor WebCLProgram;
+        attribute WebCLSamplerConstructor WebCLSampler;
+        attribute WebCLPlatformConstructor WebClPlatform;
+        //Saurabh
+        //attribute WebCLGLObjectInfoConstructor WebCLGLObjectInfo;
+        attribute WebCLKernelArgumentTypesConstructor WebCLKernelArgumentTypes;
+#endif
 
     // Timers
     [Custom] long setTimeout(in [Optional=DefaultIsUndefined] TimeoutHandler handler, 
