@@ -135,6 +135,8 @@ my (
     $webTimingSupport,
     $workersSupport,
     $xsltSupport,
+    $wtfURL,
+    $webclSupport,
 );
 
 my @features = (
@@ -413,6 +415,13 @@ my @features = (
 
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },
+
+   { option => "wtfurl", desc => "Toogle the use of WTFURL for URL parsing",
+             define => "WTF_USE_WTFURL", default => 0, value => \$wtfURL },
+
+  { option => "webcl", desc => "Toggle WebCL support",
+            define => "ENABLE_WEBCL", default => 1, value => \$webclSupport },
+
 );
 
 sub getFeatureOptionList()
