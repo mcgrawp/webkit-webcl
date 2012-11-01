@@ -43,6 +43,7 @@ namespace WebCore {
 
 class InspectorValue;
 class SerializedScriptValue;
+class WebCLKernelTypeValue;
 
 class ScriptValue {
 public:
@@ -68,6 +69,9 @@ public:
 
 #if ENABLE(INSPECTOR)
     PassRefPtr<InspectorValue> toInspectorValue(ScriptState*) const;
+#endif
+#if ENABLE(WEBCL)
+        PassRefPtr<WebCLKernelTypeValue> toWebCLKernelTypeValue(ScriptState*) const;
 #endif
 
 private:
