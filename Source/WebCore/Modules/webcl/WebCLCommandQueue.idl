@@ -1,0 +1,192 @@
+/*
+* Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+* 
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided the following conditions
+* are met:
+* 
+* 1.  Redistributions of source code must retain the above copyright
+*     notice, this list of conditions and the following disclaimer.
+* 
+* 2.  Redistributions in binary form must reproduce the above copyright
+*     notice, this list of conditions and the following disclaimer in the
+*     documentation and/or other materials provided with the distribution.
+* 
+* THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
+* CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
+* BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+* FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL SAMSUNG
+* ELECTRONICS CORPORATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING
+* BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+* DATA, OR PROFITS, OR BUSINESS INTERRUPTION), HOWEVER CAUSED AND ON ANY THEORY
+* OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING
+* NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+* EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+module webcl {
+	interface [
+		Conditional=WEBCL,
+	] WebCLCommandQueue {
+	[StrictTypeChecking, Custom]  void getInfo(in long queuenfo) raises(DOMException);
+	
+    
+    void enqueueWriteBuffer(in WebCLBuffer bufferId, 
+            in boolean blockingWrite, 
+            in long offset, 
+            in long bufferSize, 
+            in ArrayBufferView ptr,
+            in [Optional] WebCLEventList eventWaitList,
+            in [Optional] WebCLEvent event) raises(DOMException);
+
+    void enqueueWriteBuffer(in WebCLBuffer bufferId, 
+            in boolean blockingWrite, 
+            in long offset, 
+            in long bufferSize, 
+            in ImageData ptr, 
+            in [Optional] WebCLEventList eventWaitList,
+            in [Optional] WebCLEvent event) raises(DOMException);
+    void enqueueWriteBufferRect(in WebCLBuffer bufferId,
+            in boolean blockingWrite,
+            in Int32Array srcOrigin,
+            in Int32Array dstOrigin,
+            in Int32Array region ,
+            in long srcRowPitch,
+            in long srcSlicePitch,
+            in long dstRowPitch,
+            in long dstSlicePitch,
+            in ArrayBufferView ptr,
+            in [Optional] WebCLEventList eventWaitList, 
+            in [Optional] WebCLEvent event) raises(DOMException);
+
+    void enqueueReadBuffer(in WebCLBuffer bufferId, 
+            in boolean blockingRead, 
+            in long offset, 
+            in long bufferSize, 
+            in ArrayBufferView ptr, 
+            in [Optional] WebCLEventList eventWaitList,
+            in [Optional] WebCLEvent event) raises(DOMException);
+
+    void enqueueReadBuffer(in WebCLBuffer bufferId, 
+            in boolean blockingRead, 
+            in long offset, 
+            in long bufferSize, 
+            in ImageData ptr, 
+            in [Optional] WebCLEventList eventWaitList,
+            in [Optional] WebCLEvent event) raises(DOMException);
+
+    void enqueueReadBufferRect(in WebCLBuffer bufferId,
+            in boolean blockingRead,
+            in Int32Array srcOrigin,
+            in Int32Array dstOrigin,
+            in Int32Array region ,
+            in long srcRowPitch,
+            in long srcSlicePitch,
+            in long dstRowPitch,
+            in long dstSlicePitch,
+            in ArrayBufferView ptr,
+            in [Optional] WebCLEventList eventWaitList, 
+            in [Optional] WebCLEvent event) raises(DOMException);
+
+    void enqueueNDRangeKernel(in WebCLKernel kernel,
+            in Int32Array offsets, in Int32Array globalWorkSize,
+            in Int32Array localWorkSize, in [Optional] WebCLEventList eventWaitList, 
+            in [Optional] WebCLEvent event )  raises(DOMException);		
+
+    [Custom] void finish() raises(DOMException);
+    void flush()  raises(DOMException);
+    void enqueueWriteImage(in WebCLImage image, 
+            in boolean blockingWrite, 
+            in Int32Array origin, 
+            in Int32Array region, 
+            in long inputRowPitch, 
+            in long inputSlicePitch,
+            in ArrayBufferView ptr, 
+            in [Optional] WebCLEventList eventWaitList, 
+            in [Optional] WebCLEvent event)
+        raises(DOMException);
+
+    void enqueueReadImage(in WebCLImage image,
+            in boolean blockingRead,
+            in Int32Array origin,
+            in Int32Array region,
+            in long rowPitch, 
+            in long slicePitch,
+            in ArrayBufferView ptr,
+            in [Optional] WebCLEventList eventWaitList,
+            in [Optional] WebCLEvent event) 
+        raises(DOMException);
+
+    void enqueueAcquireGLObjects(in WebCLMemoryObject memObjects,
+            in [Optional] WebCLEventList eventWaitList,  
+            in [Optional] WebCLEvent event) raises(DOMException);
+
+    void enqueueReleaseGLObjects(in WebCLMemoryObject memObjects,
+            in [Optional] WebCLEventList eventWaitList,
+            in [Optional] WebCLEvent event) raises(DOMException);
+
+    void enqueueCopyBuffer(in WebCLBuffer srcBuffer,
+            in WebCLBuffer dstBuffer,
+            in long cb) raises(DOMException);
+
+    void enqueueCopyBuffer(in WebCLBuffer srcBuffer,
+            in WebCLBuffer dstBuffer,
+            in long srcOffset,
+            in long dstOffset,
+            in long sizeInBytes ,
+            in [Optional] WebCLEventList eventWaitList, 
+            in [Optional] WebCLEvent event) raises(DOMException);
+    void enqueueCopyBufferRect(in WebCLBuffer srcBuffer,
+            in WebCLBuffer dstBuffer,
+            in Int32Array srcOrigin,
+            in Int32Array dstOrigin,
+            in Int32Array region ,
+            in long srcRowPitch,
+            in long srcSlicePitch,
+            in long dstRowPitch,
+            in long dstSlicePitch,
+            in [Optional] WebCLEventList eventWaitList, 
+            in [Optional] WebCLEvent event) raises( DOMException );
+
+
+
+    void enqueueCopyImage(in WebCLImage srcImage,
+            in WebCLImage dstImage,
+            in Int32Array srcOrigin,
+            in Int32Array dstOrigin,
+            in Int32Array region ,
+            in [Optional] WebCLEventList eventWaitList, 
+            in [Optional] WebCLEvent event) raises(DOMException);
+
+    void enqueueCopyImageToBuffer(in WebCLImage srcImage,
+            in WebCLBuffer dstBuffer,
+            in Int32Array srcOrigin,
+            in Int32Array region ,
+            in long dstOffset, 
+            in [Optional] WebCLEventList eventWaitList, 
+            in [Optional] WebCLEvent event) raises(DOMException);
+
+    void enqueueCopyBufferToImage(in WebCLBuffer srcBuffer,
+            in WebCLImage dstImage,
+            in long srcOffset, 
+            in Int32Array dstOrigin,
+            in Int32Array region ,
+            in [Optional] WebCLEventList eventWaitList, 
+            in [Optional] WebCLEvent event) raises(DOMException);
+
+
+
+  void enqueueBarrier(in [Optional] WebCLEventList eventWaitList, 
+            in [Optional] WebCLEvent event) raises(DOMException);
+
+    void enqueueMarker(in [Optional] WebCLEventList eventWaitList, 
+            in [Optional] WebCLEvent event) raises(DOMException);
+
+    void enqueueWaitForEvents(in WebCLEventList events) raises(DOMException);
+
+    WebCLEvent enqueueTask(in WebCLKernel kernel,
+            in long eventWaitList) raises(DOMException);
+
+    };
+}
