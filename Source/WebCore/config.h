@@ -153,3 +153,7 @@ typedef float CGFloat;
 #define WTF_USE_AVFOUNDATION 1
 #endif
 
+#if PLATFORM(MAC)
+// Siba
+ #define ENABLE_WEBCL 1 
+ #endif // PLATFORM(MAC)
