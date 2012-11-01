@@ -58,6 +58,7 @@ VPATH = \
     $(WebCore)/svg \
     $(WebCore)/testing \
     $(WebCore)/websockets \
+    $(WebCore)/Modules/webcl \
 #
 
 BINDING_IDLS = \
@@ -166,6 +167,30 @@ BINDING_IDLS = \
     $(WebCore)/Modules/websockets/DOMWindowWebSocket.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
     $(WebCore)/Modules/websockets/WorkerContextWebSocket.idl \
+    $(WebCore)/Modules/webcl/WebCL.idl \
+    $(WebCore)/Modules/webcl/WebCLKernelArgumentTypes.idl \
+    $(WebCore)/Modules/webcl/WebCLPlatformList.idl \
+    $(WebCore)/Modules/webcl/WebCLPlatform.idl \
+    $(WebCore)/Modules/webcl/WebCLDeviceList.idl \
+    $(WebCore)/Modules/webcl/WebCLDevice.idl \
+    $(WebCore)/Modules/webcl/WebCLContext.idl \
+    $(WebCore)/Modules/webcl/WebCLCommandQueue.idl \
+    $(WebCore)/Modules/webcl/WebCLProgram.idl \
+    $(WebCore)/Modules/webcl/WebCLKernel.idl \
+    $(WebCore)/Modules/webcl/WebCLKernelList.idl \
+    $(WebCore)/Modules/webcl/WebCLEvent.idl \
+    $(WebCore)/Modules/webcl/WebCLEventList.idl \
+    $(WebCore)/Modules/webcl/WebCLImageDescriptor.idl \
+    $(WebCore)/Modules/webcl/WebCLImageDescriptorList.idl \
+    $(WebCore)/Modules/webcl/WebCLMemoryObject.idl \
+	$(WebCore)/Modules/webcl/WebCLMemoryObjectList.idl \
+    $(WebCore)/Modules/webcl/WebCLSampler.idl \
+    $(WebCore)/Modules/webcl/WebCLBuffer.idl \
+    $(WebCore)/Modules/webcl/WebCLException.idl \
+    $(WebCore)/Modules/webcl/WebCLFinishCallback.idl \
+    $(WebCore)/Modules/webcl/WebCLContextProperties.idl \
+    $(WebCore)/Modules/webcl/WebCLGLObjectInfo.idl \
+    $(WebCore)/Modules/webcl/WebCLImage.idl \
     $(WebCore)/css/CSSCharsetRule.idl \
     $(WebCore)/css/CSSFontFaceRule.idl \
     $(WebCore)/css/CSSImportRule.idl \
