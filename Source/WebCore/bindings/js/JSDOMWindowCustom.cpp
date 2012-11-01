@@ -75,6 +75,10 @@
 #include "JSWebSocket.h"
 #endif
 
+// Siba
+#if ENABLE(WEBCL)
+#include "JSWebCL.h"
+#endif
 using namespace JSC;
 
 namespace WebCore {
@@ -568,6 +572,14 @@ JSValue JSDOMWindow::sharedWorker(ExecState* exec) const
     return jsUndefined();
 }
 #endif
+
+#if ENABLE(WEBCL)
+JSValue JSDOMWindow::webCL(ExecState* exec) const
+{
+        return getDOMConstructor<JSWebCLConstructor>(exec, this);
+}
+#endif
+
 
 // Custom functions
 
