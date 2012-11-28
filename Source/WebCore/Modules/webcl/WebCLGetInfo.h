@@ -32,7 +32,7 @@
 #include <wtf/Float32Array.h>
 #include <wtf/Int32Array.h>
 #include <wtf/Int8Array.h>
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 #include <wtf/Uint8Array.h>
 #include "WebCLProgram.h"
 #include "WebCLContext.h"

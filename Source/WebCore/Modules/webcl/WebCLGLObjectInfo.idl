@@ -30,7 +30,7 @@ module webcl {
 		OmitConstructor,
 	] WebCLGLObjectInfo {
 	
-        attribute long glObjectType = 0;
-        attribute long glObject = 0;
+        attribute long glObjectType;
+        attribute long glObject;
     };
 }

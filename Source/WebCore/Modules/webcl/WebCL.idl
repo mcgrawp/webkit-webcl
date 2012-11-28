@@ -475,7 +475,7 @@ Conditional=WEBCL,
 		WebCLPlatformList getPlatforms() raises(DOMException);			
 		
 		[StrictTypeChecking, Custom]  void getImageInfo(in WebCLImage image, 
-				in long param_name) raises(DOMException) raises(DOMException);
+				in long param_name) raises(DOMException);
 
 		// Availble in OpenCL 1.1		
 		void waitForEvents(in WebCLEventList events) raises(DOMException);
@@ -492,3 +492,4 @@ Conditional=WEBCL,
 	[StrictTypeChecking, Custom] void getSupportedExtensions() raises(DOMException);
 
 	};
+}

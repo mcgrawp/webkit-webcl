@@ -200,7 +200,7 @@
 #if defined(ENABLE_WEB_TIMING) && ENABLE_WEB_TIMING
     [Replaceable] readonly attribute Performance performance;
 #endif
-#if defined(ENABLE_WEBCL)
+#if defined(ENABLE_WEBCL) && ENABLE_WEBCL
         //Check if JSCustomGetter needed ?
         attribute [JSCustomGetter] WebCLConstructor WebCL;
 

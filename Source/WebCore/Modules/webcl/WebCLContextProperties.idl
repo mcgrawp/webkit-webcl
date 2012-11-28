@@ -31,12 +31,11 @@ module webcl {
 //		OmitConstructor,
 	] WebCLContextProperties {
 	
-		readonly attribute WebCLPlatform platform ;
-		readonly attribute WebCLDeviceList devices ;
-		attribute long deviceType=0 ;
-		attribute long shareGroup = 0 ;
+		readonly attribute WebCLPlatform platform;
+		readonly attribute WebCLDeviceList devices;
+		attribute long deviceType;
+		attribute long shareGroup;
 		attribute DOMString hint;
 	
     };
-   
 }

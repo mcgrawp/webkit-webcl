@@ -61,7 +61,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
-#include <PlatformString.h>
+#include <wtf/text/WTFString.h>
 #include <OpenCL/opencl.h>
 #include <wtf/ArrayBuffer.h>
 #include <WebCLImageDescriptor.h>

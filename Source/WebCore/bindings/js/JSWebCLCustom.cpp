@@ -165,7 +165,7 @@ JSValue JSWebCL::createContext(JSC::ExecState* exec)
                 Identifier hint(exec, "hint");
                 if (jsAttrs->hasProperty(exec, hint))
                     //ustringToString(exec->argument(0).toString(exec)->value(exec))
-                    objWebCLContextProperties->setHint(ustringToString(jsAttrs->get(exec, hint).toString(exec)->value(exec)));
+                    objWebCLContextProperties->setHint(jsAttrs->get(exec, hint).toString(exec)->value(exec));
                 
                 
                 

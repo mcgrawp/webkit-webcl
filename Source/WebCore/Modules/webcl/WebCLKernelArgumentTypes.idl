@@ -62,3 +62,4 @@ interface [
     const unsigned long LOCAL_MEMORY_SIZE = 255;
 
 };
+}

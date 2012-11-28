@@ -29,7 +29,7 @@ module webcl {
 	interface [
 		Conditional=WEBCL,
 	] WebCLContext {
-	[StrictTypeChecking, Custom]  void getInfo (in long contextinfo) raises(DOMException) raises(DOMException);		
+	[StrictTypeChecking, Custom]  void getInfo (in long contextinfo) raises(DOMException);
 	
 	WebCLEvent createUserEvent() raises(DOMException);		
     WebCLImageDescriptorList getSupportedImageFormats(in long memFlags,in long imageType) raises(DOMException);

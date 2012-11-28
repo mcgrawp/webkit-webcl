@@ -30,7 +30,7 @@
 
 #if ENABLE(WEBCL)
 
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>

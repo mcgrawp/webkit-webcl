@@ -39,7 +39,6 @@
 
 #include <heap/Strong.h>
 #include <runtime/JSLock.h>
-#include <runtime/UString.h>
 #include "WebCLKernelTypes.h"
 
 using namespace JSC;
@@ -197,7 +196,7 @@ static PassRefPtr<WebCLKernelTypeValue> jsToWebCLKernelTypeValue(ScriptState* sc
             JSArray* array = asArray(value);
             unsigned length = array->length();
             for (unsigned i = 0; i < length; i++) {
-                JSValue element = array->getIndex(i);
+                JSValue element = array->getIndex(scriptState, i);
                 RefPtr<WebCLKernelTypeValue> elementValue = jsToWebCLKernelTypeValue(scriptState, element);
                 if (!elementValue) {
                     ASSERT_NOT_REACHED();

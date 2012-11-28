@@ -215,7 +215,7 @@ PassRefPtr<WebCLKernelTypeValue> WebCLKernelTypeObject::get(const String& name) 
     Dictionary::const_iterator it = m_data.find(name);
     if (it == m_data.end())
         return 0;
-    return it->second;
+    return it->value;
 }
 
 void WebCLKernelTypeObject::remove(const String& name)

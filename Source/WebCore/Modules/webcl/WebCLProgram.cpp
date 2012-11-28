@@ -194,7 +194,7 @@ WebCLGetInfo WebCLProgram::getInfo(int param_name, ExceptionCode& ec)
 WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int param_name, ExceptionCode& ec)
 {
 	cl_device_id device_id = NULL;
-	cl_uint err = 0;
+	cl_int err = 0;
 	char buffer[8192];
 	size_t len = 0;
 

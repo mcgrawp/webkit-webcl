@@ -68,7 +68,7 @@
 #include <wtf/Int32Array.h>
 #include <wtf/ArrayBuffer.h>
 
-#include <PlatformString.h>
+#include <wtf/text/WTFString.h>
 #include <OpenCL/opencl.h>
 #include <stdlib.h>
 

@@ -33,7 +33,7 @@
 #include <wtf/Vector.h>
 #include <OpenCL/opencl.h>
 #include "ExceptionCode.h"
-#include <PlatformString.h>
+#include <wtf/text/WTFString.h>
 
 #include "ActiveDOMObject.h"
 

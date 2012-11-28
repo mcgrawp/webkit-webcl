@@ -129,9 +129,7 @@ JSValue JSWebCLProgram::build(JSC::ExecState* exec)
 
 	 WebCLDeviceList* devices = toWebCLDeviceList(exec->argument(0));
 
- 
-
-	 String options = (ustringToString(exec->argument(1).toString(exec)->value(exec)));
+	 String options = exec->argument(1).toString(exec)->value(exec);
 
 	 //PassRefPtr<WebCLFinishCallback> whenFinished;
 

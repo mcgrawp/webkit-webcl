@@ -61,7 +61,7 @@ bool JSWebCLFinishCallback::handleEvent(int data)
         
 	JSC::JSLockHolder lock(m_data->globalObject()->globalData());
 	
-	//ExecState* exec = m_data->globalObject()->globalExec();
+	ExecState* exec = m_data->globalObject()->globalExec();
 
         MarkedArgumentBuffer args;
 //      args.append(toJS(exec, m_data->globalObject(), webCLComputeContext));
@@ -73,7 +73,7 @@ bool JSWebCLFinishCallback::handleEvent(int data)
         if (raisedException) {
         	return true;
     	}
-	return result.toBoolean();
+	return result.toBoolean(exec);
 }
 } // namespace WebCore
 

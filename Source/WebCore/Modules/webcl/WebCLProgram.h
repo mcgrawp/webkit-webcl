@@ -31,7 +31,7 @@
 #include <OpenCL/opencl.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <PlatformString.h>
+#include <wtf/text/WTFString.h>
 #include "ExceptionCode.h"
 
 #include "WebCLDevice.h"

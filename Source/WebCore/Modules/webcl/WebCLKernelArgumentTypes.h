@@ -64,7 +64,7 @@
 //#include <wtf/Forward.h>
 //#include <wtf/Noncopyable.h>
 
-#include <PlatformString.h>
+#include <wtf/text/WTFString.h>
 #include "WebCLImage.h"
 #include <OpenCL/opencl.h>
 #include <stdlib.h>
