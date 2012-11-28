@@ -117,7 +117,6 @@ function InitCL() {
 	catch (e)
 	{
 		console.error("Deform Demo Failed ; Message: "+ e.message);
-		test.showFailure();
 	}
 
 	return cl;
@@ -204,7 +203,6 @@ function InitCLBuffers(cl) {
 	catch (e)
 	{
 		console.error("Deform Demo Failed ; Message: "+ e.message);
-		test.showFailure();
 	}
 }
 
@@ -258,7 +256,6 @@ function SimulateCL(cl)
 	catch (e)
 	{
 		console.error("Deform Demo Failed ; Message: "+ e.message);
-		test.showFailure();
 	}
 
 	userData.phase += PHASE_DELTA;
