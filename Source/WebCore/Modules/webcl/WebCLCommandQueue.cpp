@@ -969,167 +969,136 @@ void  WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blockin
     return ;
 }
 
+// FIXME: Move this to another place, since it is generic.
+// FIXME2: Eliminate the 'default' statement and handle all enum values.
+static int computeContextErrorToWebCLExceptionCode(int computeContextError)
+{
+    switch (computeContextError) {
+    case ComputeContext::SUCCESS:
+        return WebCLException::SUCCESS;
+    case ComputeContext::INVALID_PROGRAM_EXECUTABLE:
+        return WebCLException::INVALID_PROGRAM_EXECUTABLE;
+    case ComputeContext::INVALID_COMMAND_QUEUE:
+        return WebCLException::INVALID_COMMAND_QUEUE;
+    case ComputeContext::INVALID_KERNEL:
+        return WebCLException::INVALID_KERNEL;
+    case ComputeContext::INVALID_CONTEXT:
+        return WebCLException::INVALID_CONTEXT;
+    case ComputeContext::INVALID_KERNEL_ARGS:
+        return WebCLException::INVALID_KERNEL_ARGS;
+    case ComputeContext::INVALID_WORK_DIMENSION:
+        return WebCLException::INVALID_WORK_DIMENSION;
+    case ComputeContext::INVALID_GLOBAL_WORK_SIZE:
+        return WebCLException::INVALID_GLOBAL_WORK_SIZE;
+    case ComputeContext::INVALID_GLOBAL_OFFSET:
+        return WebCLException::INVALID_GLOBAL_OFFSET;
+    case ComputeContext::INVALID_WORK_GROUP_SIZE:
+        return WebCLException::INVALID_WORK_GROUP_SIZE;
+    case ComputeContext::MISALIGNED_SUB_BUFFER_OFFSET:
+        return WebCLException::MISALIGNED_SUB_BUFFER_OFFSET;
+    case ComputeContext::INVALID_WORK_ITEM_SIZE:
+        return WebCLException::INVALID_WORK_ITEM_SIZE;
+    case ComputeContext::INVALID_IMAGE_SIZE:
+        return WebCLException::INVALID_IMAGE_SIZE;
+    case ComputeContext::MEM_OBJECT_ALLOCATION_FAILURE:
+        return WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
+    case ComputeContext::INVALID_EVENT_WAIT_LIST:
+        return WebCLException::INVALID_EVENT_WAIT_LIST;
+    case ComputeContext::OUT_OF_RESOURCES:
+        return WebCLException::OUT_OF_RESOURCES;
+    case ComputeContext::OUT_OF_HOST_MEMORY:
+        return WebCLException::OUT_OF_HOST_MEMORY;
+    default:
+            return WebCLException::FAILURE;
+    }
+    ASSERT_NOT_REACHED();
+}
 
-
-void  WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* offsets, 
-        Int32Array* global_work_size, Int32Array* local_work_size, WebCLEventList* events,
+void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* globalWorkOffsets,
+        Int32Array* globalWorkSize, Int32Array* localWorkSize, WebCLEventList* events,
         WebCLEvent* event, ExceptionCode& ec)
 {
+    cl_kernel cl_kernel_id;
+    cl_event* cl_event_wait_lists = 0;
+    cl_event cl_event_id;
+    int eventsLength = 0;
 
-    cl_int err = 0;
-    cl_kernel cl_kernel_id = NULL;
-    cl_event *cl_event_wait_lists = NULL;
-    cl_event cl_event_id = NULL;
-    int eventsLength = 0; 
+    size_t* globalWorkSizeCopy = 0;
+    size_t* localWorkSizeCopy = 0;
+    size_t* globalWorkOffsetCopy = 0;
+    int workItemDimensions = 0;
 
-    size_t *g_work_size   = NULL;
-    size_t *l_work_size   = NULL;
-    size_t *g_work_offset = NULL;
-    int work_dim = 0; 
-
-    if (m_cl_command_queue == NULL) {
+    if (!m_cl_command_queue) {
         printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return ;
     }
-    if (kernel != NULL) {
+
+    if (kernel) {
         cl_kernel_id = kernel->getCLKernel();
-        if (cl_kernel_id == NULL) {
+        if (!cl_kernel_id) {
             ec = WebCLException::INVALID_KERNEL;
             printf("Error: cl_kernel_id null\n");
             return ;
         }
     }
 
-    if (events != NULL) {
+    if (events) {
         cl_event_wait_lists = events->getCLEvents();
         eventsLength = events->length();
     }
-    if (event != NULL) {
+
+    if (event)
         cl_event_id = event->getCLEvent();
-    }
 
-    if(global_work_size != NULL) {
-        g_work_size = (size_t*)malloc(global_work_size->length() * sizeof(size_t));
-        if(NULL == g_work_size ){
+    // FIXME: The block of code is repeated all over this class.
+    if (globalWorkSize) {
+        globalWorkSizeCopy = (size_t*) malloc(globalWorkSize->length() * sizeof(size_t));
+        if (!globalWorkSizeCopy) {
             printf("Error: Error allocating memorry");
             return;
         }
-        for (unsigned int i = 0; i < global_work_size->length(); i++) {
-            g_work_size[i] = global_work_size->item(i);
-        }
-        work_dim = global_work_size->length();
+        for (unsigned i = 0; i < globalWorkSize->length(); ++i)
+            globalWorkSizeCopy[i] = globalWorkSize->item(i);
+        workItemDimensions = globalWorkSize->length();
     }
-    if(local_work_size != NULL) {
-        l_work_size = (size_t*)malloc(local_work_size->length() * sizeof(size_t));
-        if(NULL == l_work_size){
+
+    if (localWorkSize) {
+        localWorkSizeCopy = (size_t*) malloc(localWorkSize->length() * sizeof(size_t));
+        if (!localWorkSizeCopy){
             printf("Error: Error allocating memorry");
             return;
         }
-        for (unsigned int i = 0; i < local_work_size->length(); i++) {
-            l_work_size[i] = local_work_size->item(i);
+        for (unsigned i = 0; i < localWorkSize->length(); ++i) {
+            localWorkSizeCopy[i] = localWorkSize->item(i);
         }
     }
-    if(offsets != NULL)
-    {
-        g_work_offset = (size_t*)malloc(offsets->length() * sizeof(size_t));
-        if(NULL == g_work_size){
+
+    if (globalWorkOffsets) {
+        globalWorkOffsetCopy = (size_t*) malloc(globalWorkOffsets->length() * sizeof(size_t));
+        if (!globalWorkOffsetCopy) {
             printf("Error: Error allocating memorry");
             return;
         }
-        for (unsigned int i = 0; i < offsets->length(); i++) {
-            g_work_offset[i] = offsets->item(i);
-        }
+        for (unsigned i = 0; i < globalWorkOffsets->length(); ++i)
+            globalWorkOffsetCopy[i] = globalWorkOffsets->item(i);
     }
 
+    int computeContextError = m_context->computeContext()->enqueueNDRangeKernel(m_cl_command_queue, cl_kernel_id, workItemDimensions,
+	globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, eventsLength, cl_event_wait_lists, &cl_event_id);
 
-    err = clEnqueueNDRangeKernel(m_cl_command_queue, cl_kernel_id, work_dim, 
-            g_work_offset, g_work_size, l_work_size, eventsLength, 
-            cl_event_wait_lists, &cl_event_id);
+    ec = computeContextErrorToWebCLExceptionCode(computeContextError);
 
+    free(globalWorkSizeCopy);
+    globalWorkSizeCopy = 0;
+    free(localWorkSizeCopy);
+    localWorkSizeCopy = 0;
+    free(globalWorkOffsetCopy);
+    globalWorkOffsetCopy = 0;
 
-    // Is free needed ??
-    free(g_work_size);
-    g_work_size=NULL;
-    free(l_work_size);
-    l_work_size=NULL;
-    free(g_work_offset);
-    g_work_offset=NULL;
-
-    if (err != CL_SUCCESS) {
-        switch(err) {
-            case CL_INVALID_PROGRAM_EXECUTABLE:
-                printf("Error: CL_INVALID_PROGRAM_EXECUTABLE\n");
-                ec = WebCLException::INVALID_PROGRAM_EXECUTABLE;
-                break;
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_KERNEL:
-                printf("Error: CL_INVALID_KERNEL\n");
-                ec = WebCLException::INVALID_KERNEL;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_KERNEL_ARGS:
-                printf("Error: CL_INVALID_KERNEL_ARGS\n");
-                ec = WebCLException::INVALID_KERNEL_ARGS;
-                break;
-            case CL_INVALID_WORK_DIMENSION:
-                printf("Error: CL_INVALID_WORK_DIMENSION\n");
-                ec = WebCLException::INVALID_WORK_DIMENSION;
-                break;
-                //case CL_INVALID_GLOBAL_WORK_SIZE:
-                //	printf("Error: CL_INVALID_GLOBAL_WORK_SIZE\n");
-                //	ec = WebCLException::INVALID_GLOBAL_WORK_SIZE;
-                //	break;
-            case CL_INVALID_GLOBAL_OFFSET:
-                printf("Error: CL_INVALID_GLOBAL_OFFSET\n");
-                ec = WebCLException::INVALID_GLOBAL_OFFSET;
-                break;
-            case CL_INVALID_WORK_GROUP_SIZE:
-                printf("Error: CL_INVALID_WORK_GROUP_SIZE\n");
-                ec = WebCLException::INVALID_WORK_GROUP_SIZE;
-                break;
-                //case CL_MISALIGNED_SUB_BUFFER_OFFSET:
-                //	   printf("Error: CL_MISALIGNED_SUB_BUFFER_OFFSET\n");
-                //	   ec = WebCLException::MISALIGNED_SUB_BUFFER_OFFSET;
-                //	   break;
-            case CL_INVALID_WORK_ITEM_SIZE:
-                printf("Error: CL_INVALID_WORK_ITEM_SIZE\n");
-                ec = WebCLException::INVALID_WORK_ITEM_SIZE;
-                break;
-            case CL_INVALID_IMAGE_SIZE:
-                printf("Error: CL_INVALID_IMAGE_SIZE\n");
-                ec = WebCLException::INVALID_IMAGE_SIZE;
-                break;
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE\n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:	
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-    } 
     return;	
 }
+
 void WebCLCommandQueue::finish(ExceptionCode& ec)
 {
     cl_int err = 0;

@@ -1027,6 +1027,7 @@ PassRefPtr<WebCLImageDescriptorList> WebCLContext::getSupportedImageFormats(int 
     CCImageFormat *imageFormat =  new CCImageFormat[uint_num_entries];
 
     // reference to take the num of supported formats
+    // FIXME: Error code is not checked.
     error = m_computeContext->supportedImageFormats(memFlags, imageType, uint_num_entries, &uint_num_entries, imageFormat);
 
     RefPtr<WebCLImageDescriptorList> result = WebCLImageDescriptorList::create(imageFormat, uint_num_entries);

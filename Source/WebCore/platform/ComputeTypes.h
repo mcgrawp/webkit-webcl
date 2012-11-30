@@ -17,5 +17,6 @@ typedef cl_command_queue CCCommandQueue;
 typedef cl_program CCProgram;
 typedef cl_kernel_work_group_info CCKernelWorkGroupInfo;
 typedef cl_kernel CCKernel;
+typedef cl_event CCEvent;
 
 #endif

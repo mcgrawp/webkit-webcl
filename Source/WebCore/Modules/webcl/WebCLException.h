@@ -47,7 +47,7 @@ public:
     static const int WebCLExceptionMax = 51;
 
     enum WebCLExceptionCode {
-        SUCCESS 								 = WebCLExceptionOffset,
+        SUCCESS	                                 =  WebCLExceptionOffset,
         DEVICE_NOT_FOUND                         =  WebCLExceptionOffset + 1,
         DEVICE_NOT_AVAILABLE                     =  WebCLExceptionOffset + 2,
         COMPILER_NOT_AVAILABLE                   =  WebCLExceptionOffset + 3,
@@ -98,7 +98,7 @@ public:
         INVALID_MIP_LEVEL                        =  WebCLExceptionOffset + 47,
         INVALID_GLOBAL_WORK_SIZE                 =  WebCLExceptionOffset + 48,
         INVALID_PROPERTY                         =  WebCLExceptionOffset + 49,
-        FAILURE 								 =  WebCLExceptionOffset + 50,
+        FAILURE                                  =  WebCLExceptionOffset + 50,
     };
 
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);

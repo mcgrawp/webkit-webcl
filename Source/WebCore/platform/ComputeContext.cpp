@@ -196,6 +196,7 @@ static cl_mem_flags computeMemoryTypeToCL(int memoryType)
 
     return clMemoryType;
 }
+
 ComputeContext::ComputeContext(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, int* error)
 {
     CCint clError;
@@ -456,6 +457,14 @@ CCint ComputeContext::supportedImageFormats(int type, int imageType, CCuint numb
     return clToComputeContextError(error);
 }
 
+CCint ComputeContext::enqueueNDRangeKernel(CCCommandQueue commandQueue, CCKernel kernelID, int workItemDimensions,
+	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueNDRangeKernel(commandQueue, kernelID, workItemDimensions,
+        globalWorkOffset, globalWorkSize, localWorkSize, eventWaitListLength, eventWaitList, event);
+
+    return clToComputeContextError(error);
+}
 
 CCKernel ComputeContext::createKernel(CCProgram program, const String& kernelName, int& error)
 {

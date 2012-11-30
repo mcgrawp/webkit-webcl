@@ -314,6 +314,9 @@ public:
     // FIXME: horrible API, it looks C
     CCint createKernelsInProgram(CCProgram program, CCuint numberOfKernels, CCKernel& kernels, CCuint& numberOfKernelsReturned);
 
+    CCint enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
+	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
+
     // temporary method, just useful because we are refactoring the code
     // just ComputeContext should know about the opencl internals.
     cl_context context() const { return m_clContext; }
