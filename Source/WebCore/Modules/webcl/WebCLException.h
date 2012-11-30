@@ -103,6 +103,8 @@ public:
 
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
 
+    static WebCLExceptionCode computeContextErrorToWebCLExceptionCode(int computeContextError);
+
 private:
     WebCLException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)
