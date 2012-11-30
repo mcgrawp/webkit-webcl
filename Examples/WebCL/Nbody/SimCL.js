@@ -108,7 +108,6 @@ function InitCL() {
 	catch (e)
 	{
 		console.error("Nbody Demo Failed ; Message: "+ e.message);
-		test.showFailure();
 	}
 	return cl;
 }
@@ -158,7 +157,6 @@ function SimulateCL(cl) {
 	catch (e)
 	{
 		console.error("Nbody Demo Failed ; Message: "+ e.message);
-		test.showFailure();
 	}
 }
 
@@ -229,7 +227,6 @@ function GetWorkGroupSize() {
 	catch (e)
 	{
 		console.error("Nbody Demo Failed ; Message: "+ e.message);
-		test.showFailure();
 	}
 
 	return workGroupSize;  
