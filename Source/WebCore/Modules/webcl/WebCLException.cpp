@@ -31,6 +31,8 @@
 
 #include "WebCLException.h"
 
+#include "ComputeContext.h"
+
 namespace WebCore {
 
 // This should be an array of structs to pair the names and descriptions. ??
@@ -167,6 +169,115 @@ bool WebCLException::initializeDescription(ExceptionCode ec, ExceptionCodeDescri
     description->description = tableIndex < tableSize ? exceptionDescriptions[tableIndex] : 0;
 
     return true;
+}
+
+WebCLException::WebCLExceptionCode WebCLException::computeContextErrorToWebCLExceptionCode(int computeContextError)
+{
+    switch (computeContextError) {
+    case ComputeContext::SUCCESS:
+        return WebCLException::SUCCESS;
+    case ComputeContext::INVALID_PROGRAM_EXECUTABLE:
+        return WebCLException::INVALID_PROGRAM_EXECUTABLE;
+    case ComputeContext::INVALID_COMMAND_QUEUE:
+        return WebCLException::INVALID_COMMAND_QUEUE;
+    case ComputeContext::INVALID_KERNEL:
+        return WebCLException::INVALID_KERNEL;
+    case ComputeContext::INVALID_CONTEXT:
+        return WebCLException::INVALID_CONTEXT;
+    case ComputeContext::INVALID_KERNEL_ARGS:
+        return WebCLException::INVALID_KERNEL_ARGS;
+    case ComputeContext::INVALID_WORK_DIMENSION:
+        return WebCLException::INVALID_WORK_DIMENSION;
+    case ComputeContext::INVALID_GLOBAL_WORK_SIZE:
+        return WebCLException::INVALID_GLOBAL_WORK_SIZE;
+    case ComputeContext::INVALID_GLOBAL_OFFSET:
+        return WebCLException::INVALID_GLOBAL_OFFSET;
+    case ComputeContext::INVALID_WORK_GROUP_SIZE:
+        return WebCLException::INVALID_WORK_GROUP_SIZE;
+    case ComputeContext::MISALIGNED_SUB_BUFFER_OFFSET:
+        return WebCLException::MISALIGNED_SUB_BUFFER_OFFSET;
+    case ComputeContext::INVALID_WORK_ITEM_SIZE:
+        return WebCLException::INVALID_WORK_ITEM_SIZE;
+    case ComputeContext::INVALID_IMAGE_SIZE:
+        return WebCLException::INVALID_IMAGE_SIZE;
+    case ComputeContext::MEM_OBJECT_ALLOCATION_FAILURE:
+        return WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
+    case ComputeContext::INVALID_EVENT_WAIT_LIST:
+        return WebCLException::INVALID_EVENT_WAIT_LIST;
+    case ComputeContext::OUT_OF_RESOURCES:
+        return WebCLException::OUT_OF_RESOURCES;
+    case ComputeContext::OUT_OF_HOST_MEMORY:
+        return WebCLException::OUT_OF_HOST_MEMORY;
+    case ComputeContext::DEVICE_NOT_FOUND:
+        return WebCLException::DEVICE_NOT_FOUND;
+    case ComputeContext::DEVICE_NOT_AVAILABLE:
+        return WebCLException::DEVICE_NOT_AVAILABLE;
+    case ComputeContext::COMPILER_NOT_AVAILABLE:
+        return WebCLException::COMPILER_NOT_AVAILABLE;
+    case ComputeContext::PROFILING_INFO_NOT_AVAILABLE:
+        return WebCLException::PROFILING_INFO_NOT_AVAILABLE;
+    case ComputeContext::MEM_COPY_OVERLAP:
+        return WebCLException::MEM_COPY_OVERLAP;
+    case ComputeContext::IMAGE_FORMAT_MISMATCH:
+       return WebCLException::IMAGE_FORMAT_MISMATCH;
+    case ComputeContext::IMAGE_FORMAT_NOT_SUPPORTED:
+        return WebCLException::IMAGE_FORMAT_NOT_SUPPORTED;
+    case ComputeContext::BUILD_PROGRAM_FAILURE:
+        return WebCLException::BUILD_PROGRAM_FAILURE;
+    case ComputeContext::MAP_FAILURE:
+        return WebCLException::MAP_FAILURE;
+    case ComputeContext::EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST:
+        return WebCLException::EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST;
+    case ComputeContext::INVALID_VALUE:
+        return WebCLException::INVALID_VALUE;
+    case ComputeContext::INVALID_DEVICE_TYPE:
+        return WebCLException::INVALID_DEVICE_TYPE;
+    case ComputeContext::INVALID_PLATFORM:
+        return WebCLException::INVALID_PLATFORM;
+    case ComputeContext::INVALID_DEVICE:
+        return WebCLException::INVALID_DEVICE;
+    case ComputeContext::INVALID_QUEUE_PROPERTIES:
+        return WebCLException::INVALID_QUEUE_PROPERTIES;
+    case ComputeContext::INVALID_HOST_PTR:
+        return WebCLException::INVALID_HOST_PTR;
+    case ComputeContext::INVALID_MEM_OBJECT:
+        return WebCLException::INVALID_MEM_OBJECT;
+    case ComputeContext::INVALID_IMAGE_FORMAT_DESCRIPTOR:
+        return WebCLException::INVALID_IMAGE_FORMAT_DESCRIPTOR;
+    case ComputeContext::INVALID_SAMPLER:
+        return WebCLException::INVALID_SAMPLER;
+    case ComputeContext::INVALID_BINARY:
+        return WebCLException::INVALID_BINARY;
+    case ComputeContext::INVALID_BUILD_OPTIONS:
+        return WebCLException::INVALID_BUILD_OPTIONS;
+    case ComputeContext::INVALID_PROGRAM:
+        return WebCLException::INVALID_PROGRAM;
+    case ComputeContext::INVALID_KERNEL_NAME:
+        return WebCLException::INVALID_KERNEL_NAME;
+    case ComputeContext::INVALID_KERNEL_DEFINITION:
+        return WebCLException::INVALID_KERNEL_DEFINITION;
+    case ComputeContext::INVALID_ARG_INDEX:
+        return WebCLException::INVALID_ARG_INDEX;
+    case ComputeContext::INVALID_ARG_VALUE:
+        return WebCLException::INVALID_ARG_VALUE;
+    case ComputeContext::INVALID_ARG_SIZE:
+        return WebCLException::INVALID_ARG_SIZE;
+    case ComputeContext::INVALID_EVENT:
+        return WebCLException::INVALID_EVENT;
+    case ComputeContext::INVALID_OPERATION:
+        return WebCLException::INVALID_OPERATION;
+    case ComputeContext::INVALID_GL_OBJECT:
+        return WebCLException::INVALID_GL_OBJECT;
+    case ComputeContext::INVALID_BUFFER_SIZE:
+        return WebCLException::INVALID_BUFFER_SIZE;
+    case ComputeContext::INVALID_MIP_LEVEL:
+        return WebCLException::INVALID_MIP_LEVEL;
+    case ComputeContext::INVALID_PROPERTY:
+        return WebCLException::INVALID_PROPERTY;
+    default:
+        ASSERT_NOT_REACHED();
+        return WebCLException::FAILURE;
+    }
 }
 
 } // namespace WebCore

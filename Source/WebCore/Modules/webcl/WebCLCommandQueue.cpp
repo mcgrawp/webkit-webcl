@@ -969,51 +969,6 @@ void  WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blockin
     return ;
 }
 
-// FIXME: Move this to another place, since it is generic.
-// FIXME2: Eliminate the 'default' statement and handle all enum values.
-static int computeContextErrorToWebCLExceptionCode(int computeContextError)
-{
-    switch (computeContextError) {
-    case ComputeContext::SUCCESS:
-        return WebCLException::SUCCESS;
-    case ComputeContext::INVALID_PROGRAM_EXECUTABLE:
-        return WebCLException::INVALID_PROGRAM_EXECUTABLE;
-    case ComputeContext::INVALID_COMMAND_QUEUE:
-        return WebCLException::INVALID_COMMAND_QUEUE;
-    case ComputeContext::INVALID_KERNEL:
-        return WebCLException::INVALID_KERNEL;
-    case ComputeContext::INVALID_CONTEXT:
-        return WebCLException::INVALID_CONTEXT;
-    case ComputeContext::INVALID_KERNEL_ARGS:
-        return WebCLException::INVALID_KERNEL_ARGS;
-    case ComputeContext::INVALID_WORK_DIMENSION:
-        return WebCLException::INVALID_WORK_DIMENSION;
-    case ComputeContext::INVALID_GLOBAL_WORK_SIZE:
-        return WebCLException::INVALID_GLOBAL_WORK_SIZE;
-    case ComputeContext::INVALID_GLOBAL_OFFSET:
-        return WebCLException::INVALID_GLOBAL_OFFSET;
-    case ComputeContext::INVALID_WORK_GROUP_SIZE:
-        return WebCLException::INVALID_WORK_GROUP_SIZE;
-    case ComputeContext::MISALIGNED_SUB_BUFFER_OFFSET:
-        return WebCLException::MISALIGNED_SUB_BUFFER_OFFSET;
-    case ComputeContext::INVALID_WORK_ITEM_SIZE:
-        return WebCLException::INVALID_WORK_ITEM_SIZE;
-    case ComputeContext::INVALID_IMAGE_SIZE:
-        return WebCLException::INVALID_IMAGE_SIZE;
-    case ComputeContext::MEM_OBJECT_ALLOCATION_FAILURE:
-        return WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-    case ComputeContext::INVALID_EVENT_WAIT_LIST:
-        return WebCLException::INVALID_EVENT_WAIT_LIST;
-    case ComputeContext::OUT_OF_RESOURCES:
-        return WebCLException::OUT_OF_RESOURCES;
-    case ComputeContext::OUT_OF_HOST_MEMORY:
-        return WebCLException::OUT_OF_HOST_MEMORY;
-    default:
-            return WebCLException::FAILURE;
-    }
-    ASSERT_NOT_REACHED();
-}
-
 void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* globalWorkOffsets,
         Int32Array* globalWorkSize, Int32Array* localWorkSize, WebCLEventList* events,
         WebCLEvent* event, ExceptionCode& ec)
@@ -1087,7 +1042,7 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
     int computeContextError = m_context->computeContext()->enqueueNDRangeKernel(m_cl_command_queue, cl_kernel_id, workItemDimensions,
 	globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, eventsLength, cl_event_wait_lists, &cl_event_id);
 
-    ec = computeContextErrorToWebCLExceptionCode(computeContextError);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 
     free(globalWorkSizeCopy);
     globalWorkSizeCopy = 0;
