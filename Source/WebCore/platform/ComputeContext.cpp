@@ -466,6 +466,12 @@ CCint ComputeContext::enqueueNDRangeKernel(CCCommandQueue commandQueue, CCKernel
     return clToComputeContextError(error);
 }
 
+CCint ComputeContext::releaseCommandQueue(CCCommandQueue commandQueue)
+{
+    cl_int error = clReleaseCommandQueue(commandQueue);
+    return clToComputeContextError(error);
+}
+
 CCKernel ComputeContext::createKernel(CCProgram program, const String& kernelName, int& error)
 {
     cl_int clError;

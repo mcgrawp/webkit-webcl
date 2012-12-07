@@ -30,41 +30,23 @@
 #if ENABLE(WEBCL)
 
 #include "WebCL.h"
-#include "WebCLContext.h"
 #include "WebCLCommandQueue.h"
+#include "WebCLContext.h"
 #include "WebCLEventList.h"
+#include "WebCLException.h"
+
 #include <wtf/ArrayBuffer.h>
 #include <wtf/Uint8ClampedArray.h>
-#include "WebCLException.h"
 
 namespace WebCore {
 
 WebCLCommandQueue::~WebCLCommandQueue()
 {
-    cl_int err = 0;
-
     ASSERT(m_cl_command_queue);
+    int computeContextErrorCode = m_context->computeContext()->releaseCommandQueue(m_cl_command_queue);
 
-    err = clReleaseCommandQueue(m_cl_command_queue);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-            case CL_INVALID_COMMAND_QUEUE  :
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                break;
-            case CL_OUT_OF_RESOURCES   :
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                break;
-            case CL_OUT_OF_HOST_MEMORY    :
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                break;
-        }
-    } else {
-        m_command_queue = NULL;
-        return;
-    }
+    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+    m_cl_command_queue = NULL;
 }
 
 PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, cl_command_queue command_queue)
@@ -1010,7 +992,7 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
     if (globalWorkSize) {
         globalWorkSizeCopy = (size_t*) malloc(globalWorkSize->length() * sizeof(size_t));
         if (!globalWorkSizeCopy) {
-            printf("Error: Error allocating memorry");
+            printf("Error: Error allocating memory");
             return;
         }
         for (unsigned i = 0; i < globalWorkSize->length(); ++i)
@@ -1021,7 +1003,7 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
     if (localWorkSize) {
         localWorkSizeCopy = (size_t*) malloc(localWorkSize->length() * sizeof(size_t));
         if (!localWorkSizeCopy){
-            printf("Error: Error allocating memorry");
+            printf("Error: Error allocating memory");
             return;
         }
         for (unsigned i = 0; i < localWorkSize->length(); ++i) {

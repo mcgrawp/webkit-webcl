@@ -317,6 +317,8 @@ public:
     CCint enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
 
+    CCint releaseCommandQueue(CCCommandQueue);
+
     // temporary method, just useful because we are refactoring the code
     // just ComputeContext should know about the opencl internals.
     cl_context context() const { return m_clContext; }
