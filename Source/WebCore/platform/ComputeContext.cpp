@@ -326,8 +326,22 @@ PlatformComputeObject ComputeContext::createImage2D(int type, int width, int hei
 
     // FIXME: verify if CL_MEM_USE_HOST_PTR is necessary
     cl_int memoryType = computeMemoryTypeToCL(type);
+
+#if defined(CL_VERSION_1_2)
+    cl_image_desc clImageDescriptor;
+    clImageDescriptor.image_type = CL_MEM_OBJECT_IMAGE2D;
+    clImageDescriptor.image_width = width;
+    clImageDescriptor.image_height = height;
+
+    // FIXME: we are hardcoding the image stride (i.e. row_pitch) as 0.
+    // This is either a bug on the spec, or a bug in our implementation.
+    clImageDescriptor.image_row_pitch = 0;
+    clMemoryImage = clCreateImage(m_clContext, memoryType, &clImageFormat, &clImageDescriptor,
+                                    data, &memoryImageError);
+#else
     clMemoryImage = clCreateImage2D(m_clContext, memoryType, &clImageFormat, width, height, 0,
                                     data, &memoryImageError);
+#endif
 
     error = clToComputeContextError(memoryImageError);
     return clMemoryImage;
@@ -420,7 +434,12 @@ PlatformComputeObject ComputeContext::createFromGLTexture2D(int type, GC3Denum t
     cl_int clError;
     PlatformComputeObject memory;
 
+#if defined(CL_VERSION_1_2)
+    memory = clCreateFromGLTexture(m_clContext, memoryType, textureTarget, mipLevel, texture, &clError);
+#else
     memory = clCreateFromGLTexture2D(m_clContext, memoryType, textureTarget, mipLevel, texture, &clError);
+#endif
+
     error = clToComputeContextError(clError);
 
     return memory;
