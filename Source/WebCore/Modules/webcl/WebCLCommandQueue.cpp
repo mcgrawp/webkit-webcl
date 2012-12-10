@@ -2275,62 +2275,6 @@ void WebCLCommandQueue::enqueueMarker(WebCLEventList* events ,WebCLEvent* event,
     return;
 }
 
-void WebCLCommandQueue::enqueueWaitForEvents(WebCLEventList* events, ExceptionCode& ec)
-{
-    cl_int err = 0;
-    cl_event* cl_event_id = NULL;
-
-    if (m_cl_command_queue == NULL) {
-        printf("Error: Invalid Command Queue\n");
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
-        return;
-    }
-    if (events != NULL) {
-        cl_event_id = events->getCLEvents();
-        if (cl_event_id == NULL) {
-            printf("Error: cl_event null\n");
-            ec = WebCLException::INVALID_EVENT;
-            return;
-        }
-    }
-    err = clEnqueueWaitForEvents(m_cl_command_queue, events->length(), cl_event_id);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_EVENT:
-                printf("Error: CL_INVALID_EVENT\n");
-                ec = WebCLException::INVALID_EVENT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                ec = WebCLException::FAILURE;
-                printf("Error: Invaild Error Type\n");
-                break;
-        }
-    } else {
-        return;
-    }
-    return;
-}
-
 PassRefPtr<WebCLEvent> WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, 
         int event_wait_list, ExceptionCode& ec)
 {

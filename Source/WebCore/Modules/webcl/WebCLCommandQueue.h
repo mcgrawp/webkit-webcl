@@ -282,7 +282,6 @@ public:
         return(enqueueMarker(NULL,NULL,ec));
     }
 
-    void enqueueWaitForEvents(WebCLEventList*, ExceptionCode&);
     PassRefPtr<WebCLEvent> enqueueTask( WebCLKernel* ,int, ExceptionCode&);
     cl_command_queue getCLCommandQueue();	
 private:

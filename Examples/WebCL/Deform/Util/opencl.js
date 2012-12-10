@@ -85,7 +85,6 @@ if(typeof(WebCL) === "undefined") {
         
         this.createUserEvent = function(context) { return WebCLEvent() };
         this.setUserEventStatus = function(event, execution_status) { return this.SUCCESS; };
-        this.enqueueWaitForEvents = function(queue, event_list) { return this.SUCCESS; };
         this.enqueueTask = function(queue, kernel, event_list) { return WebCLEvent() }; 
 
         // from Image, Canvas, ImageData, CanvasPixelArray, 
