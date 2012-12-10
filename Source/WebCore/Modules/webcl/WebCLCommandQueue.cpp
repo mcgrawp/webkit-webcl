@@ -2167,6 +2167,7 @@ void  WebCLCommandQueue::enqueueCopyBufferRect( WebCLBuffer* src_buffer,WebCLBuf
 
 void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEvent* event, ExceptionCode& ec)
 {
+    // FIXME: Properly support 'eventsWaitList' and 'event'.
     eventsWaitList = 0;
     event = 0;
 
@@ -2177,7 +2178,24 @@ void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEven
     }
 
     cl_int error = 0;
+#if defined(CL_VERSION_1_2)
+    cl_event* clEventsWaitList = 0;
+    size_t eventsLength = 0;
+
+    cl_event clEventID = 0;
+    if (event) {
+        clEventID = event->getCLEvent();
+        if (!clEventID) {
+            printf("cl_event_id null\n");
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+    }
+
+    error = clEnqueueBarrierWithWaitList(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
+#else
     error = clEnqueueBarrier(m_cl_command_queue);
+#endif
 
     if (error != CL_SUCCESS) {
         switch (error) {
@@ -2203,26 +2221,31 @@ void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEven
 
 void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent* event, ExceptionCode& ec)
 {
+    // FIXME: Properly support 'eventsWaitList' and 'event'.
     eventsWaitList = 0;
-    cl_event clEventID = 0;
 
     if (!m_cl_command_queue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
+    cl_event clEventID = 0;
     if (event) {
         clEventID = event->getCLEvent();
         if (!clEventID) {
-            printf("cl_event_id null\n");
             ec = WebCLException::INVALID_EVENT;
             return;
         }
     }
 
     cl_int error = 0;
+#if defined(CL_VERSION_1_2)
+    cl_event* clEventsWaitList = 0;
+    size_t eventsLength = 0;
+    error = clEnqueueMarkerWithWaitList(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
+#else
     error = clEnqueueMarker(m_cl_command_queue, &clEventID);
+#endif
 
     if (error != CL_SUCCESS) {
         switch (error) {
