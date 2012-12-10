@@ -29,50 +29,50 @@ module webcl {
 	interface [
 		Conditional=WEBCL,
 	] WebCLCommandQueue {
-	[StrictTypeChecking, Custom]  void getInfo(in long queuenfo) raises(DOMException);
-	
-    
-    void enqueueWriteBuffer(in WebCLBuffer bufferId, 
-            in boolean blockingWrite, 
-            in long offset, 
-            in long bufferSize, 
+	[StrictTypeChecking, Custom] void getInfo(in long queuenfo) raises(DOMException);
+
+    void enqueueWriteBuffer(in WebCLBuffer bufferId,
+            in boolean blockingWrite,
+            in long offset,
+            in long bufferSize,
             in ArrayBufferView ptr,
             in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
 
-    void enqueueWriteBuffer(in WebCLBuffer bufferId, 
-            in boolean blockingWrite, 
-            in long offset, 
-            in long bufferSize, 
-            in ImageData ptr, 
+    void enqueueWriteBuffer(in WebCLBuffer bufferId,
+            in boolean blockingWrite,
+            in long offset,
+            in long bufferSize,
+            in ImageData ptr,
             in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
+
     void enqueueWriteBufferRect(in WebCLBuffer bufferId,
             in boolean blockingWrite,
             in Int32Array srcOrigin,
             in Int32Array dstOrigin,
-            in Int32Array region ,
+            in Int32Array region,
             in long srcRowPitch,
             in long srcSlicePitch,
             in long dstRowPitch,
             in long dstSlicePitch,
             in ArrayBufferView ptr,
-            in [Optional] WebCLEventList eventWaitList, 
-            in [Optional] WebCLEvent event) raises(DOMException);
-
-    void enqueueReadBuffer(in WebCLBuffer bufferId, 
-            in boolean blockingRead, 
-            in long offset, 
-            in long bufferSize, 
-            in ArrayBufferView ptr, 
             in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
 
-    void enqueueReadBuffer(in WebCLBuffer bufferId, 
-            in boolean blockingRead, 
-            in long offset, 
-            in long bufferSize, 
-            in ImageData ptr, 
+    void enqueueReadBuffer(in WebCLBuffer bufferId,
+            in boolean blockingRead,
+            in long offset,
+            in long bufferSize,
+            in ArrayBufferView ptr,
+            in [Optional] WebCLEventList eventWaitList,
+            in [Optional] WebCLEvent event) raises(DOMException);
+
+    void enqueueReadBuffer(in WebCLBuffer bufferId,
+            in boolean blockingRead,
+            in long offset,
+            in long bufferSize,
+            in ImageData ptr,
             in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
 
@@ -80,30 +80,31 @@ module webcl {
             in boolean blockingRead,
             in Int32Array srcOrigin,
             in Int32Array dstOrigin,
-            in Int32Array region ,
+            in Int32Array region,
             in long srcRowPitch,
             in long srcSlicePitch,
             in long dstRowPitch,
             in long dstSlicePitch,
             in ArrayBufferView ptr,
-            in [Optional] WebCLEventList eventWaitList, 
+            in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
 
     void enqueueNDRangeKernel(in WebCLKernel kernel,
             in Int32Array offsets, in Int32Array globalWorkSize,
             in Int32Array localWorkSize, in [Optional] WebCLEventList eventWaitList, 
-            in [Optional] WebCLEvent event )  raises(DOMException);		
+            in [Optional] WebCLEvent event) raises(DOMException);
 
     [Custom] void finish() raises(DOMException);
-    void flush()  raises(DOMException);
-    void enqueueWriteImage(in WebCLImage image, 
-            in boolean blockingWrite, 
-            in Int32Array origin, 
-            in Int32Array region, 
-            in long inputRowPitch, 
+    void flush() raises(DOMException);
+
+    void enqueueWriteImage(in WebCLImage image,
+            in boolean blockingWrite,
+            in Int32Array origin,
+            in Int32Array region,
+            in long inputRowPitch,
             in long inputSlicePitch,
-            in ArrayBufferView ptr, 
-            in [Optional] WebCLEventList eventWaitList, 
+            in ArrayBufferView ptr,
+            in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event)
         raises(DOMException);
 
@@ -111,7 +112,7 @@ module webcl {
             in boolean blockingRead,
             in Int32Array origin,
             in Int32Array region,
-            in long rowPitch, 
+            in long rowPitch,
             in long slicePitch,
             in ArrayBufferView ptr,
             in [Optional] WebCLEventList eventWaitList,
@@ -119,7 +120,7 @@ module webcl {
         raises(DOMException);
 
     void enqueueAcquireGLObjects(in WebCLMemoryObject memObjects,
-            in [Optional] WebCLEventList eventWaitList,  
+            in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
 
     void enqueueReleaseGLObjects(in WebCLMemoryObject memObjects,
@@ -134,53 +135,50 @@ module webcl {
             in WebCLBuffer dstBuffer,
             in long srcOffset,
             in long dstOffset,
-            in long sizeInBytes ,
-            in [Optional] WebCLEventList eventWaitList, 
+            in long sizeInBytes,
+            in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
+
     void enqueueCopyBufferRect(in WebCLBuffer srcBuffer,
             in WebCLBuffer dstBuffer,
             in Int32Array srcOrigin,
             in Int32Array dstOrigin,
-            in Int32Array region ,
+            in Int32Array region,
             in long srcRowPitch,
             in long srcSlicePitch,
             in long dstRowPitch,
             in long dstSlicePitch,
-            in [Optional] WebCLEventList eventWaitList, 
+            in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises( DOMException );
-
-
 
     void enqueueCopyImage(in WebCLImage srcImage,
             in WebCLImage dstImage,
             in Int32Array srcOrigin,
             in Int32Array dstOrigin,
-            in Int32Array region ,
-            in [Optional] WebCLEventList eventWaitList, 
+            in Int32Array region,
+            in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
 
     void enqueueCopyImageToBuffer(in WebCLImage srcImage,
             in WebCLBuffer dstBuffer,
             in Int32Array srcOrigin,
-            in Int32Array region ,
-            in long dstOffset, 
-            in [Optional] WebCLEventList eventWaitList, 
+            in Int32Array region,
+            in long dstOffset,
+            in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
 
     void enqueueCopyBufferToImage(in WebCLBuffer srcBuffer,
             in WebCLImage dstImage,
-            in long srcOffset, 
+            in long srcOffset,
             in Int32Array dstOrigin,
-            in Int32Array region ,
-            in [Optional] WebCLEventList eventWaitList, 
+            in Int32Array region,
+            in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
 
-
-
-  void enqueueBarrier(in [Optional] WebCLEventList eventWaitList, 
+    void enqueueBarrier(in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
 
-    void enqueueMarker(in [Optional] WebCLEventList eventWaitList, 
+    void enqueueMarker(in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
 
     WebCLEvent enqueueTask(in WebCLKernel kernel,

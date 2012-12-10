@@ -2165,22 +2165,22 @@ void  WebCLCommandQueue::enqueueCopyBufferRect( WebCLBuffer* src_buffer,WebCLBuf
     }
 }
 
-void WebCLCommandQueue::enqueueBarrier( WebCLEventList* events ,WebCLEvent* event,ExceptionCode& ec)
+void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEvent* event, ExceptionCode& ec)
 {
+    eventsWaitList = 0;
+    event = 0;
 
-    events = NULL;
-    event = NULL;
-
-    cl_int err = 0;
-
-    if (m_cl_command_queue == NULL) {
+    if (!m_cl_command_queue) {
         printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
-    err = clEnqueueBarrier(m_cl_command_queue);
-    if (err != CL_SUCCESS) {
-        switch (err) {
+
+    cl_int error = 0;
+    error = clEnqueueBarrier(m_cl_command_queue);
+
+    if (error != CL_SUCCESS) {
+        switch (error) {
             case CL_INVALID_COMMAND_QUEUE:
                 printf("Error: CL_INVALID_COMMAND_QUEUE\n");
                 ec = WebCLException::INVALID_COMMAND_QUEUE;
@@ -2198,38 +2198,34 @@ void WebCLCommandQueue::enqueueBarrier( WebCLEventList* events ,WebCLEvent* even
                 printf("Error: Invaild Error Type\n");
                 break;
         }
-    } else {
-        return;
     }
-    return;
 }
 
-
-void WebCLCommandQueue::enqueueMarker(WebCLEventList* events ,WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent* event, ExceptionCode& ec)
 {
+    eventsWaitList = 0;
+    cl_event clEventID = 0;
 
-
-    events = NULL;
-    cl_int err = 0;
-    cl_event cl_event_id = 0;
-
-    if (m_cl_command_queue == NULL) {
+    if (!m_cl_command_queue) {
         printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
-    if (event != NULL) {
-        cl_event_id = event->getCLEvent();
-        if (cl_event_id == NULL) {
+
+    if (event) {
+        clEventID = event->getCLEvent();
+        if (!clEventID) {
             printf("cl_event_id null\n");
             ec = WebCLException::INVALID_EVENT;
-            return ;
+            return;
         }
     }
 
-    err = clEnqueueMarker(m_cl_command_queue, &cl_event_id);
-    if (err != CL_SUCCESS) {
-        switch (err) {
+    cl_int error = 0;
+    error = clEnqueueMarker(m_cl_command_queue, &clEventID);
+
+    if (error != CL_SUCCESS) {
+        switch (error) {
             case CL_INVALID_COMMAND_QUEUE:
                 printf("Error: CL_INVALID_COMMAND_QUEUE\n");
                 ec = WebCLException::INVALID_COMMAND_QUEUE;
@@ -2251,10 +2247,7 @@ void WebCLCommandQueue::enqueueMarker(WebCLEventList* events ,WebCLEvent* event,
                 printf("Error: Invaild Error Type\n");
                 break;
         }
-    } else {
-        return;
     }
-    return;
 }
 
 PassRefPtr<WebCLEvent> WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, 
