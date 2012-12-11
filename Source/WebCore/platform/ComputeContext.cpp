@@ -485,6 +485,39 @@ CCint ComputeContext::enqueueNDRangeKernel(CCCommandQueue commandQueue, CCKernel
     return clToComputeContextError(error);
 }
 
+CCint ComputeContext::enqueueBarrier(CCCommandQueue commandQueue, int eventsWaitListLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error;
+
+#if defined(CL_VERSION_1_2)
+    error = clEnqueueBarrierWithWaitList(commandQueue, eventsWaitListLength, eventsWaitList, event);
+#else
+    UNUSED_PARAM(eventsWaitListLength);
+    UNUSED_PARAM(eventsWaitList);
+    UNUSED_PARAM(event);
+    // FIXME: This API usage has to be fixed with OpenCL 1.1. All parameters matter.
+    error = clEnqueueBarrier(commandQueue);
+#endif
+
+    return clToComputeContextError(error);
+}
+
+CCint ComputeContext::enqueueMarker(CCCommandQueue commandQueue, int eventsWaitListLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error;
+
+#if defined(CL_VERSION_1_2)
+    error = clEnqueueMarkerWithWaitList(commandQueue, eventsWaitListLength, eventsWaitList, event);
+#else
+    UNUSED_PARAM(eventsWaitListLength);
+    UNUSED_PARAM(eventsWaitList);
+    // FIXME: This API usage has to be fixed with OpenCL 1.1. All parameters matter.
+    error = clEnqueueMarker(commandQueue, event);
+#endif
+
+    return clToComputeContextError(error);
+}
+
 CCint ComputeContext::releaseCommandQueue(CCCommandQueue commandQueue)
 {
     cl_int error = clReleaseCommandQueue(commandQueue);

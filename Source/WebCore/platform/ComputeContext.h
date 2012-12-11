@@ -317,6 +317,9 @@ public:
     CCint enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
 
+    CCint enqueueBarrier(CCCommandQueue, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
+    CCint enqueueMarker(CCCommandQueue, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
+
     CCint releaseCommandQueue(CCCommandQueue);
 
     // temporary method, just useful because we are refactoring the code

@@ -2173,8 +2173,6 @@ void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEven
         return;
     }
 
-    cl_int error = 0;
-#if defined(CL_VERSION_1_2)
     cl_event* clEventsWaitList = 0;
     size_t eventsLength = 0;
     if (eventsWaitList) {
@@ -2192,33 +2190,9 @@ void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEven
         }
     }
 
-    error = clEnqueueBarrierWithWaitList(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
-#else
-    eventsWaitList = 0;
-    event = 0;
-    error = clEnqueueBarrier(m_cl_command_queue);
-#endif
+    int computeContextError = m_context->computeContext()->enqueueBarrier(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
 
-    if (error != CL_SUCCESS) {
-        switch (error) {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                ec = WebCLException::FAILURE;
-                printf("Error: Invaild Error Type\n");
-                break;
-        }
-    }
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
 void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent* event, ExceptionCode& ec)
@@ -2237,8 +2211,6 @@ void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent
         }
     }
 
-    cl_int error = 0;
-#if defined(CL_VERSION_1_2)
     cl_event* clEventsWaitList = 0;
     size_t eventsLength = 0;
     if (eventsWaitList) {
@@ -2246,36 +2218,9 @@ void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent
         eventsLength = eventsWaitList->length();
     }
 
-    error = clEnqueueMarkerWithWaitList(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
-#else
-    eventsWaitList = 0;
-    error = clEnqueueMarker(m_cl_command_queue, &clEventID);
-#endif
+    int computeContextError = m_context->computeContext()->enqueueMarker(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
 
-    if (error != CL_SUCCESS) {
-        switch (error) {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                ec = WebCLException::FAILURE;
-                printf("Error: Invaild Error Type\n");
-                break;
-        }
-    }
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
 PassRefPtr<WebCLEvent> WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, 
