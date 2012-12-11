@@ -2167,10 +2167,6 @@ void  WebCLCommandQueue::enqueueCopyBufferRect( WebCLBuffer* src_buffer,WebCLBuf
 
 void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME: Properly support 'eventsWaitList' and 'event'.
-    eventsWaitList = 0;
-    event = 0;
-
     if (!m_cl_command_queue) {
         printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
@@ -2181,6 +2177,10 @@ void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEven
 #if defined(CL_VERSION_1_2)
     cl_event* clEventsWaitList = 0;
     size_t eventsLength = 0;
+    if (eventsWaitList) {
+        clEventsWaitList = eventsWaitList->getCLEvents();
+        eventsLength = eventsWaitList->length();
+    }
 
     cl_event clEventID = 0;
     if (event) {
@@ -2194,6 +2194,8 @@ void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEven
 
     error = clEnqueueBarrierWithWaitList(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
 #else
+    eventsWaitList = 0;
+    event = 0;
     error = clEnqueueBarrier(m_cl_command_queue);
 #endif
 
@@ -2221,9 +2223,6 @@ void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEven
 
 void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME: Properly support 'eventsWaitList' and 'event'.
-    eventsWaitList = 0;
-
     if (!m_cl_command_queue) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
@@ -2242,8 +2241,14 @@ void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent
 #if defined(CL_VERSION_1_2)
     cl_event* clEventsWaitList = 0;
     size_t eventsLength = 0;
+    if (eventsWaitList) {
+        clEventsWaitList = eventsWaitList->getCLEvents();
+        eventsLength = eventsWaitList->length();
+    }
+
     error = clEnqueueMarkerWithWaitList(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
 #else
+    eventsWaitList = 0;
     error = clEnqueueMarker(m_cl_command_queue, &clEventID);
 #endif
 
