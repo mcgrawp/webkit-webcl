@@ -460,42 +460,10 @@ WebCLGetInfo  WebCLDevice::getInfo(int device_type, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-Vector<String> WebCLDevice::getSupportedExtensions(ExceptionCode& ec )
+Vector<String> WebCLDevice::getSupportedExtensions(ExceptionCode&)
 {
-    char device_string[1024] = "";
-    char extensions[16][64];	
-    Vector<String> result;
-    int count = 0;
-    int word_length = 0;
-    int i =0;
-
-    if (m_cl_device_id == NULL) {
-        printf("Error: Invalid Device ID\n");
-        ec = WebCLException::INVALID_DEVICE;
-        return result;
-    }
-    cl_int err = clGetDeviceInfo(m_cl_device_id, CL_DEVICE_EXTENSIONS, sizeof(device_string), &device_string, NULL);
-    if (err != CL_SUCCESS) {
-        ec = WebCLException::INVALID_DEVICE;
-        return result;	
-    }
-
-    while(device_string[i] != '\0')
-    {
-        while(device_string[i] == ' ')
-            ++i;
-        while(device_string[i] !=  ' ' && device_string[i] != '\0')
-            extensions[count][word_length++] = device_string[i++];
-        extensions[count++][word_length] = '\0';  /* Append terminator         */
-        word_length = 0;
-    }
-    for(i = 0 ; i<count ; i++) {
-        printf("CL_DEVICE_EXTENSIONS: %s\n",extensions[i]);
-        result.append(String(extensions[i]));
-    }
-
-    return result;
-
+    // FIXME: Needs a proper implementation.
+    return Vector<String>();
 }
 
 

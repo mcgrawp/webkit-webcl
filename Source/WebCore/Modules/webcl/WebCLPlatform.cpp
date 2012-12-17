@@ -139,44 +139,12 @@ PassRefPtr<WebCLDeviceList> WebCLPlatform::getDevices(int device_type, Exception
 		return NULL;
 	}
 }
-Vector<String> WebCLPlatform::getSupportedExtensions(ExceptionCode& ec )
+
+Vector<String> WebCLPlatform::getSupportedExtensions(ExceptionCode&)
 {
-    char platform_string[1024] = "";
-    char extensions[16][64];
-    Vector<String> result;
-    int count = 0;
-    int word_length = 0;
-    int i =0;
-
-    if (m_cl_platform_id == NULL) {
-        printf("Error: Invalid Platform ID\n");
-        ec = WebCLException::INVALID_PLATFORM;
-        return result;
-    }
-    cl_int err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_EXTENSIONS, sizeof(platform_string), &platform_string, NULL);
-    if (err != CL_SUCCESS) {
-		ec = WebCLException::INVALID_PLATFORM;
-        return result;
-    }
-
-    while(platform_string[i] != '\0')
-    {
-        while(platform_string[i] == ' ')
-            ++i;
-        while(platform_string[i] !=  ' ' && platform_string[i] != '\0')
-        extensions[count][word_length++] = platform_string[i++];
-        extensions[count++][word_length] = '\0';  /* Append terminator         */
-        word_length = 0;
-    }
-    for(i = 0 ; i<count ; i++) {
-        printf("CL_PLATFORM_EXTENSIONS: %s\n",extensions[i]);
-        result.append(String(extensions[i]));
-    }
-
-    return result;
-
+    // FIXME: Needs a proper implementation.
+    return Vector<String>();
 }
-
 
 cl_platform_id WebCLPlatform::getCLPlatform()
 {
