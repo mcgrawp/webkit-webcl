@@ -202,8 +202,10 @@ ComputeContext::ComputeContext(CCContextProperties* contextProperties, CCuint nu
     CCint clError;
     m_clContext = clCreateContext(contextProperties, numberDevices, devices, NULL, NULL, &clError);
 
-    if (clError == CL_SUCCESS)
+    if (clError == CL_SUCCESS){
+        *error = clError;
         return;
+    }
 
     int computeContextError = clToComputeContextError(clError);
     if (error)
@@ -260,7 +262,7 @@ CCint ComputeContext::platformIDs(CCuint numberEntries, CCPlatformID* platforms)
     cl_uint numberOfPlatforms;
     const cl_int result = clGetPlatformIDs(numberEntries, platforms, &numberOfPlatforms);
 
-    return result == CL_SUCCESS ? numberOfPlatforms : -1;
+    return result == CL_SUCCESS ? static_cast<int>(numberOfPlatforms) : -1;
 }
 
 CCint ComputeContext::deviceIDs(CCPlatformID platform, CCDeviceType deviceType, CCuint numberEntries, CCDeviceID* devices)
@@ -268,7 +270,7 @@ CCint ComputeContext::deviceIDs(CCPlatformID platform, CCDeviceType deviceType, 
     cl_uint numberOfDevices;
     const cl_int result = clGetDeviceIDs(platform, deviceType, numberEntries, devices, &numberOfDevices);
 
-    return result == CL_SUCCESS ? numberOfDevices : -1;
+    return result == CL_SUCCESS ? static_cast<int>(numberOfDevices) : -1;
 }
 
 CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, int properties, int& error)

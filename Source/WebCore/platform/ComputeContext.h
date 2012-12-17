@@ -324,7 +324,10 @@ public:
 
     // temporary method, just useful because we are refactoring the code
     // just ComputeContext should know about the opencl internals.
-    cl_context context() const { return m_clContext; }
+    cl_context context() const 
+    { 
+        return m_clContext; 
+    }
 
     // XXX: Create a Pimpl implementation
 private:
