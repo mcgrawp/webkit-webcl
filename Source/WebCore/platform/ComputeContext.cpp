@@ -494,11 +494,19 @@ CCint ComputeContext::enqueueBarrier(CCCommandQueue commandQueue, int eventsWait
 #if defined(CL_VERSION_1_2)
     error = clEnqueueBarrierWithWaitList(commandQueue, eventsWaitListLength, eventsWaitList, event);
 #else
-    UNUSED_PARAM(eventsWaitListLength);
-    UNUSED_PARAM(eventsWaitList);
     UNUSED_PARAM(event);
-    // FIXME: This API usage has to be fixed with OpenCL 1.1. All parameters matter.
-    error = clEnqueueBarrier(commandQueue);
+    // OpenCL 1.1 spec says "... a wait for events (clEnqueueWaitForEvents) or
+    // a barrier (clEnqueueBarrier) command can be enqueued to the command-queue.
+    // The wait for events command ensures that previously enqueued commands
+    // identified by the list of events to wait for have finished before the
+    // next batch of commands is executed. The barrier command ensures that all
+    // previously enqueued commands in a command-queue have finished execution
+    // before the next batch of commands is executed.
+    if (eventsWaitList) {
+        ASSERT(eventsWaitListLength > 0);
+        error = clEnqueueWaitForEvents(commandQueue, eventsWaitListLength, eventsWaitList);
+    } else
+        error = clEnqueueBarrier(commandQueue);
 #endif
 
     return clToComputeContextError(error);
