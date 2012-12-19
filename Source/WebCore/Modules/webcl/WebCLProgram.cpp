@@ -285,6 +285,7 @@ PassRefPtr<WebCLKernelList> WebCLProgram::createKernelsInProgram( ExceptionCode&
 void WebCLProgram::buildProgram(int options, int pfn_notify, int user_data, ExceptionCode& ec)
 {
     cl_int err = 0;
+    printf(" UNUSED PARM %d ,  %d , %d\n" , options , pfn_notify , user_data);
     if (!m_cl_program) {
         printf("Error: Invalid program object\n");
         ec = WebCLException::INVALID_PROGRAM;
@@ -302,6 +303,7 @@ void WebCLProgram::buildProgram(WebCLDevice* device_id,int options, int pfn_noti
 {
     cl_int err = 0;
     cl_device_id cl_device = 0;
+    printf(" UNUSED PARM %d ,  %d , %d\n" , options , pfn_notify , user_data);
     if (!m_cl_program) {
         printf("Error: Invalid program object\n");
         ec = WebCLException::INVALID_PROGRAM;
@@ -326,6 +328,7 @@ void WebCLProgram::buildProgram(WebCLDeviceList* cl_devices, int options, int pf
 {
     cl_int err = 0;
     cl_device_id* cl_device = 0;
+    printf(" UNUSED PARM %d ,  %d , %d\n" , options , pfn_notify , user_data);
 
     if (!m_cl_program) {
         printf("Error: Invalid program object\n");

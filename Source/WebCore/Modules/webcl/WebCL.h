@@ -1,17 +1,17 @@
 /*
  * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
  * are met:
- * 
+ *
  * 1.  Redistributions of source code must retain the above copyright
  *     notice, this list of conditions and the following disclaimer.
- * 
+ *
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
  * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
  * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -29,65 +29,33 @@
 #define WebCL_h
 
 #if ENABLE(WEBCL)
-#include "ScriptObject.h"
-#include "ScriptState.h"
 
-#include "WebCLPlatformList.h"
-#include "WebCLPlatform.h"
-#include "WebCLDeviceList.h"
-#include "WebCLDevice.h"
-#include "WebCLContext.h"
 #include "WebCLCommandQueue.h"
-#include "WebCLProgram.h"
-#include "WebCLKernel.h"
-#include "WebCLKernelList.h"
-#include "WebCLMemoryObject.h"
+#include "WebCLContext.h"
+#include "WebCLDevice.h"
+#include "WebCLDeviceList.h"
 #include "WebCLEvent.h"
-#include "WebCLEventList.h"
+#include "WebCLMemoryObject.h"
+#include "WebCLPlatformList.h"
+#include "WebCLProgram.h"
 #include "WebCLSampler.h"
-#include "WebCLKernelTypes.h"
-#include "WebCLContextProperties.h"
-#include "WebCLImage.h"
-
-#include "ActiveDOMObject.h"
-#include "ImageData.h"
-#include "HTMLCanvasElement.h"
-#include "HTMLImageElement.h"
-#include "HTMLVideoElement.h"
-#include "GraphicsContext3D.h"
-#include "WebGLBuffer.h"
-#include "WebGLRenderingContext.h"
-
-#include <wtf/OwnPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/Float32Array.h>
-#include <wtf/Int32Array.h>
-#include <wtf/ArrayBuffer.h>
-
-#include <wtf/text/WTFString.h>
 #include <OpenCL/opencl.h>
 #include <stdlib.h>
 
-using namespace std ;
+using namespace std;
 
 namespace WebCore {
 
 class ScriptExecutionContext;
-class ImageData;
-class ImageBuffer;
-class IntSize;
+class WebCLPlatformList;
+class WebCLGetInfo;
+class WebCLImage;
+class WebCLException;
+class WebCLEventList;
+class WebCLContextProperties;
 
-class WebCLKernelTypeObject;
-class WebCLKernelTypeValue;
-
-
-class WebCL : public RefCounted<WebCL>,public ActiveDOMObject {
-public: 
-    static PassRefPtr<WebCL> create(ScriptExecutionContext*);
+class WebCL : public RefCounted<WebCL> {
+public:
     virtual ~WebCL();
     enum {
         FAILURE = -1,
@@ -105,8 +73,7 @@ public:
         BUILD_PROGRAM_FAILURE                    = -11,
         MAP_FAILURE                              = -12,
         MISALIGNED_SUB_BUFFER_OFFSET             = -13,
-        EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST = -14,
-
+        EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST= -14,
         INVALID_VALUE                            = -30,
         INVALID_DEVICE_TYPE                      = -31,
         INVALID_PLATFORM                         = -32,
@@ -143,25 +110,25 @@ public:
         INVALID_GLOBAL_WORK_SIZE                 = -63,
         INVALID_PROPERTY                         = -64,
 
-        /* OpenCL Version */
+        // OpenCL Version
         VERSION_1_0                              = 1,
-        VERSION_1_1                              = 1, 
+        VERSION_1_1                              = 1,
 
-        /* cl_platform_info */
+        // cl_platform_info
         PLATFORM_PROFILE                         = 0x0900,
         PLATFORM_VERSION                         = 0x0901,
         PLATFORM_NAME                            = 0x0902,
         PLATFORM_VENDOR                          = 0x0903,
         PLATFORM_EXTENSIONS                      = 0x0904,
 
-        /* cl_device_type - bitfield */
-        DEVICE_TYPE_DEFAULT                      = 0x1, // (1 << 0),
-        DEVICE_TYPE_CPU                          = 0x2, // (1 << 1),
-        DEVICE_TYPE_GPU                          = 0x4, // (1 << 2),
-        DEVICE_TYPE_ACCELERATOR                  = 0x8, // (1 << 3),
+        // cl_device_type - bitfield
+        DEVICE_TYPE_DEFAULT                      = 0x1,
+        DEVICE_TYPE_CPU                          = 0x2,
+        DEVICE_TYPE_GPU                          = 0x4,
+        DEVICE_TYPE_ACCELERATOR                  = 0x8,
         DEVICE_TYPE_ALL                          = 0xFFFFFFFF,
 
-        /* cl_device_info */
+        // cl_device_info
         DEVICE_TYPE                              = 0x1000,
         DEVICE_VENDOR_ID                         = 0x1001,
         DEVICE_MAX_COMPUTE_UNITS                 = 0x1002,
@@ -181,9 +148,6 @@ public:
         DEVICE_MAX_MEM_ALLOC_SIZE                = 0x1010,
         DEVICE_IMAGE2D_MAX_WIDTH                 = 0x1011,
         DEVICE_IMAGE2D_MAX_HEIGHT                = 0x1012,
-        DEVICE_IMAGE3D_MAX_WIDTH                 = 0x1013,
-        DEVICE_IMAGE3D_MAX_HEIGHT                = 0x1014,
-        DEVICE_IMAGE3D_MAX_DEPTH                 = 0x1015,
         DEVICE_IMAGE_SUPPORT                     = 0x1016,
         DEVICE_MAX_PARAMETER_SIZE                = 0x1017,
         DEVICE_MAX_SAMPLERS                      = 0x1018,
@@ -212,10 +176,8 @@ public:
         DEVICE_VERSION                           = 0x102F,
         DEVICE_EXTENSIONS                        = 0x1030,
         DEVICE_PLATFORM                          = 0x1031,
-        /* = 0x1032 reserved for CL_DEVICE_DOUBLE_FP_CONFIG */
-        /* = 0x1033 reserved for CL_DEVICE_HALF_FP_CONFIG */
-        DEVICE_DOUBLE_FP_CONFIG 	 = 0x1032,
-        DEVICE_HALF_FP_CONFIG   	 = 0x1033, 
+        DEVICE_DOUBLE_FP_CONFIG                  = 0x1032,
+        DEVICE_HALF_FP_CONFIG                    = 0x1033,
         DEVICE_PREFERRED_VECTOR_WIDTH_HALF       = 0x1034,
         DEVICE_HOST_UNIFIED_MEMORY               = 0x1035,
         DEVICE_NATIVE_VECTOR_WIDTH_CHAR          = 0x1036,
@@ -227,58 +189,59 @@ public:
         DEVICE_NATIVE_VECTOR_WIDTH_HALF          = 0x103C,
         DEVICE_OPENCL_C_VERSION                  = 0x103D,
 
-        /* cl_device_fp_config - bitfield */
-        FP_DENORM                                = 0x01, // (1 << 0),
-        FP_INF_NAN                               = 0x02, // (1 << 1),
-        FP_ROUND_TO_NEAREST                      = 0x04, // (1 << 2),
-        FP_ROUND_TO_ZERO                         = 0x08, // (1 << 3),
-        FP_ROUND_TO_INF                          = 0x10, // (1 << 4),
-        FP_FMA                                   = 0x20, // (1 << 5),
-        FP_SOFT_FLOAT                            = 0x40, // (1 << 6),
+        // cl_device_fp_config - bitfield
+        FP_DENORM                                = 0x1,
+        FP_INF_NAN                               = 0x2,
+        FP_ROUND_TO_NEAREST                      = 0x4,
+        FP_ROUND_TO_ZERO                         = 0x8,
+        FP_ROUND_TO_INF                          = 0x10,
+        FP_FMA                                   = 0x20,
+        FP_SOFT_FLOAT                            = 0x40,
 
-        /* cl_device_mem_cache_type */
+        // cl_device_mem_cache_type
         NONE                                     = 0x0,
         READ_ONLY_CACHE                          = 0x1,
         READ_WRITE_CACHE                         = 0x2,
 
-        /* cl_device_local_mem_type */
+        // cl_device_local_mem_type
         LOCAL                                    = 0x1,
         GLOBAL                                   = 0x2,
 
-        /* cl_device_exec_capabilities - bitfield */
-        EXEC_KERNEL                              = 0x1, // (1 << 0),
-        EXEC_NATIVE_KERNEL                       = 0x2, // (1 << 1),
+        // cl_device_exec_capabilities - bitfield
+        EXEC_KERNEL                              = 0x1,
+        EXEC_NATIVE_KERNEL                       = 0x2,
 
-        /* cl_command_queue_properties - bitfield */
-        QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE      = 0x1, // (1 << 0),
-        QUEUE_PROFILING_ENABLE                   = 0x2, // (1 << 1),
+        // cl_command_queue_properties - bitfield
+        QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE      = 0x1,
+        QUEUE_PROFILING_ENABLE                   = 0x2,
 
-        /* cl_context_info  */
+        // cl_context_info
         CONTEXT_REFERENCE_COUNT                  = 0x1080,
         CONTEXT_DEVICES                          = 0x1081,
         CONTEXT_PROPERTIES                       = 0x1082,
         CONTEXT_NUM_DEVICES                      = 0x1083,
 
-        /* cl_context_info + cl_context_properties */
+        // cl_context_info + cl_context_properties
         CONTEXT_PLATFORM                         = 0x1084,
 
-        /* cl_command_queue_info */
+        // cl_command_queue_info
         QUEUE_CONTEXT                            = 0x1090,
         QUEUE_DEVICE                             = 0x1091,
         QUEUE_REFERENCE_COUNT                    = 0x1092,
         QUEUE_PROPERTIES                         = 0x1093,
 
-        /* cl_mem_flags - bitfield */
-        MEM_READ_WRITE                           = 0x01, // (1 << 0),
-        MEM_WRITE_ONLY                           = 0x02, // (1 << 1),
-        MEM_READ_ONLY                            = 0x04, // (1 << 2),
+        // cl_mem_flags - bitfield
+        MEM_READ_WRITE                           = 0x1,
+        MEM_WRITE_ONLY                           = 0x2,
+        MEM_READ_ONLY                            = 0x4,
         MEM_USE_HOST_PTR                         = 0x08, // (1 << 3),
         MEM_ALLOC_HOST_PTR                       = 0x10, // (1 << 4),
         MEM_COPY_HOST_PTR                        = 0x20, // (1 << 5),
         MEM_HOST_WRITE_ONLY                      = 0x80,
-        MEM_HOST_READ_ONLY			      = 0x100,
-        MEM_HOST_NO_ACCESS			      = 0x200,
-        /* cl_channel_order */
+        MEM_HOST_READ_ONLY                       = 0x100,
+        MEM_HOST_NO_ACCESS                       = 0x200,
+
+        // cl_channel_order
         R                                        = 0x10B0,
         A                                        = 0x10B1,
         RG                                       = 0x10B2,
@@ -293,7 +256,7 @@ public:
         RGx                                      = 0x10BB,
         RGBx                                     = 0x10BC,
 
-        /* cl_channel_type */
+        // cl_channel_type
         SNORM_INT8                               = 0x10D0,
         SNORM_INT16                              = 0x10D1,
         UNORM_INT8                               = 0x10D2,
@@ -310,12 +273,11 @@ public:
         HALF_FLOAT                               = 0x10DD,
         FLOAT                                    = 0x10DE,
 
-        /* cl_mem_object_type */
+        // cl_mem_object_type
         MEM_OBJECT_BUFFER                        = 0x10F0,
         MEM_OBJECT_IMAGE2D                       = 0x10F1,
-        MEM_OBJECT_IMAGE3D                       = 0x10F2,
 
-        /* cl_mem_info */
+        // cl_mem_info
         MEM_TYPE                                 = 0x1100,
         MEM_FLAGS                                = 0x1101,
         MEM_SIZE                                 = 0x1102,
@@ -326,38 +288,36 @@ public:
         MEM_ASSOCIATED_MEMOBJECT                 = 0x1107,
         MEM_OFFSET                               = 0x1108,
 
-        /* cl_image_info */
+        // cl_image_info
         IMAGE_FORMAT                             = 0x1110,
         IMAGE_ELEMENT_SIZE                       = 0x1111,
         IMAGE_ROW_PITCH                          = 0x1112,
-        IMAGE_SLICE_PITCH                        = 0x1113,
         IMAGE_WIDTH                              = 0x1114,
         IMAGE_HEIGHT                             = 0x1115,
-        IMAGE_DEPTH                              = 0x1116,
 
-        /* cl_addressing_mode */
+        // cl_addressing_mode
         ADDRESS_NONE                             = 0x1130,
         ADDRESS_CLAMP_TO_EDGE                    = 0x1131,
         ADDRESS_CLAMP                            = 0x1132,
         ADDRESS_REPEAT                           = 0x1133,
         ADDRESS_MIRRORED_REPEAT                  = 0x1134,
 
-        /* cl_filter_mode */
+        // cl_filter_mode
         FILTER_NEAREST                           = 0x1140,
         FILTER_LINEAR                            = 0x1141,
 
-        /* cl_sampler_info */
+        // cl_sampler_info
         SAMPLER_REFERENCE_COUNT                  = 0x1150,
         SAMPLER_CONTEXT                          = 0x1151,
         SAMPLER_NORMALIZED_COORDS                = 0x1152,
         SAMPLER_ADDRESSING_MODE                  = 0x1153,
         SAMPLER_FILTER_MODE                      = 0x1154,
 
-        /* cl_map_flags - bitfield */
-        MAP_READ                                 = 0x1, // (1 << 0),
-        MAP_WRITE                                = 0x2, // (1 << 1),
+        // cl_map_flags - bitfield
+        MAP_READ                                 = 0x1,
+        MAP_WRITE                                = 0x2,
 
-        /* cl_program_info */
+        // cl_program_info
         PROGRAM_REFERENCE_COUNT                  = 0x1160,
         PROGRAM_CONTEXT                          = 0x1161,
         PROGRAM_NUM_DEVICES                      = 0x1162,
@@ -366,39 +326,39 @@ public:
         PROGRAM_BINARY_SIZES                     = 0x1165,
         PROGRAM_BINARIES                         = 0x1166,
 
-        /* cl_program_build_info */
+        // cl_program_build_info
         PROGRAM_BUILD_STATUS                     = 0x1181,
         PROGRAM_BUILD_OPTIONS                    = 0x1182,
         PROGRAM_BUILD_LOG                        = 0x1183,
 
-        /* cl_build_status */
+        // cl_build_status
         BUILD_SUCCESS                            = 0,
-        BUILD_NONE                               = -1,
+        BUILD_NONE                               = 1,
         BUILD_ERROR                              = -2,
         BUILD_IN_PROGRESS                        = -3,
 
-        /* cl_kernel_info */
+        // cl_kernel_info
         KERNEL_FUNCTION_NAME                     = 0x1190,
         KERNEL_NUM_ARGS                          = 0x1191,
         KERNEL_REFERENCE_COUNT                   = 0x1192,
         KERNEL_CONTEXT                           = 0x1193,
         KERNEL_PROGRAM                           = 0x1194,
 
-        /* cl_kernel_work_group_info */
+        // cl_kernel_work_group_info
         KERNEL_WORK_GROUP_SIZE                   = 0x11B0,
         KERNEL_COMPILE_WORK_GROUP_SIZE           = 0x11B1,
         KERNEL_LOCAL_MEM_SIZE                    = 0x11B2,
-        KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE = 0x11B3,
+        KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE= 0x11B3,
         KERNEL_PRIVATE_MEM_SIZE                  = 0x11B4,
 
-        /* cl_event_info  */
+        // cl_event_info
         EVENT_COMMAND_QUEUE                      = 0x11D0,
         EVENT_COMMAND_TYPE                       = 0x11D1,
         EVENT_REFERENCE_COUNT                    = 0x11D2,
         EVENT_COMMAND_EXECUTION_STATUS           = 0x11D3,
         EVENT_CONTEXT                            = 0x11D4,
 
-        /* cl_command_type */
+        // cl_command_type
         COMMAND_NDRANGE_KERNEL                   = 0x11F0,
         COMMAND_TASK                             = 0x11F1,
         COMMAND_NATIVE_KERNEL                    = 0x11F2,
@@ -421,22 +381,23 @@ public:
         COMMAND_COPY_BUFFER_RECT                 = 0x1203,
         COMMAND_USER                             = 0x1204,
 
-        /* command execution status */
+        // command execution status
         COMPLETE                                 = 0x0,
         RUNNING                                  = 0x1,
         SUBMITTED                                = 0x2,
         QUEUED                                   = 0x3,
 
-        /* cl_buffer_create_type  */
+        // cl_buffer_create_type
         BUFFER_CREATE_TYPE_REGION                = 0x1220,
 
-        /* cl_profiling_info  */
+        // cl_profiling_info
         PROFILING_COMMAND_QUEUED                 = 0x1280,
         PROFILING_COMMAND_SUBMIT                 = 0x1281,
         PROFILING_COMMAND_START                  = 0x1282,
         PROFILING_COMMAND_END                    = 0x1283,
 
-        /* cl_kernel_arg_type */
+        /* FIXME : clean once setArg is fixed
+        cl_kernel_arg_type */
         KERNEL_ARG_CHAR                          = 0x2000,
         KERNEL_ARG_UCHAR                         = 0x2001,
         KERNEL_ARG_SHORT                         = 0x2002,
@@ -501,93 +462,70 @@ public:
         KERNEL_ARG_IMAGE3D                       = 0x2201,
         KERNEL_ARG_SAMPLER                       = 0x2202,
         KERNEL_ARG_MEM                           = 0x2203,
+        CHAR                                     = 0,
+        UCHAR                                    = 1,
+        SHORT                                    = 2,
+        USHORT                                   = 3,
+        INT                                      = 4,
+        UINT                                     = 5,
+        LONG                                     = 6,
+        ULONG                                    = 7,
+        FLOAT_KERNEL_ARG                         = 8,
+        HALF                                     = 9,
+        DOUBLE                                   = 10,
+        VEC2                                     = 0x0100,
+        VEC3                                     = 0x0200,
+        VEC4                                     = 0x0400,
+        VEC8                                     = 0x0800,
+        VEC16                                    = 0x1000,
 
-        CHAR   									 = 0,
-        UCHAR  									 = 1,
-        SHORT  									 = 2,
-        USHORT 									 = 3,
-        INT    									 = 4,
-        UINT   									 = 5,
-        LONG   									 = 6,
-        ULONG  									 = 7,
-        FLOAT_KERNAL_ARG 									 = 8,
-        HALF   									 = 9,    // not supported in all implementations
-        DOUBLE 									 = 10,   // not supported in all implementations
+        // cl_gl_object_type
+        GL_OBJECT_BUFFER                         = 0x2000,
+        GL_OBJECT_TEXTURE2D                      = 0x2001,
+        GL_OBJECT_RENDERBUFFER                   = 0x2003,
 
+        // cl_gl_texture_info
+        GL_TEXTURE_TARGET                        = 0x2004,
+        GL_MIPMAP_LEVEL                          = 0x2005,
 
+        // Buffer size
+        CHAR_BUFFER_SIZE                         = 1024,
 
-        VEC2  									 = 0x0100,
-        VEC3  									 = 0x0200,
-        VEC4  									 = 0x0400,
-        VEC8  									 = 0x0800,
-        VEC16 									 = 0x1000,
+        // Image Discriptor defaults
+        DEFAULT_OBJECT_CHANNELORDER              = 0x10B5,
+        DEFAULT_OBJECT_CHANNELTYPE               = 0x10D2,
+        DEFAULT_OBJECT_WIDTH                     = 0, // CL_DEVICE_IMAGE2D_MAX_WIDTH
+        DEFAULT_OBJECT_HEIGHT                    = 0, // CL_DEVICE_IMAGE2D_MAX_HEIGHT
+        DEFAULT_OBJECT_ROWPITCH                  = 0,
 
-        //cl_gl_texture_info param value
+        // cl_gl_texture_info param value
 
-        OBJECT_BUFFER 	                    = 0x2000,
-        OBJECT_TEXTURE2D 	                    = 0x2001,
+        OBJECT_BUFFER                            = 0x2000,
+        OBJECT_TEXTURE2D                         = 0x2001,
         OBJECT_TEXTURE3D                         = 0x2002,
         OBJECT_RENDERBUFFER                      = 0x2003,
         TEXTURE_TARGET                           = 0x2004,
-		MIPMAP_LEVEL    		                 = 0x2005,
-
-        // Buffer size
-        CHAR_BUFFER_SIZE                         = 1024, 
-
-        //Image Discriptor defaults 
-        DEFAULT_OBJECT_CHANNELORDER                  = 0x10B5,
-        DEFAULT_OBJECT_CHANNELTYPE                   = 0x10D2,
-        DEFAULT_OBJECT_WIDTH                         = 0,
-        DEFAULT_OBJECT_HEIGHT                        = 0,
-        DEFAULT_OBJECT_ROWPITCH                      = 0
-
+        MIPMAP_LEVEL                             = 0x2005
     };
-    virtual WebCL* toWebCL() { return this; }
-
-    PassRefPtr<WebCLPlatformList> getPlatforms( ExceptionCode&);
-    WebCLGetInfo getImageInfo(WebCLImage* , cl_image_info, ExceptionCode& );
-    // Present in OpenCL 1.1
+    // virtual WebCL* toWebCL() { return this; }
+    PassRefPtr<WebCLPlatformList> getPlatforms(ExceptionCode&);
     void waitForEvents(WebCLEventList*, ExceptionCode&);
-    /*PassRefPtr<WebCLContext> createContext(ExceptionCode&);
-      PassRefPtr<WebCLContext> createContext(int, WebCLDeviceList*, int, int, ExceptionCode&);
-      PassRefPtr<WebCLContext> createContext(int, WebCLDevice*, int, int, ExceptionCode&);*/
-
-    PassRefPtr<WebCLContext> createContext(WebCLContextProperties* ,ExceptionCode&);
+    PassRefPtr<WebCLContext> createContext(WebCLContextProperties*, ExceptionCode&);
     PassRefPtr<WebCLContext> createContext(ExceptionCode& ec)
     {
-        return(createContext(NULL,ec));
+        return(createContext(0, ec));
     }
-    PassRefPtr<WebCLContext> createContextFromType(int, int, int, int, ExceptionCode&);
-    PassRefPtr<WebCLContext> createSharedContext(int, int, int, ExceptionCode&);
-    void setcl_device_id(cl_device_id*);
-    cl_device_id* getcl_device_id();
     Vector<String> getSupportedExtensions(ExceptionCode&);
 
+    static PassRefPtr<WebCL> create();
+    void setCLDeviceID(cl_device_id*);
+    cl_device_id* getCLDeviceID();
+    WebCLGetInfo getImageInfo(WebCLImage*, cl_image_info, ExceptionCode&);
 private:
-    WebCL(ScriptExecutionContext*);
-    void check_mem_object(cl_mem cl_mem_ids);
-
-    cl_device_id* my_cl_device_id;
-    RefPtr<WebCLPlatformList> m_platform_id;
-    RefPtr<WebCLDeviceList> m_device_id;
+    WebCL();
+    void checkMemObject(cl_mem);
     RefPtr<WebCLContext> m_context;
-    RefPtr<WebCLCommandQueue> m_command_queue;
-    RefPtr<WebCLDevice> m_device_id_;
-
-    Vector<RefPtr<WebCLProgram> > m_program_list;
-    Vector<RefPtr<WebCLMemoryObject> > m_mem_list;
-    Vector<RefPtr<WebCLEvent> > m_event_list;
-    Vector<RefPtr<WebCLSampler> > m_sampler_list;
-    Vector<RefPtr<WebCLContext> > m_context_list;
-    Vector<RefPtr<WebCLCommandQueue> > m_commandqueue_list;
-
-    long m_num_programs;
-    long m_num_mems;
-    long m_num_events;
-    long m_num_samplers;
-    long m_num_contexts;
-    long m_num_commandqueues;
-    RefPtr<WebCLMemoryObject> m_shared_mem;
+    cl_device_id* m_cldeviceid;
 };
 
 } // namespace WebCore

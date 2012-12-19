@@ -109,9 +109,6 @@ function CheckBoundry(i) {
     var y = nxtPos[ii + 1];
     var z = nxtPos[ii + 2];
     
-    //var r2 = (x*x + y*y + z*z);
-    //if(r2 > 1) {
-    
     if(x > 1 || x < -1 || y > 1 || y < -1 || z > 1 || z < -1) {    
         var r = 0.1 *  RAND0TO1();
 	    var theta = Math.PI * RAND0TO1();

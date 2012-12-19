@@ -262,21 +262,6 @@ WebCLGetInfo  WebCLDevice::getInfo(int device_type, ExceptionCode& ec)
             if (err == CL_SUCCESS)
                 return WebCLGetInfo(static_cast<unsigned int>(sizet_units));
             break;
-        case WebCL::DEVICE_IMAGE3D_MAX_DEPTH:
-            err=clGetDeviceInfo(m_cl_device_id, CL_DEVICE_IMAGE3D_MAX_DEPTH, sizeof(size_t), &sizet_units, NULL);
-            if (err == CL_SUCCESS)
-                return WebCLGetInfo(static_cast<unsigned int>(sizet_units));
-            break;
-        case WebCL::DEVICE_IMAGE3D_MAX_HEIGHT:
-            err=clGetDeviceInfo(m_cl_device_id, CL_DEVICE_IMAGE3D_MAX_HEIGHT, sizeof(size_t), &sizet_units, NULL);
-            if (err == CL_SUCCESS)
-                return WebCLGetInfo(static_cast<unsigned int>(sizet_units));
-            break;
-        case WebCL::DEVICE_IMAGE3D_MAX_WIDTH:
-            err=clGetDeviceInfo(m_cl_device_id, CL_DEVICE_IMAGE3D_MAX_WIDTH, sizeof(size_t), &sizet_units, NULL);
-            if (err == CL_SUCCESS)
-                return WebCLGetInfo(static_cast<unsigned int>(sizet_units));
-            break;
         case WebCL::DEVICE_MAX_PARAMETER_SIZE:
             err=clGetDeviceInfo(m_cl_device_id, CL_DEVICE_MAX_PARAMETER_SIZE, sizeof(size_t), &sizet_units, NULL);
             if (err == CL_SUCCESS)

@@ -197,7 +197,7 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDeviceList* 
     else {
 
         printf(" devices is NULL \n ");
-        cl_device = m_context->getcl_device_id();
+        cl_device = m_context->getCLDeviceID();
 
         //	Creates a new command queue for the devices in the given array.
         //If devices is null, the WebCL implementation will select any single WebCLDevice that matches the given properties and is covered by this WebCLContext.

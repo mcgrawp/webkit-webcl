@@ -103,12 +103,12 @@ WebCLGetInfo WebCLKernel::getInfo (int kernel_info, ExceptionCode& ec)
                 return WebCLGetInfo(String(function_name));
             break;
         case WebCL::KERNEL_NUM_ARGS:
-            err=clGetKernelInfo(m_cl_kernel, CL_KERNEL_NUM_ARGS , sizeof(cl_uint), &uint_units, NULL);
+            err=clGetKernelInfo(m_cl_kernel, CL_KERNEL_NUM_ARGS, sizeof(cl_uint), &uint_units, NULL);
             if (err == CL_SUCCESS)
                 return WebCLGetInfo(static_cast<unsigned int>(uint_units));	
             break;
         case WebCL::KERNEL_REFERENCE_COUNT:
-            err=clGetKernelInfo(m_cl_kernel, CL_KERNEL_REFERENCE_COUNT , sizeof(cl_uint), &uint_units, NULL);
+            err=clGetKernelInfo(m_cl_kernel, CL_KERNEL_REFERENCE_COUNT, sizeof(cl_uint), &uint_units, NULL);
             if (err == CL_SUCCESS)
                 return WebCLGetInfo(static_cast<unsigned int>(uint_units));
             break;
@@ -224,7 +224,7 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo( WebCLDevice* device, int param_name,
 
 
 void WebCLKernel::setKernelArg(unsigned int argIndex,
-        PassRefPtr<WebCLKernelTypeValue> kernelObject, int argType , ExceptionCode& ec)
+        PassRefPtr<WebCLKernelTypeValue> kernelObject, int argType, ExceptionCode& ec)
 {
     cl_int err = 0;
     RefPtr<WebCLKernelTypeVector> array = NULL;
@@ -775,7 +775,7 @@ void WebCLKernel::setArg(unsigned int arg_index, unsigned int arg_size, Exceptio
 
 }
 
-void WebCLKernel::setArg(unsigned int argIndex, PassRefPtr<WebCLKernelTypeValue> kernelObject, unsigned int argType , ExceptionCode& ec)
+void WebCLKernel::setArg(unsigned int argIndex, PassRefPtr<WebCLKernelTypeValue> kernelObject, unsigned int argType, ExceptionCode& ec)
 {
     cl_int err = 0;
     RefPtr<WebCLKernelTypeVector> array = NULL;
@@ -837,7 +837,7 @@ void WebCLKernel::setArg(unsigned int argIndex, PassRefPtr<WebCLKernelTypeValue>
             err = clSetKernelArgPrimitiveType(m_cl_kernel, kernelObject, nodeIduLong,
                     argIndex, sizeof(cl_ulong));
             break;
-        case WebCL::FLOAT_KERNAL_ARG :
+        case WebCL::FLOAT_KERNEL_ARG :
             err = clSetKernelArgPrimitiveType(m_cl_kernel, kernelObject, nodeIdFloat,
                     argIndex, sizeof(cl_float));
             break;
@@ -884,9 +884,9 @@ void WebCLKernel::setArg(unsigned int argIndex, PassRefPtr<WebCLKernelTypeValue>
             err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
                     argIndex, sizeof(cl_ulong2), 2);
             break;
-        case (WebCL::FLOAT_KERNAL_ARG | WebCL::VEC2):
+        case WebCL::FLOAT_KERNEL_ARG | WebCL::VEC2:
             err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
-                    argIndex, sizeof(cl_float2), 2);
+                argIndex, sizeof(cl_float2), 2);
             break;
             /*case (WebCL::DOUBLE | WebCL::VEC2):
               err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
@@ -932,7 +932,7 @@ void WebCLKernel::setArg(unsigned int argIndex, PassRefPtr<WebCLKernelTypeValue>
                     err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
                     argIndex, sizeof(cl_ulong3), 3);
                     break;
-                    case (WebCL::FLOAT_KERNAL_ARG | WebCL::VEC3):
+                    case (WebCL::FLOAT_KERNEL_ARG | WebCL::VEC3):
                     err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
                     argIndex, sizeof(cl_float3), 3);
                     break;
@@ -983,9 +983,9 @@ void WebCLKernel::setArg(unsigned int argIndex, PassRefPtr<WebCLKernelTypeValue>
             err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
                     argIndex, sizeof(cl_ulong4), 4);
             break;
-        case (WebCL::FLOAT_KERNAL_ARG | WebCL::VEC4):
+        case WebCL::FLOAT_KERNEL_ARG | WebCL::VEC4:
             err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
-                    argIndex, sizeof(cl_float4), 4);
+                argIndex, sizeof(cl_float4), 4);
             break;
         case (WebCL::DOUBLE | WebCL::VEC4):
             err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
@@ -1030,13 +1030,13 @@ void WebCLKernel::setArg(unsigned int argIndex, PassRefPtr<WebCLKernelTypeValue>
             err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
                     argIndex, sizeof(cl_ulong8), 8);
             break;
-        case (WebCL::FLOAT_KERNAL_ARG | WebCL::VEC8):
+        case WebCL::FLOAT_KERNEL_ARG | WebCL::VEC8:
             err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
-                    argIndex, sizeof(cl_float8), 8);
+                argIndex, sizeof(cl_float8), 8);
             break;
         case (WebCL::DOUBLE | WebCL::VEC8):
             err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
-                    argIndex, sizeof(cl_double8), 8);
+                argIndex, sizeof(cl_double8), 8);
             break;
             /*case (WebCL::HALF | WebCL::VEC8):
               err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
@@ -1081,9 +1081,9 @@ void WebCLKernel::setArg(unsigned int argIndex, PassRefPtr<WebCLKernelTypeValue>
             err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
                     argIndex, sizeof(cl_ulong16), 16);
             break;
-        case (WebCL::FLOAT_KERNAL_ARG | WebCL::VEC16):
+        case WebCL::FLOAT_KERNEL_ARG | WebCL::VEC16:
             err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
-                    argIndex, sizeof(cl_float16), 16);
+                argIndex, sizeof(cl_float16), 16);
             break;
         case (WebCL::DOUBLE | WebCL::VEC16):
             err = clSetKernelArgVectorType(m_cl_kernel, kernelObject, array,
@@ -1310,7 +1310,7 @@ clSetKernelArgPrimitiveType(cl_kernel cl_kernel_id,
 inline unsigned int WebCLKernel::
 clSetKernelArgVectorType(cl_kernel cl_kernel_id,
         PassRefPtr<WebCLKernelTypeValue> kernelObject,
-        RefPtr<WebCLKernelTypeVector> array , unsigned int argIndex,
+        RefPtr<WebCLKernelTypeVector> array, unsigned int argIndex,
         int size,unsigned int length)
 {		
     if ((!kernelObject->asVector(&array)) || (length != array->length()))
