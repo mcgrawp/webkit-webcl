@@ -955,9 +955,9 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
         Int32Array* globalWorkSize, Int32Array* localWorkSize, WebCLEventList* events,
         WebCLEvent* event, ExceptionCode& ec)
 {
-    cl_kernel cl_kernel_id;
-    cl_event* cl_event_wait_lists = 0;
-    cl_event cl_event_id;
+    cl_kernel clKernelID;
+    cl_event* clEventsWaitList = 0;
+    cl_event clEventID;
     int eventsLength = 0;
 
     size_t* globalWorkSizeCopy = 0;
@@ -968,25 +968,25 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
     if (!m_cl_command_queue) {
         printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
-        return ;
+        return;
     }
 
     if (kernel) {
-        cl_kernel_id = kernel->getCLKernel();
-        if (!cl_kernel_id) {
+        clKernelID = kernel->getCLKernel();
+        if (!clKernelID) {
             ec = WebCLException::INVALID_KERNEL;
             printf("Error: cl_kernel_id null\n");
-            return ;
+            return;
         }
     }
 
     if (events) {
-        cl_event_wait_lists = events->getCLEvents();
+        clEventsWaitList = events->getCLEvents();
         eventsLength = events->length();
     }
 
     if (event)
-        cl_event_id = event->getCLEvent();
+        clEventID = event->getCLEvent();
 
     // FIXME: The block of code is repeated all over this class.
     if (globalWorkSize) {
@@ -1006,9 +1006,9 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
             printf("Error: Error allocating memory");
             return;
         }
-        for (unsigned i = 0; i < localWorkSize->length(); ++i) {
+        for (unsigned i = 0; i < localWorkSize->length(); ++i)
             localWorkSizeCopy[i] = localWorkSize->item(i);
-        }
+
     }
 
     if (globalWorkOffsets) {
@@ -1021,8 +1021,8 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
             globalWorkOffsetCopy[i] = globalWorkOffsets->item(i);
     }
 
-    int computeContextError = m_context->computeContext()->enqueueNDRangeKernel(m_cl_command_queue, cl_kernel_id, workItemDimensions,
-	globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, eventsLength, cl_event_wait_lists, &cl_event_id);
+    int computeContextError = m_context->computeContext()->enqueueNDRangeKernel(m_cl_command_queue, clKernelID, workItemDimensions,
+	globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, eventsLength, clEventsWaitList, &clEventID);
 
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 
@@ -1032,8 +1032,6 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
     localWorkSizeCopy = 0;
     free(globalWorkOffsetCopy);
     globalWorkOffsetCopy = 0;
-
-    return;	
 }
 
 void WebCLCommandQueue::finish(ExceptionCode& ec)
