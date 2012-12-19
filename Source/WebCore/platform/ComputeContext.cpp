@@ -534,6 +534,18 @@ CCint ComputeContext::releaseCommandQueue(CCCommandQueue commandQueue)
     return clToComputeContextError(error);
 }
 
+CCint ComputeContext::finishCommandQueue(CCCommandQueue commandQueue)
+{
+    cl_int error = clFinish(commandQueue);
+    return clToComputeContextError(error);
+}
+
+CCint ComputeContext::flushCommandQueue(CCCommandQueue commandQueue)
+{
+    cl_int error = clFlush(commandQueue);
+    return clToComputeContextError(error);
+}
+
 CCKernel ComputeContext::createKernel(CCProgram program, const String& kernelName, int& error)
 {
     cl_int clError;

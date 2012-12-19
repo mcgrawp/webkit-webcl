@@ -321,6 +321,8 @@ public:
     CCint enqueueMarker(CCCommandQueue, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
 
     CCint releaseCommandQueue(CCCommandQueue);
+    CCint finishCommandQueue(CCCommandQueue);
+    CCint flushCommandQueue(CCCommandQueue);
 
     // temporary method, just useful because we are refactoring the code
     // just ComputeContext should know about the opencl internals.

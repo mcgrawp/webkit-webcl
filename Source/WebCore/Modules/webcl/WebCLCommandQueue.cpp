@@ -1036,71 +1036,27 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
 
 void WebCLCommandQueue::finish(ExceptionCode& ec)
 {
-    cl_int err = 0;
-
-    if (m_cl_command_queue == NULL) {
+    if (!m_cl_command_queue) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         printf("Error: Invalid Command Queue\n");
         return;
     }
-    err = clFinish(m_cl_command_queue);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMAND_QUEUE \n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY \n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES \n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }		
-    }
-    return;
+
+    int computeContextError = m_context->computeContext()->finishCommandQueue(m_cl_command_queue);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
 
-void WebCLCommandQueue::flush( ExceptionCode& ec)
+void WebCLCommandQueue::flush(ExceptionCode& ec)
 {
-    cl_int err = 0;
-
-    if (m_cl_command_queue == NULL) {
+    if (!m_cl_command_queue) {
         printf("Error: Invalid Command Queue\n");
         ec = WebCLException::FAILURE;
         return;
     }
-    err = clFlush(m_cl_command_queue);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY \n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES \n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-    } else {
-        return;
-    }
-    return;
+
+    int computeContextError = m_context->computeContext()->flushCommandQueue(m_cl_command_queue);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image,bool blockingWrite,Int32Array* origin,Int32Array* region,int inputRowPitch,int inputSlicePitch,ArrayBufferView* ptr,WebCLEventList* eventWaitList,WebCLEvent* event,ExceptionCode& ec)
