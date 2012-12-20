@@ -291,7 +291,7 @@ void WebCLProgram::buildProgram(int options, int pfn_notify, int user_data, Exce
         ec = WebCLException::INVALID_PROGRAM;
         return;
     }
-
+    printf(" UNUSED params in buildProgram %d .%d .%d\n" , options , pfn_notify , user_data);
     // TODO(siba samal) - needs to be addressed later
     err = clBuildProgram(m_cl_program, 0, NULL, NULL, NULL, NULL);
 
@@ -316,6 +316,8 @@ void WebCLProgram::buildProgram(WebCLDevice* device_id,int options, int pfn_noti
         ec = WebCLException::INVALID_DEVICE;
         return;
     }
+    
+    printf(" UNUSED params in buildProgram %d .%d .%d\n" , options , pfn_notify , user_data);
 
     // TODO(siba samal) - NULL parameters needs to be addressed later
     err = clBuildProgram(m_cl_program, 1, (const cl_device_id*)&cl_device, NULL, NULL, NULL);
@@ -335,6 +337,7 @@ void WebCLProgram::buildProgram(WebCLDeviceList* cl_devices, int options, int pf
         ec = WebCLException::INVALID_PROGRAM;
         return ;
     }
+    printf(" UNUSED params in buildProgram %d .%d .%d\n" , options , pfn_notify , user_data);
 
     if (cl_devices) {
         cl_device = cl_devices->getCLDevices();

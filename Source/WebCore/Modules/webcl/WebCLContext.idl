@@ -1,17 +1,17 @@
 /*
 * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
 * are met:
-* 
+*
 * 1.  Redistributions of source code must retain the above copyright
 *     notice, this list of conditions and the following disclaimer.
-* 
+*
 * 2.  Redistributions in binary form must reproduce the above copyright
 *     notice, this list of conditions and the following disclaimer in the
 *     documentation and/or other materials provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
 * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -26,63 +26,56 @@
 */
 
 module webcl {
-	interface [
-		Conditional=WEBCL,
-	] WebCLContext {
-	[StrictTypeChecking, Custom]  void getInfo (in long contextinfo) raises(DOMException);
-	
-	WebCLEvent createUserEvent() raises(DOMException);		
-    WebCLImageDescriptorList getSupportedImageFormats(in long memFlags,in long imageType) raises(DOMException);
+    interface [
+        Conditional=WEBCL ,
+    ] WebCLContext {
+    [StrictTypeChecking , Custom]  void getInfo (in long contextinfo) raises(DOMException);
 
-	WebCLCommandQueue createCommandQueue(in [Optional] WebCLDeviceList devices, 
-				in [Optional] long prop) raises(DOMException);
+    WebCLEvent createUserEvent() raises(DOMException);
+    WebCLImageDescriptorList getSupportedImageFormats(in long memFlags , in long imageType) raises(DOMException);
 
-
+    WebCLCommandQueue createCommandQueue(in [Optional] WebCLDeviceList devices , in [Optional] long prop)
+        raises(DOMException);
 
     WebCLProgram createProgram(in DOMString kernelSource) raises(DOMException);
 
-    [StrictTypeChecking] WebCLBuffer createBuffer(in long memFlags, in ImageData srcPixels) raises(DOMException);	
-    [StrictTypeChecking] WebCLBuffer createBuffer(in long memFlags, in HTMLCanvasElement srcCanvas) raises(DOMException);	
-    [StrictTypeChecking] WebCLBuffer createBuffer(in long memFlags, in long sizeInBytes, in [Optional] ArrayBuffer srcBuffer) raises(DOMException);		
-    
-    WebCLSampler createSampler(in boolean normCords, in long addrMode,
-            in long fltrMode) raises(DOMException);	
-    
-    // Create Image using ImageData , HTMLCanvasElement or HTMLImageElement as i/p. Can return WebCLBuffer or WebCLImage
-    WebCLImage createImage(in long flags,in ImageData data) raises(DOMException);
-    WebCLImage createImage(in long flags,in HTMLCanvasElement canvasElement) raises(DOMException);
-	WebCLImage createImage(in long flags,in HTMLImageElement imageElement) raises(DOMException);
-    
-    WebCLImage createImage(in long flags,in HTMLVideoElement videoElement) raises(DOMException);
-    
-    [StrictTypeChecking , Custom ] WebCLImage createImageWithDescriptor(in long flags,in WebCLImageDescriptor descriptor,in [Optional] ArrayBuffer srcBuffer) raises(DOMException);
-	
-    WebCLMemoryObject createImage2D(in long flags, 
-				in HTMLCanvasElement canvasElement) raises(DOMException);
-	WebCLMemoryObject createImage2D(in long flags, 
-				in HTMLImageElement imageElement) raises(DOMException);
-	WebCLMemoryObject createImage2D(in long flags, 
-				in HTMLVideoElement videoElement) raises(DOMException);
-	WebCLMemoryObject createImage2D(in long flags, 
-				in ImageData data) raises(DOMException);
-    
-    
-    WebCLMemoryObject createImage2D(in long flags,
-				in unsigned long width,
-				in unsigned long height,
-				in ArrayBuffer data) raises(DOMException);
-	WebCLBuffer createFromGLBuffer(in long flags,
-				in WebGLBuffer bufobj) raises(DOMException);
-    //WebCLMemoryObject createFromGLBuffer(in long flags,
-	//			in WebGLBuffer bufobj) raises(DOMException);
-	
-	WebCLImage createFromGLRenderBuffer(in long flags, 
-                in WebGLRenderbuffer renderbufferobj) raises(DOMException);
-	WebCLMemoryObject createFromGLTexture2D(in long flags,
-				in unsigned long textureTarget,
-				in long miplevel,
-				in unsigned long texture) raises(DOMException);
-	
-	
-	};
+    [StrictTypeChecking] WebCLBuffer createBuffer(in long memFlags , in ImageData srcPixels) raises(DOMException);
+    [StrictTypeChecking] WebCLBuffer createBuffer(in long memFlags , in HTMLCanvasElement srcCanvas)
+        raises(DOMException);
+    [StrictTypeChecking] WebCLBuffer createBuffer(
+        in long memFlags
+        , in long sizeInBytes
+        , in [Optional] ArrayBuffer srcBuffer) raises(DOMException);
+
+    WebCLSampler createSampler(in boolean normCords , in long addrMode , in long fltrMode) raises(DOMException);
+
+    WebCLImage createImage(in long flags , in ImageData data) raises(DOMException);
+    WebCLImage createImage(in long flags , in HTMLCanvasElement canvasElement) raises (DOMException);
+    WebCLImage createImage(in long flags , in HTMLImageElement imageElement) raises(DOMException);
+
+    WebCLImage createImage(in long flags , in HTMLVideoElement videoElement) raises(DOMException);
+
+    [StrictTypeChecking , Custom] WebCLImage createImageWithDescriptor(
+        in long flags
+        , in WebCLImageDescriptor descriptor
+        , in [Optional] ArrayBuffer srcBuffer ) raises(DOMException);
+
+    WebCLMemoryObject createImage2D(in long flags , in HTMLCanvasElement canvasElement) raises(DOMException);
+    WebCLMemoryObject createImage2D(in long flags , in HTMLImageElement imageElement) raises(DOMException);
+    WebCLMemoryObject createImage2D(in long flags , in HTMLVideoElement videoElement) raises(DOMException);
+    WebCLMemoryObject createImage2D(in long flags , in ImageData data) raises(DOMException);
+
+
+    WebCLMemoryObject createImage2D(in long flags , in unsigned long width , in unsigned long height , in ArrayBuffer data)
+        raises(DOMException);
+
+    WebCLBuffer createFromGLBuffer(in long flags , in WebGLBuffer bufobj) raises(DOMException);
+
+    WebCLImage createFromGLRenderBuffer(in long flags , in WebGLRenderbuffer renderbufferobj) raises(DOMException);
+    WebCLMemoryObject createFromGLTexture2D(in long flags
+        , in unsigned long textureTarget
+        , in long miplevel
+        , in unsigned long texture) raises(DOMException);
+
+    };
 }

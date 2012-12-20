@@ -28,46 +28,15 @@
 #ifndef WebCLContext_h
 #define WebCLContext_h
 
+#include "ComputeContext.h"
+#include "GraphicsContext3D.h"
+#include "ImageBuffer.h"
+#include "ImageData.h"
 #include "ScriptObject.h"
 #include "ScriptState.h"
-
-#include "ActiveDOMObject.h"
-#include <wtf/Float32Array.h>
-#include <wtf/Int32Array.h>
-#include "ImageData.h"
-#include "HTMLCanvasElement.h"
-#include "HTMLImageElement.h"
-#include "HTMLVideoElement.h"
-#include "GraphicsContext3D.h"
-#include "WebGLBuffer.h"
-#include "WebGLRenderingContext.h"
-#include "WebCLGetInfo.h"
-#include "ScriptExecutionContext.h"
-#include "Document.h"
-#include "DOMWindow.h"
-#include "Image.h"
 #include "SharedBuffer.h"
-#include "CanvasRenderingContext2D.h"
-#include "ImageBuffer.h"
-#include "CachedImage.h"
-#include <wtf/ArrayBuffer.h>
-#include "CachedImage.h"
-#include "ComputeContext.h"
-
-#include <wtf/OwnPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include "WebCLException.h"
 #include <OpenCL/opencl.h>
-#include <wtf/ArrayBuffer.h>
-#include <WebCLImageDescriptor.h>
-#include "WebCLImage.h"
-#include "WebCLBuffer.h"
-#include <WebCLImageDescriptorList.h>
 
 namespace WebCore {
 
@@ -82,69 +51,82 @@ class ImageData;
 class ImageBuffer;
 class IntSize;
 class WebCLBuffer;
+class WebCLImageDescriptor;
 class WebCLImageDescriptorList;
+class HTMLCanvasElement;
+class HTMLImageElement;
+class HTMLVideoElement;
+class WebGLRenderbuffer;
+class WebGLBuffer;
+class WebCLDevice;
+class WebCLDeviceList;
+class WebCLGetInfo;
+
 class WebCLContext : public RefCounted<WebCLContext> {
 public:
     virtual ~WebCLContext();
-    static PassRefPtr<WebCLContext> create(WebCL*, CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID *devices, int* error);
-    static PassRefPtr<WebCLContext> create(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType, int* error);
-
-    WebCLGetInfo getInfo(int, ExceptionCode&);
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDeviceList*, int, ExceptionCode&);
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDeviceList* deviceList, ExceptionCode& ec) {
-        return(createCommandQueue(deviceList, NULL, ec));
-    }
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(ExceptionCode& ec) {
-        return(createCommandQueue(NULL, NULL, ec));
-    }
-
-    PassRefPtr<WebCLProgram> createProgram(const String&, ExceptionCode&);
+    static PassRefPtr<WebCLContext> create(WebCL*, CCContextProperties* , CCuint , CCDeviceID* , int*);
+    /* FIXME :: not needed as CCContextProperties contains deviceType field.
+       static PassRefPtr<WebCLContext> create(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType
+       , int* error);*/
 
     PassRefPtr<WebCLBuffer> createBuffer(int, int, ArrayBuffer*, ExceptionCode&);
-    PassRefPtr<WebCLBuffer> createBuffer(int memFlags, int sizeInBytes, ExceptionCode& ec)
+    PassRefPtr<WebCLBuffer> createBuffer(int memFlags , int sizeInBytes , ExceptionCode& ec)
     {
-            return(createBuffer(memFlags,sizeInBytes,NULL,ec));
+        return(createBuffer(memFlags , sizeInBytes , 0 , ec));
+    }
+    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDeviceList* , int , ExceptionCode&);
+    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDeviceList* deviceList , ExceptionCode& ec)
+    {
+        return(createCommandQueue(deviceList, 0 , ec));
+    }
+    PassRefPtr<WebCLCommandQueue> createCommandQueue(ExceptionCode& ec)
+    {
+        return(createCommandQueue(0, 0, ec));
     }
 
+    PassRefPtr<WebCLBuffer> createFromGLBuffer(int , WebGLBuffer* , ExceptionCode&);
+
+    PassRefPtr<WebCLImage> createFromGLRenderBuffer(int , WebGLRenderbuffer* , ExceptionCode&);
+
+    PassRefPtr<WebCLMemoryObject> createFromGLTexture2D(int , GC3Denum , GC3Dint , GC3Duint , ExceptionCode&);
+
+    PassRefPtr<WebCLImage> createImageWithDescriptor(int , WebCLImageDescriptor* , ArrayBuffer* , ExceptionCode&);
+    PassRefPtr<WebCLImage> createImageWithDescriptor(int flag , WebCLImageDescriptor* descriptor , ExceptionCode& ec)
+    {
+        return createImageWithDescriptor( flag , descriptor , 0 , ec);
+    }
+    PassRefPtr<WebCLProgram> createProgram(const String&, ExceptionCode&);
+
+    PassRefPtr<WebCLSampler> createSampler(bool, int, int, ExceptionCode&);
+
+    PassRefPtr<WebCLEvent> createUserEvent(ExceptionCode&);
+
+    WebCLGetInfo getInfo(int, ExceptionCode&);
+
+    PassRefPtr<WebCLImageDescriptorList> getSupportedImageFormats(int , int , ExceptionCode&);
+
+    // Strawman proposal
     PassRefPtr<WebCLBuffer> createBuffer(int, ImageData*, ExceptionCode&);
     PassRefPtr<WebCLBuffer> createBuffer(int, HTMLCanvasElement*, ExceptionCode&);
-
-    // Create Image using ImageData , HTMLCanvasElement or HTMLImageElement as i/p. Can return WebCLBuffer or WebCLImage
     PassRefPtr<WebCLImage> createImage(int, ImageData*, ExceptionCode&);
     PassRefPtr<WebCLImage> createImage(int, HTMLCanvasElement*, ExceptionCode&);
-	PassRefPtr<WebCLImage> createImage(int, HTMLImageElement*, ExceptionCode&);
-
-   //  Create Image using HTMLVideoElement as i/p
+    PassRefPtr<WebCLImage> createImage(int, HTMLImageElement*, ExceptionCode&);
     PassRefPtr<WebCLImage> createImage(int, HTMLVideoElement*, ExceptionCode&);
 
-    //  Create Image using WebCLImageDescriptor
-    PassRefPtr<WebCLImage> createImageWithDescriptor(int,WebCLImageDescriptor*,ArrayBuffer*,ExceptionCode&);
-    PassRefPtr<WebCLImage> createImageWithDescriptor(int flag,WebCLImageDescriptor* descriptor,ExceptionCode& ec)
-    {
-        return createImageWithDescriptor( flag,descriptor,NULL,ec);
-    }
+    // FIXME :: API not in Specs but used in Conformance test suit. Please
+    // remove it in future
     PassRefPtr<WebCLMemoryObject> createImage2D(int, HTMLCanvasElement*, ExceptionCode&);
     PassRefPtr<WebCLMemoryObject> createImage2D(int, HTMLImageElement*, ExceptionCode&);
     PassRefPtr<WebCLMemoryObject> createImage2D(int, HTMLVideoElement*, ExceptionCode&);
     PassRefPtr<WebCLMemoryObject> createImage2D(int, ImageData*, ExceptionCode&);
+    PassRefPtr<WebCLMemoryObject> createImage2D(int , unsigned , unsigned , ArrayBuffer* , ExceptionCode&);
 
-    PassRefPtr<WebCLMemoryObject> createImage2D(int,unsigned int,unsigned int, ArrayBuffer*, ExceptionCode&);
-    PassRefPtr<WebCLSampler> createSampler(bool, int, int, ExceptionCode&);
-    PassRefPtr<WebCLBuffer> createFromGLBuffer(int, WebGLBuffer*, ExceptionCode&);
-    //PassRefPtr<WebCLMemoryObject> createFromGLBuffer(int, WebGLBuffer*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createFromGLRenderBuffer(int, WebGLRenderbuffer*,ExceptionCode&);
-    PassRefPtr<WebCLMemoryObject> createFromGLTexture2D(int, GC3Denum,GC3Dint, GC3Duint, ExceptionCode&);
-    PassRefPtr<WebCLEvent> createUserEvent(ExceptionCode&);
-
-    PassRefPtr<WebCLImageDescriptorList> getSupportedImageFormats(int memFlags,int imageType,ExceptionCode&);
-    void setDevice(RefPtr<WebCLDevice>);
-    cl_context getCLContext();
-    // Fixed-size cache of reusable image buffers for video texImage2D calls.
     class LRUImageBufferCache {
     public:
         LRUImageBufferCache(int capacity);
         // The pointer returned is owned by the image buffer map.
-        ImageBuffer* imageBuffer(const IntSize& size);
+        ImageBuffer* imageBuffer(const IntSize&);
     private:
         void bubbleToFront(int idx);
         OwnArrayPtr<OwnPtr<ImageBuffer> > m_buffers;
@@ -155,35 +137,35 @@ public:
     ComputeContext* computeContext() const { return m_computeContext.get(); }
 
 private:
-    WebCLContext(WebCL*, CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID *devices, int* error);
-    WebCLContext(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType, int* error);
-    PassRefPtr<WebCLMemoryObject> createImage2DBaseMemory(int flags, int width, int height, const ComputeContext::ImageFormat& imageFormat, void* data, ExceptionCode& ec);
-    PassRefPtr<WebCLImage> createImage2DBaseImage(int flags, int width, int height, const ComputeContext::ImageFormat& imageFormat, void* data, ExceptionCode& ec);
+    WebCLContext(WebCL*, CCContextProperties* , CCuint , CCDeviceID* , int*);
+    // WebCLContext(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType, int* error);
+    PassRefPtr<WebCLMemoryObject> createImage2DBaseMemory(int , int , int , const ComputeContext::ImageFormat& , void*
+        , ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage2DBaseImage(int , int , int , const ComputeContext::ImageFormat& , void*
+        , ExceptionCode&);
 
     WebCL* m_context;
-    cl_context m_cl_context;
-    RefPtr<WebCLDevice> m_device_id;
+    cl_context m_clContext;
+    RefPtr<WebCLCommandQueue> m_commandQueue;
+    PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
+    RefPtr<ComputeContext> m_computeContext;
 
+    /* FIXME : These are not used. Check if needed for garbage collection. If not delete it.
+    RefPtr<WebCLDevice> m_device_id;
     Vector<RefPtr<WebCLProgram> > m_program_list;
     long m_num_programs;
     Vector<RefPtr<WebCLMemoryObject> > m_mem_list;
     long m_num_mems;
-
     Vector<RefPtr<WebCLImage> > m_img_list;
     long m_num_images;
     Vector<RefPtr<WebCLBuffer> > m_buffer_list;
     long m_num_buffer;
-
     Vector<RefPtr<WebCLEvent> > m_event_list;
     long m_num_events;
     Vector<RefPtr<WebCLSampler> > m_sampler_list;
     long m_num_samplers;
     Vector<RefPtr<WebCLContext> > m_context_list;
-    long m_num_contexts;
-    RefPtr<WebCLCommandQueue> m_command_queue;
-
-    PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
-    RefPtr<ComputeContext> m_computeContext;
+    long m_num_contexts;*/
 };
 
 
