@@ -271,7 +271,7 @@ PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, Exc
         return NULL;
     }
 
-    int error;
+    CCerror error;
     CCKernel computeContextKernel  = m_context->computeContext()->createKernel(m_cl_program, kernelName, error);
     if (error != ComputeContext::SUCCESS) {
         ec = error;

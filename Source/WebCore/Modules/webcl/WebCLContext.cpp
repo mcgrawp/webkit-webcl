@@ -47,17 +47,17 @@ WebCLContext::~WebCLContext()
 {
 }
 
-PassRefPtr<WebCLContext> WebCLContext::create(WebCL* computeContext, CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID *devices, int* error)
+PassRefPtr<WebCLContext> WebCLContext::create(WebCL* computeContext, CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID *devices, CCerror* error)
 {
     return adoptRef(new WebCLContext(computeContext, contextProperties, numberDevices, devices, error));
 }
 
-PassRefPtr<WebCLContext> WebCLContext::create(WebCL* computeContext, CCContextProperties* contextProperties, unsigned int deviceType, int* error)
+PassRefPtr<WebCLContext> WebCLContext::create(WebCL* computeContext, CCContextProperties* contextProperties, unsigned int deviceType, CCerror* error)
 {
     return adoptRef(new WebCLContext(computeContext, contextProperties, deviceType, error));
 }
 
-WebCLContext::WebCLContext(WebCL* compute_context, CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, int* error)
+WebCLContext::WebCLContext(WebCL* compute_context, CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror* error)
     : m_videoCache(4),
       m_context(compute_context)
 {
@@ -71,7 +71,7 @@ WebCLContext::WebCLContext(WebCL* compute_context, CCContextProperties* contextP
     m_cl_context = m_computeContext->context();
 }
 
-WebCLContext::WebCLContext(WebCL* compute_context, CCContextProperties* contextProperties, unsigned int deviceType, int* error)
+WebCLContext::WebCLContext(WebCL* compute_context, CCContextProperties* contextProperties, unsigned int deviceType, CCerror* error)
     : m_videoCache(4),
       m_context(compute_context)
 {
@@ -206,7 +206,7 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDeviceList* 
 
     }
 
-    int error;
+    CCerror error;
     cl_command_queue_id = m_computeContext->createCommandQueue(*cl_device, command_queue_prop, error);
     if (!cl_command_queue_id) {
         ec = error;
@@ -227,7 +227,7 @@ PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource,
         return NULL;
     }
 
-    int error;
+    CCerror error;
     cl_program_id = m_computeContext->createProgram(kernelSource, error);
     if (!cl_program_id) {
         ec = error;
@@ -262,7 +262,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int flags, int size, ArrayBuf
         vData = data->data();
     }
 
-    int error;
+    CCerror error;
     cl_mem_id = m_computeContext->createBuffer(flags, size, vData, error);
     if (!cl_mem_id) {
         ec = error;
@@ -294,7 +294,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, ImageData *ptr 
         return NULL;
     }
 
-    int error;
+    CCerror error;
     cl_mem_id = m_computeContext->createBuffer(memFlags, buffer_size, buffer, error);
     if (!cl_mem_id) {
         ec = error;
@@ -354,7 +354,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, HTMLCanvasEleme
         return NULL;
     }
 
-    int error;
+    CCerror error;
     cl_mem_id = m_computeContext->createBuffer(memFlags, buffer_size, image, error);
     if (!cl_mem_id) {
         ec = error;
@@ -371,7 +371,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, HTMLCanvasEleme
 // XXX: merge createImage2DBase
 PassRefPtr<WebCLMemoryObject> WebCLContext::createImage2DBaseMemory(int flags, int width, int height, const ComputeContext::ImageFormat& imageFormat, void *data, ExceptionCode& ec)
 {
-    int createImage2DError;
+    CCerror createImage2DError;
     cl_mem cl_mem_image = NULL;
     cl_mem_image = m_computeContext->createImage2D(flags, width, height, imageFormat, data, createImage2DError);
     if (!cl_mem_image) {
@@ -387,7 +387,7 @@ PassRefPtr<WebCLMemoryObject> WebCLContext::createImage2DBaseMemory(int flags, i
 
 PassRefPtr<WebCLImage> WebCLContext::createImage2DBaseImage(int flags, int width, int height, const ComputeContext::ImageFormat& imageFormat, void *data, ExceptionCode& ec)
 {
-    int createImage2DError;
+    CCerror createImage2DError;
     cl_mem cl_mem_image = NULL;
     cl_mem_image = m_computeContext->createImage2D(flags, width, height, imageFormat, data, createImage2DError);
     if (!cl_mem_image) {
@@ -810,7 +810,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(int flags, WebGLBuffer*
         }
     }
 
-    int error;
+    CCerror error;
     cl_mem_id = m_computeContext->createFromGLBuffer(flags, buf_id, error);
     if (!cl_mem_id) {
         ec = error;
@@ -839,7 +839,7 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderBuffer(int flags, WebGLRe
 
     }
 
-    int error;
+    CCerror error;
     cl_mem_id = m_computeContext->createFromGLRenderbuffer(flags, rbuf_id, error);
     if (!cl_mem_id) {
         ec = error;
@@ -861,7 +861,7 @@ PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool norm_cords, int addr_m
         return NULL;
     }
 
-    int error;
+    CCerror error;
     cl_sampler_id = m_computeContext->createSampler(norm_cords, addr_mode, fltr_mode, error);
     if (!cl_sampler_id) {
         ec = error;
@@ -884,7 +884,7 @@ PassRefPtr<WebCLMemoryObject> WebCLContext::createFromGLTexture2D(int flags, GC3
         return NULL;
     }
 
-    int error;
+    CCerror error;
     cl_mem_id = m_computeContext->createFromGLTexture2D(flags, texture_target, miplevel, texture, error);
     if (!cl_mem_id) {
         ec = error;
@@ -1014,7 +1014,7 @@ PassRefPtr<WebCLImageDescriptorList> WebCLContext::getSupportedImageFormats(int 
     }
 
     cl_uint uint_num_entries = 0;
-    CCint error = m_computeContext->supportedImageFormats(memFlags, imageType, 0, &uint_num_entries, NULL);
+    CCerror error = m_computeContext->supportedImageFormats(memFlags, imageType, 0, &uint_num_entries, NULL);
 
     if (uint_num_entries == 0) {
         ec = error;

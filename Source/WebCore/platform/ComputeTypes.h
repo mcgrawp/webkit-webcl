@@ -4,6 +4,8 @@
 #include <OpenCL/opencl.h>
 
 typedef unsigned int CCenum;
+typedef int CCerror;
+
 typedef cl_int CCint;
 typedef cl_uint CCuint;
 typedef cl_mem PlatformComputeObject;

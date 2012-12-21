@@ -43,7 +43,7 @@ namespace WebCore {
 WebCLCommandQueue::~WebCLCommandQueue()
 {
     ASSERT(m_cl_command_queue);
-    int computeContextErrorCode = m_context->computeContext()->releaseCommandQueue(m_cl_command_queue);
+    CCerror computeContextErrorCode = m_context->computeContext()->releaseCommandQueue(m_cl_command_queue);
 
     ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
     m_cl_command_queue = NULL;
@@ -1021,7 +1021,7 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
             globalWorkOffsetCopy[i] = globalWorkOffsets->item(i);
     }
 
-    int computeContextError = m_context->computeContext()->enqueueNDRangeKernel(m_cl_command_queue, clKernelID, workItemDimensions,
+    CCerror computeContextError = m_context->computeContext()->enqueueNDRangeKernel(m_cl_command_queue, clKernelID, workItemDimensions,
 	globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, eventsLength, clEventsWaitList, &clEventID);
 
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
@@ -1042,7 +1042,7 @@ void WebCLCommandQueue::finish(ExceptionCode& ec)
         return;
     }
 
-    int computeContextError = m_context->computeContext()->finishCommandQueue(m_cl_command_queue);
+    CCerror computeContextError = m_context->computeContext()->finishCommandQueue(m_cl_command_queue);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
@@ -1055,7 +1055,7 @@ void WebCLCommandQueue::flush(ExceptionCode& ec)
         return;
     }
 
-    int computeContextError = m_context->computeContext()->flushCommandQueue(m_cl_command_queue);
+    CCerror computeContextError = m_context->computeContext()->flushCommandQueue(m_cl_command_queue);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
@@ -2144,7 +2144,7 @@ void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEven
         }
     }
 
-    int computeContextError = m_context->computeContext()->enqueueBarrier(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
+    CCerror computeContextError = m_context->computeContext()->enqueueBarrier(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
 
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
@@ -2172,7 +2172,7 @@ void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent
         eventsLength = eventsWaitList->length();
     }
 
-    int computeContextError = m_context->computeContext()->enqueueMarker(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
+    CCerror computeContextError = m_context->computeContext()->enqueueMarker(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
 
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }

@@ -197,7 +197,7 @@ static cl_mem_flags computeMemoryTypeToCL(int memoryType)
     return clMemoryType;
 }
 
-ComputeContext::ComputeContext(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, int* error)
+ComputeContext::ComputeContext(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror* error)
 {
     CCint clError;
     m_clContext = clCreateContext(contextProperties, numberDevices, devices, NULL, NULL, &clError);
@@ -212,7 +212,7 @@ ComputeContext::ComputeContext(CCContextProperties* contextProperties, CCuint nu
         *error = computeContextError;
 }
 
-ComputeContext::ComputeContext(CCContextProperties* contextProperties, unsigned int deviceType, int* error)
+ComputeContext::ComputeContext(CCContextProperties* contextProperties, unsigned int deviceType, CCerror* error)
 {
     CCint clError;
 
@@ -247,16 +247,17 @@ ComputeContext::~ComputeContext()
     clReleaseContext(m_clContext);
 }
 
-PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, int* error)
+PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror* error)
 {
     return adoptRef(new ComputeContext(contextProperties, numberDevices, devices, error));
 }
 
-PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, unsigned int deviceType, int* error)
+PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, unsigned int deviceType, CCerror* error)
 {
     return adoptRef(new ComputeContext(contextProperties, deviceType, error));
 }
 
+// FIXME: Should it return the associated CCerror instead of the number of platforms?
 CCint ComputeContext::platformIDs(CCuint numberEntries, CCPlatformID* platforms)
 {
     cl_uint numberOfPlatforms;
@@ -265,6 +266,7 @@ CCint ComputeContext::platformIDs(CCuint numberEntries, CCPlatformID* platforms)
     return result == CL_SUCCESS ? static_cast<int>(numberOfPlatforms) : -1;
 }
 
+// FIXME: Should it return the associated CCerror instead of the number of devices?
 CCint ComputeContext::deviceIDs(CCPlatformID platform, CCDeviceType deviceType, CCuint numberEntries, CCDeviceID* devices)
 {
     cl_uint numberOfDevices;
@@ -273,7 +275,7 @@ CCint ComputeContext::deviceIDs(CCPlatformID platform, CCDeviceType deviceType, 
     return result == CL_SUCCESS ? static_cast<int>(numberOfDevices) : -1;
 }
 
-CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, int properties, int& error)
+CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, int properties, CCerror& error)
 {
     cl_command_queue_properties clProperties;
     switch (properties) {
@@ -296,7 +298,7 @@ CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, int prope
     return clCommandQueue;
 }
 
-CCProgram ComputeContext::createProgram(const String& kernelSource, int& error)
+CCProgram ComputeContext::createProgram(const String& kernelSource, CCerror& error)
 {
     cl_program clProgram;
     cl_int clError;
@@ -308,7 +310,7 @@ CCProgram ComputeContext::createProgram(const String& kernelSource, int& error)
     return clProgram;
 }
 
-PlatformComputeObject ComputeContext::createBuffer(int type, size_t size, void* data, int& error)
+PlatformComputeObject ComputeContext::createBuffer(int type, size_t size, void* data, CCerror& error)
 {
     cl_mem clMemoryBuffer;
     cl_int clError;
@@ -320,7 +322,7 @@ PlatformComputeObject ComputeContext::createBuffer(int type, size_t size, void* 
     return clMemoryBuffer;
 }
 
-PlatformComputeObject ComputeContext::createImage2D(int type, int width, int height, const ImageFormat& imageFormat, void* data, int& error)
+PlatformComputeObject ComputeContext::createImage2D(int type, int width, int height, const ImageFormat& imageFormat, void* data, CCerror& error)
 {
     cl_mem clMemoryImage = NULL;
     cl_int memoryImageError = CL_SUCCESS;
@@ -349,7 +351,7 @@ PlatformComputeObject ComputeContext::createImage2D(int type, int width, int hei
     return clMemoryImage;
 }
 
-PlatformComputeObject ComputeContext::createFromGLBuffer(int type, int bufferId, int& error)
+PlatformComputeObject ComputeContext::createFromGLBuffer(int type, int bufferId, CCerror& error)
 {
     cl_mem clMemoryImage = NULL;
     cl_int clError;
@@ -361,7 +363,7 @@ PlatformComputeObject ComputeContext::createFromGLBuffer(int type, int bufferId,
     return clMemoryImage;
 }
 
-PlatformComputeObject ComputeContext::createFromGLRenderbuffer(int type, GC3Dint renderbufferId, int& error)
+PlatformComputeObject ComputeContext::createFromGLRenderbuffer(int type, GC3Dint renderbufferId, CCerror& error)
 {
     cl_mem clMemory;
     cl_int clError;
@@ -407,8 +409,8 @@ static cl_filter_mode computeFilterModeToCL(int filterMode)
     case ComputeContext::FILTER_LINEAR:
         clFilterMode = CL_FILTER_LINEAR;
         break;
-    case ComputeContext::FILTER_NEAREST :
-        clFilterMode = CL_FILTER_NEAREST ;
+    case ComputeContext::FILTER_NEAREST:
+        clFilterMode = CL_FILTER_NEAREST;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -418,7 +420,7 @@ static cl_filter_mode computeFilterModeToCL(int filterMode)
     return clFilterMode;
 }
 
-CCSampler ComputeContext::createSampler(bool normalizedCoords, int addressingMode, int filterMode, int& error)
+CCSampler ComputeContext::createSampler(bool normalizedCoords, int addressingMode, int filterMode, CCerror& error)
 {
     cl_addressing_mode clAddressingMode = computeAddressingModeToCL(addressingMode);
     cl_filter_mode clFilterMode = computeFilterModeToCL(filterMode);
@@ -430,7 +432,7 @@ CCSampler ComputeContext::createSampler(bool normalizedCoords, int addressingMod
     return sampler;
 }
 
-PlatformComputeObject ComputeContext::createFromGLTexture2D(int type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, int& error)
+PlatformComputeObject ComputeContext::createFromGLTexture2D(int type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror& error)
 {
     cl_int memoryType = computeMemoryTypeToCL(type);
     cl_int clError;
@@ -469,7 +471,7 @@ static cl_mem_object_type computeObjectTypeToCL(int type)
 }
 
 // FIXME: improve the API
-CCint ComputeContext::supportedImageFormats(int type, int imageType, CCuint numberOfEntries, CCuint *numberImageFormat, CCImageFormat* imageFormat)
+CCerror ComputeContext::supportedImageFormats(int type, int imageType, CCuint numberOfEntries, CCuint *numberImageFormat, CCImageFormat* imageFormat)
 {
     cl_mem_flags memoryType = computeMemoryTypeToCL(type);
     cl_mem_object_type clImageType = computeObjectTypeToCL(imageType);
@@ -478,7 +480,7 @@ CCint ComputeContext::supportedImageFormats(int type, int imageType, CCuint numb
     return clToComputeContextError(error);
 }
 
-CCint ComputeContext::enqueueNDRangeKernel(CCCommandQueue commandQueue, CCKernel kernelID, int workItemDimensions,
+CCerror ComputeContext::enqueueNDRangeKernel(CCCommandQueue commandQueue, CCKernel kernelID, int workItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event)
 {
     cl_int error = clEnqueueNDRangeKernel(commandQueue, kernelID, workItemDimensions,
@@ -487,7 +489,7 @@ CCint ComputeContext::enqueueNDRangeKernel(CCCommandQueue commandQueue, CCKernel
     return clToComputeContextError(error);
 }
 
-CCint ComputeContext::enqueueBarrier(CCCommandQueue commandQueue, int eventsWaitListLength, CCEvent* eventsWaitList, CCEvent* event)
+CCerror ComputeContext::enqueueBarrier(CCCommandQueue commandQueue, int eventsWaitListLength, CCEvent* eventsWaitList, CCEvent* event)
 {
     cl_int error;
 
@@ -512,7 +514,7 @@ CCint ComputeContext::enqueueBarrier(CCCommandQueue commandQueue, int eventsWait
     return clToComputeContextError(error);
 }
 
-CCint ComputeContext::enqueueMarker(CCCommandQueue commandQueue, int eventsWaitListLength, CCEvent* eventsWaitList, CCEvent* event)
+CCerror ComputeContext::enqueueMarker(CCCommandQueue commandQueue, int eventsWaitListLength, CCEvent* eventsWaitList, CCEvent* event)
 {
     cl_int error;
 
@@ -528,31 +530,30 @@ CCint ComputeContext::enqueueMarker(CCCommandQueue commandQueue, int eventsWaitL
     return clToComputeContextError(error);
 }
 
-CCint ComputeContext::releaseCommandQueue(CCCommandQueue commandQueue)
+CCerror ComputeContext::releaseCommandQueue(CCCommandQueue commandQueue)
 {
     cl_int error = clReleaseCommandQueue(commandQueue);
     return clToComputeContextError(error);
 }
 
-CCint ComputeContext::finishCommandQueue(CCCommandQueue commandQueue)
+CCerror ComputeContext::finishCommandQueue(CCCommandQueue commandQueue)
 {
     cl_int error = clFinish(commandQueue);
     return clToComputeContextError(error);
 }
 
-CCint ComputeContext::flushCommandQueue(CCCommandQueue commandQueue)
+CCerror ComputeContext::flushCommandQueue(CCCommandQueue commandQueue)
 {
     cl_int error = clFlush(commandQueue);
     return clToComputeContextError(error);
 }
 
-CCKernel ComputeContext::createKernel(CCProgram program, const String& kernelName, int& error)
+CCKernel ComputeContext::createKernel(CCProgram program, const String& kernelName, CCerror& error)
 {
     cl_int clError;
     cl_kernel kernel = clCreateKernel(program, kernelName.utf8().data(), &clError);
 
     error = clToComputeContextError(clError);
-
     return kernel;
 }
 

@@ -292,37 +292,37 @@ public:
         CCenum channelDataType;
     } ImageFormat;
 
-    static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, int* error);
-    static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, unsigned int deviceType, int* error);
+    static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror* error);
+    static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, unsigned int deviceType, CCerror* error);
     ~ComputeContext();
 
     static CCint platformIDs(CCuint numberPlatforms, CCPlatformID* platforms);
     static CCint deviceIDs(CCPlatformID platform, CCDeviceType deviceType, CCuint numberEntries, CCDeviceID* devices);
 
-    CCCommandQueue createCommandQueue(CCDeviceID deviceId, int properties, int& error);
-    CCProgram createProgram(const String& kernelSource, int& error);
+    CCCommandQueue createCommandQueue(CCDeviceID deviceId, int properties, CCerror& error);
+    CCProgram createProgram(const String& kernelSource, CCerror& error);
 
-    PlatformComputeObject createBuffer(int type, size_t size, void* data, int& error);
-    PlatformComputeObject createImage2D(int type, int width, int height, const ImageFormat& imageFormat, void* data, int& error);
-    PlatformComputeObject createFromGLBuffer(int type, int bufferId, int& error);
-    PlatformComputeObject createFromGLRenderbuffer(int type, GC3Dint renderbufferId, int& error);
-    CCSampler createSampler(bool normalizedCoords, int addressingMode, int filterMode, int& error);
-    PlatformComputeObject createFromGLTexture2D(int type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, int& error);
-    CCint supportedImageFormats(int type, int imageType, CCuint numberOfEntries, CCuint *numberImageFormat, CCImageFormat* imageFormat);
+    PlatformComputeObject createBuffer(int type, size_t size, void* data, CCerror& error);
+    PlatformComputeObject createImage2D(int type, int width, int height, const ImageFormat& imageFormat, void* data, CCerror& error);
+    PlatformComputeObject createFromGLBuffer(int type, int bufferId, CCerror& error);
+    PlatformComputeObject createFromGLRenderbuffer(int type, GC3Dint renderbufferId, CCerror& error);
+    CCSampler createSampler(bool normalizedCoords, int addressingMode, int filterMode, CCerror& error);
+    PlatformComputeObject createFromGLTexture2D(int type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror& error);
+    CCerror supportedImageFormats(int type, int imageType, CCuint numberOfEntries, CCuint *numberImageFormat, CCImageFormat* imageFormat);
 
-    CCKernel createKernel(CCProgram program, const String& kernelName, int& error);
+    CCKernel createKernel(CCProgram program, const String& kernelName, CCerror& error);
     // FIXME: horrible API, it looks C
-    CCint createKernelsInProgram(CCProgram program, CCuint numberOfKernels, CCKernel& kernels, CCuint& numberOfKernelsReturned);
+    CCerror createKernelsInProgram(CCProgram program, CCuint numberOfKernels, CCKernel& kernels, CCuint& numberOfKernelsReturned);
 
-    CCint enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
+    CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
 
-    CCint enqueueBarrier(CCCommandQueue, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
-    CCint enqueueMarker(CCCommandQueue, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueBarrier(CCCommandQueue, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueMarker(CCCommandQueue, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
 
-    CCint releaseCommandQueue(CCCommandQueue);
-    CCint finishCommandQueue(CCCommandQueue);
-    CCint flushCommandQueue(CCCommandQueue);
+    CCerror releaseCommandQueue(CCCommandQueue);
+    CCerror finishCommandQueue(CCCommandQueue);
+    CCerror flushCommandQueue(CCCommandQueue);
 
     // temporary method, just useful because we are refactoring the code
     // just ComputeContext should know about the opencl internals.
@@ -333,8 +333,8 @@ public:
 
     // XXX: Create a Pimpl implementation
 private:
-    ComputeContext(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, int* error = NULL);
-    ComputeContext(CCContextProperties* contextProperties, unsigned int deviceType, int* error = NULL);
+    ComputeContext(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror* error = 0);
+    ComputeContext(CCContextProperties* contextProperties, unsigned int deviceType, CCerror* error = 0);
 
     cl_context m_clContext;
 };
