@@ -58,7 +58,7 @@ WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, cl_command_queue com
 {
 }
 
-WebCLGetInfo WebCLCommandQueue:: getInfo(int param_name, ExceptionCode& ec)
+WebCLGetInfo WebCLCommandQueue::getInfo(int param_name, ExceptionCode& ec)
 {
     cl_int err = 0;
     cl_uint uint_units = 0;
@@ -2177,12 +2177,9 @@ void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
-PassRefPtr<WebCLEvent> WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, 
-        int event_wait_list, ExceptionCode& ec)
+PassRefPtr<WebCLEvent> WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, int event_wait_list, ExceptionCode& ec)
 {
-
     cl_kernel cl_kernel_id = NULL;
-    cl_int err = 0;
     cl_event cl_event_id = NULL;
 
     if (m_cl_command_queue == NULL) {
@@ -2202,64 +2199,15 @@ PassRefPtr<WebCLEvent> WebCLCommandQueue::enqueueTask(WebCLKernel* kernel,
         }
     }
 
-    err = clEnqueueTask(m_cl_command_queue, cl_kernel_id, 0, NULL,&cl_event_id); 
-
+    CCerror err = clEnqueueTask(m_cl_command_queue, cl_kernel_id, 0, NULL, &cl_event_id);
     if (err != CL_SUCCESS) {
         printf("Error: clEnqueueTask\n");
-        switch (err) {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_PROGRAM_EXECUTABLE :
-                printf("Error: CL_INVALID_PROGRAM_EXECUTABLE \n");
-                ec = WebCLException::INVALID_PROGRAM_EXECUTABLE;
-                break;				
-            case CL_INVALID_KERNEL :
-                printf("Error: CL_INVALID_KERNEL \n");
-                ec = WebCLException::INVALID_KERNEL;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-            case CL_INVALID_KERNEL_ARGS :
-                printf("Error: CL_INVALID_KERNEL_ARGS \n");
-                ec = WebCLException::INVALID_KERNEL_ARGS;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            case CL_INVALID_WORK_GROUP_SIZE :
-                printf("Error: CL_INVALID_WORK_GROUP_SIZE \n");
-                ec = WebCLException::FAILURE;
-                break;		
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES  \n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;			
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE  \n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;	
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-
-    } else {
-        RefPtr<WebCLEvent> o = WebCLEvent::create(m_context, cl_event_id);
-        m_event_list.append(o);
-        m_num_events++;
-        return o;
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+        return NULL;
     }
-    return NULL;
+
+    RefPtr<WebCLEvent> o = WebCLEvent::create(m_context, cl_event_id);
+    return o;
 }
 
 cl_command_queue WebCLCommandQueue::getCLCommandQueue()

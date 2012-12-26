@@ -292,10 +292,8 @@ private:
     RefPtr<WebCLFinishCallback> m_finishCallback;
     RefPtr<WebCLCommandQueue> m_command_queue;
 
-    long m_num_events;
     long m_num_commandqueues;
     long m_num_mems;
-    Vector<RefPtr<WebCLEvent> > m_event_list;
     Vector<RefPtr<WebCLCommandQueue> > m_commandqueue_list;
     Vector<RefPtr<WebCLMemoryObject> > m_mem_list;
 };
