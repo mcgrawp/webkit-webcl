@@ -86,8 +86,7 @@ function InitCL() {
 
     // Create a compute context
     //
-    //context = cl.createContext(null, device, null, null);
-    context = cl.createSharedContext(cl.DEVICE_TYPE_GPU, null, null);
+    context = cl.createContext({platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU, shareGroup: 1, hint: null});
 
     // Create a command queue
     //
@@ -229,9 +228,8 @@ function SimulateCL(cl)
     kernel.setKernelArg(11, userData.roughness, cl.KERNEL_ARG_FLOAT);
     kernel.setKernelArg(12, userData.nVertices, cl.KERNEL_ARG_INT);
 
-    queue.enqueueNDRangeKernel(kernel, new Int32Array(0, 0), globalWorkSize, localWorkSize);
-    //queue.enqueueNDRangeKernel(kernel,null, globalWorkSize, null, null);
-
+    //queue.enqueueNDRangeKernel(kernel, new Int32Array(0, 0), globalWorkSize, localWorkSize);
+    queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, null, null);
     queue.finish();
 
     if (GLCL_SHARE_MODE) {
