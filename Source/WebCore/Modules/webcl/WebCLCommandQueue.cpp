@@ -67,64 +67,66 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int param_name, ExceptionCode& ec)
     RefPtr<WebCLContext> contextObj = NULL;
     RefPtr<WebCLDevice> deviceObj = NULL;
 
-    if (m_cl_command_queue == NULL) {
+    if (!m_cl_command_queue) {
         printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return WebCLGetInfo();
     }
-    switch(param_name)
-    {
 
-        case WebCL::QUEUE_REFERENCE_COUNT:
-            err=clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_REFERENCE_COUNT , sizeof(cl_uint), &uint_units, NULL);
-            if (err == CL_SUCCESS)
-                return WebCLGetInfo(static_cast<unsigned int>(uint_units));
-            break;
-            // FIXME: We should not create a WebCLContext here.
-            /*        case WebCL::QUEUE_CONTEXT:
-            clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_CONTEXT, sizeof(cl_context), &cl_context_id, NULL);
-            contextObj = WebCLContext::create(m_context, cl_context_id);
-            if (err == CL_SUCCESS)
-                return WebCLGetInfo(PassRefPtr<WebCLContext>(contextObj));
-                break;*/
-        case WebCL::QUEUE_DEVICE:
-            clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_DEVICE, sizeof(cl_device_id), &cl_device, NULL);
-            deviceObj = WebCLDevice::create(cl_device);
-            if (err == CL_SUCCESS)
-                return WebCLGetInfo(PassRefPtr<WebCLDevice>(deviceObj));
-            break;
-        case WebCL::QUEUE_PROPERTIES:
-            clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_PROPERTIES, sizeof(cl_command_queue_properties), &queue_properties, NULL);
-            return WebCLGetInfo(static_cast<unsigned int>(queue_properties));
-            break;
-
-        default:
-            printf("Error: Unsupported Commans Queue Info type\n");
-            ec = WebCLException::FAILURE;
-            return WebCLGetInfo();
+    switch (param_name) {
+    case WebCL::QUEUE_REFERENCE_COUNT:
+        err = clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_REFERENCE_COUNT , sizeof(cl_uint), &uint_units, NULL);
+        if (err == CL_SUCCESS)
+            return WebCLGetInfo(static_cast<unsigned int>(uint_units));
+        break;
+    // FIXME: We should not create a WebCLContext here.
+    /*
+    case WebCL::QUEUE_CONTEXT:
+        clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_CONTEXT, sizeof(cl_context), &cl_context_id, NULL);
+        contextObj = WebCLContext::create(m_context, cl_context_id);
+        if (err == CL_SUCCESS)
+            return WebCLGetInfo(PassRefPtr<WebCLContext>(contextObj));
+        break;
+    */
+    case WebCL::QUEUE_DEVICE:
+        clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_DEVICE, sizeof(cl_device_id), &cl_device, NULL);
+        deviceObj = WebCLDevice::create(cl_device);
+        if (err == CL_SUCCESS)
+            return WebCLGetInfo(PassRefPtr<WebCLDevice>(deviceObj));
+        break;
+    case WebCL::QUEUE_PROPERTIES:
+        clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_PROPERTIES, sizeof(cl_command_queue_properties), &queue_properties, NULL);
+        return WebCLGetInfo(static_cast<unsigned int>(queue_properties));
+        break;
+    default:
+        printf("Error: Unsupported Commans Queue Info type\n");
+        ec = WebCLException::FAILURE;
+        return WebCLGetInfo();
     }
+
     switch (err) {
-        case CL_INVALID_COMMAND_QUEUE:
-            printf("Error: CL_INVALID_COMMAND_QUEUE \n");
-            ec = WebCLException::INVALID_COMMAND_QUEUE;
-            break;
-        case CL_INVALID_VALUE:
-            printf("Error: CL_INVALID_VALUE \n");
-            ec = WebCLException::INVALID_VALUE;
-            break;
-        case CL_OUT_OF_RESOURCES:
-            printf("Error: CL_OUT_OF_RESOURCES \n");
-            ec = WebCLException::OUT_OF_RESOURCES;
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            printf("Error: CL_OUT_OF_HOST_MEMORY \n");
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            break;
-        default:
-            printf("Error: Invaild Error Type\n");
-            ec = WebCLException::FAILURE;
-            break;
+    case CL_INVALID_COMMAND_QUEUE:
+        printf("Error: CL_INVALID_COMMAND_QUEUE \n");
+        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        break;
+    case CL_INVALID_VALUE:
+        printf("Error: CL_INVALID_VALUE \n");
+        ec = WebCLException::INVALID_VALUE;
+        break;
+    case CL_OUT_OF_RESOURCES:
+        printf("Error: CL_OUT_OF_RESOURCES \n");
+        ec = WebCLException::OUT_OF_RESOURCES;
+        break;
+    case CL_OUT_OF_HOST_MEMORY:
+        printf("Error: CL_OUT_OF_HOST_MEMORY \n");
+        ec = WebCLException::OUT_OF_HOST_MEMORY;
+        break;
+    default:
+        printf("Error: Invaild Error Type\n");
+        ec = WebCLException::FAILURE;
+        break;
     }				
+
     return WebCLGetInfo();
 }
 
@@ -2179,17 +2181,18 @@ void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent
 
 PassRefPtr<WebCLEvent> WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, int event_wait_list, ExceptionCode& ec)
 {
-    cl_kernel cl_kernel_id = NULL;
-    cl_event cl_event_id = NULL;
+    cl_kernel cl_kernel_id = 0;
+    cl_event cl_event_id = 0;
 
-    if (m_cl_command_queue == NULL) {
+    if (!m_cl_command_queue) {
         printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return NULL;
     }
-    if (kernel != NULL) {
+
+    if (kernel) {
         cl_kernel_id = kernel->getCLKernel();
-        if (cl_kernel_id == NULL) {
+        if (!cl_kernel_id) {
             printf("Error: cl_kernel_id null\n");
             //TODO (siba samal) Handle enqueueTask  API
             printf("WebCLCommandQueue::enqueueTask event_wait_list=%d\n",
@@ -2203,7 +2206,7 @@ PassRefPtr<WebCLEvent> WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, int e
     if (err != CL_SUCCESS) {
         printf("Error: clEnqueueTask\n");
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-        return NULL;
+        return 0;
     }
 
     RefPtr<WebCLEvent> o = WebCLEvent::create(m_context, cl_event_id);

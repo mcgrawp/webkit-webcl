@@ -258,31 +258,28 @@ public:
         enqueueCopyBufferToImage(srcBuffer,dstImage,srcOffset,dstOrigin,region,NULL,NULL,ec);
     }
 
-    void enqueueBarrier(WebCLEventList* ,WebCLEvent*,ExceptionCode&);
-    
-    void enqueueBarrier(WebCLEventList* eventWaitList ,ExceptionCode& ec)
+    void enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEvent* event, ExceptionCode&);
+    void enqueueBarrier(WebCLEventList* eventsWaitList, ExceptionCode& ec)
     {
-        return(enqueueBarrier(eventWaitList,NULL,ec)); 
+        return enqueueBarrier(eventsWaitList, NULL, ec);
     }
-    
     void enqueueBarrier(ExceptionCode& ec)
     {
-        return(enqueueBarrier(NULL,NULL,ec));
+        return enqueueBarrier(NULL, NULL, ec);
     }
 
-    void enqueueMarker(WebCLEventList* ,WebCLEvent*,ExceptionCode&);
-
-    void enqueueMarker(WebCLEventList* eventWaitList ,ExceptionCode& ec)
+    void enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent*, ExceptionCode&);
+    void enqueueMarker(WebCLEventList* eventsWaitList, ExceptionCode& ec)
     {
-        return(enqueueMarker(eventWaitList,NULL,ec));
+        return enqueueMarker(eventsWaitList, NULL, ec);
     }
-
     void enqueueMarker(ExceptionCode& ec)
     {
-        return(enqueueMarker(NULL,NULL,ec));
+        return enqueueMarker(NULL, NULL, ec);
     }
 
-    PassRefPtr<WebCLEvent> enqueueTask( WebCLKernel* ,int, ExceptionCode&);
+    PassRefPtr<WebCLEvent> enqueueTask(WebCLKernel*, int, ExceptionCode&);
+
     cl_command_queue getCLCommandQueue();	
 private:
     WebCLCommandQueue(WebCLContext*, cl_command_queue);
