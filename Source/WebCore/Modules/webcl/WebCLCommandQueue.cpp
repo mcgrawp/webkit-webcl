@@ -116,7 +116,6 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blocking_wr
         WebCLEvent* event, ExceptionCode& ec)
 {
     cl_mem cl_mem_id = NULL;
-    cl_int err = 0;
     int eventsLength = 0;
     cl_event *cl_event_wait_lists = NULL;
     cl_event cl_event_id = NULL;
@@ -157,6 +156,7 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blocking_wr
     }
 
     // TODO(siba samal) - NULL parameters need to be addressed later
+    CCerror err = 0;
     if(blocking_write)
     {
         err = clEnqueueWriteBuffer(m_cl_command_queue, cl_mem_id, CL_TRUE, offset, 
@@ -167,65 +167,14 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blocking_wr
         err = clEnqueueWriteBuffer(m_cl_command_queue, cl_mem_id, CL_FALSE, offset, 
                 buffer_size, ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
     }
-    if (err != CL_SUCCESS) 
-    {
-        printf("Error: clEnqueueWriteBuffer\n");
-        switch (err) 
-        {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-                //case CL_MISALIGNED_SUB_BUFFER_OFFSET:
-                //	printf("Error: CL_MISALIGNED_SUB_BUFFER_OFFSET\n");
-                //	ec = WebCLException::MISALIGNED_SUB_BUFFER_OFFSET;
-                //	break;
-                //case CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST:
-                //	printf("Error: CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST\n");
-                //	ec = WebCLException::EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST;
-                //	break;
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE\n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-    } 
-    return;
+
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blocking_write, int offset, int buffer_size,ImageData* ptr, WebCLEventList* events,WebCLEvent* event, ExceptionCode& ec)
 {
-
     cl_mem cl_mem_id = NULL;
-    cl_int err = 0;
     int eventsLength = 0;
     cl_event *cl_event_wait_lists = NULL;
     cl_event cl_event_id = NULL;
@@ -268,6 +217,7 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blocking_wr
         return;
     }
     // TODO(won.jeon) - NULL parameters need to be addressed later
+    CCerror err = 0;
     if(blocking_write) 
     {
         err = clEnqueueWriteBuffer(m_cl_command_queue, cl_mem_id, CL_TRUE, 
@@ -279,47 +229,8 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blocking_wr
                 offset, buffer_size, buffer_array, eventsLength, cl_event_wait_lists, &cl_event_id);
     }
 
-    if (err != CL_SUCCESS) 
-    {
-        printf("Error: clEnqueueWriteBuffer\n");
-        switch (err) 
-        {
-            case CL_INVALID_COMMAND_QUEUE:
-                ec = WebCL::INVALID_COMMAND_QUEUE;
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                break;
-            case CL_INVALID_CONTEXT:
-                ec = WebCL::INVALID_CONTEXT;
-                printf("Error: CL_INVALID_CONTEXT\n");
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                ec = WebCL::INVALID_MEM_OBJECT;
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                break;
-
-            case CL_INVALID_VALUE:
-                ec = WebCL::INVALID_VALUE;
-                printf("Error: CL_INVALID_VALUE\n");
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                ec = WebCL::INVALID_EVENT_WAIT_LIST;
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                break;
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                ec = WebCL::MEM_OBJECT_ALLOCATION_FAILURE;
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE\n");
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                ec = WebCL::OUT_OF_HOST_MEMORY;
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                break;
-            default:
-                ec = WebCL::FAILURE;
-                printf("Error: Invaild Error Type\n");
-                break;
-        }
-    } 
-    return ;
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLCommandQueue::enqueueWriteBufferRect( WebCLBuffer* buffer,bool blocking_write,Int32Array* bufferOrigin,Int32Array* hostOrigin,Int32Array* region,
@@ -327,7 +238,6 @@ void WebCLCommandQueue::enqueueWriteBufferRect( WebCLBuffer* buffer,bool blockin
         WebCLEventList* eventWaitList, WebCLEvent* event, ExceptionCode& ec )
 {
     cl_mem cl_mem_id = NULL;
-    cl_int err = 0;
     cl_event cl_event_id = NULL;
     cl_event* cl_event_wait_lists = NULL;
     int eventsLength = 0;
@@ -394,6 +304,7 @@ void WebCLCommandQueue::enqueueWriteBufferRect( WebCLBuffer* buffer,bool blockin
         region_array[i] = region->item(i);
     }
 
+    CCerror err = 0;
     if(blocking_write)
     {
         err = clEnqueueWriteBufferRect(m_cl_command_queue, cl_mem_id, CL_TRUE, bufferOrigin_array , hostOrigin_array , region_array , bufferRowPitch , bufferSlicePitch , hostRowPitch , hostSlicePitch , ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
@@ -402,68 +313,14 @@ void WebCLCommandQueue::enqueueWriteBufferRect( WebCLBuffer* buffer,bool blockin
     {
         err = clEnqueueWriteBufferRect(m_cl_command_queue, cl_mem_id, CL_FALSE ,bufferOrigin_array ,hostOrigin_array ,region_array , bufferRowPitch , bufferSlicePitch , hostRowPitch , hostSlicePitch , ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
     }
-    if (err != CL_SUCCESS) 
-    {
-        printf("Error: clEnqueueWriteBufferRect \n");
-        switch (err) 
-        {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-                //case CL_MISALIGNED_SUB_BUFFER_OFFSET:
-                //	printf("Error: CL_MISALIGNED_SUB_BUFFER_OFFSET\n");
-                //	ec = WebCLException::MISALIGNED_SUB_BUFFER_OFFSET;
-                //	break;
-                //case CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST:
-                //	printf("Error: CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST\n");
-                //	ec = WebCLException::EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST;
-                //	break;
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE\n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
 
-        }
-    }
-    else
-    {
-        return ;
-    }
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blocking_read,int offset, int buffer_size, ImageData* ptr, WebCLEventList* events,WebCLEvent* event, ExceptionCode& ec)
 {
     cl_mem cl_mem_id = NULL;
-    cl_int err = 0;
     cl_event cl_event_id = NULL;
     int eventsLength = 0;
     cl_event *cl_event_wait_lists = NULL;
@@ -506,6 +363,7 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blocking_rea
         return ;
     }
     // TODO(siba samal) - NULL parameters need to be addressed later
+    CCerror err = 0;
     if(blocking_read)
     {
         err = clEnqueueReadBuffer(m_cl_command_queue, cl_mem_id, CL_TRUE, 
@@ -518,64 +376,13 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blocking_rea
     }
 
     if (err != CL_SUCCESS)
-    {
-        printf("Error: clEnqueueReadBuffer\n");
-        switch (err) 
-        {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-                //case CL_MISALIGNED_SUB_BUFFER_OFFSET :
-                //	printf("Error: CL_MISALIGNED_SUB_BUFFER_OFFSET \n");
-                //	ec = WebCLException::MISALIGNED_SUB_BUFFER_OFFSET;
-                //	break;
-                //case CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST  :
-                //	printf("Error: CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST  \n");
-                //	ec = WebCLException::EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST;
-                //	break;
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE\n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES \n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-    } 
-    return ;
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blocking_read,Int32Array* origin, Int32Array* region,int rowPitch,int slicePitch,
     ArrayBufferView* ptr,WebCLEventList* events,WebCLEvent* event, ExceptionCode& ec)
 {
     cl_mem cl_mem_id = NULL;
-    cl_int err = 0;
     cl_event cl_event_id = NULL;
     cl_event* cl_event_wait_lists = NULL;
     int eventsLength = 0;
@@ -629,6 +436,7 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blocking_read,I
     }
 
     // TODO(siba samal) - NULL parameters need to be addressed later
+    CCerror err = 0;
     if(blocking_read)
     {
         for (unsigned int i = 0; i < 24; i++)
@@ -654,65 +462,14 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blocking_read,I
         }
 
     }
-    if (err != CL_SUCCESS) 
-    {
-        printf("Error: clEnqueueReadImage\n");
-        switch (err)
-        {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-                //case CL_MISALIGNED_SUB_BUFFER_OFFSET :
-                //	printf("Error: CL_MISALIGNED_SUB_BUFFER_OFFSET \n");
-                //	ec = WebCLException::MISALIGNED_SUB_BUFFER_OFFSET;
-                //	break;
-                //case CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST  :
-                //	printf("Error: CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST  \n");
-                //	ec = WebCLException::EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST;
-                //	break;
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE\n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES \n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-    }
-    return ;
-}
 
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+}
 
 void  WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer_src , bool blocking_read,int offset, int buffer_size, ArrayBufferView* ptr, WebCLEventList* events,WebCLEvent* event, ExceptionCode& ec)
 {
     cl_mem cl_mem_id = NULL;
-    cl_int err = 0;
     cl_event cl_event_id = NULL;
     cl_event* cl_event_wait_lists = NULL;
     int eventsLength = 0;
@@ -740,62 +497,14 @@ void  WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer_src , bool blocki
     }
 
     // TODO(siba samal) - NULL parameters need to be addressed later
+    CCerror err = 0;
     if(blocking_read)
         err = clEnqueueReadBuffer(m_cl_command_queue, cl_mem_id, CL_TRUE, offset, buffer_size, ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
     else
         err = clEnqueueReadBuffer(m_cl_command_queue, cl_mem_id, CL_FALSE, offset, buffer_size, ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
 
-    if (err != CL_SUCCESS) {
-        printf("Error: clEnqueueReadBuffer\n");
-        switch (err) {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-                //case CL_MISALIGNED_SUB_BUFFER_OFFSET :
-                //	printf("Error: CL_MISALIGNED_SUB_BUFFER_OFFSET \n");
-                //	ec = WebCLException::MISALIGNED_SUB_BUFFER_OFFSET;
-                //	break;
-                //case CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST  :
-                //	printf("Error: CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST  \n");
-                //	ec = WebCLException::EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST;
-                //	break;
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE\n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES \n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-
-        }
-    }
-    return ;
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void  WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blocking_read,
@@ -804,7 +513,6 @@ void  WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blockin
         ArrayBufferView* ptr, WebCLEventList* eventWaitList,WebCLEvent* event, ExceptionCode& ec)
 {
     cl_mem cl_mem_id = NULL;
-    cl_int err = 0;
     cl_event cl_event_id = NULL;
     cl_event* cl_event_wait_lists = NULL;
     int eventsLength = 0;
@@ -869,6 +577,7 @@ void  WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blockin
         region_array[i] = region->item(i);
     }
 
+    CCerror err = 0;
     if(blocking_read)
     {
         err = clEnqueueReadBufferRect(m_cl_command_queue, cl_mem_id, CL_TRUE, bufferOrigin_array , hostOrigin_array , region_array , bufferRowPitch , bufferSlicePitch , hostRowPitch , hostSlicePitch , ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
@@ -877,59 +586,9 @@ void  WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blockin
     {
         err = clEnqueueReadBufferRect(m_cl_command_queue, cl_mem_id, CL_FALSE ,bufferOrigin_array ,hostOrigin_array ,region_array , bufferRowPitch , bufferSlicePitch , hostRowPitch , hostSlicePitch , ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
     }
-    if (err != CL_SUCCESS) 
-    {
-        printf("Error: clEnqueueReadBufferRect\n");
-        switch (err) 
-        {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-                //case CL_MISALIGNED_SUB_BUFFER_OFFSET :
-                //	printf("Error: CL_MISALIGNED_SUB_BUFFER_OFFSET \n");
-                //	ec = WebCLException::MISALIGNED_SUB_BUFFER_OFFSET;
-                //	break;
-                //case CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST  :
-                //	printf("Error: CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST  \n");
-                //	ec = WebCLException::EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST;
-                //	break;
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE\n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES \n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
 
-        }
-    }
-    return ;
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* globalWorkOffsets,
@@ -1004,7 +663,6 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
 
     CCerror computeContextError = m_context->computeContext()->enqueueNDRangeKernel(m_cl_command_queue, clKernelID, workItemDimensions,
 	globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, eventsLength, clEventsWaitList, &clEventID);
-
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 
     free(globalWorkSizeCopy);
@@ -1043,7 +701,6 @@ void WebCLCommandQueue::flush(ExceptionCode& ec)
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image,bool blockingWrite,Int32Array* origin,Int32Array* region,int inputRowPitch,int inputSlicePitch,ArrayBufferView* ptr,WebCLEventList* eventWaitList,WebCLEvent* event,ExceptionCode& ec)
 {
     cl_mem cl_image_id = NULL;
-    cl_int err = 0;
     cl_event *cl_event_wait_lists = NULL;
     cl_event cl_event_id = NULL;
     int eventsLength = 0;
@@ -1102,70 +759,15 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image,bool blockingWrite,I
         cl_event_id = event->getCLEvent();
     }
 
-    err = clEnqueueWriteImage(m_cl_command_queue,cl_image_id,blockingWrite,origin_array,region_array,inputRowPitch,inputSlicePitch,ptr->baseAddress(),
+    CCerror err = clEnqueueWriteImage(m_cl_command_queue,cl_image_id,blockingWrite,origin_array,region_array,inputRowPitch,inputSlicePitch,ptr->baseAddress(),
             eventsLength,cl_event_wait_lists,&cl_event_id);
-
-    if( err!= CL_SUCCESS )
-    {
-        switch(err)
-        {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: INVALID_COMMAND_QUEUE \n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: INVALID_CONTEXT \n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: INVALID_VALUE \n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-            case CL_INVALID_IMAGE_SIZE:
-                printf("Error: INVALID_IMAGE_SIZE \n");
-                ec = WebCLException::INVALID_IMAGE_SIZE;
-                break;
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: MEM_OBJECT_ALLOCATION_FAILURE \n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_INVALID_OPERATION:
-                printf("Error: INVALID_OPERATION \n");
-                ec = WebCLException::INVALID_OPERATION;
-                break;
-            case CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST:
-                printf("Error: EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST \n");
-                ec = WebCLException::EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: OUT_OF_RESOURCES \n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: OUT_OF_HOST_MEMORY \n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }// Switch
-    }
-    return;
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 
 void WebCLCommandQueue::enqueueAcquireGLObjects(WebCLMemoryObject *mem_objects, WebCLEventList* events, WebCLEvent* event, ExceptionCode& ec)
 {
-    cl_int err = 0;
     cl_mem cl_mem_ids[1] = {NULL};
     cl_event *cl_event_wait_lists = NULL;
     cl_event cl_event_id = NULL;
@@ -1211,58 +813,16 @@ void WebCLCommandQueue::enqueueAcquireGLObjects(WebCLMemoryObject *mem_objects, 
     {
         cl_event_id = event->getCLEvent();
     }
-    err = clEnqueueAcquireGLObjects(m_cl_command_queue, 1, cl_mem_ids, eventsLength, cl_event_wait_lists, &cl_event_id);
+
+    CCerror err = clEnqueueAcquireGLObjects(m_cl_command_queue, 1, cl_mem_ids, eventsLength, cl_event_wait_lists, &cl_event_id);
     if (err != CL_SUCCESS) 
-    {
-        printf("Error: clEnqueueAcquireGLObjects\n");
-        switch (err) 
-        {
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_GL_OBJECT:
-                printf("Error: CL_INVALID_GL_OBJECT\n");
-                ec = WebCLException::INVALID_GL_OBJECT;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-    } 
-    else 
-    {
-        return;
-    }
-    return;
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLCommandQueue::enqueueReleaseGLObjects(WebCLMemoryObject *mem_objects, WebCLEventList* events,
         WebCLEvent* event, ExceptionCode& ec)
 {
     cl_mem cl_mem_ids = NULL;
-    cl_int err = 0;
     cl_event *cl_event_wait_lists = NULL;
     cl_event cl_event_id = NULL;
     int eventsLength = 0;
@@ -1288,61 +848,21 @@ void WebCLCommandQueue::enqueueReleaseGLObjects(WebCLMemoryObject *mem_objects, 
         cl_event_id = event->getCLEvent();
     }
 
-    err = clEnqueueReleaseGLObjects(m_cl_command_queue, 1 ,&cl_mem_ids, 
-            eventsLength, cl_event_wait_lists, &cl_event_id);
+    CCerror err = clEnqueueReleaseGLObjects(m_cl_command_queue, 1, &cl_mem_ids, eventsLength, cl_event_wait_lists, &cl_event_id);
     if (err != CL_SUCCESS) {
-        switch (err) {
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_GL_OBJECT:
-                printf("Error: CL_INVALID_GL_OBJECT\n");
-                ec = WebCLException::INVALID_GL_OBJECT;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-    } 
-    else 
-    {
-        unsigned int i;
-        for (i = 0; i < m_mem_list.size(); i++)
-        {
-            if (( m_mem_list[i].get())->getCLMemoryObject() == cl_mem_ids) 
-            {
-                m_mem_list.remove(i);
-                m_num_mems = m_mem_list.size();
-                break;
-            }
-        }   
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
         return;
+    }
+
+    // FIXME: Remove the block below?
+    for (unsigned i = 0; i < m_mem_list.size(); i++)
+    {
+        if (( m_mem_list[i].get())->getCLMemoryObject() == cl_mem_ids)
+        {
+            m_mem_list.remove(i);
+            m_num_mems = m_mem_list.size();
+            break;
+        }
     }
 }
 void WebCLCommandQueue::enqueueCopyImage(WebCLImage* src_image, WebCLImage* dst_image,Int32Array* src_origin,Int32Array* dst_origin,Int32Array* region,
@@ -1350,8 +870,6 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* src_image, WebCLImage* dst_
 {
     cl_mem cl_src_image_id = NULL;
     cl_mem cl_dst_image_id = NULL;
-    cl_int err = 0;
-
     cl_event *cl_event_wait_lists = NULL;
     cl_event cl_event_id = NULL;
     int eventsLength = 0;
@@ -1421,64 +939,10 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* src_image, WebCLImage* dst_
         cl_event_id = event->getCLEvent();
     }
 
-    err = clEnqueueCopyImage(m_cl_command_queue, cl_src_image_id, cl_dst_image_id,
+    CCerror err = clEnqueueCopyImage(m_cl_command_queue, cl_src_image_id, cl_dst_image_id,
             src_origin_array, dst_origin_array, region_array, eventsLength, cl_event_wait_lists, &cl_event_id);
-
-    if (err != CL_SUCCESS) {
-        printf("Error: clEnqueueCopyImage\n");
-        switch (err) {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-            case CL_MEM_COPY_OVERLAP:
-                printf("Error: CL_MEM_COPY_OVERLAP\n");
-                ec = WebCLException::MEM_COPY_OVERLAP;
-                break;
-                //CHECK(won.jeon) - defined in 1.1?
-                //case CL_MISALIGNED_SUB_BUFFER_OFFSET:
-                //printf("Error: CL_MISALIGNED_SUB_BUFFER_OFFSET\n");
-                //break;
-
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE\n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-    } 
-    else 
-    {
-        return;
-    }
-    return;
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 
@@ -1487,7 +951,6 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer( WebCLImage *srcImage, WebCLBuf
 {
     cl_mem cl_src_image_id= NULL;
     cl_mem cl_dst_buffer_id = NULL;
-    cl_int err = 0;
     cl_event *cl_event_wait_lists = NULL;
     cl_event cl_event_id = NULL;
     int eventsLength = 0;
@@ -1558,65 +1021,11 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer( WebCLImage *srcImage, WebCLBuf
         cl_event_id = event->getCLEvent();
     }
 
-    err = clEnqueueCopyImageToBuffer(m_cl_command_queue, cl_src_image_id , cl_dst_buffer_id,
+    CCerror err = clEnqueueCopyImageToBuffer(m_cl_command_queue, cl_src_image_id , cl_dst_buffer_id,
             src_origin_array,region_array, dstOffset, eventsLength ,cl_event_wait_lists, &cl_event_id);
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 
-    if (err != CL_SUCCESS) 
-    {
-        printf("Error: clEnqueueCopyImageToBuffer \n");
-        switch (err) 
-        {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-            case CL_MISALIGNED_SUB_BUFFER_OFFSET:
-                printf("Error: CL_MISALIGNED_SUB_BUFFER_OFFSET \n");
-                ec = WebCLException::MISALIGNED_SUB_BUFFER_OFFSET;
-                break;
-            case CL_INVALID_IMAGE_SIZE:
-                printf("Error: CL_INVALID_IMAGE_SIZE \n");
-                ec = WebCLException::INVALID_IMAGE_SIZE;
-                break;
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE \n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_INVALID_OPERATION:
-                printf("Error: CL_INVALID_OPERATION\n");
-                ec = WebCLException::INVALID_OPERATION;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-    }// If !CS_SUCCESS
-    return;
 }
 
 void WebCLCommandQueue::enqueueCopyBufferToImage( WebCLBuffer *srcBuffer, WebCLImage *dstImage,int srcOffset,Int32Array* dstOrigin,Int32Array* region,
@@ -1624,7 +1033,6 @@ void WebCLCommandQueue::enqueueCopyBufferToImage( WebCLBuffer *srcBuffer, WebCLI
 {
     cl_mem cl_src_buffer_id = NULL;
     cl_mem cl_dst_image_id = NULL;
-    cl_int err = 0;
     cl_event *cl_event_wait_lists = NULL;
     cl_event cl_event_id = NULL;
     int eventsLength = 0;
@@ -1695,72 +1103,16 @@ void WebCLCommandQueue::enqueueCopyBufferToImage( WebCLBuffer *srcBuffer, WebCLI
         cl_event_id = event->getCLEvent();
     }
 
-    err = clEnqueueCopyBufferToImage(m_cl_command_queue,cl_src_buffer_id,cl_dst_image_id,srcOffset,
+    CCerror err = clEnqueueCopyBufferToImage(m_cl_command_queue,cl_src_buffer_id,cl_dst_image_id,srcOffset,
             dst_origin_array,region_array,eventsLength ,cl_event_wait_lists, &cl_event_id);
-
-    if (err != CL_SUCCESS) 
-    {
-        printf("Error: clEnqueueCopyBufferToImage \n");
-        switch (err) 
-        {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-            case CL_MISALIGNED_SUB_BUFFER_OFFSET:
-                printf("Error: CL_MISALIGNED_SUB_BUFFER_OFFSET \n");
-                ec = WebCLException::MISALIGNED_SUB_BUFFER_OFFSET;
-                break;
-            case CL_INVALID_IMAGE_SIZE:
-                printf("Error: CL_INVALID_IMAGE_SIZE \n");
-                ec = WebCLException::INVALID_IMAGE_SIZE;
-                break;
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE \n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_INVALID_OPERATION:
-                printf("Error: CL_INVALID_OPERATION\n");
-                ec = WebCLException::INVALID_OPERATION;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-    }// If !CS_SUCCESS
-    return;
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* src_buffer, WebCLBuffer* dst_buffer, int cb, ExceptionCode& ec)
 {
     cl_mem cl_src_buffer_id = NULL;
     cl_mem cl_dst_buffer_id = NULL;
-    cl_int err = 0;
 
     if (m_cl_command_queue == NULL) 
     {
@@ -1788,64 +1140,9 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* src_buffer, WebCLBuffer* 
             return;
         }
     }
-    err = clEnqueueCopyBuffer(m_cl_command_queue, cl_src_buffer_id, cl_dst_buffer_id,0, 0, cb, 0, NULL, NULL);
-    if (err != CL_SUCCESS) 
-    {
-        printf("Error: clEnqueueCopyBuffer\n");
-        switch (err) 
-        {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-            case CL_MEM_COPY_OVERLAP:
-                printf("Error: CL_MEM_COPY_OVERLAP\n");
-                ec = WebCLException::MEM_COPY_OVERLAP;
-                break;
-                //CHECK(won.jeon) - defined in 1.1?
-                //case CL_MISALIGNED_SUB_BUFFER_OFFSET:
-                //printf("Error: CL_MISALIGNED_SUB_BUFFER_OFFSET\n");
-                //break;
-
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE\n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-    } 
-    else 
-    {
-        return;
-    }
-    return;
+    CCerror err = clEnqueueCopyBuffer(m_cl_command_queue, cl_src_buffer_id, cl_dst_buffer_id,0, 0, cb, 0, NULL, NULL);
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* src_buffer, WebCLBuffer* dst_buffer,int srcOffset,int dstOffset,int sizeInBytes, WebCLEventList* events,
@@ -1853,7 +1150,6 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* src_buffer, WebCLBuffer* 
 {
     cl_mem cl_src_buffer_id = NULL;
     cl_mem cl_dst_buffer_id = NULL;
-    cl_int err = 0;
     cl_event *cl_event_wait_lists = NULL;
     cl_event cl_event_id = NULL;
     int eventsLength = 0;
@@ -1895,71 +1191,15 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* src_buffer, WebCLBuffer* 
         cl_event_id = event->getCLEvent();
     }
 
-    err = clEnqueueCopyBuffer(m_cl_command_queue, cl_src_buffer_id, cl_dst_buffer_id,
+    CCerror err = clEnqueueCopyBuffer(m_cl_command_queue, cl_src_buffer_id, cl_dst_buffer_id,
             srcOffset, dstOffset,sizeInBytes, eventsLength,cl_event_wait_lists, &cl_event_id);
-    if (err != CL_SUCCESS) 
-    {
-        printf("Error: clEnqueueCopyBuffer\n");
-        switch (err) 
-        {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-            case CL_MEM_COPY_OVERLAP:
-                printf("Error: CL_MEM_COPY_OVERLAP\n");
-                ec = WebCLException::MEM_COPY_OVERLAP;
-                break;
-                /* CHECK(won.jeon) - defined in 1.1?
-                   case CL_MISALIGNED_SUB_BUFFER_OFFSET:
-                   printf("Error: CL_MISALIGNED_SUB_BUFFER_OFFSET\n");
-                   break;
-                 */
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE\n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-    } 
-    else 
-    {
-        return;
-    }
-    return;
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 void  WebCLCommandQueue::enqueueCopyBufferRect( WebCLBuffer* src_buffer,WebCLBuffer* dst_buffer,Int32Array* srcOrigin,Int32Array* dstOrigin,Int32Array* region,int srcRowPitch,int srcSlicePitch,int dstRowPitch,int dstSlicePitch,WebCLEventList* eventWaitList,WebCLEvent* event,ExceptionCode& ec )
 {
     cl_mem cl_src_buffer_id = NULL;
     cl_mem cl_dst_buffer_id = NULL;
-    cl_int err = 0;
     cl_event *cl_event_wait_lists = NULL;
     cl_event cl_event_id = NULL;
     int eventsLength = 0;
@@ -2039,65 +1279,11 @@ void  WebCLCommandQueue::enqueueCopyBufferRect( WebCLBuffer* src_buffer,WebCLBuf
         cl_event_id = event->getCLEvent();
     }
 
-    err = clEnqueueCopyBufferRect(m_cl_command_queue, cl_src_buffer_id, cl_dst_buffer_id,
+    CCerror err = clEnqueueCopyBufferRect(m_cl_command_queue, cl_src_buffer_id, cl_dst_buffer_id,
             srcOrigin_array,dstOrigin_array,region_array,srcRowPitch,srcSlicePitch,dstRowPitch,dstSlicePitch, 
             eventsLength,cl_event_wait_lists, &cl_event_id);
-    if (err != CL_SUCCESS) 
-    {
-        printf("Error: clEnqueueCopyBufferRect\n");
-        switch (err) 
-        {
-            case CL_INVALID_COMMAND_QUEUE:
-                printf("Error: CL_INVALID_COMAND_QUEUE\n");
-                ec = WebCLException::INVALID_COMMAND_QUEUE;
-                break;
-            case CL_INVALID_CONTEXT:
-                printf("Error: CL_INVALID_CONTEXT\n");
-                ec = WebCLException::INVALID_CONTEXT;
-                break;
-            case CL_INVALID_MEM_OBJECT:
-                printf("Error: CL_INVALID_MEM_OBJECT\n");
-                ec = WebCLException::INVALID_MEM_OBJECT;
-                break;
-            case CL_INVALID_VALUE:
-                printf("Error: CL_INVALID_VALUE\n");
-                ec = WebCLException::INVALID_VALUE;
-                break;
-            case CL_INVALID_EVENT_WAIT_LIST:
-                printf("Error: CL_INVALID_EVENT_WAIT_LIST\n");
-                ec = WebCLException::INVALID_EVENT_WAIT_LIST;
-                break;
-            case CL_MEM_COPY_OVERLAP:
-                printf("Error: CL_MEM_COPY_OVERLAP\n");
-                ec = WebCLException::MEM_COPY_OVERLAP;
-                break;
-                /* CHECK(won.jeon) - defined in 1.1?
-                   case CL_MISALIGNED_SUB_BUFFER_OFFSET:
-                   printf("Error: CL_MISALIGNED_SUB_BUFFER_OFFSET\n");
-                   break;
-                 */
-            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-                printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE\n");
-                ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-                break;
-            case CL_OUT_OF_RESOURCES:
-                printf("Error: CL_OUT_OF_RESOURCES\n");
-                ec = WebCLException::OUT_OF_RESOURCES;
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                ec = WebCLException::OUT_OF_HOST_MEMORY;
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                ec = WebCLException::FAILURE;
-                break;
-        }
-    }// if !CL_SUCCESS
-    else
-    {
-        return;
-    }
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEvent* event, ExceptionCode& ec)
@@ -2126,7 +1312,6 @@ void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEven
     }
 
     CCerror computeContextError = m_context->computeContext()->enqueueBarrier(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
-
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
@@ -2154,7 +1339,6 @@ void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent
     }
 
     CCerror computeContextError = m_context->computeContext()->enqueueMarker(m_cl_command_queue, eventsLength, clEventsWaitList, &clEventID);
-
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
