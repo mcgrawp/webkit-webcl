@@ -2158,7 +2158,7 @@ void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
-PassRefPtr<WebCLEvent> WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, int event_wait_list, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, WebCLEventList* eventsWaitList, WebCLEvent* event, ExceptionCode& ec)
 {
     cl_kernel cl_kernel_id = 0;
     cl_event cl_event_id = 0;
@@ -2166,30 +2166,41 @@ PassRefPtr<WebCLEvent> WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, int e
     if (!m_cl_command_queue) {
         printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
-        return NULL;
+        return;
     }
 
     if (kernel) {
         cl_kernel_id = kernel->getCLKernel();
         if (!cl_kernel_id) {
             printf("Error: cl_kernel_id null\n");
-            //TODO (siba samal) Handle enqueueTask  API
-            printf("WebCLCommandQueue::enqueueTask event_wait_list=%d\n",
-                    event_wait_list);
             ec = WebCLException::INVALID_KERNEL;
-            return NULL;
+            return;
         }
     }
 
-    CCerror err = clEnqueueTask(m_cl_command_queue, cl_kernel_id, 0, NULL, &cl_event_id);
+    cl_event* clEventsWaitList = 0;
+    size_t eventsLength = 0;
+    if (eventsWaitList) {
+        clEventsWaitList = eventsWaitList->getCLEvents();
+        eventsLength = eventsWaitList->length();
+    }
+
+    cl_event clEventID = 0;
+    if (event) {
+        clEventID = event->getCLEvent();
+        if (!clEventID) {
+            printf("cl_event_id null\n");
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+    }
+
+    CCerror err = clEnqueueTask(m_cl_command_queue, cl_kernel_id, eventsLength, clEventsWaitList, &cl_event_id);
     if (err != CL_SUCCESS) {
         printf("Error: clEnqueueTask\n");
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-        return 0;
+        return;
     }
-
-    RefPtr<WebCLEvent> o = WebCLEvent::create(m_context, cl_event_id);
-    return o;
 }
 
 cl_command_queue WebCLCommandQueue::getCLCommandQueue()

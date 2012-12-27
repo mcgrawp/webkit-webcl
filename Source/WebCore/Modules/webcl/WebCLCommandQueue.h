@@ -278,9 +278,17 @@ public:
         return enqueueMarker(NULL, NULL, ec);
     }
 
-    PassRefPtr<WebCLEvent> enqueueTask(WebCLKernel*, int, ExceptionCode&);
+    void enqueueTask(WebCLKernel*, WebCLEventList*, WebCLEvent*, ExceptionCode&);
+    void enqueueTask(WebCLKernel* kernel, WebCLEventList* eventsWaitList, ExceptionCode& ec)
+    {
+        return enqueueTask(kernel, eventsWaitList, NULL, ec);
+    }
+    void enqueueTask(WebCLKernel* kernel, ExceptionCode& ec)
+    {
+        return enqueueTask(kernel, NULL, NULL, ec);
+    }
 
-    cl_command_queue getCLCommandQueue();	
+    cl_command_queue getCLCommandQueue();
 private:
     WebCLCommandQueue(WebCLContext*, cl_command_queue);
 

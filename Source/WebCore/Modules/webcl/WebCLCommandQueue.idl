@@ -181,8 +181,8 @@ module webcl {
     void enqueueMarker(in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
 
-    WebCLEvent enqueueTask(in WebCLKernel kernel,
-            in long eventWaitList) raises(DOMException);
-
+    void enqueueTask(in WebCLKernel kernel,
+            in [Optional] WebCLEventList eventWaitList,
+            in [Optional] WebCLEvent event) raises(DOMException);
     };
 }
