@@ -69,9 +69,6 @@ public:
 
     PassRefPtr<WebCLKernel> createKernel(const String&, ExceptionCode&);
 
-    void buildProgram(int, int, int, ExceptionCode&);
-    void buildProgram(WebCLDevice*, int, int, int, ExceptionCode&);
-    void buildProgram(WebCLDeviceList*, int, int, int, ExceptionCode&);
     PassRefPtr<WebCLKernelList> createKernelsInProgram(ExceptionCode&);
 
     void releaseProgram(ExceptionCode&);

@@ -214,7 +214,7 @@ function GetWorkGroupSize() {
 
     // Build the program executable
     //
-    program.buildProgram(null, null, null);
+    program.build(devices);
 
     // Create the compute kernel in the program we wish to run
     //

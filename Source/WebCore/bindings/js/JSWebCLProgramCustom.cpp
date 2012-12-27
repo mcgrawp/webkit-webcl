@@ -99,22 +99,24 @@ static PassRefPtr<WebCLFinishCallback> createFinishCallback(ExecState* exec, JSD
 
 JSValue JSWebCLProgram::build(JSC::ExecState* exec)
 {
-    if (exec->argumentCount() != 2)
+    if (exec->argumentCount() < 1)
         return throwSyntaxError(exec);
 
     WebCLDeviceList* devices = toWebCLDeviceList(exec->argument(0));
     if (exec->hadException())
         return jsUndefined();
 
-    String options = exec->argument(1).toString(exec)->value(exec);
+    String options = "";
+    if (exec->argumentCount() > 1 && !exec->argument(1).isNull())
+        options = exec->argument(1).toString(exec)->value(exec);
     if (exec->hadException())
         return jsUndefined();
 
     ExceptionCode ec = 0;
     RefPtr<WebCLFinishCallback> callback;
-    int userData =  exec->argument(3).toInt32(exec);
+    int userData = exec->argument(3).toInt32(exec);
     if (!exec->argument(2).getObject())
-        m_impl->build(devices, options, 0, userData, ec);
+        m_impl->build(devices, options, 0 /*WebCLFinishCallback*/, userData, ec);
     else {
         if (!exec->argument(2).isUndefinedOrNull()) {
             JSObject* object = exec->argument(2).getObject();
@@ -124,11 +126,10 @@ JSValue JSWebCLProgram::build(JSC::ExecState* exec)
             }
             callback = JSWebCLFinishCallback::create(object, static_cast<JSDOMGlobalObject*>(globalObject()));
         }
-        RefPtr<WebCLFinishCallback> finishCallback = createFinishCallback(exec
-           , static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(2));
+        RefPtr<WebCLFinishCallback> finishCallback = createFinishCallback(exec,
+            static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(2));
         if (exec->hadException())
             return jsUndefined();
-
         m_impl->build(devices, options, callback.release(), userData, ec);
     }
     if (ec) {

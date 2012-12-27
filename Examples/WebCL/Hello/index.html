@@ -141,9 +141,10 @@ function InitCL()
 
         // Build the program executable
         //
-        program.buildProgram( null, null, null);
+        program.build(devices);
         // also allow the following form since can provide a device list
-        // cl.buildProgram(program, devices, null, null, null);
+        //program.build(devices,"-cl-single-precision-constant");
+        //program.build(devices,null);
 
         // Create the compute kernel in the program we wish to run
         //

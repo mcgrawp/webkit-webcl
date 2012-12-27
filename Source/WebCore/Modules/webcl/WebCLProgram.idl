@@ -36,18 +36,6 @@ interface [
 
     WebCLKernelList createKernelsInProgram() raises(DOMException);
 
-    void buildProgram( in WebCLDevice device,
-            in long options,
-            in long pfn,
-            in long userData) raises(DOMException);
-    void buildProgram( in WebCLDeviceList devices,
-            in long options,
-            in long pfn,
-            in long userData) raises(DOMException);
-    void buildProgram( in long options,
-            in long pfnNotify,
-            in long userData) raises(DOMException);
-
     [StrictTypeChecking, Custom] void build(
             in WebCLDeviceList devices,
             in [Optional,TreatNullAs = NullString, TreatUndefinedAs = NullString] DOMString options,
