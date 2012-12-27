@@ -82,21 +82,23 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int param_name, ExceptionCode& ec)
     // FIXME: We should not create a WebCLContext here.
     /*
     case WebCL::QUEUE_CONTEXT:
-        clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_CONTEXT, sizeof(cl_context), &cl_context_id, NULL);
+        err = clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_CONTEXT, sizeof(cl_context), &cl_context_id, NULL);
         contextObj = WebCLContext::create(m_context, cl_context_id);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(PassRefPtr<WebCLContext>(contextObj));
         break;
     */
     case WebCL::QUEUE_DEVICE:
-        clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_DEVICE, sizeof(cl_device_id), &cl_device, NULL);
-        deviceObj = WebCLDevice::create(cl_device);
-        if (err == CL_SUCCESS)
+        err = clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_DEVICE, sizeof(cl_device_id), &cl_device, NULL);
+        if (err == CL_SUCCESS) {
+            deviceObj = WebCLDevice::create(cl_device);
             return WebCLGetInfo(PassRefPtr<WebCLDevice>(deviceObj));
+        }
         break;
     case WebCL::QUEUE_PROPERTIES:
-        clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_PROPERTIES, sizeof(cl_command_queue_properties), &queue_properties, NULL);
-        return WebCLGetInfo(static_cast<unsigned int>(queue_properties));
+        err = clGetCommandQueueInfo(m_cl_command_queue, CL_QUEUE_PROPERTIES, sizeof(cl_command_queue_properties), &queue_properties, NULL);
+        if (err == CL_SUCCESS)
+            return WebCLGetInfo(static_cast<unsigned int>(queue_properties));
         break;
     default:
         printf("Error: Unsupported Commans Queue Info type\n");
@@ -104,35 +106,12 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int param_name, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    switch (err) {
-    case CL_INVALID_COMMAND_QUEUE:
-        printf("Error: CL_INVALID_COMMAND_QUEUE \n");
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
-        break;
-    case CL_INVALID_VALUE:
-        printf("Error: CL_INVALID_VALUE \n");
-        ec = WebCLException::INVALID_VALUE;
-        break;
-    case CL_OUT_OF_RESOURCES:
-        printf("Error: CL_OUT_OF_RESOURCES \n");
-        ec = WebCLException::OUT_OF_RESOURCES;
-        break;
-    case CL_OUT_OF_HOST_MEMORY:
-        printf("Error: CL_OUT_OF_HOST_MEMORY \n");
-        ec = WebCLException::OUT_OF_HOST_MEMORY;
-        break;
-    default:
-        printf("Error: Invaild Error Type\n");
-        ec = WebCLException::FAILURE;
-        break;
-    }				
-
+    ASSERT(err != CL_SUCCESS);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
 }
 
-
-
-void  WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blocking_write,
+void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blocking_write,
         int offset, int buffer_size, ArrayBufferView* ptr, WebCLEventList* events,
         WebCLEvent* event, ExceptionCode& ec)
 {
