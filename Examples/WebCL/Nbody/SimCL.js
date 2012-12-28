@@ -127,14 +127,14 @@ function SimulateCL(cl) {
       //queue.enqueueAcquireGLObjects(curVelBuffer, null);
     }
     var localMemSize = localWorkSize[0] * POS_ATTRIB_SIZE * Float32Array.BYTES_PER_ELEMENT;
-    kernel.setKernelArgGlobal(0, curPosBuffer);
-    kernel.setKernelArgGlobal(1, curVelBuffer);
-    kernel.setKernelArg( 2, NBODY, cl.KERNEL_ARG_INT);
-    kernel.setKernelArg(3, DT, cl.KERNEL_ARG_FLOAT);
-    kernel.setKernelArg(4, EPSSQR, cl.KERNEL_ARG_INT);
-    kernel.setKernelArgLocal(5, localMemSize);  // __local: val (ignored) and size
-    kernel.setKernelArgGlobal(6, nxtPosBuffer);
-    kernel.setKernelArgGlobal(7, nxtVelBuffer);
+    kernel.setArg(0, curPosBuffer);
+    kernel.setArg(1, curVelBuffer);
+    kernel.setArg( 2, NBODY, cl.LONG);
+    kernel.setArg(3, DT, cl.FLOAT_KERNEL_ARG);
+    kernel.setArg(4, EPSSQR, cl.LONG);
+    kernel.setArg(5, localMemSize);  // __local: val (ignored) and size
+    kernel.setArg(6, nxtPosBuffer);
+    kernel.setArg(7, nxtVelBuffer);
     queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize );
 
     queue.finish();

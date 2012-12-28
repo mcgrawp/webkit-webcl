@@ -32,16 +32,6 @@ module webcl {
 	[StrictTypeChecking, Custom]  void getInfo (in long kernelInfo) raises(DOMException);
 	[StrictTypeChecking, Custom]  void getWorkGroupInfo(in WebCLDevice device, 
 				in long param_name) raises(DOMException);
-	//unsigned long getKernelWorkGroupInfo(in WebCLDeviceList device,in long param_name);
-	[Custom] void setKernelArg(in unsigned long argIndex, 
-						   in DOMObject kernelObject,
-						   in long argType) raises(DOMException);		
-	void setKernelArgGlobal(in unsigned long argIndex, 
-						in WebCLMemoryObject argValue) raises(DOMException);
-	void setKernelArgConstant(in unsigned long argIndex, 
-				in WebCLMemoryObject argValue) raises(DOMException);				
-	void setKernelArgLocal(in unsigned long argIndex,
-				in unsigned long argSize) raises(DOMException);
 	[Custom] void setArg(in unsigned long argIndex,
 											 in DOMObject kernelObject,
 											 in long type ) raises(DOMException);
@@ -49,8 +39,11 @@ module webcl {
 	[Custom] void setArg(in unsigned long argIndex, 
 				in WebCLMemoryObject argValue) raises(DOMException);
 	
-	[Custom] void setArg(in unsigned long argIndex,
-			in unsigned long argSize) raises(DOMException);
+   [Custom] void setArg(in unsigned long argIndex, in unsigned long argValue,
+                in unsigned long argSize) raises(DOMException);
+
+    [Custom] void setArg(in unsigned long argIndex ,in unsigned long argSize)
+        raises(DOMException);
 	
 	};
 }

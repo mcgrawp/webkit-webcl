@@ -52,15 +52,10 @@ public:
 	WebCLGetInfo getInfo (int, ExceptionCode&);
 	WebCLGetInfo getWorkGroupInfo(WebCLDevice*, int, ExceptionCode&);
 
-	void setKernelArg(unsigned int, PassRefPtr<WebCLKernelTypeValue>, int, ExceptionCode&);
-	void setKernelArgGlobal(unsigned int, WebCLMemoryObject*, ExceptionCode&);
-	void setKernelArgConstant(unsigned int, WebCLMemoryObject*, ExceptionCode&);
-	void setKernelArgLocal(unsigned int,unsigned int, ExceptionCode&);
-
-
-	void setArg(unsigned int, PassRefPtr<WebCLKernelTypeValue>, unsigned int, ExceptionCode& ec);
-	void setArg(unsigned int, WebCLMemoryObject*, ExceptionCode& ec);
-	void setArg(unsigned int, unsigned int, ExceptionCode& ec);
+    void setArg(unsigned, PassRefPtr<WebCLKernelTypeValue>, unsigned, ExceptionCode&);
+    void setArg(unsigned, WebCLMemoryObject*, ExceptionCode&);
+    void setArg(unsigned, unsigned, unsigned, ExceptionCode&);
+    void setArg(unsigned, unsigned, ExceptionCode&);
 
 	//unsigned long getKernelWorkGroupInfo(WebCLDeviceList*, int);
 	void setDevice(RefPtr<WebCLDevice>);

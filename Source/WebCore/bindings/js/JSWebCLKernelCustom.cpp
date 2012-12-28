@@ -109,35 +109,6 @@ JSValue JSWebCLKernel::getWorkGroupInfo(JSC::ExecState* exec)
 	return toJS(exec, globalObject(), info);
 }
 
-JSValue JSWebCLKernel::setKernelArg(ExecState* exec)
-{
-	if (exec->argumentCount() != 3)
-		return throwSyntaxError(exec);
-
-	ExceptionCode ec = 0;
-	WebCLKernel* kernel = static_cast<WebCLKernel*>(impl());	
-	if (exec->hadException())
-		return jsUndefined();
-
-	unsigned argIndex  = exec->argument(0).toInt32(exec);
-	if (exec->hadException())
-		return jsUndefined();
-
-	ScriptValue object(exec->globalData(), exec->argument(1));
-	if (exec->hadException())
-		return jsUndefined();
-
-	unsigned argType  = exec->argument(2).toInt32(exec);
-	if (exec->hadException())
-		return jsUndefined();
-   	kernel->setKernelArg(argIndex, object.toWebCLKernelTypeValue(exec),argType, ec);
-	if (ec) {
-		setDOMException(exec, ec);
-		return jsUndefined();
-	}
-	return jsUndefined();
-
-}
 JSValue JSWebCLKernel::setArg(ExecState* exec)
 {
 	

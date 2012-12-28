@@ -165,10 +165,10 @@ function InitCL()
         queue.enqueueWriteBuffer( input, true, 0, Float32Array.BYTES_PER_ELEMENT * count, data );
 
         // Set the arguments to our compute kernel
-        //
-        kernel.setKernelArgGlobal(0, input);
-        kernel.setKernelArgGlobal(1, output);
-        kernel.setKernelArg(2, count, cl.KERNEL_ARG_INT);
+        kernel.setArg(0, input);
+        kernel.setArg(1, output);
+        kernel.setArg(2, count, cl.LONG);
+
 
         // Get the maximum work group size for executing the kernel on the device
         //
