@@ -293,14 +293,7 @@ private:
     WebCLCommandQueue(WebCLContext*, cl_command_queue);
 
     WebCLContext* m_context;
-    cl_command_queue m_cl_command_queue;
-    RefPtr<WebCLFinishCallback> m_finishCallback;
-    RefPtr<WebCLCommandQueue> m_command_queue;
-
-    long m_num_commandqueues;
-    long m_num_mems;
-    Vector<RefPtr<WebCLCommandQueue> > m_commandqueue_list;
-    Vector<RefPtr<WebCLMemoryObject> > m_mem_list;
+    cl_command_queue m_clCommandQueue;
 };
 
 } // namespace WebCore
