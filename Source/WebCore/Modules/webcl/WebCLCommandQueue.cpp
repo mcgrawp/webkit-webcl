@@ -155,19 +155,8 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blocking_wr
         cl_event_id = event->getCLEvent();
     }
 
-    // TODO(siba samal) - NULL parameters need to be addressed later
-    CCerror err = 0;
-    if(blocking_write)
-    {
-        err = clEnqueueWriteBuffer(m_cl_command_queue, cl_mem_id, CL_TRUE, offset, 
+    CCerror err = clEnqueueWriteBuffer(m_cl_command_queue, cl_mem_id, blocking_write, offset,
                 buffer_size, ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
-    }
-    else
-    {
-        err = clEnqueueWriteBuffer(m_cl_command_queue, cl_mem_id, CL_FALSE, offset, 
-                buffer_size, ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
-    }
-
     if (err != CL_SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -216,19 +205,9 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blocking_wr
         ec = WebCL::FAILURE;
         return;
     }
-    // TODO(won.jeon) - NULL parameters need to be addressed later
-    CCerror err = 0;
-    if(blocking_write) 
-    {
-        err = clEnqueueWriteBuffer(m_cl_command_queue, cl_mem_id, CL_TRUE, 
-                offset, buffer_size, buffer_array, eventsLength, cl_event_wait_lists, &cl_event_id);
-    }
-    else
-    {
-        err = clEnqueueWriteBuffer(m_cl_command_queue, cl_mem_id, CL_FALSE, 
-                offset, buffer_size, buffer_array, eventsLength, cl_event_wait_lists, &cl_event_id);
-    }
 
+    CCerror err = clEnqueueWriteBuffer(m_cl_command_queue, cl_mem_id, blocking_write,
+                offset, buffer_size, buffer_array, eventsLength, cl_event_wait_lists, &cl_event_id);
     if (err != CL_SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -304,16 +283,7 @@ void WebCLCommandQueue::enqueueWriteBufferRect( WebCLBuffer* buffer,bool blockin
         region_array[i] = region->item(i);
     }
 
-    CCerror err = 0;
-    if(blocking_write)
-    {
-        err = clEnqueueWriteBufferRect(m_cl_command_queue, cl_mem_id, CL_TRUE, bufferOrigin_array , hostOrigin_array , region_array , bufferRowPitch , bufferSlicePitch , hostRowPitch , hostSlicePitch , ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
-    }
-    else
-    {
-        err = clEnqueueWriteBufferRect(m_cl_command_queue, cl_mem_id, CL_FALSE ,bufferOrigin_array ,hostOrigin_array ,region_array , bufferRowPitch , bufferSlicePitch , hostRowPitch , hostSlicePitch , ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
-    }
-
+    CCerror err = clEnqueueWriteBufferRect(m_cl_command_queue, cl_mem_id, blocking_write, bufferOrigin_array , hostOrigin_array , region_array , bufferRowPitch , bufferSlicePitch , hostRowPitch , hostSlicePitch , ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
     if (err != CL_SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -362,19 +332,9 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blocking_rea
         ec = WebCL::FAILURE;
         return ;
     }
-    // TODO(siba samal) - NULL parameters need to be addressed later
-    CCerror err = 0;
-    if(blocking_read)
-    {
-        err = clEnqueueReadBuffer(m_cl_command_queue, cl_mem_id, CL_TRUE, 
-                offset,buffer_size, buffer_array, eventsLength, cl_event_wait_lists, &cl_event_id);
-    }
-    else
-    {
-        err = clEnqueueReadBuffer(m_cl_command_queue, cl_mem_id, CL_FALSE, 
-                offset, buffer_size,  buffer_array , eventsLength, cl_event_wait_lists, &cl_event_id);
-    }
 
+    CCerror err = clEnqueueReadBuffer(m_cl_command_queue, cl_mem_id, blocking_read,
+                offset,buffer_size, buffer_array, eventsLength, cl_event_wait_lists, &cl_event_id);
     if (err != CL_SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -436,33 +396,11 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blocking_read,I
     }
 
     // TODO(siba samal) - NULL parameters need to be addressed later
-    CCerror err = 0;
-    if(blocking_read)
-    {
-        for (unsigned int i = 0; i < 24; i++)
-        {
-            printf(" Before clEnqueueReadImage => %d ptr->baseAddress() => %u   \n ", i,((unsigned char*)ptr->baseAddress())[i]);
-        }
-        err = clEnqueueReadImage(m_cl_command_queue, cl_mem_id, CL_TRUE, origin_array, region_array, rowPitch, slicePitch, ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
-        for (unsigned int i = 0; i < 24; i++)
-        {
-            printf(" After clEnqueueReadImage => %d ptr->baseAddress() => %u   \n ", i,((unsigned char*)ptr->baseAddress())[i]);
-        }
-    }       
-    else
-    {
-        for (unsigned int i = 0; i < 24; i++)
-        {
-            printf(" Before clEnqueueReadImage => %d ptr->baseAddress() => %u   \n ", i,((unsigned char*)ptr->baseAddress())[i]);
-        }
-        err = clEnqueueReadImage(m_cl_command_queue, cl_mem_id, CL_FALSE, origin_array, region_array, rowPitch, slicePitch, ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
-        for (unsigned int i = 0; i < 24; i++)
-        {
-            printf(" After clEnqueueReadImage => %d ptr->baseAddress() => %u   \n ", i,((unsigned char*)ptr->baseAddress())[i]);
-        }
-
-    }
-
+    for (unsigned int i = 0; i < 24; i++)
+        printf(" Before clEnqueueReadImage => %d ptr->baseAddress() => %u   \n ", i,((unsigned char*)ptr->baseAddress())[i]);
+    CCerror err = clEnqueueReadImage(m_cl_command_queue, cl_mem_id, blocking_read, origin_array, region_array, rowPitch, slicePitch, ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
+    for (unsigned int i = 0; i < 24; i++)
+        printf(" After clEnqueueReadImage => %d ptr->baseAddress() => %u   \n ", i,((unsigned char*)ptr->baseAddress())[i]);
     if (err != CL_SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -496,13 +434,7 @@ void  WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer_src , bool blocki
         cl_event_id = event->getCLEvent();
     }
 
-    // TODO(siba samal) - NULL parameters need to be addressed later
-    CCerror err = 0;
-    if(blocking_read)
-        err = clEnqueueReadBuffer(m_cl_command_queue, cl_mem_id, CL_TRUE, offset, buffer_size, ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
-    else
-        err = clEnqueueReadBuffer(m_cl_command_queue, cl_mem_id, CL_FALSE, offset, buffer_size, ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
-
+    CCerror err = clEnqueueReadBuffer(m_cl_command_queue, cl_mem_id, blocking_read, offset, buffer_size, ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
     if (err != CL_SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -577,16 +509,7 @@ void  WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blockin
         region_array[i] = region->item(i);
     }
 
-    CCerror err = 0;
-    if(blocking_read)
-    {
-        err = clEnqueueReadBufferRect(m_cl_command_queue, cl_mem_id, CL_TRUE, bufferOrigin_array , hostOrigin_array , region_array , bufferRowPitch , bufferSlicePitch , hostRowPitch , hostSlicePitch , ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
-    }
-    else
-    {
-        err = clEnqueueReadBufferRect(m_cl_command_queue, cl_mem_id, CL_FALSE ,bufferOrigin_array ,hostOrigin_array ,region_array , bufferRowPitch , bufferSlicePitch , hostRowPitch , hostSlicePitch , ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
-    }
-
+    CCerror err = clEnqueueReadBufferRect(m_cl_command_queue, cl_mem_id, blocking_read, bufferOrigin_array, hostOrigin_array, region_array, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr->baseAddress(), eventsLength, cl_event_wait_lists, &cl_event_id);
     if (err != CL_SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
