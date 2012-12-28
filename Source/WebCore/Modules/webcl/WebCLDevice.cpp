@@ -393,28 +393,8 @@ WebCLGetInfo WebCLDevice::getInfo(int deviceType, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    switch (err) {
-    case CL_INVALID_DEVICE:
-        ec = WebCLException::INVALID_DEVICE;
-        printf("Error: CL_INVALID_DEVICE \n");
-        break;
-    case CL_INVALID_VALUE:
-        ec = WebCLException::INVALID_VALUE;
-        printf("Error: CL_INVALID_VALUE\n");
-        break;
-    case CL_OUT_OF_RESOURCES:
-        ec = WebCLException::OUT_OF_RESOURCES;
-        printf("Error: CL_OUT_OF_RESOURCES \n");
-        break;
-    case CL_OUT_OF_HOST_MEMORY:
-        ec = WebCLException::OUT_OF_HOST_MEMORY;
-        printf("Error: CL_OUT_OF_HOST_MEMORY  \n");
-        break;
-    default:
-        printf("Error: Invaild Error Type\n");
-        ec = WebCLException::FAILURE;
-        break;
-    }
+    ASSERT(err != CL_SUCCESS);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
 }
 
