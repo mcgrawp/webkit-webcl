@@ -1,3 +1,32 @@
+/*
+ * Copyright (C) 2012, 2013 Samsung Electronics Corporation. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
+ * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL SAMSUNG
+ * ELECTRONICS CORPORATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS, OR BUSINESS INTERRUPTION), HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING
+ * NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+
 #include "ComputeContext.h"
 
 #include <wtf/text/CString.h>
@@ -200,9 +229,10 @@ static cl_mem_flags computeMemoryTypeToCL(int memoryType)
 ComputeContext::ComputeContext(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror* error)
 {
     CCint clError;
-    m_clContext = clCreateContext(contextProperties, numberDevices, devices, NULL, NULL, &clError);
+    m_clContext = clCreateContext(contextProperties, numberDevices, devices, 0, 0, &clError);
 
-    if (clError == CL_SUCCESS){
+    // FIXME: Is this special handling of SUCCESS needed? It should not be.
+    if (clError == CL_SUCCESS) {
         *error = clError;
         return;
     }
@@ -212,25 +242,25 @@ ComputeContext::ComputeContext(CCContextProperties* contextProperties, CCuint nu
         *error = computeContextError;
 }
 
-ComputeContext::ComputeContext(CCContextProperties* contextProperties, unsigned int deviceType, CCerror* error)
+ComputeContext::ComputeContext(CCContextProperties* contextProperties, unsigned deviceType, CCerror* error)
 {
     CCint clError;
 
     switch (deviceType) {
     case DEVICE_TYPE_GPU:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_GPU, NULL, NULL, &clError);
+        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_GPU, 0, 0, &clError);
         break;
     case DEVICE_TYPE_CPU:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_CPU, NULL, NULL, &clError);
+        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_CPU, 0, 0, &clError);
         break;
     case DEVICE_TYPE_ACCELERATOR:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_ACCELERATOR, NULL, NULL, &clError);
+        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_ACCELERATOR, 0, 0, &clError);
         break;
     case DEVICE_TYPE_DEFAULT:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_DEFAULT, NULL, NULL, &clError);
+        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_DEFAULT, 0, 0, &clError);
         break;
     case DEVICE_TYPE_ALL:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_ALL, NULL, NULL, &clError);
+        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_ALL, 0, 0, &clError);
         break;
     default:
         clError = CL_INVALID_DEVICE_TYPE;
@@ -252,7 +282,7 @@ PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextPr
     return adoptRef(new ComputeContext(contextProperties, numberDevices, devices, error));
 }
 
-PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, unsigned int deviceType, CCerror* error)
+PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, unsigned deviceType, CCerror* error)
 {
     return adoptRef(new ComputeContext(contextProperties, deviceType, error));
 }
@@ -286,7 +316,7 @@ CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, int prope
         clProperties = CL_QUEUE_PROFILING_ENABLE;
         break;
     default:
-        //FIXME 
+        // FIXME
         clProperties = 0;
         break;
     }
@@ -304,7 +334,7 @@ CCProgram ComputeContext::createProgram(const String& kernelSource, CCerror& err
     cl_int clError;
     const char* kernelSourcePtr = kernelSource.utf8().data();
 
-    clProgram = clCreateProgramWithSource(m_clContext, 1, &kernelSourcePtr, NULL, &clError);
+    clProgram = clCreateProgramWithSource(m_clContext, 1, &kernelSourcePtr, 0, &clError);
     error = clToComputeContextError(clError);
 
     return clProgram;
@@ -324,7 +354,7 @@ PlatformComputeObject ComputeContext::createBuffer(int type, size_t size, void* 
 
 PlatformComputeObject ComputeContext::createImage2D(int type, int width, int height, const ImageFormat& imageFormat, void* data, CCerror& error)
 {
-    cl_mem clMemoryImage = NULL;
+    cl_mem clMemoryImage = 0;
     cl_int memoryImageError = CL_SUCCESS;
     cl_image_format clImageFormat = computeImageFormatToCL(imageFormat);
 
@@ -341,10 +371,10 @@ PlatformComputeObject ComputeContext::createImage2D(int type, int width, int hei
     // This is either a bug on the spec, or a bug in our implementation.
     clImageDescriptor.image_row_pitch = 0;
     clMemoryImage = clCreateImage(m_clContext, memoryType, &clImageFormat, &clImageDescriptor,
-                                    data, &memoryImageError);
+        data, &memoryImageError);
 #else
     clMemoryImage = clCreateImage2D(m_clContext, memoryType, &clImageFormat, width, height, 0,
-                                    data, &memoryImageError);
+        data, &memoryImageError);
 #endif
 
     error = clToComputeContextError(memoryImageError);
@@ -353,7 +383,7 @@ PlatformComputeObject ComputeContext::createImage2D(int type, int width, int hei
 
 PlatformComputeObject ComputeContext::createFromGLBuffer(int type, int bufferId, CCerror& error)
 {
-    cl_mem clMemoryImage = NULL;
+    cl_mem clMemoryImage = 0;
     cl_int clError;
     cl_int memoryType = computeMemoryTypeToCL(type);
 
@@ -452,7 +482,7 @@ PlatformComputeObject ComputeContext::createFromGLTexture2D(int type, GC3Denum t
 static cl_mem_object_type computeObjectTypeToCL(int type)
 {
     cl_mem_object_type clObjectType;
-    switch(type) {
+    switch (type) {
     case ComputeContext::GL_OBJECT_BUFFER:
         clObjectType = CL_GL_OBJECT_BUFFER;
         break;
@@ -481,7 +511,7 @@ CCerror ComputeContext::supportedImageFormats(int type, int imageType, CCuint nu
 }
 
 CCerror ComputeContext::enqueueNDRangeKernel(CCCommandQueue commandQueue, CCKernel kernelID, int workItemDimensions,
-	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event)
+    size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event)
 {
     cl_int error = clEnqueueNDRangeKernel(commandQueue, kernelID, workItemDimensions,
         globalWorkOffset, globalWorkSize, localWorkSize, eventWaitListLength, eventWaitList, event);
