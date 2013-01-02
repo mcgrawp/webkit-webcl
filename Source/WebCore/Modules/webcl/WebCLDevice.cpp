@@ -369,6 +369,7 @@ WebCLGetInfo WebCLDevice::getInfo(int deviceType, ExceptionCode& ec)
     // Platform ID is not supported.
     case WebCL::DEVICE_PLATFORM:
         err = clGetDeviceInfo(m_cl_device_id, CL_DEVICE_PLATFORM, sizeof(platformID), &platformID, 0);
+        // FIXME: This String cast is probably not needed.
         if (err == CL_SUCCESS)
             return WebCLGetInfo((String)platformID);
         break;

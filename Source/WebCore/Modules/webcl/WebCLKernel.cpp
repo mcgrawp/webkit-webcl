@@ -38,10 +38,9 @@ namespace WebCore {
 
 WebCLKernel::~WebCLKernel()
 {
-    cl_int err = 0;
     ASSERT(m_cl_kernel);
 
-    err = clReleaseKernel(m_cl_kernel);
+    CCerror err = clReleaseKernel(m_cl_kernel);
     if (err != CL_SUCCESS) {
         switch (err) {
         case CL_INVALID_KERNEL:
@@ -82,7 +81,7 @@ WebCLKernel::WebCLKernel(WebCLContext* context, cl_kernel kernel)
 
 WebCLGetInfo WebCLKernel::getInfo(int kernel_info, ExceptionCode& ec)
 {
-    cl_int err = 0;
+    CCerror err = 0;
     char function_name[1024];
     cl_uint uint_units = 0;
     cl_program cl_program_id = 0;
@@ -131,34 +130,14 @@ WebCLGetInfo WebCLKernel::getInfo(int kernel_info, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    switch (err) {
-    case CL_INVALID_KERNEL:
-        ec = WebCLException::INVALID_KERNEL;
-        printf("Error: CL_INVALID_KERNEL  \n");
-        break;
-    case CL_INVALID_VALUE:
-        ec = WebCLException::INVALID_VALUE;
-        printf("Error: CL_INVALID_VALUE\n");
-        break;
-    case CL_OUT_OF_RESOURCES:
-        ec = WebCLException::OUT_OF_RESOURCES;
-        printf("Error: CL_OUT_OF_RESOURCES \n");
-        break;
-    case CL_OUT_OF_HOST_MEMORY:
-        ec = WebCLException::OUT_OF_HOST_MEMORY;
-        printf("Error: CL_OUT_OF_HOST_MEMORY  \n");
-        break;
-    default:
-        ec = WebCLException::FAILURE;
-        printf("Error: Invaild Error Type\n");
-        break;
-    }
+    ASSERT(err != CL_SUCCESS);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
 }
 
 WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, int param_name, ExceptionCode& ec)
 {
-    cl_int err = 0;
+    CCerror err = 0;
     cl_device_id cl_device = 0;
     size_t sizet_units = 0;
     cl_ulong ulong_units = 0;
@@ -201,30 +180,14 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, int param_name, 
     }
 
     printf("Error: clGetKerelWorkGroupInfo\n");
-    switch (err) {
-    case CL_INVALID_DEVICE:
-        ec = WebCLException::INVALID_DEVICE;
-        printf("Error: CL_INVALID_DEVICE\n");
-        break;
-    case CL_INVALID_VALUE:
-        ec = WebCLException::INVALID_VALUE;
-        printf("Error: CL_INVALID_VALUE\n");
-        break;
-    case CL_INVALID_KERNEL:
-        ec = WebCLException::INVALID_KERNEL;
-        printf("Error: CL_INVALID_KERNEL\n");
-        break;
-    default:
-        ec = WebCLException::FAILURE;
-        printf("Error: Invaild Error Type\n");
-        break;
-    }
+    ASSERT(err != CL_SUCCESS);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
 }
 
 void WebCLKernel::setKernelArg(unsigned argIndex, PassRefPtr<WebCLKernelTypeValue> kernelObject, int argType, ExceptionCode& ec)
 {
-    cl_int err = 0;
+    CCerror err = 0;
     RefPtr<WebCLKernelTypeVector> array = 0;
     char nodeIdCh = 0;
     unsigned char nodeIduCh = 0;
@@ -421,51 +384,13 @@ void WebCLKernel::setKernelArg(unsigned argIndex, PassRefPtr<WebCLKernelTypeValu
         return;
     }
 
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_KERNEL:
-            ec = WebCLException::INVALID_KERNEL;
-            printf("Error: CL_INVALID_KERNEL \n");
-            break;
-        case CL_INVALID_ARG_INDEX:
-            ec = WebCLException::INVALID_ARG_INDEX;
-            printf("Error: CL_INVALID_ARG_INDEX \n");
-            break;
-        case CL_INVALID_ARG_VALUE:
-            ec = WebCLException::INVALID_ARG_VALUE;
-            printf("Error: CL_INVALID_ARG_VALUE \n");
-            break;
-        case CL_INVALID_MEM_OBJECT:
-            ec = WebCLException::INVALID_MEM_OBJECT;
-            printf("Error: CL_INVALID_MEM_OBJECT  \n");
-            break;
-        case CL_INVALID_SAMPLER:
-            ec = WebCLException::INVALID_SAMPLER;
-            printf("Error: CL_INVALID_SAMPLER  \n");
-            break;
-        case CL_INVALID_ARG_SIZE:
-            ec = WebCLException::INVALID_ARG_SIZE;
-            printf("Error: CL_INVALID_ARG_SIZE  \n");
-            break;
-        case CL_OUT_OF_RESOURCES:
-            ec = WebCLException::OUT_OF_RESOURCES;
-            printf("Error: CL_OUT_OF_RESOURCES\n");
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-            break;
-        default:
-            ec = WebCLException::FAILURE;
-            printf("Error: Invaild Error Type\n");
-            break;
-        }
-    }
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLKernel::setKernelArgGlobal(unsigned arg_index, WebCLMemoryObject* arg_value, ExceptionCode& ec)
 {
-    cl_int err = 0;
+    CCerror err = 0;
     cl_mem cl_mem_id = 0;
 
     if (!m_cl_kernel) {
@@ -482,52 +407,14 @@ void WebCLKernel::setKernelArgGlobal(unsigned arg_index, WebCLMemoryObject* arg_
             return;
         }
     }
+
     err = clSetKernelArg(m_cl_kernel, arg_index, sizeof(cl_mem), &cl_mem_id);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_KERNEL:
-            printf("Error: CL_INVALID_KERNEL \n");
-            ec = WebCLException::INVALID_KERNEL;
-            break;
-        case CL_INVALID_ARG_INDEX:
-            printf("Error: CL_INVALID_ARG_INDEX \n");
-            ec = WebCLException::INVALID_ARG_INDEX;
-            break;
-        case CL_INVALID_ARG_VALUE:
-            printf("Error: CL_INVALID_ARG_VALUE \n");
-            ec = WebCLException::INVALID_ARG_VALUE;
-            break;
-        case CL_INVALID_MEM_OBJECT:
-            printf("Error: CL_INVALID_MEM_OBJECT  \n");
-            ec = WebCLException::INVALID_MEM_OBJECT;
-            break;
-        case CL_INVALID_SAMPLER:
-            printf("Error: CL_INVALID_SAMPLER  \n");
-            ec = WebCLException::INVALID_SAMPLER;
-            break;
-        case CL_INVALID_ARG_SIZE:
-            printf("Error: CL_INVALID_ARG_SIZE  \n");
-            ec = WebCLException::INVALID_ARG_SIZE;
-            break;
-        case CL_OUT_OF_RESOURCES:
-            printf("Error: CL_OUT_OF_RESOURCES\n");
-            ec = WebCLException::OUT_OF_RESOURCES;
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            break;
-        default:
-            printf("Error: Invaild Error Type\n");
-            ec = WebCLException::FAILURE;
-            break;
-        }
-    }
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLKernel::setKernelArgConstant(unsigned arg_index, WebCLMemoryObject* arg_value, ExceptionCode& ec)
 {
-    cl_int err = 0;
     cl_mem cl_mem_id = 0;
     cl_device_id cl_device = 0;
 
@@ -549,163 +436,49 @@ void WebCLKernel::setKernelArgConstant(unsigned arg_index, WebCLMemoryObject* ar
     if (m_device_id) {
         cl_device = m_device_id->getCLDevice();
         cl_ulong max_buffer_size = 0;
+
+        CCerror err = 0;
+        // FIXME: Handle error code here?
         clGetDeviceInfo(cl_device, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE, sizeof(cl_ulong), &max_buffer_size, 0);
         cl_uint max_args = 0;
         clGetDeviceInfo(cl_device, CL_DEVICE_MAX_CONSTANT_ARGS, sizeof(cl_uint), &max_args, 0);
         // Check for __constant qualifier restrictions
         if ((sizeof(cl_mem) <= max_buffer_size) && (arg_index <= max_args)) {
             err = clSetKernelArg(m_cl_kernel, arg_index, sizeof(cl_mem), &cl_mem_id);
-            if (err != CL_SUCCESS) {
-                switch (err) {
-                case CL_INVALID_KERNEL:
-                    printf("Error: CL_INVALID_KERNEL \n");
-                    ec = WebCLException::INVALID_KERNEL;
-                    break;
-                case CL_INVALID_ARG_INDEX:
-                    printf("Error: CL_INVALID_ARG_INDEX \n");
-                    ec = WebCLException::INVALID_ARG_INDEX;
-                    break;
-                case CL_INVALID_ARG_VALUE:
-                    printf("Error: CL_INVALID_ARG_VALUE \n");
-                    ec = WebCLException::INVALID_ARG_VALUE;
-                    break;
-                case CL_INVALID_MEM_OBJECT:
-                    printf("Error: CL_INVALID_MEM_OBJECT  \n");
-                    ec = WebCLException::INVALID_MEM_OBJECT;
-                    break;
-                case CL_INVALID_SAMPLER:
-                    printf("Error: CL_INVALID_SAMPLER  \n");
-                    ec = WebCLException::INVALID_SAMPLER;
-                    break;
-                case CL_INVALID_ARG_SIZE:
-                    printf("Error: CL_INVALID_ARG_SIZE  \n");
-                    ec = WebCLException::INVALID_ARG_SIZE;
-                    break;
-                case CL_OUT_OF_RESOURCES:
-                    printf("Error: CL_OUT_OF_RESOURCES\n");
-                    ec = WebCLException::OUT_OF_RESOURCES;
-                    break;
-                case CL_OUT_OF_HOST_MEMORY:
-                    printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                    ec = WebCLException::OUT_OF_HOST_MEMORY;
-                    break;
-                default:
-                    printf("Error: Invaild Error Type\n");
-                    ec = WebCLException::FAILURE;
-                    break;
-                }
-            }
+            if (err != CL_SUCCESS)
+                ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
         }
     }
 }
 
 void WebCLKernel::setKernelArgLocal(unsigned arg_index, unsigned arg_size, ExceptionCode& ec)
 {
-    cl_int err = 0;
     if (!m_cl_kernel) {
         printf("Error: Invalid kernel\n");
         ec = WebCLException::INVALID_KERNEL;
         return;
     }
 
-    err = clSetKernelArg(m_cl_kernel, arg_index, arg_size, 0);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_KERNEL:
-            printf("Error: CL_INVALID_KERNEL \n");
-            ec = WebCLException::INVALID_KERNEL;
-            break;
-        case CL_INVALID_ARG_INDEX:
-            printf("Error: CL_INVALID_ARG_INDEX \n");
-            ec = WebCLException::INVALID_ARG_INDEX;
-            break;
-        case CL_INVALID_ARG_VALUE:
-            printf("Error: CL_INVALID_ARG_VALUE \n");
-            ec = WebCLException::INVALID_ARG_VALUE;
-            break;
-        case CL_INVALID_MEM_OBJECT:
-            printf("Error: CL_INVALID_MEM_OBJECT  \n");
-            ec = WebCLException::INVALID_MEM_OBJECT;
-            break;
-        case CL_INVALID_SAMPLER:
-            printf("Error: CL_INVALID_SAMPLER  \n");
-            ec = WebCLException::INVALID_SAMPLER;
-            break;
-        case CL_INVALID_ARG_SIZE:
-            printf("Error: CL_INVALID_ARG_SIZE  \n");
-            ec = WebCLException::INVALID_ARG_SIZE;
-            break;
-        case CL_OUT_OF_RESOURCES:
-            printf("Error: CL_OUT_OF_RESOURCES\n");
-            ec = WebCLException::OUT_OF_RESOURCES;
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            break;
-        default:
-            printf("Error: Invaild Error Type\n");
-            ec = WebCLException::FAILURE;
-            break;
-        }
-    }
+    CCerror err = clSetKernelArg(m_cl_kernel, arg_index, arg_size, 0);
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLKernel::setArg(unsigned arg_index, unsigned arg_size, ExceptionCode& ec)
 {
-    cl_int err = 0;
     if (!m_cl_kernel) {
         printf("Error: Invalid kernel\n");
         ec = WebCLException::INVALID_KERNEL;
         return;
     }
 
-    err = clSetKernelArg(m_cl_kernel, arg_index, arg_size, 0);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_KERNEL:
-            printf("Error: CL_INVALID_KERNEL \n");
-            ec = WebCLException::INVALID_KERNEL;
-            break;
-        case CL_INVALID_ARG_INDEX:
-            printf("Error: CL_INVALID_ARG_INDEX \n");
-            ec = WebCLException::INVALID_ARG_INDEX;
-            break;
-        case CL_INVALID_ARG_VALUE:
-            printf("Error: CL_INVALID_ARG_VALUE \n");
-            ec = WebCLException::INVALID_ARG_VALUE;
-            break;
-        case CL_INVALID_MEM_OBJECT:
-            printf("Error: CL_INVALID_MEM_OBJECT  \n");
-            ec = WebCLException::INVALID_MEM_OBJECT;
-            break;
-        case CL_INVALID_SAMPLER:
-            printf("Error: CL_INVALID_SAMPLER  \n");
-            ec = WebCLException::INVALID_SAMPLER;
-            break;
-        case CL_INVALID_ARG_SIZE:
-            printf("Error: CL_INVALID_ARG_SIZE  \n");
-            ec = WebCLException::INVALID_ARG_SIZE;
-            break;
-        case CL_OUT_OF_RESOURCES:
-            printf("Error: CL_OUT_OF_RESOURCES\n");
-            ec = WebCLException::OUT_OF_RESOURCES;
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            break;
-        default:
-            printf("Error: Invaild Error Type\n");
-            ec = WebCLException::FAILURE;
-            break;
-        }
-    }
+    CCerror err = clSetKernelArg(m_cl_kernel, arg_index, arg_size, 0);
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLKernel::setArg(unsigned argIndex, PassRefPtr<WebCLKernelTypeValue> kernelObject, unsigned argType, ExceptionCode& ec)
 {
-    cl_int err = 0;
     RefPtr<WebCLKernelTypeVector> array = 0;
     char nodeIdCh = 0;
     unsigned char nodeIduCh = 0;
@@ -730,6 +503,7 @@ void WebCLKernel::setArg(unsigned argIndex, PassRefPtr<WebCLKernelTypeValue> ker
         return;
     }
 
+    CCerror err = 0;
     switch (argType) {
     case WebCL::CHAR:
         err = clSetKernelArgPrimitiveType(m_cl_kernel, kernelObject, nodeIdCh, argIndex, sizeof(cl_char));
@@ -956,51 +730,12 @@ void WebCLKernel::setArg(unsigned argIndex, PassRefPtr<WebCLKernelTypeValue> ker
         return;
     }
 
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_KERNEL:
-            ec = WebCLException::INVALID_KERNEL;
-            printf("Error: CL_INVALID_KERNEL \n");
-            break;
-        case CL_INVALID_ARG_INDEX:
-            ec = WebCLException::INVALID_ARG_INDEX;
-            printf("Error: CL_INVALID_ARG_INDEX \n");
-            break;
-        case CL_INVALID_ARG_VALUE:
-            ec = WebCLException::INVALID_ARG_VALUE;
-            printf("Error: CL_INVALID_ARG_VALUE \n");
-            break;
-        case CL_INVALID_MEM_OBJECT:
-            ec = WebCLException::INVALID_MEM_OBJECT;
-            printf("Error: CL_INVALID_MEM_OBJECT  \n");
-            break;
-        case CL_INVALID_SAMPLER:
-            ec = WebCLException::INVALID_SAMPLER;
-            printf("Error: CL_INVALID_SAMPLER  \n");
-            break;
-        case CL_INVALID_ARG_SIZE:
-            ec = WebCLException::INVALID_ARG_SIZE;
-            printf("Error: CL_INVALID_ARG_SIZE  \n");
-            break;
-        case CL_OUT_OF_RESOURCES:
-            ec = WebCLException::OUT_OF_RESOURCES;
-            printf("Error: CL_OUT_OF_RESOURCES\n");
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-            break;
-        default:
-            ec = WebCLException::FAILURE;
-            printf("Error: Invaild Error Type\n");
-            break;
-        }
-    }
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLKernel::setArg(unsigned arg_index, WebCLMemoryObject* arg_value, ExceptionCode& ec)
 {
-    cl_int err = 0;
     cl_mem cl_mem_id = 0;
     cl_device_id cl_device = 0;
 
@@ -1019,6 +754,7 @@ void WebCLKernel::setArg(unsigned arg_index, WebCLMemoryObject* arg_value, Excep
         }
     }
 
+    CCerror err = 0;
     if (m_device_id) {
         cl_device = m_device_id->getCLDevice();
         cl_ulong max_buffer_size = 0;
@@ -1033,46 +769,8 @@ void WebCLKernel::setArg(unsigned arg_index, WebCLMemoryObject* arg_value, Excep
     } else
         err = clSetKernelArg(m_cl_kernel, arg_index, sizeof(cl_mem), &cl_mem_id);
 
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_KERNEL:
-            printf("Error: CL_INVALID_KERNEL \n");
-            ec = WebCLException::INVALID_KERNEL;
-            break;
-        case CL_INVALID_ARG_INDEX:
-            printf("Error: CL_INVALID_ARG_INDEX \n");
-            ec = WebCLException::INVALID_ARG_INDEX;
-            break;
-        case CL_INVALID_ARG_VALUE:
-            printf("Error: CL_INVALID_ARG_VALUE \n");
-            ec = WebCLException::INVALID_ARG_VALUE;
-            break;
-        case CL_INVALID_MEM_OBJECT:
-            printf("Error: CL_INVALID_MEM_OBJECT  \n");
-            ec = WebCLException::INVALID_MEM_OBJECT;
-            break;
-        case CL_INVALID_SAMPLER:
-            printf("Error: CL_INVALID_SAMPLER  \n");
-            ec = WebCLException::INVALID_SAMPLER;
-            break;
-        case CL_INVALID_ARG_SIZE:
-            printf("Error: CL_INVALID_ARG_SIZE  \n");
-            ec = WebCLException::INVALID_ARG_SIZE;
-            break;
-        case CL_OUT_OF_RESOURCES:
-            printf("Error: CL_OUT_OF_RESOURCES\n");
-            ec = WebCLException::OUT_OF_RESOURCES;
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            break;
-        default:
-            printf("Error: Invaild Error Type\n");
-            ec = WebCLException::FAILURE;
-            break;
-        }
-    }
+    if (err != CL_SUCCESS)
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 /*
@@ -1133,7 +831,7 @@ template<class T> inline unsigned WebCLKernel::clSetKernelArgPrimitiveType(cl_ke
         return -1;
     }
 
-    cl_int err = clSetKernelArg(cl_kernel_id, argIndex, size, &nodeId);
+    CCerror err = clSetKernelArg(cl_kernel_id, argIndex, size, &nodeId);
     return err;
 }
 
@@ -1147,7 +845,7 @@ inline unsigned WebCLKernel::clSetKernelArgVectorType(cl_kernel cl_kernel_id,
         return -1;
     }
 
-    cl_int err = clSetKernelArg(cl_kernel_id, argIndex, size, &array);
+    CCerror err = clSetKernelArg(cl_kernel_id, argIndex, size, &array);
     return err;
 }
 
