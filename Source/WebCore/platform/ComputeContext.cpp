@@ -560,6 +560,112 @@ CCerror ComputeContext::enqueueMarker(CCCommandQueue commandQueue, int eventsWai
     return clToComputeContextError(error);
 }
 
+CCerror ComputeContext::enqueueTask(CCCommandQueue commandQueue, CCKernel kernelID, int eventsWaitListLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueTask(commandQueue, kernelID, eventsWaitListLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::enqueueWriteBuffer(CCCommandQueue commandQueue, PlatformComputeObject buffer, bool blockingWrite,
+    int offset, int bufferSize, void* baseAddress, unsigned eventsWaitListLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueWriteBuffer(commandQueue, buffer, blockingWrite, offset,
+        bufferSize, baseAddress, eventsWaitListLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::enqueueWriteBufferRect(CCCommandQueue commandQueue, PlatformComputeObject buffer, bool blockingWrite,
+    size_t* bufferOriginArray, size_t* hostOriginArray, size_t* regionArray, int bufferRowPitch, int bufferSlicePitch, int hostRowPitch,
+    int hostSlicePitch, void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueWriteBufferRect(commandQueue, buffer, blockingWrite, bufferOriginArray, hostOriginArray, regionArray,
+        bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, baseAddress, eventsLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::enqueueReadBuffer(CCCommandQueue commandQueue, PlatformComputeObject buffer, bool blockingRead, int offset, int bufferSize, void* baseAddress, unsigned eventsWaitListLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueReadBuffer(commandQueue, buffer, blockingRead, offset,
+        bufferSize, baseAddress, eventsWaitListLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::enqueueReadBufferRect(CCCommandQueue commandQueue, PlatformComputeObject buffer, bool blockingRead,
+    size_t* bufferOriginArray, size_t* hostOriginArray, size_t* regionArray, int bufferRowPitch, int bufferSlicePitch, int hostRowPitch,
+    int hostSlicePitch, void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueReadBufferRect(commandQueue, buffer, blockingRead, bufferOriginArray, hostOriginArray, regionArray,
+        bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, baseAddress, eventsLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::enqueueReadImage(CCCommandQueue commandQueue, PlatformComputeObject image, bool blockingRead, size_t* originArray,
+    size_t* regionArray, int rowPitch, int slicePitch, void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueReadImage(commandQueue, image, blockingRead, originArray, regionArray, rowPitch, slicePitch, baseAddress, eventsLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::enqueueWriteImage(CCCommandQueue commandQueue, PlatformComputeObject image, bool blockingWrite, size_t* originArray,
+    size_t* regionArray, int rowPitch, int slicePitch, void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueWriteImage(commandQueue, image, blockingWrite, originArray, regionArray, rowPitch, slicePitch, baseAddress, eventsLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::enqueueAcquireGLObjects(CCCommandQueue commandQueue, unsigned numberOfObjects, PlatformComputeObject* objects, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueAcquireGLObjects(commandQueue, numberOfObjects, objects, eventsLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::enqueueReleaseGLObjects(CCCommandQueue commandQueue, unsigned numberOfObjects, PlatformComputeObject* objects, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueReleaseGLObjects(commandQueue, numberOfObjects, objects, eventsLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::enqueueCopyImage(CCCommandQueue commandQueue, PlatformComputeObject originImage, PlatformComputeObject targetImage,
+    size_t* sourceOriginArray, size_t* targetOriginArray, size_t* regionArray, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueCopyImage(commandQueue, originImage, targetImage, sourceOriginArray, targetOriginArray, regionArray,
+        eventsLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::enqueueCopyImageToBuffer(CCCommandQueue commandQueue, PlatformComputeObject sourceImage, PlatformComputeObject targetBuffer,
+    size_t* sourceOriginArray, size_t* regionArray, int targetOffset, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueCopyImageToBuffer(commandQueue, sourceImage, targetBuffer, sourceOriginArray, regionArray, targetOffset,
+        eventsLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::enqueueCopyBufferToImage(CCCommandQueue commandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetImage,
+    int srcOffset, size_t* targetOriginArray, size_t* regionArray, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueCopyBufferToImage(commandQueue, sourceBuffer, targetImage, srcOffset, targetOriginArray, regionArray,
+        eventsLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::enqueueCopyBuffer(CCCommandQueue commandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
+    size_t sourceOffset, size_t targetOffset, size_t sizeInBytes, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueCopyBuffer(commandQueue, sourceBuffer, targetBuffer, sourceOffset, targetOffset, sizeInBytes,
+        eventsLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::enqueueCopyBufferRect(CCCommandQueue commandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
+    size_t* sourceOriginArray, size_t* targetOriginArray, size_t* regionArray, int sourceRowPitch, int sourceSlicePitch, int targetRowPitch,
+    int targetSlicePitch, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
+{
+    cl_int error = clEnqueueCopyBufferRect(commandQueue, sourceBuffer, targetBuffer, sourceOriginArray, targetOriginArray, regionArray,
+        sourceRowPitch, sourceSlicePitch, targetRowPitch, targetSlicePitch, eventsLength, eventsWaitList, event);
+    return clToComputeContextError(error);
+}
+
 CCerror ComputeContext::releaseCommandQueue(CCCommandQueue commandQueue)
 {
     cl_int error = clReleaseCommandQueue(commandQueue);

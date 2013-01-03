@@ -151,9 +151,9 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blockingWri
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = clEnqueueWriteBuffer(m_clCommandQueue, clMemID, blockingWrite, offset,
+    CCerror err = m_context->computeContext()->enqueueWriteBuffer(m_clCommandQueue, clMemID, blockingWrite, offset,
         bufferSize, ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
-    if (err != CL_SUCCESS)
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -196,9 +196,9 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blockingWri
         return;
     }
 
-    CCerror err = clEnqueueWriteBuffer(m_clCommandQueue, clMemID, blockingWrite,
-        offset, bufferSize, bufferArray, eventsLength, clEventWaitLists, &clEventID);
-    if (err != CL_SUCCESS)
+    CCerror err = m_context->computeContext()->enqueueWriteBuffer(m_clCommandQueue, clMemID, blockingWrite, offset,
+        bufferSize, bufferArray, eventsLength, clEventWaitLists, &clEventID);
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -263,8 +263,10 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, bool blockin
     for (unsigned i = 0; i < regionArrayLength; ++i)
         regionArray[i] = region->item(i);
 
-    CCerror err = clEnqueueWriteBufferRect(m_clCommandQueue, clMemID, blockingWrite, bufferOriginArray, hostOriginArray, regionArray, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
-    if (err != CL_SUCCESS)
+    CCerror err = m_context->computeContext()->enqueueWriteBufferRect(m_clCommandQueue, clMemID, blockingWrite, bufferOriginArray,
+        hostOriginArray, regionArray, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr->baseAddress(), eventsLength,
+        clEventWaitLists, &clEventID);
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -307,9 +309,9 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead
         return;
     }
 
-    CCerror err = clEnqueueReadBuffer(m_clCommandQueue, clMemID, blockingRead,
-        offset, bufferSize, bufferArray, eventsLength, clEventWaitLists, &clEventID);
-    if (err != CL_SUCCESS)
+    CCerror err = m_context->computeContext()->enqueueReadBuffer(m_clCommandQueue, clMemID, blockingRead, offset,
+        bufferSize, bufferArray, eventsLength, clEventWaitLists, &clEventID);
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -364,12 +366,9 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, I
         regionArray[i] = region->item(i);
 
     // FIXME: '0' parameters need to be addressed later.
-    for (unsigned i = 0; i < 24; ++i)
-        printf(" Before clEnqueueReadImage => %d ptr->baseAddress() => %u   \n ", i, ((unsigned char*)ptr->baseAddress())[i]);
-    CCerror err = clEnqueueReadImage(m_clCommandQueue, clMemID, blockingRead, originArray, regionArray, rowPitch, slicePitch, ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
-    for (unsigned i = 0; i < 24; ++i)
-        printf(" After clEnqueueReadImage => %d ptr->baseAddress() => %u   \n ", i, ((unsigned char*)ptr->baseAddress())[i]);
-    if (err != CL_SUCCESS)
+    CCerror err = m_context->computeContext()->enqueueReadImage(m_clCommandQueue, clMemID, blockingRead, originArray,
+        regionArray, rowPitch, slicePitch, ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -402,8 +401,9 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* bufferSrc, bool blockingR
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = clEnqueueReadBuffer(m_clCommandQueue, clMemID, blockingRead, offset, bufferSize, ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
-    if (err != CL_SUCCESS)
+    CCerror err = m_context->computeContext()->enqueueReadBuffer(m_clCommandQueue, clMemID, blockingRead, offset, bufferSize,
+        ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -469,8 +469,10 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blocking
     for (unsigned i = 0; i < regionArrayLength; ++i)
         regionArray[i] = region->item(i);
 
-    CCerror err = clEnqueueReadBufferRect(m_clCommandQueue, clMemID, blockingRead, bufferOriginArray, hostOriginArray, regionArray, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
-    if (err != CL_SUCCESS)
+    CCerror err = m_context->computeContext()->enqueueReadBufferRect(m_clCommandQueue, clMemID, blockingRead, bufferOriginArray,
+        hostOriginArray, regionArray, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr->baseAddress(),
+        eventsLength, clEventWaitLists, &clEventID);
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -544,7 +546,7 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
     }
 
     CCerror computeContextError = m_context->computeContext()->enqueueNDRangeKernel(m_clCommandQueue, clKernelID, workItemDimensions,
-    globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, eventsLength, clEventsWaitList, &clEventID);
+        globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, eventsLength, clEventsWaitList, &clEventID);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 
     free(globalWorkSizeCopy);
@@ -630,12 +632,11 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = clEnqueueWriteImage(m_clCommandQueue, clImageID, blockingWrite, originArray, regionArray, inputRowPitch, inputSlicePitch, ptr->baseAddress(),
-        eventsLength, clEventWaitLists, &clEventID);
-    if (err != CL_SUCCESS)
+    CCerror err = m_context->computeContext()->enqueueWriteImage(m_clCommandQueue, clImageID, blockingWrite, originArray, regionArray,
+        inputRowPitch, inputSlicePitch, ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
-
 
 void WebCLCommandQueue::enqueueAcquireGLObjects(WebCLMemoryObject* memoryObjects, WebCLEventList* events, WebCLEvent* event, ExceptionCode& ec)
 {
@@ -677,8 +678,8 @@ void WebCLCommandQueue::enqueueAcquireGLObjects(WebCLMemoryObject* memoryObjects
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = clEnqueueAcquireGLObjects(m_clCommandQueue, 1, clMemIDs, eventsLength, clEventWaitLists, &clEventID);
-    if (err != CL_SUCCESS)
+    CCerror err = m_context->computeContext()->enqueueAcquireGLObjects(m_clCommandQueue, 1, clMemIDs, eventsLength, clEventWaitLists, &clEventID);
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -713,9 +714,9 @@ void WebCLCommandQueue::enqueueReleaseGLObjects(WebCLMemoryObject* memoryObjects
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = clEnqueueReleaseGLObjects(m_clCommandQueue, 1, &clMemIDs, eventsLength, clEventWaitLists, &clEventID);
-    if (err != CL_SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    CCerror error = m_context->computeContext()->enqueueReleaseGLObjects(m_clCommandQueue, 1, &clMemIDs, eventsLength, clEventWaitLists, &clEventID);
+    if (error != ComputeContext::SUCCESS) {
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return;
     }
 }
@@ -858,9 +859,9 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *srcImage, WebCLBuff
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = clEnqueueCopyImageToBuffer(m_clCommandQueue, clSrcImageID, clDstBufferID,
+    CCerror err = m_context->computeContext()->enqueueCopyImageToBuffer(m_clCommandQueue, clSrcImageID, clDstBufferID,
         srcOriginArray, regionArray, dstOffset, eventsLength, clEventWaitLists, &clEventID);
-    if (err != CL_SUCCESS)
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -927,9 +928,9 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *srcBuffer, WebCLIm
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = clEnqueueCopyBufferToImage(m_clCommandQueue, clSrcBufferID, clDstImageID, srcOffset,
+    CCerror err = m_context->computeContext()->enqueueCopyBufferToImage(m_clCommandQueue, clSrcBufferID, clDstImageID, srcOffset,
         dstOriginArray, regionArray, eventsLength, clEventWaitLists, &clEventID);
-    if (err != CL_SUCCESS)
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -962,8 +963,8 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* srcBuffer, WebCLBuffer* d
         }
     }
 
-    CCerror err = clEnqueueCopyBuffer(m_clCommandQueue, clSrcBufferID, clDstBufferID, 0, 0, cb, 0, 0, 0);
-    if (err != CL_SUCCESS)
+    CCerror err = m_context->computeContext()->enqueueCopyBuffer(m_clCommandQueue, clSrcBufferID, clDstBufferID, 0, 0, cb, 0, 0, 0);
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -1008,9 +1009,9 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* srcBuffer, WebCLBuffer* d
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = clEnqueueCopyBuffer(m_clCommandQueue, clSrcBufferID, clDstBufferID,
+    CCerror err = m_context->computeContext()->enqueueCopyBuffer(m_clCommandQueue, clSrcBufferID, clDstBufferID,
         srcOffset, dstOffset, sizeInBytes, eventsLength, clEventWaitLists, &clEventID);
-    if (err != CL_SUCCESS)
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* srcBuffer, WebCLBuffer* dstBuffer, Int32Array* srcOrigin, Int32Array* dstOrigin, Int32Array* region, int srcRowPitch, int srcSlicePitch, int dstRowPitch, int dstSlicePitch, WebCLEventList* eventWaitList, WebCLEvent* event, ExceptionCode& ec)
@@ -1083,10 +1084,10 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* srcBuffer, WebCLBuffe
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = clEnqueueCopyBufferRect(m_clCommandQueue, clSrcBufferID, clDstBufferID,
+    CCerror err = m_context->computeContext()->enqueueCopyBufferRect(m_clCommandQueue, clSrcBufferID, clDstBufferID,
         srcOriginArray, dstOriginArray, regionArray, srcRowPitch, srcSlicePitch, dstRowPitch, dstSlicePitch,
         eventsLength, clEventWaitLists, &clEventID);
-    if (err != CL_SUCCESS)
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -1181,8 +1182,8 @@ void WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, WebCLEventList* eventsW
         }
     }
 
-    CCerror err = clEnqueueTask(m_clCommandQueue, clKernelID, eventsLength, clEventsWaitList, &clEventID);
-    if (err != CL_SUCCESS) {
+    CCerror err = m_context->computeContext()->enqueueTask(m_clCommandQueue, clKernelID, eventsLength, clEventsWaitList, &clEventID);
+    if (err != ComputeContext::SUCCESS) {
         printf("Error: clEnqueueTask\n");
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
         return;

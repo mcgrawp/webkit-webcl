@@ -316,9 +316,39 @@ public:
 
     CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
-
     CCerror enqueueBarrier(CCCommandQueue, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
     CCerror enqueueMarker(CCCommandQueue, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueTask(CCCommandQueue, CCKernel, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
+    // FIXME: bufferSize and offset are to be unsigned/size_t.
+    CCerror enqueueWriteBuffer(CCCommandQueue, PlatformComputeObject buffer, bool blockingWrite, int offset, int bufferSize,
+        void* baseAddress, unsigned eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+    CCerror enqueueWriteBufferRect(CCCommandQueue, PlatformComputeObject, bool blockingWrite, size_t* bufferOriginArray,
+        size_t* hostOriginArray, size_t* regionArray, int bufferRowPitch, int bufferSlicePitch, int hostRowPitch, int hostSlicePitch,
+        void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueReadBuffer(CCCommandQueue, PlatformComputeObject buffer, bool blockingRead, int offset, int bufferSize,
+        void* baseAddress, unsigned eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+    CCerror enqueueReadBufferRect(CCCommandQueue, PlatformComputeObject buffer, bool blockingRead, size_t* bufferOriginArray,
+        size_t* hostOriginArray, size_t* regionArray, int bufferRowPitch, int bufferSlicePitch, int hostRowPitch, int hostSlicePitch,
+        void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueReadImage(CCCommandQueue, PlatformComputeObject image, bool blockingRead, size_t* originArray, size_t* regionArray,
+        int rowPitch, int slicePitch, void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueWriteImage(CCCommandQueue, PlatformComputeObject image, bool blockingWrite, size_t* originArray, size_t* regionArray,
+        int rowPitch, int slicePitch, void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueAcquireGLObjects(CCCommandQueue, unsigned numberOfObjects, PlatformComputeObject* objects, unsigned eventsLength,
+        CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueReleaseGLObjects(CCCommandQueue, unsigned numberOfObjects, PlatformComputeObject* objects, unsigned eventsLength,
+        CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueCopyImage(CCCommandQueue, PlatformComputeObject originImage, PlatformComputeObject targetImage, size_t* sourceOriginArray,
+        size_t* targetOriginArray, size_t* regionArray, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueCopyImageToBuffer(CCCommandQueue, PlatformComputeObject sourceImage, PlatformComputeObject targetBuffer,
+        size_t* sourceOriginArray, size_t* regionArray, int targetOffset, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueCopyBufferToImage(CCCommandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetImage, int srcOffset,
+        size_t* targetOriginArray, size_t* regionArray, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueCopyBuffer(CCCommandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
+        size_t sourceOffset, size_t targetOffset, size_t sizeInBytes, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueCopyBufferRect(CCCommandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
+        size_t* sourceOriginArray, size_t* targetOriginArray, size_t* regionArray, int sourceRowPitch, int sourceSlicePitch,
+        int targetRowPitch, int targetSlicePitch, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
 
     CCerror releaseCommandQueue(CCCommandQueue);
     CCerror finishCommandQueue(CCCommandQueue);
