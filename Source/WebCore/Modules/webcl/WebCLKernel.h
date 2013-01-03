@@ -1,17 +1,17 @@
 /*
 * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
 * are met:
-* 
+*
 * 1.  Redistributions of source code must retain the above copyright
 *     notice, this list of conditions and the following disclaimer.
-* 
+*
 * 2.  Redistributions in binary form must reproduce the above copyright
 *     notice, this list of conditions and the following disclaimer in the
 *     documentation and/or other materials provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
 * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -29,13 +29,8 @@
 #define WebCLKernel_h
 
 #include "ExceptionCode.h"
-#include "WebCLDevice.h"
-#include "WebCLMemoryObject.h"
 #include "WebCLGetInfo.h"
-#include "WebCLDeviceList.h"
-#include "WebCLKernelList.h"
 #include "WebCLKernelTypes.h"
-
 #include <OpenCL/opencl.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -44,34 +39,36 @@ namespace WebCore {
 
 class WebCL;
 class WebCLGetInfo;
+class WebCLDevice;
+class WebCLMemoryObject;
 
 class WebCLKernel : public RefCounted<WebCLKernel> {
 public:
-	virtual ~WebCLKernel();
-	static PassRefPtr<WebCLKernel> create(WebCLContext*, cl_kernel);
-	WebCLGetInfo getInfo (int, ExceptionCode&);
-	WebCLGetInfo getWorkGroupInfo(WebCLDevice*, int, ExceptionCode&);
+    virtual ~WebCLKernel();
+    static PassRefPtr<WebCLKernel> create(WebCLContext*, cl_kernel);
+    WebCLGetInfo getInfo(int, ExceptionCode&);
+    WebCLGetInfo getWorkGroupInfo(WebCLDevice*, int, ExceptionCode&);
 
     void setArg(unsigned, PassRefPtr<WebCLKernelTypeValue>, unsigned, ExceptionCode&);
     void setArg(unsigned, WebCLMemoryObject*, ExceptionCode&);
     void setArg(unsigned, unsigned, unsigned, ExceptionCode&);
     void setArg(unsigned, unsigned, ExceptionCode&);
 
-	//unsigned long getKernelWorkGroupInfo(WebCLDeviceList*, int);
-	void setDevice(RefPtr<WebCLDevice>);
-	cl_kernel getCLKernel();
+    void setDevice(PassRefPtr<WebCLDevice>);
+    cl_kernel getCLKernel();
 
 private:
-	WebCLKernel(WebCLContext*, cl_kernel);
+    WebCLKernel(WebCLContext*, cl_kernel);
+    // private fucntions simulating opencl API for WebCLKernelTypeValue object.
+    template<class T> unsigned clSetKernelArgPrimitiveType(cl_kernel, RefPtr<WebCLKernelTypeValue>, T, unsigned, int);
+    unsigned clSetKernelArgVectorType(cl_kernel, RefPtr<WebCLKernelTypeValue>, RefPtr<WebCLKernelTypeVector>, unsigned,
+        int, unsigned);
 
-	template<class T> unsigned int clSetKernelArgPrimitiveType(cl_kernel cl_kernel_id, PassRefPtr<WebCLKernelTypeValue> kernelObject, T nodeId, unsigned int argIndex, int size);
-	unsigned int clSetKernelArgVectorType(cl_kernel cl_kernel_id,PassRefPtr<WebCLKernelTypeValue> kernelObject, RefPtr<WebCLKernelTypeVector> array , unsigned int argIndex, int size,  unsigned int length);
-
-	WebCLContext* m_context;
-	cl_kernel m_cl_kernel;
-	RefPtr<WebCLDevice> m_device_id;
-	Vector<RefPtr<WebCLKernel> > m_kernel_list;
-	long m_num_kernels;
+    WebCLContext* m_context;
+    cl_kernel m_clKernel;
+    RefPtr<WebCLDevice> m_deviceID;
+    Vector<RefPtr<WebCLKernel> > m_kernelList;
+    long m_numKernels;
 };
 
 } // namespace WebCore
