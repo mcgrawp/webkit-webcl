@@ -129,10 +129,6 @@ module webcl {
 
     void enqueueCopyBuffer(in WebCLBuffer srcBuffer,
             in WebCLBuffer dstBuffer,
-            in long cb) raises(DOMException);
-
-    void enqueueCopyBuffer(in WebCLBuffer srcBuffer,
-            in WebCLBuffer dstBuffer,
             in long srcOffset,
             in long dstOffset,
             in long sizeInBytes,

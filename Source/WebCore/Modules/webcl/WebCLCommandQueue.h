@@ -187,7 +187,6 @@ public:
         enqueueReleaseGLObjects(memoryList, 0, 0, ec);
     }
 
-    void enqueueCopyBuffer(WebCLBuffer*, WebCLBuffer*, int, ExceptionCode&);
     void enqueueCopyBuffer(WebCLBuffer*, WebCLBuffer*, int, int, int, WebCLEventList*, WebCLEvent*, ExceptionCode&);
     void enqueueCopyBuffer(WebCLBuffer* srcBuffer, WebCLBuffer* dstBuffer, int srcOffset, int dstOffset, int sizeInBytes, WebCLEventList* events, ExceptionCode& ec)
     {

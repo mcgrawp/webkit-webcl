@@ -138,9 +138,8 @@ function SimulateCL(cl) {
     queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize );
 
     queue.finish();
-    queue.enqueueCopyBuffer(nxtPosBuffer, curPosBuffer, bufferSize);
-
-    queue.enqueueCopyBuffer(nxtVelBuffer, curVelBuffer, bufferSize);
+    queue.enqueueCopyBuffer(nxtPosBuffer, curPosBuffer, 0, 0, bufferSize);
+    queue.enqueueCopyBuffer(nxtVelBuffer, curVelBuffer, 0, 0, bufferSize);
 
     if (userData.isGLCLshared) {
       //queue.enqueueReleaseGLObjects(curPosBuffer, null);

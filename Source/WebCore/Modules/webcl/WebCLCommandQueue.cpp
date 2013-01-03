@@ -934,40 +934,6 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *srcBuffer, WebCLIm
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* srcBuffer, WebCLBuffer* dstBuffer, int cb, ExceptionCode& ec)
-{
-    cl_mem clSrcBufferID = 0;
-    cl_mem clDstBufferID = 0;
-
-    if (!m_clCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
-        return;
-    }
-
-    if (srcBuffer) {
-        clSrcBufferID = srcBuffer->getCLBuffer();
-        if (!clSrcBufferID) {
-            printf("Error: clSrcBufferID null\n");
-            ec = WebCLException::INVALID_MEM_OBJECT;
-            return;
-        }
-    }
-
-    if (dstBuffer) {
-        clDstBufferID = dstBuffer->getCLBuffer();
-        if (!clDstBufferID) {
-            printf("Error: clDstBufferID null\n");
-            ec = WebCLException::FAILURE;
-            return;
-        }
-    }
-
-    CCerror err = m_context->computeContext()->enqueueCopyBuffer(m_clCommandQueue, clSrcBufferID, clDstBufferID, 0, 0, cb, 0, 0, 0);
-    if (err != ComputeContext::SUCCESS)
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-}
-
 void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* srcBuffer, WebCLBuffer* dstBuffer, int srcOffset, int dstOffset, int sizeInBytes, WebCLEventList* events,
     WebCLEvent* event, ExceptionCode& ec)
 {
