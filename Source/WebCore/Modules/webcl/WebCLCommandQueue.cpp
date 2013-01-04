@@ -210,9 +210,6 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, bool blockin
     cl_event clEventID = 0;
     cl_event* clEventWaitLists = 0;
     int eventsLength = 0;
-    size_t* bufferOriginArray = 0;
-    size_t* hostOriginArray = 0;
-    size_t* regionArray = 0;
 
     if (!m_clCommandQueue) {
         printf("Error: Invalid Command Queue\n");
@@ -236,36 +233,25 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, bool blockin
     if (event)
         clEventID = event->getCLEvent();
 
-    unsigned bufferOriginArrayLength = bufferOrigin->length();
-    bufferOriginArray = (size_t*) malloc(bufferOriginArrayLength * sizeof(size_t));
-    if (!bufferOriginArray) {
-        printf("Error: Error allocating memory");
+    if (bufferOrigin->length() < 3
+        || hostOrigin->length() < 3
+        || region->length() < 3) {
+        ec = WebCLException::FAILURE;
         return;
     }
-    for (unsigned i = 0; i < bufferOriginArrayLength; ++i)
-        bufferOriginArray[i] = bufferOrigin->item(i);
 
-    unsigned hostOriginArrayLength = hostOrigin->length();
-    hostOriginArray = (size_t*) malloc(hostOriginArrayLength * sizeof(size_t));
-    if (!hostOriginArray) {
-        printf("Error: Error allocating memory");
-        return;
+    Vector<size_t, 3> bufferOriginData;
+    Vector<size_t, 3> hostOriginData;
+    Vector<size_t, 3> regionData;
+
+    for (size_t i = 0; i < 3; ++i) {
+        bufferOriginData[i] = bufferOrigin->item(i);
+        hostOriginData[i] = hostOrigin->item(i);
+        regionData[i] = region->item(i);
     }
-    for (unsigned i = 0; i < hostOriginArrayLength; ++i)
-        hostOriginArray[i] = hostOrigin->item(i);
 
-    unsigned regionArrayLength = region->length();
-    regionArray = (size_t*) malloc(regionArrayLength * sizeof(size_t));
-    if (!regionArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-    for (unsigned i = 0; i < regionArrayLength; ++i)
-        regionArray[i] = region->item(i);
+    CCerror err = m_context->computeContext()->enqueueWriteBufferRect(m_clCommandQueue, clMemID, blockingWrite, bufferOriginData.data(), hostOriginData.data(), regionData.data(), bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
 
-    CCerror err = m_context->computeContext()->enqueueWriteBufferRect(m_clCommandQueue, clMemID, blockingWrite, bufferOriginArray,
-        hostOriginArray, regionArray, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr->baseAddress(), eventsLength,
-        clEventWaitLists, &clEventID);
     if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -315,15 +301,12 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, Int32Array* origin, Int32Array* region, int rowPitch, int slicePitch,
-    ArrayBufferView* ptr, WebCLEventList* events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, Int32Array* origin, Int32Array* region, int rowPitch, int slicePitch, ArrayBufferView* ptr, WebCLEventList* events, WebCLEvent* event, ExceptionCode& ec)
 {
     cl_mem clMemID = 0;
     cl_event clEventID = 0;
     cl_event* clEventWaitLists = 0;
     int eventsLength = 0;
-    size_t* originArray = 0;
-    size_t* regionArray = 0;
 
     if (!m_clCommandQueue) {
         printf("Error: Invalid Command Queue\n");
@@ -347,27 +330,21 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, I
     if (event)
         clEventID = event->getCLEvent();
 
-    unsigned originArrayLength = origin->length();
-    originArray = (size_t*) malloc(originArrayLength * sizeof(size_t));
-    if (!originArray) {
-        printf("Error: Error allocating memory");
+    if (origin->length() < 3
+        || region->length() < 3) {
+        ec = WebCLException::FAILURE;
         return;
     }
-    for (unsigned i = 0; i < originArrayLength; ++i)
-        originArray[i] = origin->item(i);
 
-    unsigned regionArrayLength = region->length();
-    regionArray = (size_t*) malloc(regionArrayLength * sizeof(size_t));
-    if (!regionArray) {
-        printf("Error: Error allocating memory");
-        return;
+    Vector<size_t, 3> originData;
+    Vector<size_t, 3> regionData;
+    for (size_t i = 0; i < 3; ++i) {
+        originData[i] = origin->item(i);
+        regionData[i] = region->item(i);
     }
-    for (unsigned i = 0; i < regionArrayLength; ++i)
-        regionArray[i] = region->item(i);
 
-    // FIXME: '0' parameters need to be addressed later.
-    CCerror err = m_context->computeContext()->enqueueReadImage(m_clCommandQueue, clMemID, blockingRead, originArray,
-        regionArray, rowPitch, slicePitch, ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
+    CCerror err = m_context->computeContext()->enqueueReadImage(m_clCommandQueue, clMemID, blockingRead, originData.data(), regionData.data(), rowPitch, slicePitch, ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
+
     if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -416,9 +393,6 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blocking
     cl_event clEventID = 0;
     cl_event* clEventWaitLists = 0;
     int eventsLength = 0;
-    size_t* bufferOriginArray = 0;
-    size_t* hostOriginArray = 0;
-    size_t* regionArray = 0;
 
     if (!m_clCommandQueue) {
         printf("Error: Invalid Command Queue\n");
@@ -442,36 +416,24 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blocking
     if (event)
         clEventID = event->getCLEvent();
 
-    unsigned bufferOriginArrayLength = bufferOrigin->length();
-    bufferOriginArray = (size_t*) malloc(bufferOriginArrayLength * sizeof(size_t));
-    if (!bufferOriginArray) {
-        printf("Error: Error allocating memory");
+    if (bufferOrigin->length() < 3
+        || hostOrigin->length() < 3
+        || region->length() < 3) {
+        ec = WebCLException::FAILURE;
         return;
     }
-    for (unsigned i = 0; i < bufferOriginArrayLength; ++i)
-        bufferOriginArray[i] = bufferOrigin->item(i);
 
-    unsigned hostOriginArrayLength = hostOrigin->length();
-    hostOriginArray = (size_t*) malloc(hostOriginArrayLength * sizeof(size_t));
-    if (!hostOriginArray) {
-        printf("Error: Error allocating memory");
-        return;
+    Vector<size_t, 3> bufferOriginData;
+    Vector<size_t, 3> hostOriginData;
+    Vector<size_t, 3> regionData;
+    for (size_t i = 0; i < 3; ++i) {
+        bufferOriginData[i] = bufferOrigin->item(i);
+        hostOriginData[i] = hostOrigin->item(i);
+        regionData[i] = region->item(i);
     }
-    for (unsigned i = 0; i < hostOriginArrayLength; ++i)
-        hostOriginArray[i] = hostOrigin->item(i);
 
-    unsigned regionArrayLength = region->length();
-    regionArray = (size_t*) malloc(regionArrayLength * sizeof(size_t));
-    if (!regionArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-    for (unsigned i = 0; i < regionArrayLength; ++i)
-        regionArray[i] = region->item(i);
+    CCerror err = m_context->computeContext()->enqueueReadBufferRect(m_clCommandQueue, clMemID, blockingRead, bufferOriginData.data(), hostOriginData.data(), regionData.data(), bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
 
-    CCerror err = m_context->computeContext()->enqueueReadBufferRect(m_clCommandQueue, clMemID, blockingRead, bufferOriginArray,
-        hostOriginArray, regionArray, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr->baseAddress(),
-        eventsLength, clEventWaitLists, &clEventID);
     if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -484,10 +446,6 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
     cl_event* clEventsWaitList = 0;
     cl_event clEventID;
     int eventsLength = 0;
-
-    size_t* globalWorkSizeCopy = 0;
-    size_t* localWorkSizeCopy = 0;
-    size_t* globalWorkOffsetCopy = 0;
     int workItemDimensions = 0;
 
     if (!m_clCommandQueue) {
@@ -514,47 +472,28 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
         clEventID = event->getCLEvent();
 
     // FIXME: The block of code is repeated all over this class.
+    Vector<size_t> globalWorkSizeCopy;
     if (globalWorkSize) {
-        globalWorkSizeCopy = (size_t*) malloc(globalWorkSize->length() * sizeof(size_t));
-        if (!globalWorkSizeCopy) {
-            printf("Error: Error allocating memory");
-            return;
-        }
-        for (unsigned i = 0; i < globalWorkSize->length(); ++i)
-            globalWorkSizeCopy[i] = globalWorkSize->item(i);
+        for (size_t i = 0; i < globalWorkSize->length(); ++i)
+            globalWorkSizeCopy.append(globalWorkSize->item(i));
         workItemDimensions = globalWorkSize->length();
     }
 
+    Vector<size_t> localWorkSizeCopy;
     if (localWorkSize) {
-        localWorkSizeCopy = (size_t*) malloc(localWorkSize->length() * sizeof(size_t));
-        if (!localWorkSizeCopy) {
-            printf("Error: Error allocating memory");
-            return;
-        }
-        for (unsigned i = 0; i < localWorkSize->length(); ++i)
-            localWorkSizeCopy[i] = localWorkSize->item(i);
+        for (size_t i = 0; i < localWorkSize->length(); ++i)
+            localWorkSizeCopy.append(localWorkSize->item(i));
     }
 
+    Vector<size_t> globalWorkOffsetCopy;
     if (globalWorkOffsets) {
-        globalWorkOffsetCopy = (size_t*) malloc(globalWorkOffsets->length() * sizeof(size_t));
-        if (!globalWorkOffsetCopy) {
-            printf("Error: Error allocating memory");
-            return;
-        }
         for (unsigned i = 0; i < globalWorkOffsets->length(); ++i)
-            globalWorkOffsetCopy[i] = globalWorkOffsets->item(i);
+            globalWorkOffsetCopy.append(globalWorkOffsets->item(i));
     }
 
-    CCerror computeContextError = m_context->computeContext()->enqueueNDRangeKernel(m_clCommandQueue, clKernelID, workItemDimensions,
-        globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, eventsLength, clEventsWaitList, &clEventID);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
+    CCerror computeContextError = m_context->computeContext()->enqueueNDRangeKernel(m_clCommandQueue, clKernelID, workItemDimensions, globalWorkOffsetCopy.data(), globalWorkSizeCopy.data(), localWorkSizeCopy.data(), eventsLength, clEventsWaitList, &clEventID);
 
-    free(globalWorkSizeCopy);
-    globalWorkSizeCopy = 0;
-    free(localWorkSizeCopy);
-    localWorkSizeCopy = 0;
-    free(globalWorkOffsetCopy);
-    globalWorkOffsetCopy = 0;
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
 void WebCLCommandQueue::finish(ExceptionCode& ec)
@@ -588,8 +527,6 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
     cl_event* clEventWaitLists = 0;
     cl_event clEventID = 0;
     int eventsLength = 0;
-    size_t* originArray = 0;
-    size_t* regionArray = 0;
 
     if (!m_clCommandQueue) {
         printf("Error: Invalid Command Queue\n");
@@ -606,24 +543,6 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
         }
     }
 
-    unsigned originArrayLength = origin->length();
-    originArray = (size_t*) malloc(originArrayLength * sizeof(size_t));
-    if (!originArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-    for (unsigned i = 0; i < originArrayLength; ++i)
-        originArray[i] = origin->item(i);
-
-    unsigned regionArrayLength = region->length();
-    regionArray = (size_t*) malloc(regionArrayLength * sizeof(size_t));
-    if (!regionArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-    for (unsigned i = 0; i < regionArrayLength; ++i)
-        regionArray[i] = region->item(i);
-
     if (eventWaitList) {
         clEventWaitLists = eventWaitList->getCLEvents();
         eventsLength = eventWaitList->length();
@@ -632,8 +551,21 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = m_context->computeContext()->enqueueWriteImage(m_clCommandQueue, clImageID, blockingWrite, originArray, regionArray,
-        inputRowPitch, inputSlicePitch, ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
+    if (origin->length() < 3
+        || region->length() < 3) {
+        ec = WebCLException::FAILURE;
+        return;
+    }
+
+    Vector<size_t, 3> originData;
+    Vector<size_t, 3> regionData;
+    for (size_t i = 0; i < 3; ++i) {
+        originData[i] = origin->item(i);
+        regionData[i] = region->item(i);
+    }
+
+    CCerror err = m_context->computeContext()->enqueueWriteImage(m_clCommandQueue, clImageID, blockingWrite, originData.data(), regionData.data(), inputRowPitch, inputSlicePitch, ptr->baseAddress(), eventsLength, clEventWaitLists, &clEventID);
+
     if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -729,10 +661,6 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* srcImage, WebCLImage* dstIm
     cl_event clEventID = 0;
     int eventsLength = 0;
 
-    size_t* srcOriginArray = 0;
-    size_t* dstOriginArray = 0;
-    size_t* regionArray = 0;
-
     if (!m_clCommandQueue) {
         printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
@@ -757,33 +685,6 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* srcImage, WebCLImage* dstIm
         }
     }
 
-    unsigned srcOriginArrayLength = srcOrigin->length();
-    srcOriginArray = (size_t*) malloc(srcOriginArrayLength * sizeof(size_t));
-    if (!srcOriginArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-    for (unsigned i = 0; i < srcOriginArrayLength; ++i)
-        srcOriginArray[i] = srcOrigin->item(i);
-
-    unsigned dstOriginArrayLength = dstOrigin->length();
-    dstOriginArray = (size_t*) malloc(dstOriginArrayLength * sizeof(size_t));
-    if (!dstOriginArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-    for (unsigned i = 0; i < dstOriginArrayLength; ++i)
-        dstOriginArray[i] = dstOrigin->item(i);
-
-    unsigned regionArrayLength = region->length();
-    regionArray = (size_t*) malloc(regionArrayLength * sizeof(size_t));
-    if (!regionArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-    for (unsigned i = 0; i < regionArrayLength; ++i)
-        regionArray[i] = region->item(i);
-
     if (events) {
         clEventWaitLists = events->getCLEvents();
         eventsLength = events->length();
@@ -792,8 +693,24 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* srcImage, WebCLImage* dstIm
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = clEnqueueCopyImage(m_clCommandQueue, clSrcImageID, clDstImageID,
-        srcOriginArray, dstOriginArray, regionArray, eventsLength, clEventWaitLists, &clEventID);
+    if (srcOrigin->length() < 3
+        || dstOrigin->length() < 3
+        || region->length() < 3) {
+        ec = WebCLException::FAILURE;
+        return;
+    }
+
+    Vector<size_t, 3> srcOriginData;
+    Vector<size_t, 3> dstOriginData;
+    Vector<size_t, 3> regionData;
+
+    for (size_t i = 0; i < 3; ++i) {
+        srcOriginData[i] = srcOrigin->item(i);
+        dstOriginData[i] = dstOrigin->item(i);
+        regionData[i] = region->item(i);
+    }
+
+    CCerror err = clEnqueueCopyImage(m_clCommandQueue, clSrcImageID, clDstImageID, srcOriginData.data(), dstOriginData.data(), regionData.data(), eventsLength, clEventWaitLists, &clEventID);
     if (err != CL_SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -806,8 +723,6 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *srcImage, WebCLBuff
     cl_event* clEventWaitLists = 0;
     cl_event clEventID = 0;
     int eventsLength = 0;
-    size_t* srcOriginArray = 0;
-    size_t* regionArray = 0;
 
     if (!m_clCommandQueue) {
         printf("Error: Invalid Command Queue\n");
@@ -833,24 +748,6 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *srcImage, WebCLBuff
         }
     }
 
-    unsigned srcOriginArrayLength = srcOrigin->length();
-    srcOriginArray = (size_t*) malloc(srcOriginArrayLength * sizeof(size_t));
-    if (!srcOriginArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-    for (unsigned i = 0; i < srcOriginArrayLength; ++i)
-        srcOriginArray[i] = srcOrigin->item(i);
-
-    unsigned regionArrayLength = region->length();
-    regionArray = (size_t*)malloc(regionArrayLength*sizeof(size_t));
-    if (!regionArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-    for (unsigned i = 0; i < regionArrayLength; ++i)
-        regionArray[i] = region->item(i);
-
     if (eventWaitList) {
         clEventWaitLists = eventWaitList->getCLEvents();
         eventsLength = eventWaitList->length();
@@ -859,8 +756,22 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *srcImage, WebCLBuff
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = m_context->computeContext()->enqueueCopyImageToBuffer(m_clCommandQueue, clSrcImageID, clDstBufferID,
-        srcOriginArray, regionArray, dstOffset, eventsLength, clEventWaitLists, &clEventID);
+    if (srcOrigin->length() < 3
+        || region->length() < 3) {
+        ec = WebCLException::FAILURE;
+        return;
+    }
+
+    Vector<size_t, 3> srcOriginData;
+    Vector<size_t, 3> regionData;
+
+    for (size_t i = 0; i < 3; ++i) {
+        srcOriginData[i] = srcOrigin->item(i);
+        regionData[i] = region->item(i);
+    }
+
+    CCerror err = m_context->computeContext()->enqueueCopyImageToBuffer(m_clCommandQueue, clSrcImageID, clDstBufferID, srcOriginData.data(), regionData.data(), dstOffset, eventsLength, clEventWaitLists, &clEventID);
+
     if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -873,8 +784,6 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *srcBuffer, WebCLIm
     cl_event* clEventWaitLists = 0;
     cl_event clEventID = 0;
     int eventsLength = 0;
-    size_t* dstOriginArray = 0;
-    size_t* regionArray = 0;
 
     if (!m_clCommandQueue) {
         printf("Error: Invalid Command Queue\n");
@@ -900,26 +809,6 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *srcBuffer, WebCLIm
         }
     }
 
-    unsigned dstOriginArrayLength = dstOrigin->length();
-    dstOriginArray = (size_t*) malloc(dstOriginArrayLength * sizeof(size_t));
-    if (!dstOriginArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-
-    for (unsigned i = 0; i < dstOriginArrayLength; ++i)
-        dstOriginArray[i] = dstOrigin->item(i);
-
-    unsigned regionArrayLength = region->length();
-    regionArray = (size_t*) malloc(regionArrayLength * sizeof(size_t));
-    if (!regionArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-
-    for (unsigned i = 0; i < regionArrayLength; ++i)
-        regionArray[i] = region->item(i);
-
     if (eventWaitList) {
         clEventWaitLists = eventWaitList->getCLEvents();
         eventsLength = eventWaitList->length();
@@ -928,8 +817,26 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *srcBuffer, WebCLIm
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = m_context->computeContext()->enqueueCopyBufferToImage(m_clCommandQueue, clSrcBufferID, clDstImageID, srcOffset,
-        dstOriginArray, regionArray, eventsLength, clEventWaitLists, &clEventID);
+
+    if (dstOrigin->length() < 3
+        || region->length() < 3) {
+        ec = WebCLException::FAILURE;
+        return;
+    }
+
+    Vector<size_t, 3> dstOriginData;
+    Vector<size_t, 3> regionData;
+
+    for (size_t i = 0; i < 3; ++i) {
+        dstOriginData[i] = dstOrigin->item(i);
+        regionData[i] = region->item(i);
+    }
+
+    if (event)
+        clEventID = event->getCLEvent();
+
+    CCerror err = m_context->computeContext()->enqueueCopyBufferToImage(m_clCommandQueue, clSrcBufferID, clDstImageID, srcOffset, dstOriginData.data(), regionData.data(), eventsLength, clEventWaitLists, &clEventID);
+
     if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -980,6 +887,7 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* srcBuffer, WebCLBuffer* d
     if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
+
 void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* srcBuffer, WebCLBuffer* dstBuffer, Int32Array* srcOrigin, Int32Array* dstOrigin, Int32Array* region, int srcRowPitch, int srcSlicePitch, int dstRowPitch, int dstSlicePitch, WebCLEventList* eventWaitList, WebCLEvent* event, ExceptionCode& ec)
 {
     cl_mem clSrcBufferID = 0;
@@ -987,9 +895,6 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* srcBuffer, WebCLBuffe
     cl_event* clEventWaitLists = 0;
     cl_event clEventID = 0;
     int eventsLength = 0;
-    size_t* srcOriginArray = 0;
-    size_t* dstOriginArray = 0;
-    size_t* regionArray = 0;
 
     if (!m_clCommandQueue) {
         printf("Error: Invalid Command Queue\n");
@@ -1015,33 +920,6 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* srcBuffer, WebCLBuffe
         }
     }
 
-    unsigned srcOriginArrayLength = srcOrigin->length();
-    srcOriginArray = (size_t*) malloc(srcOriginArrayLength * sizeof(size_t));
-    if (!srcOriginArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-    for (unsigned i = 0; i < srcOriginArrayLength; ++i)
-        srcOriginArray[i] = srcOrigin->item(i);
-
-    unsigned dstOriginArrayLength = dstOrigin->length();
-    dstOriginArray = (size_t*) malloc(dstOriginArrayLength * sizeof(size_t));
-    if (!dstOriginArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-    for (unsigned i = 0; i < dstOriginArrayLength; ++i)
-        dstOriginArray[i] = dstOrigin->item(i);
-
-    unsigned regionArrayLength = region->length();
-    regionArray = (size_t*) malloc(regionArrayLength * sizeof(size_t));
-    if (!regionArray) {
-        printf("Error: Error allocating memory");
-        return;
-    }
-    for (unsigned i = 0; i < regionArrayLength; ++i)
-        regionArray[i] = region->item(i);
-
     if (eventWaitList) {
         clEventWaitLists = eventWaitList->getCLEvents();
         eventsLength = eventWaitList->length();
@@ -1050,9 +928,25 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* srcBuffer, WebCLBuffe
     if (event)
         clEventID = event->getCLEvent();
 
-    CCerror err = m_context->computeContext()->enqueueCopyBufferRect(m_clCommandQueue, clSrcBufferID, clDstBufferID,
-        srcOriginArray, dstOriginArray, regionArray, srcRowPitch, srcSlicePitch, dstRowPitch, dstSlicePitch,
-        eventsLength, clEventWaitLists, &clEventID);
+    if (srcOrigin->length() < 3
+        || dstOrigin->length() < 3
+        || region->length() < 3) {
+        ec = WebCLException::FAILURE;
+        return;
+    }
+
+    Vector<size_t, 3> srcOriginData;
+    Vector<size_t, 3> dstOriginData;
+    Vector<size_t, 3> regionData;
+
+    for (size_t i = 0; i < 3; ++i) {
+        srcOriginData[i] = srcOrigin->item(i);
+        dstOriginData[i] = dstOrigin->item(i);
+        regionData[i] = region->item(i);
+    }
+
+    CCerror err = m_context->computeContext()->enqueueCopyBufferRect(m_clCommandQueue, clSrcBufferID, clDstBufferID, srcOriginData.data(), dstOriginData.data(), regionData.data(), srcRowPitch, srcSlicePitch, dstRowPitch, dstSlicePitch, eventsLength, clEventWaitLists, &clEventID);
+
     if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
