@@ -231,14 +231,15 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties
     }
 
     CCerror error;
-    RefPtr<WebCLContext> contextObj = WebCLContext::create(this, propIndex ? contextProperties : 0, numofDevice, clDevice, error);
-    if (error == CL_SUCCESS && contextObj) {
-        m_context = contextObj;
-        return contextObj;
+    RefPtr<WebCLContext> webCLContext = WebCLContext::create(this, propIndex ? contextProperties : 0, numofDevice, clDevice, error);
+    if (!webCLContext) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return 0;
     }
 
-    ec = error;
-    return 0;
+    m_context = webCLContext;
+    return webCLContext;
 }
 
 /*

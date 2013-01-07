@@ -52,17 +52,22 @@ WebCLContext::~WebCLContext()
 {
 }
 
-PassRefPtr<WebCLContext> WebCLContext::create(WebCL* computeContext, CCContextProperties* contextProperties,
-    CCuint numberDevices, CCDeviceID *devices, CCerror& error)
+PassRefPtr<WebCLContext> WebCLContext::create(WebCL* context, CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID *devices, CCerror& error)
 {
-    return adoptRef(new WebCLContext(computeContext, contextProperties, numberDevices, devices, error));
+    RefPtr<ComputeContext> computeContext = ComputeContext::create(contextProperties, numberDevices, devices, error);
+    if (!computeContext) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        return 0;
+    }
+
+    return adoptRef(new WebCLContext(context, computeContext));
 }
 
-WebCLContext::WebCLContext(WebCL* compute_context, CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror& error)
+WebCLContext::WebCLContext(WebCL* context, RefPtr<ComputeContext>& computeContext)
     : m_videoCache(4) // FIXME: Why '4'?
-    , m_context(compute_context)
+    , m_context(context)
 {
-    m_computeContext = ComputeContext::create(contextProperties, numberDevices, devices, error);
+    m_computeContext = computeContext;
     m_clContext = m_computeContext->context();
 }
 
