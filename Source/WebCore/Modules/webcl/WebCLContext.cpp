@@ -197,6 +197,7 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDeviceList* 
     CCerror error = 0;
     clCommandqueueID = m_computeContext->createCommandQueue(*clDevice, commandQueueProp, error);
     if (!clCommandqueueID) {
+        ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
@@ -223,6 +224,7 @@ PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource,
     CCerror error = 0;
     clProgramID = m_computeContext->createProgram(kernelSource, error);
     if (!clProgramID) {
+        ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
@@ -250,6 +252,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int flags, int size, ArrayBuf
     CCerror error;
     clMemID = m_computeContext->createBuffer(flags, size, vData, error);
     if (!clMemID) {
+        ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
@@ -276,6 +279,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, ImageData *ptr,
     CCerror error;
     clMemID = m_computeContext->createBuffer(memFlags, bufferSize, buffer, error);
     if (!clMemID) {
+        ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
@@ -315,6 +319,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, HTMLCanvasEleme
     CCerror error = 0;
     clMemID = m_computeContext->createBuffer(memFlags, bufferSize, image, error);
     if (!clMemID) {
+        ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
@@ -529,6 +534,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(int flags, WebGLBuffer*
     CCerror error;
     clMemID = m_computeContext->createFromGLBuffer(flags, bufferID, error);
     if (!clMemID) {
+        ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
@@ -555,6 +561,7 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderBuffer(int flags, WebGLRe
     CCerror error;
     clMemID = m_computeContext->createFromGLRenderbuffer(flags, rbufID, error);
     if (!clMemID) {
+        ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
@@ -575,6 +582,7 @@ PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCords, int addrMod
     CCerror error;
     clSamplerID = m_computeContext->createSampler(normCords, addrMode, fltrMode, error);
     if (!clSamplerID) {
+        ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
@@ -595,6 +603,7 @@ PassRefPtr<WebCLMemoryObject> WebCLContext::createFromGLTexture2D(int flags, GC3
     CCerror error;
     clMemID = m_computeContext->createFromGLTexture2D(flags, textureTarget, miplevel, texture, error);
     if (!clMemID) {
+        ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
@@ -736,6 +745,7 @@ PassRefPtr<WebCLImageDescriptorList> WebCLContext::getSupportedImageFormats(int 
     cl_uint uintNumEntries = 0;
     CCerror error = m_computeContext->supportedImageFormats(memFlags, imageType, 0, &uintNumEntries, 0);
 
+    // FIXME: Should the error code be checked here instead?
     if (!uintNumEntries) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;

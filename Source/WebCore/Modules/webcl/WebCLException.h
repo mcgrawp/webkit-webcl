@@ -43,6 +43,8 @@ public:
         return adoptRef(new WebCLException(description));
     }
 
+    // Setting the OFFSET to 0 here allows to have a SUCCESS exception, since
+    // setDOMException bails out earlier if 'ec' is equal to 0.
     static const int WebCLExceptionOffset = 0;
     static const int WebCLExceptionMax = 51;
 

@@ -207,6 +207,8 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int paramName, Exce
         printf("Error: UNSUPPORTED Program Build Info   Type = %d ", paramName);
         return WebCLGetInfo();
     }
+
+    ASSERT(err != CL_SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
 }
@@ -221,10 +223,12 @@ PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, Exc
 
     CCerror error;
     CCKernel computeContextKernel = m_context->computeContext()->createKernel(m_clProgram, kernelName, error);
-    if (error != ComputeContext::SUCCESS) {
+    if (!computeContextKernel) {
+        ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
+
     RefPtr<WebCLKernel> webclKernel = WebCLKernel::create(m_context, computeContextKernel);
     return webclKernel;
 }
