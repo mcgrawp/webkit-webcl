@@ -226,25 +226,16 @@ static cl_mem_flags computeMemoryTypeToCL(int memoryType)
     return clMemoryType;
 }
 
-ComputeContext::ComputeContext(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror* error)
+ComputeContext::ComputeContext(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror& error)
 {
-    CCint clError;
+    cl_int clError;
     m_clContext = clCreateContext(contextProperties, numberDevices, devices, 0, 0, &clError);
-
-    // FIXME: Is this special handling of SUCCESS needed? It should not be.
-    if (clError == CL_SUCCESS) {
-        *error = clError;
-        return;
-    }
-
-    int computeContextError = clToComputeContextError(clError);
-    if (error)
-        *error = computeContextError;
+    error = clToComputeContextError(clError);
 }
 
-ComputeContext::ComputeContext(CCContextProperties* contextProperties, unsigned deviceType, CCerror* error)
+ComputeContext::ComputeContext(CCContextProperties* contextProperties, unsigned deviceType, CCerror& error)
 {
-    CCint clError;
+    cl_int clError;
 
     switch (deviceType) {
     case DEVICE_TYPE_GPU:
@@ -267,9 +258,7 @@ ComputeContext::ComputeContext(CCContextProperties* contextProperties, unsigned 
         break;
     }
 
-    int computeContextError = clToComputeContextError(clError);
-    if (error)
-        *error = computeContextError;
+    error = clToComputeContextError(clError);
 }
 
 ComputeContext::~ComputeContext()
@@ -277,12 +266,12 @@ ComputeContext::~ComputeContext()
     clReleaseContext(m_clContext);
 }
 
-PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror* error)
+PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror& error)
 {
     return adoptRef(new ComputeContext(contextProperties, numberDevices, devices, error));
 }
 
-PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, unsigned deviceType, CCerror* error)
+PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, unsigned deviceType, CCerror& error)
 {
     return adoptRef(new ComputeContext(contextProperties, deviceType, error));
 }

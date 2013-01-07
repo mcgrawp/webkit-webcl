@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
@@ -65,7 +65,7 @@ class WebCLGetInfo;
 class WebCLContext : public RefCounted<WebCLContext> {
 public:
     virtual ~WebCLContext();
-    static PassRefPtr<WebCLContext> create(WebCL*, CCContextProperties* , CCuint , CCDeviceID* , int*);
+    static PassRefPtr<WebCLContext> create(WebCL*, CCContextProperties* , CCuint , CCDeviceID* , CCerror&);
     /* FIXME :: not needed as CCContextProperties contains deviceType field.
        static PassRefPtr<WebCLContext> create(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType
        , int* error);*/
@@ -137,7 +137,7 @@ public:
     ComputeContext* computeContext() const { return m_computeContext.get(); }
 
 private:
-    WebCLContext(WebCL*, CCContextProperties* , CCuint , CCDeviceID* , int*);
+    WebCLContext(WebCL*, CCContextProperties* , CCuint , CCDeviceID* , CCerror&);
     // WebCLContext(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType, int* error);
     PassRefPtr<WebCLMemoryObject> createImage2DBaseMemory(int , int , int , const ComputeContext::ImageFormat& , void*
         , ExceptionCode&);

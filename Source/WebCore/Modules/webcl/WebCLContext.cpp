@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -53,19 +53,13 @@ WebCLContext::~WebCLContext()
 }
 
 PassRefPtr<WebCLContext> WebCLContext::create(WebCL* computeContext, CCContextProperties* contextProperties,
-    CCuint numberDevices, CCDeviceID *devices, CCerror* error)
+    CCuint numberDevices, CCDeviceID *devices, CCerror& error)
 {
     return adoptRef(new WebCLContext(computeContext, contextProperties, numberDevices, devices, error));
 }
 
-/*PassRefPtr<WebCLContext> WebCLContext::create(WebCL* computeContext, CCContextProperties* contextProperties,
-    unsigned deviceType, int* error)
-{
-    return adoptRef(new WebCLContext(computeContext, contextProperties, deviceType, error));
-}*/
-
-WebCLContext::WebCLContext(WebCL* compute_context, CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, int* error)
-    : m_videoCache(4)
+WebCLContext::WebCLContext(WebCL* compute_context, CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror& error)
+    : m_videoCache(4) // FIXME: Why '4'?
     , m_context(compute_context)
 {
     m_computeContext = ComputeContext::create(contextProperties, numberDevices, devices, error);

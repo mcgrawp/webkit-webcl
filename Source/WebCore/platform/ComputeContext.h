@@ -292,8 +292,8 @@ public:
         CCenum channelDataType;
     } ImageFormat;
 
-    static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror* error);
-    static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, unsigned int deviceType, CCerror* error);
+    static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror& error);
+    static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, unsigned int deviceType, CCerror& error);
     ~ComputeContext();
 
     static CCint platformIDs(CCuint numberPlatforms, CCPlatformID* platforms);
@@ -363,8 +363,8 @@ public:
 
     // XXX: Create a Pimpl implementation
 private:
-    ComputeContext(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror* error = 0);
-    ComputeContext(CCContextProperties* contextProperties, unsigned int deviceType, CCerror* error = 0);
+    ComputeContext(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror& error);
+    ComputeContext(CCContextProperties* contextProperties, unsigned int deviceType, CCerror& error);
 
     cl_context m_clContext;
 };

@@ -230,13 +230,14 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties
         }
     }
 
-    int error;
-    RefPtr<WebCLContext> contextObj = WebCLContext::create(this, propIndex ? contextProperties : 0, numofDevice, clDevice, &error);
-    ec = error;
+    CCerror error;
+    RefPtr<WebCLContext> contextObj = WebCLContext::create(this, propIndex ? contextProperties : 0, numofDevice, clDevice, error);
     if (error == CL_SUCCESS && contextObj) {
         m_context = contextObj;
         return contextObj;
     }
+
+    ec = error;
     return 0;
 }
 
