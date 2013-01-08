@@ -268,12 +268,22 @@ ComputeContext::~ComputeContext()
 
 PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror& error)
 {
-    return adoptRef(new ComputeContext(contextProperties, numberDevices, devices, error));
+    RefPtr<ComputeContext> computeContext =  adoptRef(new ComputeContext(contextProperties, numberDevices, devices, error));
+    if (!computeContext) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        return 0;
+    }
+    return computeContext.release();
 }
 
 PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, unsigned deviceType, CCerror& error)
 {
-    return adoptRef(new ComputeContext(contextProperties, deviceType, error));
+    RefPtr<ComputeContext> computeContext = adoptRef(new ComputeContext(contextProperties, deviceType, error));
+    if (!computeContext) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        return 0;
+    }
+    return computeContext.release();
 }
 
 // FIXME: Should it return the associated CCerror instead of the number of platforms?
