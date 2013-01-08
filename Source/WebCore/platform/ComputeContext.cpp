@@ -682,4 +682,32 @@ CCKernel ComputeContext::createKernel(CCProgram program, const String& kernelNam
     return kernel;
 }
 
+CCKernel* ComputeContext::createKernelsInProgram(CCProgram program, CCuint& numberOfKernels, CCerror& error)
+{
+    cl_kernel* kernels = 0;
+    numberOfKernels = 0;
+
+    cl_int clError = clCreateKernelsInProgram(program, 0, 0, &numberOfKernels);
+    if (clError != CL_SUCCESS) {
+        error = clToComputeContextError(clError);
+        return 0;
+    }
+
+    if (!numberOfKernels) {
+        // FIXME: Having '0' kernels is an error?
+        error = clToComputeContextError(clError);
+        return 0;
+    }
+
+    kernels = (cl_kernel*) malloc(sizeof(cl_kernel) * numberOfKernels);
+    if (!kernels) {
+        error = ComputeContext::MEM_OBJECT_ALLOCATION_FAILURE;
+        return 0;
+    }
+
+    clError = clCreateKernelsInProgram(program, numberOfKernels, kernels, 0);
+    error = clToComputeContextError(clError);
+    return kernels;
+}
+
 }

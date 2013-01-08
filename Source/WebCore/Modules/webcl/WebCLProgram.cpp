@@ -235,38 +235,22 @@ PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, Exc
 
 PassRefPtr<WebCLKernelList> WebCLProgram::createKernelsInProgram(ExceptionCode& ec)
 {
-    cl_int err = 0;
-    cl_kernel* kernelBuf = 0;
-    cl_uint num = 0;
     if (!m_clProgram) {
         printf("Error: Invalid program object\n");
         ec = WebCLException::INVALID_PROGRAM;
         return 0;
     }
-    err = clCreateKernelsInProgram(m_clProgram, 0, 0, &num);
-    if (err != CL_SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-        printf("Error: clCreateKernelsInProgram \n");
-        return 0;
-    }
-    if (!num) {
-        printf("Warning: createKernelsInProgram - Number of Kernels is 0 \n");
-        ec = WebCLException::FAILURE;
+
+    CCerror error = 0;
+    CCuint numberOfKernels = 0;
+    CCKernel* computeContextKernels = m_context->computeContext()->createKernelsInProgram(m_clProgram, numberOfKernels, error);
+    // computeContextKernels can be 0 even if there was not ComputeContext error, e.g. program has 0 kernels.
+    if (error != ComputeContext::SUCCESS) {
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
 
-    kernelBuf = (cl_kernel*)malloc(sizeof(cl_kernel) * num);
-    if (!kernelBuf) {
-        printf("Error:: Memmory allocation failure in createKernelsInProgram/n");
-        return 0;
-    }
-
-    err = clCreateKernelsInProgram(m_clProgram, num, kernelBuf, 0);
-    if (err != CL_SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-        return 0;
-    }
-    RefPtr<WebCLKernelList> kernalListObject = WebCLKernelList::create(m_context, kernelBuf, num);
+    RefPtr<WebCLKernelList> kernalListObject = WebCLKernelList::create(m_context, computeContextKernels, numberOfKernels);
     return kernalListObject;
 }
 

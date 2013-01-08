@@ -308,11 +308,11 @@ public:
     PlatformComputeObject createFromGLRenderbuffer(int type, GC3Dint renderbufferId, CCerror& error);
     CCSampler createSampler(bool normalizedCoords, int addressingMode, int filterMode, CCerror& error);
     PlatformComputeObject createFromGLTexture2D(int type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror& error);
-    CCerror supportedImageFormats(int type, int imageType, CCuint numberOfEntries, CCuint *numberImageFormat, CCImageFormat* imageFormat);
 
     CCKernel createKernel(CCProgram program, const String& kernelName, CCerror& error);
-    // FIXME: horrible API, it looks C
-    CCerror createKernelsInProgram(CCProgram program, CCuint numberOfKernels, CCKernel& kernels, CCuint& numberOfKernelsReturned);
+    CCKernel* createKernelsInProgram(CCProgram, CCuint& numberOfKernels, CCerror& error);
+
+    CCerror supportedImageFormats(int type, int imageType, CCuint numberOfEntries, CCuint *numberImageFormat, CCImageFormat* imageFormat);
 
     CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
