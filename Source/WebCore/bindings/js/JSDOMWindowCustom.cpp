@@ -573,14 +573,6 @@ JSValue JSDOMWindow::sharedWorker(ExecState* exec) const
 }
 #endif
 
-#if ENABLE(WEBCL)
-JSValue JSDOMWindow::webCL(ExecState* exec) const
-{
-        return getDOMConstructor<JSWebCLConstructor>(exec, this);
-}
-#endif
-
-
 // Custom functions
 
 JSValue JSDOMWindow::open(ExecState* exec)

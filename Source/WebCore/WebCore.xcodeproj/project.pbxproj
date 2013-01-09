@@ -1730,6 +1730,14 @@
 		5DFE8F560D16477B0076E937 /* ScheduledAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA378BA0D15F64200B793D6 /* ScheduledAction.cpp */; };
 		5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA378BB0D15F64200B793D6 /* ScheduledAction.h */; };
 		5FC7DC26CFE2563200B85AE4 /* JSEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FC7DC26CFE2563200B85AE5 /* JSEventTarget.h */; };
+		616340FA169DEC6000020986 /* DOMWindowWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 616340F4169DEC6000020986 /* DOMWindowWebCLEnvironment.cpp */; };
+		616340FB169DEC6000020986 /* DOMWindowWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 616340F5169DEC6000020986 /* DOMWindowWebCLEnvironment.h */; };
+		616340FD169DEC6000020986 /* WorkerContextWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 616340F7169DEC6000020986 /* WorkerContextWebCLEnvironment.cpp */; };
+		616340FE169DEC6000020986 /* WorkerContextWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 616340F8169DEC6000020986 /* WorkerContextWebCLEnvironment.h */; };
+		61634103169DECF900020986 /* JSDOMWindowWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 61634101169DECF900020986 /* JSDOMWindowWebCLEnvironment.cpp */; };
+		61634104169DECF900020986 /* JSDOMWindowWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 61634102169DECF900020986 /* JSDOMWindowWebCLEnvironment.h */; };
+		61634107169DEDA200020986 /* JSWorkerContextWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 61634105169DEDA200020986 /* JSWorkerContextWebCLEnvironment.cpp */; };
+		61634108169DEDA200020986 /* JSWorkerContextWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 61634106169DEDA200020986 /* JSWorkerContextWebCLEnvironment.h */; };
 		626CDE0E1140424C001E5A68 /* SpatialNavigation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */; };
 		626CDE0F1140424C001E5A68 /* SpatialNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 626CDE0D1140424C001E5A68 /* SpatialNavigation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		628D214C12131ED10055DCFC /* NetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 628D214B12131ED10055DCFC /* NetworkingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9070,6 +9078,16 @@
 		5DB1BC6910715A6400EFAA49 /* TransformSourceLibxslt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformSourceLibxslt.cpp; sourceTree = "<group>"; };
 		5DC87EEF11716DF2001C0E6D /* EmptyProtocolDefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyProtocolDefinitions.h; sourceTree = "<group>"; };
 		5FC7DC26CFE2563200B85AE5 /* JSEventTarget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEventTarget.h; sourceTree = "<group>"; };
+		616340F4169DEC6000020986 /* DOMWindowWebCLEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowWebCLEnvironment.cpp; sourceTree = "<group>"; };
+		616340F5169DEC6000020986 /* DOMWindowWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowWebCLEnvironment.h; sourceTree = "<group>"; };
+		616340F6169DEC6000020986 /* DOMWindowWebCLEnvironment.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindowWebCLEnvironment.idl; sourceTree = "<group>"; };
+		616340F7169DEC6000020986 /* WorkerContextWebCLEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerContextWebCLEnvironment.cpp; sourceTree = "<group>"; };
+		616340F8169DEC6000020986 /* WorkerContextWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerContextWebCLEnvironment.h; sourceTree = "<group>"; };
+		616340F9169DEC6000020986 /* WorkerContextWebCLEnvironment.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerContextWebCLEnvironment.idl; sourceTree = "<group>"; };
+		61634101169DECF900020986 /* JSDOMWindowWebCLEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMWindowWebCLEnvironment.cpp; path = JSDOMWindowWebCLEnvironment.cpp; sourceTree = "<group>"; };
+		61634102169DECF900020986 /* JSDOMWindowWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSDOMWindowWebCLEnvironment.h; path = JSDOMWindowWebCLEnvironment.h; sourceTree = "<group>"; };
+		61634105169DEDA200020986 /* JSWorkerContextWebCLEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWorkerContextWebCLEnvironment.cpp; path = JSWorkerContextWebCLEnvironment.cpp; sourceTree = "<group>"; };
+		61634106169DEDA200020986 /* JSWorkerContextWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWorkerContextWebCLEnvironment.h; path = JSWorkerContextWebCLEnvironment.h; sourceTree = "<group>"; };
 		626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpatialNavigation.cpp; sourceTree = "<group>"; };
 		626CDE0D1140424C001E5A68 /* SpatialNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpatialNavigation.h; sourceTree = "<group>"; };
 		628D214B12131ED10055DCFC /* NetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkingContext.h; sourceTree = "<group>"; };
@@ -16284,6 +16302,12 @@
 		75945322165E618A00E5C118 /* webcl */ = {
 			isa = PBXGroup;
 			children = (
+				616340F4169DEC6000020986 /* DOMWindowWebCLEnvironment.cpp */,
+				616340F5169DEC6000020986 /* DOMWindowWebCLEnvironment.h */,
+				616340F6169DEC6000020986 /* DOMWindowWebCLEnvironment.idl */,
+				616340F7169DEC6000020986 /* WorkerContextWebCLEnvironment.cpp */,
+				616340F8169DEC6000020986 /* WorkerContextWebCLEnvironment.h */,
+				616340F9169DEC6000020986 /* WorkerContextWebCLEnvironment.idl */,
 				75945323165E618A00E5C118 /* WebCL.cpp */,
 				75945324165E618A00E5C118 /* WebCL.h */,
 				75945325165E618A00E5C118 /* WebCL.idl */,
@@ -16367,6 +16391,10 @@
 		759453D6165E658E00E5C118 /* WebCL */ = {
 			isa = PBXGroup;
 			children = (
+				61634105169DEDA200020986 /* JSWorkerContextWebCLEnvironment.cpp */,
+				61634106169DEDA200020986 /* JSWorkerContextWebCLEnvironment.h */,
+				61634101169DECF900020986 /* JSDOMWindowWebCLEnvironment.cpp */,
+				61634102169DECF900020986 /* JSDOMWindowWebCLEnvironment.h */,
 				759453D7165E660300E5C118 /* JSWebCL.cpp */,
 				759453D8165E660300E5C118 /* JSWebCL.h */,
 				759453D9165E660300E5C118 /* JSWebCLBuffer.cpp */,
@@ -26182,6 +26210,10 @@
 				75945432165E660300E5C118 /* JSWebCLPlatformList.h in Headers */,
 				75945434165E660300E5C118 /* JSWebCLProgram.h in Headers */,
 				75945436165E660300E5C118 /* JSWebCLSampler.h in Headers */,
+				616340FB169DEC6000020986 /* DOMWindowWebCLEnvironment.h in Headers */,
+				616340FE169DEC6000020986 /* WorkerContextWebCLEnvironment.h in Headers */,
+				61634104169DECF900020986 /* JSDOMWindowWebCLEnvironment.h in Headers */,
+				61634108169DEDA200020986 /* JSWorkerContextWebCLEnvironment.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29329,6 +29361,10 @@
 				75945435165E660300E5C118 /* JSWebCLSampler.cpp in Sources */,
 				7570E5AB165E8A5A00996A15 /* JSCustomWebCLFinishCallback.cpp in Sources */,
 				75479AF9169F18F500E4F971 /* ComputeContextCL.cpp in Sources */,
+				616340FA169DEC6000020986 /* DOMWindowWebCLEnvironment.cpp in Sources */,
+				616340FD169DEC6000020986 /* WorkerContextWebCLEnvironment.cpp in Sources */,
+				61634103169DECF900020986 /* JSDOMWindowWebCLEnvironment.cpp in Sources */,
+				61634107169DEDA200020986 /* JSWorkerContextWebCLEnvironment.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

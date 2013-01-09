@@ -161,15 +161,15 @@ function SimulateCL(cl) {
 
 function GetWorkGroupSize() {
   try {
-    if (typeof(WebCL) === "undefined") {
-      console.error("WebCL is yet to be defined");
+    if (typeof(webcl) === "undefined") {
+      console.error("webcl is yet to be defined");
       return null;
     }
 
-    cl = new WebCL();
+    cl = webcl;
 
     if (cl === null) {
-      console.error("Failed to create WebCL context");
+      console.error("Failed to create webcl object");
       return;
     }
 

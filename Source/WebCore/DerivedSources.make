@@ -149,6 +149,8 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/WaveShaperNode.idl \
     $(WebCore)/Modules/webaudio/WaveTable.idl \
     $(WebCore)/Modules/webcl/WebCL.idl \
+    $(WebCore)/Modules/webcl/DOMWindowWebCLEnvironment.idl \
+    $(WebCore)/Modules/webcl/WorkerContextWebCLEnvironment.idl\
     $(WebCore)/Modules/webcl/WebCLKernelArgumentTypes.idl \
     $(WebCore)/Modules/webcl/WebCLPlatformList.idl \
     $(WebCore)/Modules/webcl/WebCLPlatform.idl \

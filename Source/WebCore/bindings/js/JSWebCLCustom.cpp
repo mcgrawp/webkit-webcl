@@ -114,13 +114,6 @@ JSValue JSWebCL::createContext(JSC::ExecState* exec)
     return jsUndefined();
 }
 
-    
-EncodedJSValue JSC_HOST_CALL JSWebCLConstructor::constructJSWebCL(ExecState* exec)
-{
-    JSWebCLConstructor* jsConstructor = static_cast<JSWebCLConstructor*>(exec->callee());
-    RefPtr<WebCL> webCLComputeContext = WebCL::create();
-    return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), WebCL, webCLComputeContext.get()));
-}
 
 JSValue JSWebCL::getSupportedExtensions(ExecState* exec)
 {
