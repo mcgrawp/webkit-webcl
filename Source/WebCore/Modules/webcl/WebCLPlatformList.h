@@ -42,17 +42,13 @@ class WebCLPlatformList : public RefCounted<WebCLPlatformList> {
 
 public:
     virtual ~WebCLPlatformList();
-    static PassRefPtr<WebCLPlatformList> create();
-    cl_platform_id* getCLPlatforms();
+    static PassRefPtr<WebCLPlatformList> create(CCerror&);
 
     unsigned length() const;
-    WebCLPlatform* item(unsigned index);
+    WebCLPlatform* item(unsigned index) const;
 private:
-    WebCLPlatformList();
-
-    Vector<RefPtr<WebCLPlatform> > m_platform_id_list;
-    cl_platform_id* m_cl_platforms;
-    cl_uint m_num_platforms;
+    WebCLPlatformList(const Vector<CCPlatformID>& platformsIDs);
+    Vector<RefPtr<WebCLPlatform> > m_platformIDs;
 };
 
 } // namespace WebCore

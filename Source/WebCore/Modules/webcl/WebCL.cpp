@@ -55,11 +55,15 @@ WebCL::~WebCL()
 
 PassRefPtr<WebCLPlatformList> WebCL::getPlatforms(ExceptionCode& ec)
 {
-    RefPtr<WebCLPlatformList> platformListPtr = WebCLPlatformList::create();
-    if (platformListPtr)
-        return platformListPtr;
-    ec = WebCLException::INVALID_PLATFORM;
-    return 0;
+    CCerror error;
+    RefPtr<WebCLPlatformList> platformListPtr = WebCLPlatformList::create(error);
+    if (!platformListPtr) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::INVALID_PLATFORM;
+        return 0;
+    }
+
+    return platformListPtr;
 }
 
 WebCLGetInfo WebCL::getImageInfo(WebCLImage* image, cl_image_info paramName, ExceptionCode& ec)

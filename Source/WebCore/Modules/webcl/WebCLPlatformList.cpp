@@ -38,52 +38,40 @@ WebCLPlatformList::~WebCLPlatformList()
 {
 }
 
-PassRefPtr<WebCLPlatformList> WebCLPlatformList::create()
+PassRefPtr<WebCLPlatformList> WebCLPlatformList::create(CCerror &error)
 {
-    return adoptRef(new WebCLPlatformList());
+    CCint numberOfPlatforms = ComputeContext::platformIDs(0, 0, error);
+    if (error != ComputeContext::SUCCESS)
+        return 0;
+
+    Vector<CCPlatformID> platformIDs(numberOfPlatforms);
+    ComputeContext::platformIDs(numberOfPlatforms, platformIDs.data(), error);
+    if (error != ComputeContext::SUCCESS)
+        return 0;
+
+    return adoptRef(new WebCLPlatformList(platformIDs));
 }
 
-WebCLPlatformList::WebCLPlatformList()
+WebCLPlatformList::WebCLPlatformList(const Vector<CCPlatformID>& platformIDs)
 {
-	cl_int err = 0;
-	err = clGetPlatformIDs(0, NULL, &m_num_platforms);
-	if (err != CL_SUCCESS) {
-		// TODO (siba samal) Error handling
-	}
-
-	m_cl_platforms = new cl_platform_id[m_num_platforms];
-	err = clGetPlatformIDs(m_num_platforms, m_cl_platforms, NULL);
-	if (err != CL_SUCCESS) {
-		// TODO (siba samal) Error handling
-	}
-
-	for (unsigned int i = 0 ; i < m_num_platforms; i++) {
-		RefPtr<WebCLPlatform> o = WebCLPlatform::create(m_cl_platforms[i]);
-		if (o != NULL) {
-			m_platform_id_list.append(o);
-		} else {
-			// TODO (siba samal) Error handling
-		}
-	}
-}
-
-cl_platform_id* WebCLPlatformList::getCLPlatforms()
-{
-	return m_cl_platforms;
+    for (size_t i = 0 ; i < platformIDs.size(); ++i) {
+        RefPtr<WebCLPlatform> webCLPlatform = WebCLPlatform::create(platformIDs[i]);
+        if (webCLPlatform)
+            m_platformIDs.append(webCLPlatform);
+    }
 }
 
 unsigned WebCLPlatformList::length() const
 {
-	return m_num_platforms;
+    return m_platformIDs.size();
 }
 
-WebCLPlatform* WebCLPlatformList::item(unsigned index)
+WebCLPlatform* WebCLPlatformList::item(unsigned index) const
 {
-	if (index >= m_num_platforms) {
-		return 0;
-	}
-	WebCLPlatform* ret = (m_platform_id_list[index]).get();
-	return ret;
+    if (index >= m_platformIDs.size())
+        return 0;
+
+    return m_platformIDs[index].get();
 }
 
 
