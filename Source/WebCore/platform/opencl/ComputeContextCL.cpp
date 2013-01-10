@@ -286,22 +286,22 @@ PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextPr
     return computeContext.release();
 }
 
-// FIXME: Should it return the associated CCerror instead of the number of platforms?
-CCint ComputeContext::platformIDs(CCuint numberEntries, CCPlatformID* platforms)
+CCint ComputeContext::platformIDs(CCuint numberEntries, CCPlatformID* platforms, CCerror& error)
 {
     cl_uint numberOfPlatforms;
-    const cl_int result = clGetPlatformIDs(numberEntries, platforms, &numberOfPlatforms);
+    cl_int clError = clGetPlatformIDs(numberEntries, platforms, &numberOfPlatforms);
 
-    return result == CL_SUCCESS ? static_cast<int>(numberOfPlatforms) : -1;
+    error = clToComputeContextError(clError);
+    return numberOfPlatforms;
 }
 
-// FIXME: Should it return the associated CCerror instead of the number of devices?
-CCint ComputeContext::deviceIDs(CCPlatformID platform, CCDeviceType deviceType, CCuint numberEntries, CCDeviceID* devices)
+CCint ComputeContext::deviceIDs(CCPlatformID platform, CCDeviceType deviceType, CCuint numberEntries, CCDeviceID* devices, CCerror& error)
 {
     cl_uint numberOfDevices;
-    const cl_int result = clGetDeviceIDs(platform, deviceType, numberEntries, devices, &numberOfDevices);
+    cl_int clError = clGetDeviceIDs(platform, deviceType, numberEntries, devices, &numberOfDevices);
 
-    return result == CL_SUCCESS ? static_cast<int>(numberOfDevices) : -1;
+    error = clToComputeContextError(clError);
+    return numberOfDevices;
 }
 
 CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, int properties, CCerror& error)
