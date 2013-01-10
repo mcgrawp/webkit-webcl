@@ -1908,6 +1908,7 @@
 		75415D58129AB2D2003AD669 /* JSSpeechInputResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 75415D52129AB2D2003AD669 /* JSSpeechInputResult.h */; };
 		75415D59129AB2D2003AD669 /* JSSpeechInputResultList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75415D53129AB2D2003AD669 /* JSSpeechInputResultList.cpp */; };
 		75415D5A129AB2D2003AD669 /* JSSpeechInputResultList.h in Headers */ = {isa = PBXBuildFile; fileRef = 75415D54129AB2D2003AD669 /* JSSpeechInputResultList.h */; };
+		75479AF9169F18F500E4F971 /* ComputeContextCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75479AF8169F18EB00E4F971 /* ComputeContextCL.cpp */; };
 		7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */; };
 		7553CFE9108F473F00EA281E /* TimelineRecordFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */; };
 		7570E5A8165E741100996A15 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7570E5A7165E741100996A15 /* OpenCL.framework */; };
@@ -1986,7 +1987,6 @@
 		759453CB165E625200E5C118 /* WebCLProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945369165E618A00E5C118 /* WebCLProgram.h */; };
 		759453CD165E625200E5C118 /* WebCLSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7594536B165E618A00E5C118 /* WebCLSampler.cpp */; };
 		759453CE165E625200E5C118 /* WebCLSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7594536C165E618A00E5C118 /* WebCLSampler.h */; };
-		759453D3165E647000E5C118 /* ComputeContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759453D0165E646100E5C118 /* ComputeContext.cpp */; };
 		759453D4165E647000E5C118 /* ComputeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 759453D1165E646100E5C118 /* ComputeContext.h */; };
 		759453D5165E647000E5C118 /* ComputeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 759453D2165E646100E5C118 /* ComputeTypes.h */; };
 		75945407165E660300E5C118 /* JSWebCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759453D7165E660300E5C118 /* JSWebCL.cpp */; };
@@ -9270,6 +9270,7 @@
 		75415D52129AB2D2003AD669 /* JSSpeechInputResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSpeechInputResult.h; sourceTree = "<group>"; };
 		75415D53129AB2D2003AD669 /* JSSpeechInputResultList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSpeechInputResultList.cpp; sourceTree = "<group>"; };
 		75415D54129AB2D2003AD669 /* JSSpeechInputResultList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSpeechInputResultList.h; sourceTree = "<group>"; };
+		75479AF8169F18EB00E4F971 /* ComputeContextCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeContextCL.cpp; sourceTree = "<group>"; };
 		7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimelineRecordFactory.h; sourceTree = "<group>"; };
 		7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimelineRecordFactory.cpp; sourceTree = "<group>"; };
 		7570E5A7165E741100996A15 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = ../../../../../../../System/Library/Frameworks/OpenCL.framework; sourceTree = "<group>"; };
@@ -9374,7 +9375,6 @@
 		75945377165E61EF00E5C118 /* JSWebCLPlatformCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLPlatformCustom.cpp; sourceTree = "<group>"; };
 		75945378165E61EF00E5C118 /* JSWebCLProgramCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLProgramCustom.cpp; sourceTree = "<group>"; };
 		75945379165E61EF00E5C118 /* JSWebCLSamplerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLSamplerCustom.cpp; sourceTree = "<group>"; };
-		759453D0165E646100E5C118 /* ComputeContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeContext.cpp; sourceTree = "<group>"; };
 		759453D1165E646100E5C118 /* ComputeContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeContext.h; sourceTree = "<group>"; };
 		759453D2165E646100E5C118 /* ComputeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeTypes.h; sourceTree = "<group>"; };
 		759453D7165E660300E5C118 /* JSWebCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCL.cpp; sourceTree = "<group>"; };
@@ -16273,6 +16273,14 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		75479AF5169F0DA400E4F971 /* opencl */ = {
+			isa = PBXGroup;
+			children = (
+				75479AF8169F18EB00E4F971 /* ComputeContextCL.cpp */,
+			);
+			path = opencl;
+			sourceTree = "<group>";
+		};
 		75945322165E618A00E5C118 /* webcl */ = {
 			isa = PBXGroup;
 			children = (
@@ -21254,7 +21262,7 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
-				759453D0165E646100E5C118 /* ComputeContext.cpp */,
+				75479AF5169F0DA400E4F971 /* opencl */,
 				759453D1165E646100E5C118 /* ComputeContext.h */,
 				759453D2165E646100E5C118 /* ComputeTypes.h */,
 				49E912A40EFAC8E6009D0CAF /* animation */,
@@ -29295,7 +29303,6 @@
 				759453C7165E625200E5C118 /* WebCLPlatformList.cpp in Sources */,
 				759453CA165E625200E5C118 /* WebCLProgram.cpp in Sources */,
 				759453CD165E625200E5C118 /* WebCLSampler.cpp in Sources */,
-				759453D3165E647000E5C118 /* ComputeContext.cpp in Sources */,
 				75945407165E660300E5C118 /* JSWebCL.cpp in Sources */,
 				75945409165E660300E5C118 /* JSWebCLBuffer.cpp in Sources */,
 				7594540B165E660300E5C118 /* JSWebCLCommandQueue.cpp in Sources */,
@@ -29321,6 +29328,7 @@
 				75945433165E660300E5C118 /* JSWebCLProgram.cpp in Sources */,
 				75945435165E660300E5C118 /* JSWebCLSampler.cpp in Sources */,
 				7570E5AB165E8A5A00996A15 /* JSCustomWebCLFinishCallback.cpp in Sources */,
+				75479AF9169F18F500E4F971 /* ComputeContextCL.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
