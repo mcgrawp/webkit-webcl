@@ -343,7 +343,7 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, I
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* bufferSrc, bool blockingRead, int offset, int bufferSize, ArrayBufferView* ptr, WebCLEventList* events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* sourceBuffer, bool blockingRead, int offset, int bufferSize, ArrayBufferView* ptr, WebCLEventList* events, WebCLEvent* event, ExceptionCode& ec)
 {
     PlatformComputeObject ccBuffer = 0;
     CCEvent ccEvent = 0;
@@ -356,13 +356,8 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* bufferSrc, bool blockingR
         return;
     }
 
-    if (bufferSrc) {
-        ccBuffer = bufferSrc->getCLBuffer();
-        if (!ccBuffer) {
-            printf("Error: ccBuffer null\n");
-            return;
-        }
-    }
+    if (sourceBuffer)
+        ccBuffer = sourceBuffer->getCLBuffer();
 
     if (events) {
         ccEventWaitList = events->getCLEvents();

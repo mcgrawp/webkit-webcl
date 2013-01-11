@@ -188,57 +188,57 @@ public:
     }
 
     void enqueueCopyBuffer(WebCLBuffer*, WebCLBuffer*, int, int, int, WebCLEventList*, WebCLEvent*, ExceptionCode&);
-    void enqueueCopyBuffer(WebCLBuffer* srcBuffer, WebCLBuffer* dstBuffer, int srcOffset, int dstOffset, int sizeInBytes, WebCLEventList* events, ExceptionCode& ec)
+    void enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer* targetBuffer, int sourceOffset, int targetOffset, int sizeInBytes, WebCLEventList* events, ExceptionCode& ec)
     {
-        enqueueCopyBuffer(srcBuffer, dstBuffer, srcOffset, dstOffset, sizeInBytes, events, 0, ec);
+        enqueueCopyBuffer(sourceBuffer, targetBuffer, sourceOffset, targetOffset, sizeInBytes, events, 0, ec);
     }
-    void enqueueCopyBuffer(WebCLBuffer* srcBuffer, WebCLBuffer* dstBuffer, int srcOffset, int dstOffset, int sizeInBytes, ExceptionCode& ec)
+    void enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer* targetBuffer, int sourceOffset, int targetOffset, int sizeInBytes, ExceptionCode& ec)
     {
-        enqueueCopyBuffer(srcBuffer, dstBuffer, srcOffset, dstOffset, sizeInBytes, 0, 0, ec);
+        enqueueCopyBuffer(sourceBuffer, targetBuffer, sourceOffset, targetOffset, sizeInBytes, 0, 0, ec);
     }
 
     void enqueueCopyBufferRect(WebCLBuffer*, WebCLBuffer*, Int32Array*, Int32Array*, Int32Array*, int, int, int, int, WebCLEventList*, WebCLEvent*, ExceptionCode&);
-    void enqueueCopyBufferRect(WebCLBuffer* srcBuffer, WebCLBuffer* dstBuffer, Int32Array* srcOrigin, Int32Array* dstOrigin,
-        Int32Array* region, int srcRowPitch, int srcSlicePitch, int dstRowPitch, int dstSlicePitch, WebCLEventList* eventWaitList, ExceptionCode& ec)
+    void enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBuffer* targetBuffer, Int32Array* sourceOrigin, Int32Array* targetOrigin,
+        Int32Array* region, int sourceRowPitch, int sourceSlicePitch, int targetRowPitch, int targetSlicePitch, WebCLEventList* eventWaitList, ExceptionCode& ec)
     {
-        enqueueCopyBufferRect(srcBuffer, dstBuffer, srcOrigin, dstOrigin, region, srcRowPitch, srcSlicePitch, dstRowPitch, dstSlicePitch, eventWaitList, 0, ec);
+        enqueueCopyBufferRect(sourceBuffer, targetBuffer, sourceOrigin, targetOrigin, region, sourceRowPitch, sourceSlicePitch, targetRowPitch, targetSlicePitch, eventWaitList, 0, ec);
     }
-    void enqueueCopyBufferRect(WebCLBuffer* srcBuffer, WebCLBuffer* dstBuffer, Int32Array* srcOrigin, Int32Array* dstOrigin,
-        Int32Array* region, int srcRowPitch, int srcSlicePitch, int dstRowPitch, int dstSlicePitch, ExceptionCode& ec)
+    void enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBuffer* targetBuffer, Int32Array* sourceOrigin, Int32Array* targetOrigin,
+        Int32Array* region, int sourceRowPitch, int sourceSlicePitch, int targetRowPitch, int targetSlicePitch, ExceptionCode& ec)
     {
-        enqueueCopyBufferRect(srcBuffer, dstBuffer, srcOrigin, dstOrigin, region, srcRowPitch, srcSlicePitch, dstRowPitch, dstSlicePitch, 0, 0, ec);
+        enqueueCopyBufferRect(sourceBuffer, targetBuffer, sourceOrigin, targetOrigin, region, sourceRowPitch, sourceSlicePitch, targetRowPitch, targetSlicePitch, 0, 0, ec);
     }
 
     void enqueueCopyImage(WebCLImage*, WebCLImage*, Int32Array*, Int32Array*, Int32Array*, WebCLEventList*, WebCLEvent*, ExceptionCode&);
-    void enqueueCopyImage(WebCLImage* srcImage, WebCLImage* dstImage, Int32Array* srcOrigin, Int32Array* dstOrigin, Int32Array* region, WebCLEventList* events, ExceptionCode& ec)
+    void enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* targetImage, Int32Array* sourceOrigin, Int32Array* targetOrigin, Int32Array* region, WebCLEventList* events, ExceptionCode& ec)
     {
-        enqueueCopyImage(srcImage, dstImage, srcOrigin, dstOrigin, region, events, 0, ec);
+        enqueueCopyImage(sourceImage, targetImage, sourceOrigin, targetOrigin, region, events, 0, ec);
     }
-    void enqueueCopyImage(WebCLImage* srcImage, WebCLImage* dstImage, Int32Array* srcOrigin, Int32Array* dstOrigin, Int32Array* region, ExceptionCode& ec)
+    void enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* targetImage, Int32Array* sourceOrigin, Int32Array* targetOrigin, Int32Array* region, ExceptionCode& ec)
     {
-        enqueueCopyImage(srcImage, dstImage, srcOrigin, dstOrigin, region, 0, 0, ec);
+        enqueueCopyImage(sourceImage, targetImage, sourceOrigin, targetOrigin, region, 0, 0, ec);
     }
 
     void enqueueCopyImageToBuffer(WebCLImage*, WebCLBuffer*, Int32Array*, Int32Array*, int, WebCLEventList*, WebCLEvent*, ExceptionCode&);
-    void enqueueCopyImageToBuffer(WebCLImage* srcImage, WebCLBuffer *dstBuffer, Int32Array* srcOrigin, Int32Array* region, int dstOffset,
+    void enqueueCopyImageToBuffer(WebCLImage* sourceImage, WebCLBuffer *targetBuffer, Int32Array* sourceOrigin, Int32Array* region, int targetOffset,
         WebCLEventList* eventWaitList, ExceptionCode& ec)
     {
-        enqueueCopyImageToBuffer(srcImage, dstBuffer, srcOrigin, region, dstOffset, eventWaitList, 0, ec);
+        enqueueCopyImageToBuffer(sourceImage, targetBuffer, sourceOrigin, region, targetOffset, eventWaitList, 0, ec);
     }
-    void enqueueCopyImageToBuffer(WebCLImage* srcImage, WebCLBuffer *dstBuffer, Int32Array* srcOrigin, Int32Array* region, int dstOffset, ExceptionCode& ec)
+    void enqueueCopyImageToBuffer(WebCLImage* sourceImage, WebCLBuffer *targetBuffer, Int32Array* sourceOrigin, Int32Array* region, int targetOffset, ExceptionCode& ec)
     {
-        enqueueCopyImageToBuffer(srcImage, dstBuffer, srcOrigin, region, dstOffset, 0, 0, ec);
+        enqueueCopyImageToBuffer(sourceImage, targetBuffer, sourceOrigin, region, targetOffset, 0, 0, ec);
     }
 
     void enqueueCopyBufferToImage(WebCLBuffer*, WebCLImage*, int, Int32Array*, Int32Array*, WebCLEventList*, WebCLEvent*, ExceptionCode&);
-    void enqueueCopyBufferToImage(WebCLBuffer *srcBuffer, WebCLImage *dstImage, int srcOffset, Int32Array* dstOrigin, Int32Array* region,
+    void enqueueCopyBufferToImage(WebCLBuffer *sourceBuffer, WebCLImage *targetImage, int sourceOffset, Int32Array* targetOrigin, Int32Array* region,
         WebCLEventList* eventWaitList, ExceptionCode& ec)
     {
-        enqueueCopyBufferToImage(srcBuffer, dstImage, srcOffset, dstOrigin, region, eventWaitList, 0, ec);
+        enqueueCopyBufferToImage(sourceBuffer, targetImage, sourceOffset, targetOrigin, region, eventWaitList, 0, ec);
     }
-    void enqueueCopyBufferToImage(WebCLBuffer *srcBuffer, WebCLImage *dstImage, int srcOffset, Int32Array* dstOrigin, Int32Array* region, ExceptionCode& ec)
+    void enqueueCopyBufferToImage(WebCLBuffer *sourceBuffer, WebCLImage *targetImage, int sourceOffset, Int32Array* targetOrigin, Int32Array* region, ExceptionCode& ec)
     {
-        enqueueCopyBufferToImage(srcBuffer, dstImage, srcOffset, dstOrigin, region, 0, 0, ec);
+        enqueueCopyBufferToImage(sourceBuffer, targetImage, sourceOffset, targetOrigin, region, 0, 0, ec);
     }
 
     void enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEvent*, ExceptionCode&);
