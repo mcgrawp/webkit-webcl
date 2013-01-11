@@ -276,7 +276,7 @@ private:
     WebCLCommandQueue(WebCLContext*, cl_command_queue);
 
     WebCLContext* m_context;
-    cl_command_queue m_clCommandQueue;
+    cl_command_queue m_ccCommandQueue;
 };
 
 } // namespace WebCore

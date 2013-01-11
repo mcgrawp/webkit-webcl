@@ -16,6 +16,7 @@ typedef cl_context_properties CCContextProperties;
 typedef cl_image_format CCImageFormat;
 typedef cl_sampler CCSampler;
 typedef cl_command_queue CCCommandQueue;
+typedef cl_command_queue_properties CCCommandQueueProperties;
 typedef cl_program CCProgram;
 typedef cl_kernel_work_group_info CCKernelWorkGroupInfo;
 typedef cl_kernel CCKernel;
