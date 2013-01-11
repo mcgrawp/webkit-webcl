@@ -247,10 +247,10 @@ PassRefPtr<WebCLKernelList> WebCLProgram::createKernelsInProgram(ExceptionCode& 
     return kernalListObject;
 }
 
-void WebCLProgram::finishCallBack(cl_program program, void* userData)
+void WebCLProgram::finishCallback(cl_program program, void* userData)
 {
     // FIXME :: Test and clean.
-    printf(" inside finishCallBack() call back \n ");
+    printf(" inside finishCallback() call back \n ");
     if (!program)
         printf(" program is NULL \n ");
 
@@ -259,18 +259,18 @@ void WebCLProgram::finishCallBack(cl_program program, void* userData)
 
     WebCLProgram* self = static_cast<WebCLProgram*>(WebCLProgram::thisPointer);
     self->m_finishCallback.get()->handleEvent(17);
-    printf(" Just Finished finishCallBack() call back");
+    printf(" Just Finished finishCallback() call back");
 }
 
 WebCLProgram* WebCLProgram::thisPointer = 0;
 
 void WebCLProgram::build(WebCLDeviceList* clDevices, const String& options,
-    PassRefPtr<WebCLFinishCallback> finishCallBack, int userData, ExceptionCode& ec)
+    PassRefPtr<WebCLFinishCallback> finishCallback, int userData, ExceptionCode& ec)
 {
     cl_int err = 0;
     cl_device_id* clDevice = 0;
 
-    m_finishCallback = finishCallBack;
+    m_finishCallback = finishCallback;
     if (!m_clProgram) {
         printf("Error: Invalid program object\n");
         ec = WebCLException::INVALID_PROGRAM;
@@ -308,7 +308,7 @@ void WebCLProgram::build(WebCLDeviceList* clDevices, const String& options,
         err = clBuildProgram(m_clProgram, clDevices->length(), clDevice, optionsStr, 0, &userData);
     else
         err = clBuildProgram(m_clProgram, clDevices->length(), clDevice, optionsStr,
-            &(WebCLProgram::finishCallBack), &userData);
+            &(WebCLProgram::finishCallback), &userData);
 
     // Free memory allocated by strdup.
     if (optionsStr)

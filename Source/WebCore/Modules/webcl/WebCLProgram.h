@@ -53,10 +53,10 @@ public:
     WebCLGetInfo getBuildInfo(WebCLDevice*, int, ExceptionCode&);
 
     void build(WebCLDeviceList*, const String&, PassRefPtr<WebCLFinishCallback>, int, ExceptionCode&);
-    void build(WebCLDeviceList* devices, const String& options, PassRefPtr<WebCLFinishCallback> finishCallBack,
+    void build(WebCLDeviceList* devices, const String& options, PassRefPtr<WebCLFinishCallback> finishCallback,
         ExceptionCode& ec)
     {
-        return build(devices, options, finishCallBack, 0, ec);
+        return build(devices, options, finishCallback, 0, ec);
     }
     void build(WebCLDeviceList* devices, const String& options, ExceptionCode& ec)
     {
@@ -76,7 +76,7 @@ public:
 
 private:
     WebCLProgram(WebCLContext*, cl_program);
-    static void finishCallBack(cl_program, void*);
+    static void finishCallback(cl_program, void*);
     static WebCLProgram* thisPointer;
     WebCLContext* m_context;
     cl_program m_clProgram;
