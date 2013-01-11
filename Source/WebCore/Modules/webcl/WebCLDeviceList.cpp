@@ -40,161 +40,51 @@ WebCLDeviceList::~WebCLDeviceList()
 {
 }
 
-PassRefPtr<WebCLDeviceList> WebCLDeviceList::create(cl_device_id* devicelist, int num_devices)
+PassRefPtr<WebCLDeviceList> WebCLDeviceList::create(CCPlatformID platformId, CCenum deviceType, CCerror& error)
 {
+    CCint devicesSize = ComputeContext::deviceIDs(platformId, deviceType, 0, 0, error);
+    if (error != ComputeContext::SUCCESS)
+        return 0;
 
-    return adoptRef(new WebCLDeviceList(devicelist, num_devices));
+    Vector<CCDeviceID> devices(devicesSize);
+    ComputeContext::deviceIDs(platformId, deviceType, devicesSize, devices.data(), error);
+    if (error != ComputeContext::SUCCESS)
+        return 0;
+
+    return adoptRef(new WebCLDeviceList(devices));
 }
 
-WebCLDeviceList::WebCLDeviceList(cl_device_id* devicelist, int num_devices )
-    :  m_cl_devices(devicelist),
-       m_num_devices(num_devices)
+PassRefPtr<WebCLDeviceList> WebCLDeviceList::create(const Vector<CCDeviceID>& devices)
 {
-    if (m_num_devices == 0) {
-        printf("Error: Number of devices is 0");
-    }
-
-    for (unsigned int i = 0 ; i < m_num_devices; i++) {
-        RefPtr<WebCLDevice> o = WebCLDevice::create(m_cl_devices[i]);
-        if (o != NULL) {
-            m_device_id_list.append(o);
-        } else {
-            // TODO (siba samal) Error handling
-        }
-    }
-    printf("iLength of WebCLDevice = %d", num_devices);
+    return adoptRef(new WebCLDeviceList(devices));
 }
 
-
-
-PassRefPtr<WebCLDeviceList> WebCLDeviceList::create(cl_platform_id platform_id, int device_type)
+WebCLDeviceList::WebCLDeviceList(const Vector<CCDeviceID>& devices)
+    : m_clDevices(devices)
 {
-    return adoptRef(new WebCLDeviceList(platform_id, device_type));
-}
-
-WebCLDeviceList::WebCLDeviceList(cl_platform_id platform_id, int device_type)
-{
-    cl_int err = 0;
-    cl_uint num_devices = 0;
-
-    if(device_type == WebCL::DEVICE_TYPE_GPU)
-        err = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_GPU, 1, NULL, &num_devices);
-    else if(device_type ==  WebCL::DEVICE_TYPE_CPU)
-        err = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_CPU, 1, NULL, &num_devices);
-    else if(device_type ==  WebCL::DEVICE_TYPE_ACCELERATOR)
-        err = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_ACCELERATOR, 1, NULL, &num_devices);
-    else if(device_type == WebCL::DEVICE_TYPE_DEFAULT)
-        err = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_DEFAULT, 1, NULL, &num_devices);
-    //else if(device_type == WebCL::DEVICE_TYPE_ALL)
-    //	err = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_ALL, 1, NULL, &num_devices);
-    else
-        printf("Error:Invalid Device Type \n");
-
-    m_num_devices = num_devices;
-    if(m_num_devices == 0)
-    {
-        printf("Error: Device Type Not Supported \n");
-        return;
-    }
-    if (err != CL_SUCCESS)
-    {
-        switch (err) {
-            case CL_INVALID_PLATFORM :
-                printf("Error: CL_INVALID_PLATFORM \n");
-                break;
-            case CL_INVALID_DEVICE_TYPE :
-                printf("Error: CL_INVALID_DEVICE_TYPE \n");
-                break;
-            case CL_INVALID_VALUE :
-                printf("Error: CL_INVALID_VALUE \n");
-                break;
-            case CL_DEVICE_NOT_FOUND :
-                printf("Error: CL_DEVICE_NOT_FOUND \n");
-                break;
-            case CL_OUT_OF_RESOURCES :
-                printf("Error: CL_OUT_OF_RESOURCES  \n");
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                break;
-        } 
-        return;
-    }
-
-    m_cl_devices = new cl_device_id[num_devices];
-
-    if(device_type == WebCL::DEVICE_TYPE_GPU)
-        err = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_GPU, 1, m_cl_devices, &num_devices);
-    else if(device_type == WebCL::DEVICE_TYPE_CPU)
-        err = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_CPU, 1, m_cl_devices, &num_devices);
-    else if(device_type == WebCL::DEVICE_TYPE_ACCELERATOR)
-        err = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_ACCELERATOR, 1, m_cl_devices, &num_devices);
-    else if(device_type == WebCL::DEVICE_TYPE_DEFAULT)
-        err = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_DEFAULT, 1, m_cl_devices, &num_devices);
-    //else if(device_type == WebCL::DEVICE_TYPE_ALL)
-    //	err = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_ALL, 1, m_cl_devices , &num_devices);
-    else
-        printf("Error:Invalid Device Type \n");
-
-    if (err != CL_SUCCESS)
-    {
-        printf("Error ACCELERATOR 2\n");
-        switch (err) {
-            case CL_INVALID_PLATFORM :
-                printf("Error: CL_INVALID_PLATFORM \n");
-                break;
-            case CL_INVALID_DEVICE_TYPE :
-                printf("Error: CL_INVALID_DEVICE_TYPE \n");
-                break;
-            case CL_INVALID_VALUE :
-                printf("Error: CL_INVALID_VALUE \n");
-                break;
-            case CL_DEVICE_NOT_FOUND :
-                printf("Error: CL_DEVICE_NOT_FOUND \n");
-                break;
-            case CL_OUT_OF_RESOURCES :
-                printf("Error: CL_OUT_OF_RESOURCES  \n");
-                break;
-            case CL_OUT_OF_HOST_MEMORY:
-                printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-                break;
-            default:
-                printf("Error: Invaild Error Type\n");
-                break;
-        } 
-        return;
-    }
-
-    for (unsigned int i = 0; i < m_num_devices; i++) {
-        RefPtr<WebCLDevice> o = WebCLDevice::create(m_cl_devices[i]);
-        if (o != NULL) {
-            m_device_id_list.append(o);
-        } else {
-        }
+    for (size_t i = 0; i < devices.size(); ++i) {
+        RefPtr<WebCLDevice> webCLDevice = WebCLDevice::create(devices[i]);
+        if (!webCLDevice)
+            m_devices.append(webCLDevice);
     }
 }
 
-cl_device_id* WebCLDeviceList::getCLDevices()
+CCDeviceID* WebCLDeviceList::getCLDevices()
 {
-    return m_cl_devices;
+    return m_clDevices.data();
 }
 
 unsigned WebCLDeviceList::length() const
 {
-    return m_num_devices;
+    return m_devices.size();
 }
 
-WebCLDevice* WebCLDeviceList::item(unsigned index)
+WebCLDevice* WebCLDeviceList::item(unsigned index) const
 {
-    if (index >= m_num_devices) {
+    if (index >= m_devices.size())
         return 0;
-    }
-    WebCLDevice* ret = (m_device_id_list[index]).get();
-    return ret;
 
+    return m_devices[index].get();
 }
 
 } // namespace WebCore

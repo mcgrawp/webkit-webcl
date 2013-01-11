@@ -28,11 +28,11 @@
 #ifndef WebCLDevice_h
 #define WebCLDevice_h
 
+#include "ComputeContext.h"
+#include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include <OpenCL/opencl.h>
-#include "ExceptionCode.h"
 #include <wtf/text/WTFString.h>
 
 #include "ActiveDOMObject.h"

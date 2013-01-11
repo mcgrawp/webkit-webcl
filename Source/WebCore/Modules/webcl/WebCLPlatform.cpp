@@ -118,26 +118,22 @@ WebCLGetInfo WebCLPlatform::getInfo (int platform_info, ExceptionCode& ec)
 
 PassRefPtr<WebCLDeviceList> WebCLPlatform::getDevices(int device_type, ExceptionCode& ec)
 {
-	if (m_cl_platform_id == NULL) {
-		printf("Error: Invalid Platform ID\n");
-		ec = WebCLException::INVALID_PLATFORM;
-		return NULL;
-	}
-    
-    if(device_type == 0)
-    {
-        device_type = WebCL::DEVICE_TYPE_DEFAULT;
+    if (!m_cl_platform_id) {
+        ec = WebCLException::INVALID_PLATFORM;
+        return 0;
     }
-    
-	RefPtr<WebCLDeviceList> o = WebCLDeviceList::create(m_cl_platform_id, device_type);
-	if (o != NULL) {
-		//TODO (siba samal) Check if its needed
-		//m_device_id = o;
-		return o;
-	} else {
-		ec = WebCLException::INVALID_DEVICE;
-		return NULL;
-	}
+
+    if (!device_type)
+        device_type = WebCL::DEVICE_TYPE_DEFAULT;
+
+    CCerror error;
+    RefPtr<WebCLDeviceList> webCLDeviceList = WebCLDeviceList::create(m_cl_platform_id, device_type, error);
+    if (!webCLDeviceList) {
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return 0;
+    }
+
+    return webCLDeviceList;
 }
 
 Vector<String> WebCLPlatform::getSupportedExtensions(ExceptionCode&)

@@ -104,18 +104,11 @@ WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
         break;
     case WebCL::CONTEXT_DEVICES:
         {
-            cl_device_id* cdDevices = 0;
             err = clGetContextInfo(m_clContext, CL_CONTEXT_DEVICES, 0, 0, &szParmDataBytes);
             if (err == CL_SUCCESS) {
-                int nd = szParmDataBytes / sizeof(cl_device_id);
-                cdDevices = (cl_device_id*) malloc(szParmDataBytes);
-                if (!cdDevices) {
-                    printf("Error: Memory allocation failed in getInfo\n");
-                    return WebCLGetInfo();
-                }
-                clGetContextInfo(m_clContext, CL_CONTEXT_DEVICES, szParmDataBytes, cdDevices, 0);
-                deviceList = WebCLDeviceList::create(cdDevices, nd);
-                free(cdDevices);
+                Vector<CCDeviceID> devices(szParmDataBytes);
+                clGetContextInfo(m_clContext, CL_CONTEXT_DEVICES, szParmDataBytes, devices.data(), 0);
+                deviceList = WebCLDeviceList::create(devices);
                 return WebCLGetInfo(PassRefPtr<WebCLDeviceList>(deviceList));
             }
         }

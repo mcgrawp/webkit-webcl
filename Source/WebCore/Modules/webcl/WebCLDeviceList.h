@@ -28,12 +28,12 @@
 #ifndef WebCLDeviceList_h
 #define WebCLDeviceList_h
 
-#include <OpenCL/opencl.h>
-
+#include "ComputeContext.h"
+#include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include "ExceptionCode.h"
+
 
 namespace WebCore {
 
@@ -42,19 +42,17 @@ class WebCLDevice;
 class WebCLDeviceList : public RefCounted<WebCLDeviceList> {
 public:
 	// TODO (siba samal) Remove if not needed
-	virtual ~WebCLDeviceList();
-	static PassRefPtr<WebCLDeviceList> create(cl_platform_id, int);
-	static PassRefPtr<WebCLDeviceList> create(cl_device_id*, int);
-	cl_device_id* getCLDevices();
-	unsigned length() const;
-	WebCLDevice* item(unsigned index);
+    virtual ~WebCLDeviceList();
+    static PassRefPtr<WebCLDeviceList> create(CCPlatformID, CCenum, CCerror&);
+    static PassRefPtr<WebCLDeviceList> create(const Vector<CCDeviceID>&);
+    CCDeviceID* getCLDevices();
+    unsigned length() const;
+    WebCLDevice* item(unsigned index) const;
 
 private:
-	WebCLDeviceList(cl_platform_id, int);
-	WebCLDeviceList(cl_device_id*, int);
-	Vector<RefPtr<WebCLDevice> > m_device_id_list;
-	cl_device_id* m_cl_devices;
-	cl_uint m_num_devices;
+    WebCLDeviceList(const Vector<CCDeviceID>&);
+    Vector<RefPtr<WebCLDevice> > m_devices;
+    Vector<CCDeviceID> m_clDevices;
 };
 
 } // namespace WebCore

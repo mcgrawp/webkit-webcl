@@ -33,6 +33,7 @@
 #include "WebCL.h"
 #include "WebCLGetInfo.h"
 #include "WebCLKernelList.h"
+
 namespace WebCore {
 
 WebCLProgram::~WebCLProgram()
@@ -136,19 +137,11 @@ WebCLGetInfo WebCLProgram::getInfo(int paramName, ExceptionCode& ec)
         break;
     case WebCL::PROGRAM_DEVICES:
         {
-            cl_device_id* cdDevices;
             err = clGetProgramInfo(m_clProgram, CL_PROGRAM_DEVICES, 0, 0, &szParmDataBytes);
             if (err == CL_SUCCESS) {
-                int nd = szParmDataBytes / sizeof(cl_device_id);
-                cdDevices = (cl_device_id*) malloc(szParmDataBytes);
-                if (!cdDevices) {
-                    printf("Error : Malloc failed in GetInfo \n");
-                    return WebCLGetInfo();
-                }
-                clGetProgramInfo(m_clProgram, CL_PROGRAM_DEVICES, szParmDataBytes, cdDevices, 0);
-                deviceList = WebCLDeviceList::create(cdDevices, nd);
-                free(cdDevices);
-                cdDevices = 0;
+                Vector<CCDeviceID> devices(szParmDataBytes);
+                clGetProgramInfo(m_clProgram, CL_PROGRAM_DEVICES, szParmDataBytes, devices.data(), 0);
+                deviceList = WebCLDeviceList::create(devices);
                 return WebCLGetInfo(PassRefPtr<WebCLDeviceList>(deviceList));
             }
         }
