@@ -1017,11 +1017,6 @@ void WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, WebCLEventList* eventsW
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-CCCommandQueue WebCLCommandQueue::getCLCommandQueue()
-{
-    return m_ccCommandQueue;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

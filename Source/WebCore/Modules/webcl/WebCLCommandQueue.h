@@ -271,7 +271,6 @@ public:
         enqueueTask(kernel, 0, 0, ec);
     }
 
-    cl_command_queue getCLCommandQueue();
 private:
     WebCLCommandQueue(WebCLContext*, cl_command_queue);
 
