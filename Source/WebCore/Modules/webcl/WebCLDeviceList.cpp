@@ -64,7 +64,7 @@ WebCLDeviceList::WebCLDeviceList(const Vector<CCDeviceID>& devices)
 {
     for (size_t i = 0; i < devices.size(); ++i) {
         RefPtr<WebCLDevice> webCLDevice = WebCLDevice::create(devices[i]);
-        if (!webCLDevice)
+        if (webCLDevice)
             m_devices.append(webCLDevice);
     }
 }
