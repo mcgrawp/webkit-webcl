@@ -1,5 +1,6 @@
 /*
-* Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+* Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation.
+* All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
@@ -41,7 +42,7 @@ WebCLPlatform::~WebCLPlatform()
 
 PassRefPtr<WebCLPlatform> WebCLPlatform::create(cl_platform_id platform_id)
 {
-	return adoptRef(new WebCLPlatform(platform_id));
+    return adoptRef(new WebCLPlatform(platform_id));
 }
 
 WebCLPlatform::WebCLPlatform(cl_platform_id platform_id)
@@ -49,71 +50,69 @@ WebCLPlatform::WebCLPlatform(cl_platform_id platform_id)
 {
 }
 
-WebCLGetInfo WebCLPlatform::getInfo (int platform_info, ExceptionCode& ec)
+WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
 {
-	cl_int err = 0;
-	if (m_cl_platform_id == NULL) {
-			ec = WebCLException::INVALID_PLATFORM;
-			printf("Error: Invalid Platform ID\n");
-			return WebCLGetInfo();
-	}
+    cl_int err = 0;
+    if (!m_cl_platform_id) {
+        ec = WebCLException::INVALID_PLATFORM;
+        printf("Error: Invalid Platform ID\n");
+        return WebCLGetInfo();
+    }
 
-	char platform_string[1024];
-	switch(platform_info)
-	{
-		case WebCL::PLATFORM_PROFILE:
-			err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_PROFILE, sizeof(platform_string), &platform_string, NULL);
-			if (err == CL_SUCCESS)
-				return WebCLGetInfo(String(platform_string));
-			break;
-		case WebCL::PLATFORM_VERSION:
-			err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_VERSION, sizeof(platform_string), &platform_string, NULL);
-			if (err == CL_SUCCESS)
-				return WebCLGetInfo(String(platform_string));
-			break;
-		case WebCL::PLATFORM_NAME:
-			err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_NAME, sizeof(platform_string), &platform_string, NULL);
-			if (err == CL_SUCCESS)
-				return WebCLGetInfo(String(platform_string));
-			break;
-		case WebCL::PLATFORM_VENDOR:
-			err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_VENDOR, sizeof(platform_string), &platform_string, NULL);
-			if (err == CL_SUCCESS)
-				return WebCLGetInfo(String(platform_string));
-			break;
-		case WebCL::PLATFORM_EXTENSIONS:
-			err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_EXTENSIONS, sizeof(platform_string), &platform_string, NULL);
-			if (err == CL_SUCCESS)
-				return WebCLGetInfo(String(platform_string));
-			break;
-		default:
-			printf("Error: Unsupported Platform Info type = %d ",platform_info);
+    char platform_string[1024];
+    switch(platform_info) {
+    case WebCL::PLATFORM_PROFILE:
+        err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_PROFILE, sizeof(platform_string), &platform_string, NULL);
+        if (err == CL_SUCCESS)
+            return WebCLGetInfo(String(platform_string));
+        break;
+    case WebCL::PLATFORM_VERSION:
+        err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_VERSION, sizeof(platform_string), &platform_string, NULL);
+        if (err == CL_SUCCESS)
+            return WebCLGetInfo(String(platform_string));
+        break;
+    case WebCL::PLATFORM_NAME:
+        err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_NAME, sizeof(platform_string), &platform_string, NULL);
+        if (err == CL_SUCCESS)
+            return WebCLGetInfo(String(platform_string));
+        break;
+    case WebCL::PLATFORM_VENDOR:
+        err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_VENDOR, sizeof(platform_string), &platform_string, NULL);
+        if (err == CL_SUCCESS)
+            return WebCLGetInfo(String(platform_string));
+        break;
+    case WebCL::PLATFORM_EXTENSIONS:
+        err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_EXTENSIONS, sizeof(platform_string), &platform_string, NULL);
+        if (err == CL_SUCCESS)
+            return WebCLGetInfo(String(platform_string));
+        break;
+    default:
+        printf("Error: Unsupported Platform Info type = %d ", platform_info);
+        ec = WebCLException::FAILURE;
+        return WebCLGetInfo();
+    }
+
+    if (err != CL_SUCCESS) {
+        switch (err) {
+        case CL_INVALID_PLATFORM:
+            ec = WebCLException::INVALID_PLATFORM;
+            printf("Error: CL_INVALID_PLATFORM  \n");
+            break;
+        case CL_INVALID_VALUE:
+            ec = WebCLException::INVALID_VALUE;
+            printf("Error: CL_INVALID_VALUE\n");
+            break;
+        case CL_OUT_OF_HOST_MEMORY:
+            ec = WebCLException::OUT_OF_HOST_MEMORY;
+            printf("Error: CL_OUT_OF_HOST_MEMORY  \n");
+            break;
+        default:
             ec = WebCLException::FAILURE;
-			return WebCLGetInfo();
-	}
-
-	if(err != CL_SUCCESS)
-	{
-		switch (err) {
-			case CL_INVALID_PLATFORM:
-				ec = WebCLException::INVALID_PLATFORM;
-				printf("Error: CL_INVALID_PLATFORM  \n");
-				break;
-			case CL_INVALID_VALUE:
-				ec = WebCLException::INVALID_VALUE;
-				printf("Error: CL_INVALID_VALUE\n");
-				break;
-			case CL_OUT_OF_HOST_MEMORY:
-				ec = WebCLException::OUT_OF_HOST_MEMORY;
-				printf("Error: CL_OUT_OF_HOST_MEMORY  \n");
-				break;
-			default:
-				ec = WebCLException::FAILURE;
-				printf("Invaild Error Type\n");
-				break;
-		}
-	}
-	return WebCLGetInfo();
+            printf("Invaild Error Type\n");
+            break;
+        }
+    }
+    return WebCLGetInfo();
 }
 
 PassRefPtr<WebCLDeviceList> WebCLPlatform::getDevices(int device_type, ExceptionCode& ec)
@@ -144,7 +143,7 @@ Vector<String> WebCLPlatform::getSupportedExtensions(ExceptionCode&)
 
 cl_platform_id WebCLPlatform::getCLPlatform()
 {
-	return m_cl_platform_id;
+    return m_cl_platform_id;
 }
 
 } // namespace WebCore
