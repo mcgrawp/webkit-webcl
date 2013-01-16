@@ -102,6 +102,12 @@ WebCLGetInfo::WebCLGetInfo(PassRefPtr<Float32Array> value)
 {
 }
 
+WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLImageDescriptor> value)
+    : m_type(kTypeWebCLImageDescriptor)
+    , m_webclImageDescriptor(value)
+{
+}
+
 WebCLGetInfo::WebCLGetInfo(PassRefPtr<Int32Array> value)
     : m_type(kTypeWebCLIntArray)
     , m_webclIntArray(value)
@@ -206,6 +212,12 @@ PassRefPtr<Float32Array> WebCLGetInfo::getWebCLFloatArray() const
 {
     ASSERT(getType() == kTypeWebCLFloatArray);
     return m_webclFloatArray;
+}
+
+PassRefPtr<WebCLImageDescriptor> WebCLGetInfo::getWebCLImageDescriptor() const
+{
+    ASSERT(getType() == kTypeWebCLImageDescriptor);
+    return m_webclImageDescriptor;
 }
 
 PassRefPtr<Int32Array> WebCLGetInfo::getWebCLIntArray() const

@@ -60,6 +60,7 @@
 #include "JSWebCLEvent.h"
 #include "JSWebCLSampler.h"
 #include "JSWebCLImage.h"
+#include "JSWebCLImageDescriptor.h"
 #include "WebCLPlatform.h"
 #include "WebCLKernel.h"  //not needeed
 #include "WebCLProgram.h"
@@ -83,48 +84,50 @@ namespace WebCore {
 
 static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInfo& info)
 {
-	switch (info.getType()) {
-		case WebCLGetInfo::kTypeBool:
-			return jsBoolean(info.getBool());
-		case WebCLGetInfo::kTypeBoolArray: {
-											   MarkedArgumentBuffer list;
-											   const Vector<bool>& value = info.getBoolArray();
-											   for (size_t ii = 0; ii < value.size(); ++ii)
-												   list.append(jsBoolean(value[ii]));
-											   return constructArray(exec, list);
-										   }
-		case WebCLGetInfo::kTypeFloat:
-										   return jsNumber(info.getFloat());
-		case WebCLGetInfo::kTypeInt:
-										   return jsNumber(info.getInt());
-		case WebCLGetInfo::kTypeNull:
-										   return jsNull();
-		case WebCLGetInfo::kTypeString:
-										   return jsString(exec, info.getString());
-		case WebCLGetInfo::kTypeUnsignedInt:
-										   return jsNumber(info.getUnsignedInt());
-		case WebCLGetInfo::kTypeUnsignedLong:
-										   return jsNumber(info.getUnsignedLong());
-		case WebCLGetInfo::kTypeWebCLFloatArray:
-										   return toJS(exec, globalObject, info.getWebCLFloatArray());
-		case WebCLGetInfo::kTypeWebCLIntArray:
-										   return toJS(exec, globalObject, info.getWebCLIntArray());
-		case WebCLGetInfo::kTypeWebCLProgram:
-										   return toJS(exec, globalObject, info.getWebCLProgram());
-		case WebCLGetInfo::kTypeWebCLContext:
-										   return toJS(exec, globalObject, info.getWebCLContext());
-		case WebCLGetInfo::kTypeWebCLCommandQueue:
-										   return toJS(exec, globalObject, info.getWebCLCommandQueue());
-		case WebCLGetInfo::kTypeWebCLDevice:
-										   return toJS(exec, globalObject, info.getWebCLDevice());
-		case WebCLGetInfo::kTypeWebCLDeviceList:
-										   return toJS(exec, globalObject, info.getWebCLDeviceList());
-		default:
-										   notImplemented();
-										   return jsUndefined();
-	}
+    switch (info.getType()) {
+    case WebCLGetInfo::kTypeBool:
+        return jsBoolean(info.getBool());
+    case WebCLGetInfo::kTypeBoolArray: {
+        MarkedArgumentBuffer list;
+        const Vector<bool>& value = info.getBoolArray();
+        for (size_t ii = 0; ii < value.size(); ++ii)
+            list.append(jsBoolean(value[ii]));
+        return constructArray(exec, list);
+    }
+    case WebCLGetInfo::kTypeFloat:
+        return jsNumber(info.getFloat());
+    case WebCLGetInfo::kTypeInt:
+        return jsNumber(info.getInt());
+    case WebCLGetInfo::kTypeNull:
+        return jsNull();
+    case WebCLGetInfo::kTypeString:
+        return jsString(exec, info.getString());
+    case WebCLGetInfo::kTypeUnsignedInt:
+        return jsNumber(info.getUnsignedInt());
+    case WebCLGetInfo::kTypeUnsignedLong:
+        return jsNumber(info.getUnsignedLong());
+    case WebCLGetInfo::kTypeWebCLFloatArray:
+        return toJS(exec, globalObject, info.getWebCLFloatArray());
+    case WebCLGetInfo::kTypeWebCLImageDescriptor:
+        return toJS(exec, globalObject, info.getWebCLImageDescriptor());
+    case WebCLGetInfo::kTypeWebCLIntArray:
+        return toJS(exec, globalObject, info.getWebCLIntArray());
+    case WebCLGetInfo::kTypeWebCLProgram:
+        return toJS(exec, globalObject, info.getWebCLProgram());
+    case WebCLGetInfo::kTypeWebCLContext:
+        return toJS(exec, globalObject, info.getWebCLContext());
+    case WebCLGetInfo::kTypeWebCLCommandQueue:
+        return toJS(exec, globalObject, info.getWebCLCommandQueue());
+    case WebCLGetInfo::kTypeWebCLDevice:
+        return toJS(exec, globalObject, info.getWebCLDevice());
+    case WebCLGetInfo::kTypeWebCLDeviceList:
+        return toJS(exec, globalObject, info.getWebCLDeviceList());
+    default:
+        notImplemented();
+        return jsUndefined();
+    }
 }
-} // namespace WebCore 
+} // namespace WebCore
 
 #endif // ENABLE(WEBCL)
 

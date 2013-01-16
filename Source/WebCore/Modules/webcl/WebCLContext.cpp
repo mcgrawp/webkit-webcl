@@ -38,7 +38,6 @@
 #include "WebCLCommandQueue.h"
 #include "WebCLEvent.h"
 #include "WebCLImage.h"
-#include "WebCLImageDescriptorList.h"
 #include "WebCLKernel.h"
 #include "WebCLMemoryObject.h"
 #include "WebCLProgram.h"
@@ -687,73 +686,28 @@ void WebCLContext::LRUImageBufferCache::bubbleToFront(int idx)
         m_buffers[i].swap(m_buffers[i-1]);
 }
 
-PassRefPtr<WebCLImageDescriptorList> WebCLContext::getSupportedImageFormats(int memFlags, int imageType, ExceptionCode &ec)
+void WebCLContext::getSupportedImageFormats(int memFlags, int imageType, Vector<RefPtr<WebCLImageDescriptor> >& imageDescriptors, ExceptionCode &ec)
 {
     //  Get context
     if (!m_clContext) {
         printf("Error: Invalid CL Context\n");
         ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-    // Validate the flags passed.
-    switch (memFlags) {
-    case CL_MEM_READ_WRITE:
-    case CL_MEM_WRITE_ONLY:
-    case CL_MEM_READ_ONLY:
-    case CL_MEM_USE_HOST_PTR:
-    case CL_MEM_ALLOC_HOST_PTR:
-    case CL_MEM_COPY_HOST_PTR:
-    case CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR:
-    case CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR:
-    case CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR:
-    case CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR:
-    case CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR:
-    case CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR:
-        // Valid flags . Continue with the cl API call.
-        break;
-    case 0:
-        // 0 is treated as CL_MEM_READ_WRITE flag.
-        memFlags = CL_MEM_READ_WRITE;
-        break;
-    default:
-        printf("Error: INVALID_VALUE specified as flag \n");
-        ec = WebCLException::INVALID_VALUE;
-        break;
+        return;
     }
 
-    // Validate the imageType passed.
-    switch (imageType) {
-    case CL_MEM_OBJECT_IMAGE2D :
-    case CL_MEM_OBJECT_IMAGE3D :
-        // Valid Image Types supported by OpenCL. Continue ...
-        break;
-    default:
-        printf("Error: INVALID_VALUE specified as imageType\n");
-        ec = WebCLException::INVALID_VALUE;
-        break;
-    }
+    CCuint numberOfSupportedImages;
+    CCerror error;
+    CCImageFormat* imageFormats = m_computeContext->supportedImageFormats(memFlags, imageType, numberOfSupportedImages, error);
 
-    // Max Number of Formats expected FIXME check how to standardise this
-    cl_uint uintNumEntries = 0;
-    CCerror error = m_computeContext->supportedImageFormats(memFlags, imageType, 0, &uintNumEntries, 0);
-
-    // FIXME: Should the error code be checked here instead?
-    if (!uintNumEntries) {
+    if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
+        return;
     }
-    // Max Number of Formats expected FIXME check how to standardise this
 
-    // FIXME: we should use WebKit memory allocator
-    // Array of size uint_num_entries to hold formats from opencl API
-    CCImageFormat* imageFormat =  new CCImageFormat[uintNumEntries];
-
-    // reference to take the num of supported formats
-    // FIXME: Error code is not checked.
-    error = m_computeContext->supportedImageFormats(memFlags, imageType, uintNumEntries, &uintNumEntries, imageFormat);
-
-    RefPtr<WebCLImageDescriptorList> result = WebCLImageDescriptorList::create(imageFormat, uintNumEntries);
-    return result;
+    for (size_t i = 0; i < numberOfSupportedImages; ++i) {
+        RefPtr<WebCLImageDescriptor> imgDescriptor = WebCLImageDescriptor::create(imageFormats[i]);
+        imageDescriptors.append(imgDescriptor);
+    }
 }
 
 PassRefPtr<WebCLMemoryObject> WebCLContext::createImage2D(int flags, unsigned width, unsigned height, ArrayBuffer* data, ExceptionCode& ec)

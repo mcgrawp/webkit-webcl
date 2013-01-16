@@ -64,10 +64,11 @@ public:
         kTypeInt,
         kTypeNull,
         kTypeString,
-        kTypeUnsignedInt,   
+        kTypeUnsignedInt,
         kTypeUnsignedLong,
         kTypeVoidPointer,
-        kTypeWebCLFloatArray,       
+        kTypeWebCLFloatArray,
+        kTypeWebCLImageDescriptor,
         kTypeWebCLIntArray,
         kTypeWebCLInt8Array,
         kTypeWebCLObjectArray,
@@ -88,6 +89,7 @@ public:
     explicit WebCLGetInfo(unsigned long value);
     explicit WebCLGetInfo(void* value);
     explicit WebCLGetInfo(PassRefPtr<Float32Array> value);
+    explicit WebCLGetInfo(PassRefPtr<WebCLImageDescriptor> value);
     explicit WebCLGetInfo(PassRefPtr<Int32Array> value);
     explicit WebCLGetInfo(PassRefPtr<Int8Array> value);
     explicit WebCLGetInfo(PassRefPtr<WebCLProgram> value);
@@ -107,6 +109,7 @@ public:
     unsigned long getUnsignedLong() const;
     void* getVoidPointer() const;
     PassRefPtr<Float32Array> getWebCLFloatArray() const;
+    PassRefPtr<WebCLImageDescriptor> getWebCLImageDescriptor() const;
     PassRefPtr<Int32Array> getWebCLIntArray() const;
     PassRefPtr<Int8Array> getWebCLInt8Array() const;
     PassRefPtr<WebCLProgram> getWebCLProgram() const;
@@ -126,6 +129,7 @@ private:
     unsigned long m_unsignedLong;
     void* m_voidPointer;
     RefPtr<Float32Array> m_webclFloatArray;
+    RefPtr<WebCLImageDescriptor> m_webclImageDescriptor;
     RefPtr<Int32Array> m_webclIntArray;
     RefPtr<Int8Array> m_webclInt8Array;
     RefPtr<WebCLProgram> m_webclProgram;

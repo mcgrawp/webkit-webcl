@@ -1973,8 +1973,6 @@
 		759453AB165E625100E5C118 /* WebCLImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945349165E618A00E5C118 /* WebCLImage.h */; };
 		759453AD165E625100E5C118 /* WebCLImageDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7594534B165E618A00E5C118 /* WebCLImageDescriptor.cpp */; };
 		759453AE165E625100E5C118 /* WebCLImageDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7594534C165E618A00E5C118 /* WebCLImageDescriptor.h */; };
-		759453B0165E625100E5C118 /* WebCLImageDescriptorList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7594534E165E618A00E5C118 /* WebCLImageDescriptorList.cpp */; };
-		759453B1165E625100E5C118 /* WebCLImageDescriptorList.h in Headers */ = {isa = PBXBuildFile; fileRef = 7594534F165E618A00E5C118 /* WebCLImageDescriptorList.h */; };
 		759453B3165E625100E5C118 /* WebCLKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75945351165E618A00E5C118 /* WebCLKernel.cpp */; };
 		759453B4165E625100E5C118 /* WebCLKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945352165E618A00E5C118 /* WebCLKernel.h */; };
 		759453B6165E625100E5C118 /* WebCLKernelArgumentTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75945354165E618A00E5C118 /* WebCLKernelArgumentTypes.cpp */; };
@@ -2025,8 +2023,6 @@
 		75945420165E660300E5C118 /* JSWebCLImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 759453F0165E660300E5C118 /* JSWebCLImage.h */; };
 		75945421165E660300E5C118 /* JSWebCLImageDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759453F1165E660300E5C118 /* JSWebCLImageDescriptor.cpp */; };
 		75945422165E660300E5C118 /* JSWebCLImageDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 759453F2165E660300E5C118 /* JSWebCLImageDescriptor.h */; };
-		75945423165E660300E5C118 /* JSWebCLImageDescriptorList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759453F3165E660300E5C118 /* JSWebCLImageDescriptorList.cpp */; };
-		75945424165E660300E5C118 /* JSWebCLImageDescriptorList.h in Headers */ = {isa = PBXBuildFile; fileRef = 759453F4165E660300E5C118 /* JSWebCLImageDescriptorList.h */; };
 		75945425165E660300E5C118 /* JSWebCLKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759453F5165E660300E5C118 /* JSWebCLKernel.cpp */; };
 		75945426165E660300E5C118 /* JSWebCLKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = 759453F6165E660300E5C118 /* JSWebCLKernel.h */; };
 		75945427165E660300E5C118 /* JSWebCLKernelArgumentTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759453F7165E660300E5C118 /* JSWebCLKernelArgumentTypes.cpp */; };
@@ -9350,9 +9346,6 @@
 		7594534B165E618A00E5C118 /* WebCLImageDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLImageDescriptor.cpp; sourceTree = "<group>"; };
 		7594534C165E618A00E5C118 /* WebCLImageDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLImageDescriptor.h; sourceTree = "<group>"; };
 		7594534D165E618A00E5C118 /* WebCLImageDescriptor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLImageDescriptor.idl; sourceTree = "<group>"; };
-		7594534E165E618A00E5C118 /* WebCLImageDescriptorList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLImageDescriptorList.cpp; sourceTree = "<group>"; };
-		7594534F165E618A00E5C118 /* WebCLImageDescriptorList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLImageDescriptorList.h; sourceTree = "<group>"; };
-		75945350165E618A00E5C118 /* WebCLImageDescriptorList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLImageDescriptorList.idl; sourceTree = "<group>"; };
 		75945351165E618A00E5C118 /* WebCLKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLKernel.cpp; sourceTree = "<group>"; };
 		75945352165E618A00E5C118 /* WebCLKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLKernel.h; sourceTree = "<group>"; };
 		75945353165E618A00E5C118 /* WebCLKernel.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLKernel.idl; sourceTree = "<group>"; };
@@ -9423,8 +9416,6 @@
 		759453F0165E660300E5C118 /* JSWebCLImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLImage.h; sourceTree = "<group>"; };
 		759453F1165E660300E5C118 /* JSWebCLImageDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLImageDescriptor.cpp; sourceTree = "<group>"; };
 		759453F2165E660300E5C118 /* JSWebCLImageDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLImageDescriptor.h; sourceTree = "<group>"; };
-		759453F3165E660300E5C118 /* JSWebCLImageDescriptorList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLImageDescriptorList.cpp; sourceTree = "<group>"; };
-		759453F4165E660300E5C118 /* JSWebCLImageDescriptorList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLImageDescriptorList.h; sourceTree = "<group>"; };
 		759453F5165E660300E5C118 /* JSWebCLKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLKernel.cpp; sourceTree = "<group>"; };
 		759453F6165E660300E5C118 /* JSWebCLKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLKernel.h; sourceTree = "<group>"; };
 		759453F7165E660300E5C118 /* JSWebCLKernelArgumentTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLKernelArgumentTypes.cpp; sourceTree = "<group>"; };
@@ -16351,9 +16342,6 @@
 				7594534B165E618A00E5C118 /* WebCLImageDescriptor.cpp */,
 				7594534C165E618A00E5C118 /* WebCLImageDescriptor.h */,
 				7594534D165E618A00E5C118 /* WebCLImageDescriptor.idl */,
-				7594534E165E618A00E5C118 /* WebCLImageDescriptorList.cpp */,
-				7594534F165E618A00E5C118 /* WebCLImageDescriptorList.h */,
-				75945350165E618A00E5C118 /* WebCLImageDescriptorList.idl */,
 				75945351165E618A00E5C118 /* WebCLKernel.cpp */,
 				75945352165E618A00E5C118 /* WebCLKernel.h */,
 				75945353165E618A00E5C118 /* WebCLKernel.idl */,
@@ -16423,8 +16411,6 @@
 				759453F0165E660300E5C118 /* JSWebCLImage.h */,
 				759453F1165E660300E5C118 /* JSWebCLImageDescriptor.cpp */,
 				759453F2165E660300E5C118 /* JSWebCLImageDescriptor.h */,
-				759453F3165E660300E5C118 /* JSWebCLImageDescriptorList.cpp */,
-				759453F4165E660300E5C118 /* JSWebCLImageDescriptorList.h */,
 				759453F5165E660300E5C118 /* JSWebCLKernel.cpp */,
 				759453F6165E660300E5C118 /* JSWebCLKernel.h */,
 				759453F7165E660300E5C118 /* JSWebCLKernelArgumentTypes.cpp */,
@@ -26173,7 +26159,6 @@
 				759453A8165E625100E5C118 /* WebCLGLObjectInfo.h in Headers */,
 				759453AB165E625100E5C118 /* WebCLImage.h in Headers */,
 				759453AE165E625100E5C118 /* WebCLImageDescriptor.h in Headers */,
-				759453B1165E625100E5C118 /* WebCLImageDescriptorList.h in Headers */,
 				759453B4165E625100E5C118 /* WebCLKernel.h in Headers */,
 				759453B7165E625100E5C118 /* WebCLKernelArgumentTypes.h in Headers */,
 				759453BA165E625200E5C118 /* WebCLKernelList.h in Headers */,
@@ -26200,7 +26185,6 @@
 				7594541E165E660300E5C118 /* JSWebCLGLObjectInfo.h in Headers */,
 				75945420165E660300E5C118 /* JSWebCLImage.h in Headers */,
 				75945422165E660300E5C118 /* JSWebCLImageDescriptor.h in Headers */,
-				75945424165E660300E5C118 /* JSWebCLImageDescriptorList.h in Headers */,
 				75945426165E660300E5C118 /* JSWebCLKernel.h in Headers */,
 				75945428165E660300E5C118 /* JSWebCLKernelArgumentTypes.h in Headers */,
 				7594542A165E660300E5C118 /* JSWebCLKernelList.h in Headers */,
@@ -29324,7 +29308,6 @@
 				759453A7165E625100E5C118 /* WebCLGLObjectInfo.cpp in Sources */,
 				759453AA165E625100E5C118 /* WebCLImage.cpp in Sources */,
 				759453AD165E625100E5C118 /* WebCLImageDescriptor.cpp in Sources */,
-				759453B0165E625100E5C118 /* WebCLImageDescriptorList.cpp in Sources */,
 				759453B3165E625100E5C118 /* WebCLKernel.cpp in Sources */,
 				759453B6165E625100E5C118 /* WebCLKernelArgumentTypes.cpp in Sources */,
 				759453B9165E625200E5C118 /* WebCLKernelList.cpp in Sources */,
@@ -29349,7 +29332,6 @@
 				7594541D165E660300E5C118 /* JSWebCLGLObjectInfo.cpp in Sources */,
 				7594541F165E660300E5C118 /* JSWebCLImage.cpp in Sources */,
 				75945421165E660300E5C118 /* JSWebCLImageDescriptor.cpp in Sources */,
-				75945423165E660300E5C118 /* JSWebCLImageDescriptorList.cpp in Sources */,
 				75945425165E660300E5C118 /* JSWebCLKernel.cpp in Sources */,
 				75945427165E660300E5C118 /* JSWebCLKernelArgumentTypes.cpp in Sources */,
 				75945429165E660300E5C118 /* JSWebCLKernelList.cpp in Sources */,

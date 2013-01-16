@@ -478,35 +478,36 @@ PlatformComputeObject ComputeContext::createFromGLTexture2D(int type, GC3Denum t
     return memory;
 }
 
-static cl_mem_object_type computeObjectTypeToCL(int type)
-{
-    cl_mem_object_type clObjectType;
-    switch (type) {
-    case ComputeContext::GL_OBJECT_BUFFER:
-        clObjectType = CL_GL_OBJECT_BUFFER;
-        break;
-    case ComputeContext::GL_OBJECT_TEXTURE2D:
-        clObjectType = CL_GL_OBJECT_TEXTURE2D;
-        break;
-    case ComputeContext::GL_OBJECT_RENDERBUFFER:
-        clObjectType = CL_GL_OBJECT_RENDERBUFFER;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return clObjectType;
-}
-
-// FIXME: improve the API
-CCerror ComputeContext::supportedImageFormats(int type, int imageType, CCuint numberOfEntries, CCuint *numberImageFormat, CCImageFormat* imageFormat)
+CCImageFormat* ComputeContext::supportedImageFormats(int type, int imageType, CCuint& numberOfSupportedImages, CCerror& error)
 {
     cl_mem_flags memoryType = computeMemoryTypeToCL(type);
-    cl_mem_object_type clImageType = computeObjectTypeToCL(imageType);
 
-    cl_int error = clGetSupportedImageFormats(m_clContext, memoryType, clImageType, numberOfEntries, imageFormat, numberImageFormat);
-    return clToComputeContextError(error);
+    if (imageType != ComputeContext::MEM_OBJECT_IMAGE2D) {
+        error = ComputeContext::INVALID_VALUE;
+        return 0;
+    }
+
+    cl_mem_object_type clImageType = CL_MEM_OBJECT_IMAGE2D;
+
+    cl_int clError;
+    clError = clGetSupportedImageFormats(m_clContext, memoryType, clImageType, 0, 0, &numberOfSupportedImages);
+
+    if (clError != CL_SUCCESS) {
+        error = clToComputeContextError(clError);
+        return 0;
+    }
+
+    // FIXME: We should not use malloc
+    CCImageFormat* imageFormats = (CCImageFormat*) malloc(sizeof(CCImageFormat) * numberOfSupportedImages);
+
+    clError = clGetSupportedImageFormats(m_clContext, memoryType, clImageType, numberOfSupportedImages, imageFormats, 0);
+    if (clError != CL_SUCCESS) {
+        error = clToComputeContextError(clError);
+        return 0;
+    }
+
+    error = clToComputeContextError(clError);
+    return imageFormats;
 }
 
 CCerror ComputeContext::enqueueNDRangeKernel(CCCommandQueue commandQueue, CCKernel kernelID, int workItemDimensions,

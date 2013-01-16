@@ -52,7 +52,6 @@ class ImageBuffer;
 class IntSize;
 class WebCLBuffer;
 class WebCLImageDescriptor;
-class WebCLImageDescriptorList;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
@@ -104,7 +103,7 @@ public:
 
     WebCLGetInfo getInfo(int, ExceptionCode&);
 
-    PassRefPtr<WebCLImageDescriptorList> getSupportedImageFormats(int , int , ExceptionCode&);
+    void getSupportedImageFormats(int, int, Vector<RefPtr<WebCLImageDescriptor> >&, ExceptionCode&);
 
     // Strawman proposal
     PassRefPtr<WebCLBuffer> createBuffer(int, ImageData*, ExceptionCode&);

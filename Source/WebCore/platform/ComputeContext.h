@@ -312,7 +312,7 @@ public:
     CCKernel createKernel(CCProgram program, const String& kernelName, CCerror& error);
     CCKernel* createKernelsInProgram(CCProgram, CCuint& numberOfKernels, CCerror& error);
 
-    CCerror supportedImageFormats(int type, int imageType, CCuint numberOfEntries, CCuint *numberImageFormat, CCImageFormat* imageFormat);
+    CCImageFormat* supportedImageFormats(int /*type*/, int /*imageType*/, CCuint& /*numberOfSupportedImages*/, CCerror&);
 
     CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
