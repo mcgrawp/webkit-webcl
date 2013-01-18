@@ -251,7 +251,10 @@ void WebCLProgram::finishCallback(cl_program program, void* userData)
         printf(" userData is NULL \n ");
 
     WebCLProgram* self = static_cast<WebCLProgram*>(WebCLProgram::thisPointer);
-    self->m_finishCallback.get()->handleEvent(17);
+    if (self)
+        self->m_finishCallback.get()->handleEvent(17);
+    else
+        printf(" ERROR:: static_cast to WebCLProgram failed\n");
     printf(" Just Finished finishCallback() call back");
 }
 
@@ -262,6 +265,7 @@ void WebCLProgram::build(WebCLDeviceList* clDevices, const String& options,
 {
     cl_int err = 0;
     cl_device_id* clDevice = 0;
+    WebCLProgram::thisPointer = static_cast<WebCLProgram*>(this);
 
     m_finishCallback = finishCallback;
     if (!m_clProgram) {
