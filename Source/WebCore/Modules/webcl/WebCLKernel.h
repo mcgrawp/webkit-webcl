@@ -31,6 +31,7 @@
 #include "ExceptionCode.h"
 #include "WebCLGetInfo.h"
 #include "WebCLKernelTypes.h"
+
 #include <OpenCL/opencl.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -38,6 +39,7 @@
 namespace WebCore {
 
 class WebCL;
+class WebCLContext;
 class WebCLGetInfo;
 class WebCLDevice;
 class WebCLMemoryObject;

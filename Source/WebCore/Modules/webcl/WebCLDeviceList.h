@@ -28,7 +28,7 @@
 #ifndef WebCLDeviceList_h
 #define WebCLDeviceList_h
 
-#include "ComputeContext.h"
+#include "ComputeTypes.h"
 #include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

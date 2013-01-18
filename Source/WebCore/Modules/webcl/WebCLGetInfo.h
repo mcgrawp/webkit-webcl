@@ -28,27 +28,25 @@
 #ifndef WebCLGetInfo_h
 #define WebCLGetInfo_h
 
+#include "ComputeTypes.h"
+#include "ComputeContext.h"
 
 #include <wtf/Float32Array.h>
 #include <wtf/Int32Array.h>
 #include <wtf/Int8Array.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/Uint8Array.h>
-#include "WebCLProgram.h"
-#include "WebCLContext.h"
-#include "WebCLCommandQueue.h"
-#include "WebCLDeviceList.h"
-#include "WebCLDevice.h"
-
-
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-
 namespace WebCore {
 
-class WebCLProgram;
+class WebCLCommandQueue;
 class WebCLContext;
+class WebCLDeviceList;
+class WebCLDevice;
+class WebCLImageDescriptor;
+class WebCLProgram;
 
 // A tagged union representing the result of get queries like
 // getParameter (encompassing getBooleanv, getIntegerv, getFloatv) and

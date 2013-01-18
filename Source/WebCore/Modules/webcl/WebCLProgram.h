@@ -29,6 +29,8 @@
 #define WebCLProgram_h
 
 #include "ExceptionCode.h"
+#include "WebCLFinishCallback.h"
+
 #include <OpenCL/opencl.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -40,7 +42,6 @@ class WebCLContext;
 class WebCLGetInfo;
 class WebCLKernel;
 class WebCLKernelList;
-class WebCLFinishCallback;
 class WebCLDevice;
 class WebCLDeviceList;
 
@@ -53,8 +54,7 @@ public:
     WebCLGetInfo getBuildInfo(WebCLDevice*, int, ExceptionCode&);
 
     void build(WebCLDeviceList*, const String&, PassRefPtr<WebCLFinishCallback>, int, ExceptionCode&);
-    void build(WebCLDeviceList* devices, const String& options, PassRefPtr<WebCLFinishCallback> finishCallback,
-        ExceptionCode& ec)
+    void build(WebCLDeviceList* devices, const String& options, PassRefPtr<WebCLFinishCallback> finishCallback, ExceptionCode& ec)
     {
         return build(devices, options, finishCallback, 0, ec);
     }
@@ -72,6 +72,8 @@ public:
     PassRefPtr<WebCLKernelList> createKernelsInProgram(ExceptionCode&);
 
     void releaseProgram(ExceptionCode&);
+
+    // FIXME: Does it need to be public?
     RefPtr<WebCLFinishCallback> m_finishCallback;
 
 private:

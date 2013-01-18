@@ -31,8 +31,12 @@
 
 #include "WebCLGetInfo.h"
 
+#include "WebCLCommandQueue.h"
+#include "WebCLDeviceList.h"
+#include "WebCLDevice.h"
 #include "WebCLProgram.h"
 #include "WebCLContext.h"
+
 #include <wtf/Float32Array.h>
 #include <wtf/Int32Array.h>
 #include <wtf/Uint32Array.h>

@@ -30,7 +30,7 @@
 #if ENABLE(WEBCL)
 
 #include "WebCLImage.h"
-#include "WebCLException.h"
+
 #include "WebCLContext.h"
 #include "WebCL.h"
 

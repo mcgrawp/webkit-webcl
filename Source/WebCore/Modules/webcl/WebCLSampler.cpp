@@ -29,6 +29,7 @@
 
 #if ENABLE(WEBCL)
 
+#include "ExceptionCode.h"
 #include "WebCLSampler.h"
 #include "WebCL.h"
 #include "WebCLException.h"

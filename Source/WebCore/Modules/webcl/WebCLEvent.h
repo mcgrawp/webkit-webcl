@@ -28,18 +28,21 @@
 #ifndef WebCLEvent_h
 #define WebCLEvent_h
 
+#include "ExceptionCode.h"
+#include "WebCLFinishCallback.h"
+#include "WebCLGetInfo.h"
+
 #include <OpenCL/opencl.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-#include "WebCLFinishCallback.h"
-#include "WebCLGetInfo.h"
-
 namespace WebCore {
 
 class WebCL;
 class WebCLEvent;
+class WebCLContext;
+
 class WebCLEvent : public RefCounted<WebCLEvent> {
 public:
     virtual ~WebCLEvent();
