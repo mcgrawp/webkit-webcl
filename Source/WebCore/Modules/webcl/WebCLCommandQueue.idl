@@ -1,17 +1,17 @@
 /*
 * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
 * are met:
-* 
+*
 * 1.  Redistributions of source code must retain the above copyright
 *     notice, this list of conditions and the following disclaimer.
-* 
+*
 * 2.  Redistributions in binary form must reproduce the above copyright
 *     notice, this list of conditions and the following disclaimer in the
 *     documentation and/or other materials provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
 * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -26,10 +26,10 @@
 */
 
 module webcl {
-	interface [
-		Conditional=WEBCL,
-	] WebCLCommandQueue {
-	[StrictTypeChecking, Custom] void getInfo(in long queuenfo) raises(DOMException);
+    interface [
+        Conditional=WEBCL,
+    ] WebCLCommandQueue {
+    [StrictTypeChecking, Custom] void getInfo(in long queuenfo) raises(DOMException);
 
     void enqueueWriteBuffer(in WebCLBuffer bufferId,
             in boolean blockingWrite,
@@ -91,7 +91,7 @@ module webcl {
 
     void enqueueNDRangeKernel(in WebCLKernel kernel,
             in Int32Array offsets, in Int32Array globalWorkSize,
-            in Int32Array localWorkSize, in [Optional] WebCLEventList eventWaitList, 
+            in Int32Array localWorkSize, in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
 
     void enqueueWriteImage(in WebCLImage image,
@@ -113,7 +113,7 @@ module webcl {
             in long slicePitch,
             in ArrayBufferView ptr,
             in [Optional] WebCLEventList eventWaitList,
-            in [Optional] WebCLEvent event) 
+            in [Optional] WebCLEvent event)
         raises(DOMException);
 
     void enqueueAcquireGLObjects(in WebCLMemoryObject memObjects,
