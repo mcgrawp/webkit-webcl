@@ -52,40 +52,26 @@ WebCLPlatform::WebCLPlatform(cl_platform_id platform_id)
 
 WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
 {
-    cl_int err = 0;
     if (!m_cl_platform_id) {
         ec = WebCLException::INVALID_PLATFORM;
         printf("Error: Invalid Platform ID\n");
         return WebCLGetInfo();
     }
 
-    char platform_string[1024];
+    cl_int err = 0;
     switch(platform_info) {
     case WebCL::PLATFORM_PROFILE:
-        err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_PROFILE, sizeof(platform_string), &platform_string, NULL);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(String(platform_string));
-        break;
     case WebCL::PLATFORM_VERSION:
-        err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_VERSION, sizeof(platform_string), &platform_string, NULL);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(String(platform_string));
-        break;
     case WebCL::PLATFORM_NAME:
-        err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_NAME, sizeof(platform_string), &platform_string, NULL);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(String(platform_string));
-        break;
     case WebCL::PLATFORM_VENDOR:
-        err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_VENDOR, sizeof(platform_string), &platform_string, NULL);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(String(platform_string));
-        break;
     case WebCL::PLATFORM_EXTENSIONS:
-        err = clGetPlatformInfo(m_cl_platform_id, CL_PLATFORM_EXTENSIONS, sizeof(platform_string), &platform_string, NULL);
+    {
+        char platform_string[1024];
+        err = ComputeContext::getPlatformInfo(m_cl_platform_id, platform_info, sizeof(platform_string), &platform_string);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(String(platform_string));
         break;
+    }
     default:
         printf("Error: Unsupported Platform Info type = %d ", platform_info);
         ec = WebCLException::FAILURE;

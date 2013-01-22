@@ -164,6 +164,24 @@ static cl_device_info computeDeviceInfoTypeToCL(int deviceInfoType)
     return CL_INVALID_VALUE;
 }
 
+static cl_platform_info computePlatformInfoTypeToCL(int platformInfoType)
+{
+    switch (platformInfoType) {
+    case ComputeContext::PLATFORM_PROFILE:
+        return CL_PLATFORM_PROFILE;
+    case ComputeContext::PLATFORM_VERSION:
+        return CL_PLATFORM_VERSION;
+    case ComputeContext::PLATFORM_NAME:
+        return CL_PLATFORM_NAME;
+    case ComputeContext::PLATFORM_VENDOR:
+        return CL_PLATFORM_VENDOR;
+    case ComputeContext::PLATFORM_EXTENSIONS:
+        return CL_PLATFORM_EXTENSIONS;
+    }
+    ASSERT_NOT_REACHED();
+    return CL_INVALID_VALUE;
+}
+
 static CCerror clToComputeContextError(cl_int clError)
 {
     int computeContextError;
@@ -640,6 +658,13 @@ CCerror ComputeContext::getDeviceInfo(CCDeviceID deviceID, int infoType, size_t 
 {
    cl_device_info clDeviceInfoType = computeDeviceInfoTypeToCL(infoType);
    cl_int error = clGetDeviceInfo(deviceID, clDeviceInfoType, sizeOfData, data, 0 /*param_value_size_ret)*/);
+   return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::getPlatformInfo(CCPlatformID platformID, int infoType, size_t sizeOfData, void* data)
+{
+   cl_platform_info clPlatformInfoType = computePlatformInfoTypeToCL(infoType);
+   cl_int error = clGetPlatformInfo(platformID, clPlatformInfoType, sizeOfData, data, 0 /*param_value_size_ret)*/);
    return clToComputeContextError(error);
 }
 

@@ -313,6 +313,7 @@ public:
     CCImageFormat* supportedImageFormats(int /*type*/, int /*imageType*/, CCuint& /*numberOfSupportedImages*/, CCerror&);
 
     static CCerror getDeviceInfo(CCDeviceID, int infoType, size_t sizeOfData, void* data);
+    static CCerror getPlatformInfo(CCPlatformID, int infoType, size_t sizeOfData, void* data);
 
     CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
