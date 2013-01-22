@@ -82,6 +82,12 @@ WebCLProgram::WebCLProgram(WebCLContext* context, cl_program program)
 
 WebCLGetInfo WebCLProgram::getInfo(int paramName, ExceptionCode& ec)
 {
+    if (!m_clProgram) {
+        ec = WebCLException::INVALID_PROGRAM;
+        printf("Error: Invalid program object\n");
+        return WebCLGetInfo();
+    }
+
     cl_int err = 0;
     cl_uint uintUnits = 0;
     size_t sizetUnits = 0;
@@ -90,41 +96,28 @@ WebCLGetInfo WebCLProgram::getInfo(int paramName, ExceptionCode& ec)
     RefPtr<WebCLContext> contextObj  = 0;
     RefPtr<WebCLDeviceList> deviceList =  0;
     size_t szParmDataBytes = 0;
-    if (!m_clProgram) {
-        ec = WebCLException::INVALID_PROGRAM;
-        printf("Error: Invalid program object\n");
-        return WebCLGetInfo();
-    }
 
     switch (paramName) {
     case WebCL::PROGRAM_REFERENCE_COUNT:
-        err = clGetProgramInfo(m_clProgram, CL_PROGRAM_REFERENCE_COUNT, sizeof(cl_uint), &uintUnits, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(uintUnits));
-        break;
     case WebCL::PROGRAM_NUM_DEVICES:
-        err = clGetProgramInfo(m_clProgram, CL_PROGRAM_NUM_DEVICES, sizeof(cl_uint), &uintUnits, 0);
+        err = ComputeContext::getProgramInfo(m_clProgram, paramName, sizeof(cl_uint), &uintUnits, 0);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(uintUnits));
         break;
     case WebCL::PROGRAM_BINARY_SIZES:
-        err = clGetProgramInfo(m_clProgram, CL_PROGRAM_BINARY_SIZES, sizeof(size_t), &sizetUnits, 0);
+        err = ComputeContext::getProgramInfo(m_clProgram, CL_PROGRAM_BINARY_SIZES, sizeof(size_t), &sizetUnits, 0);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(sizetUnits));
         break;
     case WebCL::PROGRAM_SOURCE:
-        err = clGetProgramInfo(m_clProgram, CL_PROGRAM_SOURCE, sizeof(programString), &programString, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(String(programString));
-        break;
     case WebCL::PROGRAM_BINARIES:
-        err = clGetProgramInfo(m_clProgram, CL_PROGRAM_BINARIES, sizeof(programString), &programString, 0);
+        err = ComputeContext::getProgramInfo(m_clProgram, paramName, sizeof(programString), &programString, 0);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(String(programString));
         break;
     case WebCL::PROGRAM_CONTEXT:
         {
-            err = clGetProgramInfo(m_clProgram, CL_PROGRAM_CONTEXT, sizeof(cl_context), &clContextID, 0);
+            err = ComputeContext::getProgramInfo(m_clProgram, CL_PROGRAM_CONTEXT, sizeof(cl_context), &clContextID, 0);
             // FIXME Need a create API taking cl_context in WebCLContext interface.
             // contextObj = WebCLContext::create(m_context->webclObject(), clContextID, 1, 0, err );
             if (!contextObj) {
@@ -137,20 +130,21 @@ WebCLGetInfo WebCLProgram::getInfo(int paramName, ExceptionCode& ec)
         break;
     case WebCL::PROGRAM_DEVICES:
         {
-            err = clGetProgramInfo(m_clProgram, CL_PROGRAM_DEVICES, 0, 0, &szParmDataBytes);
+            err = ComputeContext::getProgramInfo(m_clProgram, CL_PROGRAM_DEVICES, 0, 0, &szParmDataBytes);
             if (err == CL_SUCCESS) {
                 Vector<CCDeviceID> devices(szParmDataBytes);
-                clGetProgramInfo(m_clProgram, CL_PROGRAM_DEVICES, szParmDataBytes, devices.data(), 0);
+                ComputeContext::getProgramInfo(m_clProgram, CL_PROGRAM_DEVICES, szParmDataBytes, devices.data(), 0);
                 deviceList = WebCLDeviceList::create(devices);
                 return WebCLGetInfo(PassRefPtr<WebCLDeviceList>(deviceList));
             }
         }
         break;
     default:
-        printf("Error: UNSUPPORTED program Info type = %d ", paramName);
+        // FIXME: Is this really the best exception?
         ec = WebCLException::INVALID_PROGRAM;
         return WebCLGetInfo();
     }
+
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
 }

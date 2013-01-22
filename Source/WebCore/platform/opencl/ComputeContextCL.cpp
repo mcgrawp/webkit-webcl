@@ -182,6 +182,28 @@ static cl_platform_info computePlatformInfoTypeToCL(int platformInfoType)
     return CL_INVALID_VALUE;
 }
 
+static cl_program_info computeProgramInfoTypeToCL(int deviceInfoType)
+{
+    switch (deviceInfoType) {
+    case ComputeContext::PROGRAM_REFERENCE_COUNT:
+        return CL_PROGRAM_REFERENCE_COUNT;
+    case ComputeContext::PROGRAM_CONTEXT:
+        return CL_PROGRAM_CONTEXT;
+    case ComputeContext::PROGRAM_NUM_DEVICES:
+        return CL_PROGRAM_NUM_DEVICES;
+    case ComputeContext::PROGRAM_DEVICES:
+        return CL_PROGRAM_DEVICES;
+    case ComputeContext::PROGRAM_SOURCE:
+        return CL_PROGRAM_SOURCE;
+    case ComputeContext::PROGRAM_BINARY_SIZES:
+        return CL_PROGRAM_BINARY_SIZES;
+    case ComputeContext::PROGRAM_BINARIES:
+        return CL_PROGRAM_BINARIES;
+    }
+    ASSERT_NOT_REACHED();
+    return CL_INVALID_VALUE;
+}
+
 static cl_command_queue_info computeCommandQueueInfoTypeToCL(int commandQueueInfoType)
 {
     switch (commandQueueInfoType) {
@@ -684,6 +706,13 @@ CCerror ComputeContext::getPlatformInfo(CCPlatformID platformID, int infoType, s
 {
    cl_platform_info clPlatformInfoType = computePlatformInfoTypeToCL(infoType);
    cl_int error = clGetPlatformInfo(platformID, clPlatformInfoType, sizeOfData, data, 0 /*param_value_size_ret)*/);
+   return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::getProgramInfo(CCProgram program, int infoType, size_t sizeOfData, void* data, size_t* actualSizeOfData)
+{
+   cl_program_info clProgramInfoType = computeProgramInfoTypeToCL(infoType);
+   cl_int error = clGetProgramInfo(program, clProgramInfoType, sizeOfData, data, actualSizeOfData);
    return clToComputeContextError(error);
 }
 
