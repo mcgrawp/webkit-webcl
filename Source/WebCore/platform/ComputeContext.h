@@ -314,6 +314,7 @@ public:
 
     static CCerror getDeviceInfo(CCDeviceID, int infoType, size_t sizeOfData, void* data);
     static CCerror getPlatformInfo(CCPlatformID, int infoType, size_t sizeOfData, void* data);
+    static CCerror getCommandQueueInfo(CCCommandQueue, int infoType, size_t sizeOfData, void* data);
 
     CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);

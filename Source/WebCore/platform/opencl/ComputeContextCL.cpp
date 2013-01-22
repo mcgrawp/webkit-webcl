@@ -182,6 +182,22 @@ static cl_platform_info computePlatformInfoTypeToCL(int platformInfoType)
     return CL_INVALID_VALUE;
 }
 
+static cl_command_queue_info computeCommandQueueInfoTypeToCL(int commandQueueInfoType)
+{
+    switch (commandQueueInfoType) {
+    case ComputeContext::QUEUE_CONTEXT:
+        return CL_QUEUE_CONTEXT;
+    case ComputeContext::QUEUE_DEVICE:
+        return CL_QUEUE_DEVICE;
+    case ComputeContext::QUEUE_REFERENCE_COUNT:
+        return CL_QUEUE_REFERENCE_COUNT;
+    case ComputeContext::QUEUE_PROPERTIES:
+        return CL_QUEUE_PROPERTIES;
+    }
+    ASSERT_NOT_REACHED();
+    return CL_INVALID_VALUE;
+}
+
 static CCerror clToComputeContextError(cl_int clError)
 {
     int computeContextError;
@@ -668,6 +684,13 @@ CCerror ComputeContext::getPlatformInfo(CCPlatformID platformID, int infoType, s
 {
    cl_platform_info clPlatformInfoType = computePlatformInfoTypeToCL(infoType);
    cl_int error = clGetPlatformInfo(platformID, clPlatformInfoType, sizeOfData, data, 0 /*param_value_size_ret)*/);
+   return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::getCommandQueueInfo(CCCommandQueue queue, int infoType, size_t sizeOfData, void* data)
+{
+   cl_command_queue_info clCommandQueueInfoType = computeCommandQueueInfoTypeToCL(infoType);
+   cl_int error = clGetCommandQueueInfo(queue, clCommandQueueInfoType, sizeOfData, data, 0);
    return clToComputeContextError(error);
 }
 

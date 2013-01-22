@@ -76,14 +76,14 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
 
     switch (paramName) {
     case WebCL::QUEUE_REFERENCE_COUNT:
-	    err = clGetCommandQueueInfo(m_ccCommandQueue, CL_QUEUE_REFERENCE_COUNT, sizeof(CCuint), &uintUnits, 0);
+        err = ComputeContext::getCommandQueueInfo(m_ccCommandQueue, paramName, sizeof(CCuint), &uintUnits);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(uintUnits));
         break;
-    // FIXME: We should not create a WebCLContext here.
     /*
+    // FIXME: We should not create a WebCLContext here.
     case WebCL::QUEUE_CONTEXT:
-        err = clGetCommandQueueInfo(m_ccCommandQueue, CL_QUEUE_CONTEXT, sizeof(cl_context), &cl_context_id, 0);
+        err = clGetCommandQueueInfo(m_ccCommandQueue, paramName, sizeof(cl_context), &cl_context_id, 0);
         if (err == CL_SUCCESS) {
             RefPtr<WebCLContext> contextObj = WebCLContext::create(m_context, cl_context_id);
             // FIXME: The the wrapping PassRefPtr below REALLY needed?
@@ -91,7 +91,7 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
         break;
     */
     case WebCL::QUEUE_DEVICE:
-        err = clGetCommandQueueInfo(m_ccCommandQueue, CL_QUEUE_DEVICE, sizeof(CCDeviceID), &ccDeviceID, 0);
+        err = ComputeContext::getCommandQueueInfo(m_ccCommandQueue, paramName, sizeof(CCDeviceID), &ccDeviceID);
         if (err == CL_SUCCESS) {
             RefPtr<WebCLDevice> deviceObj = WebCLDevice::create(ccDeviceID);
             // FIXME: The the wrapping PassRefPtr below REALLY needed?
@@ -99,12 +99,11 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
         }
         break;
     case WebCL::QUEUE_PROPERTIES:
-        err = clGetCommandQueueInfo(m_ccCommandQueue, CL_QUEUE_PROPERTIES, sizeof(CCCommandQueueProperties), &ccCommandQueueProperties, 0);
+        err = ComputeContext::getCommandQueueInfo(m_ccCommandQueue, paramName, sizeof(CCCommandQueueProperties), &ccCommandQueueProperties);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccCommandQueueProperties));
         break;
     default:
-        printf("Error: Unsupported Commans Queue Info type\n");
         ec = WebCLException::FAILURE;
         return WebCLGetInfo();
     }
