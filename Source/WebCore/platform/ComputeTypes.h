@@ -21,5 +21,6 @@ typedef cl_program CCProgram;
 typedef cl_kernel_work_group_info CCKernelWorkGroupInfo;
 typedef cl_kernel CCKernel;
 typedef cl_event CCEvent;
+typedef cl_buffer_region CCBufferRegion;
 
 #endif

@@ -1,17 +1,17 @@
 /*
 * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
 * are met:
-* 
+*
 * 1.  Redistributions of source code must retain the above copyright
 *     notice, this list of conditions and the following disclaimer.
-* 
+*
 * 2.  Redistributions in binary form must reproduce the above copyright
 *     notice, this list of conditions and the following disclaimer in the
 *     documentation and/or other materials provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
 * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -28,10 +28,6 @@
 #ifndef WebCLBuffer_h
 #define WebCLBuffer_h
 
-#include <OpenCL/opencl.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-
 #include "WebCLMemoryObject.h"
 
 namespace WebCore {
@@ -40,18 +36,13 @@ class WebCL;
 
 class WebCLBuffer : public WebCLMemoryObject  {
 public:
-	virtual ~WebCLBuffer();
-	static PassRefPtr<WebCLBuffer> create(WebCL*, cl_mem, bool);
-	cl_mem getCLBuffer();
-	//bool isShared() { return m_shared; }
-
-    PassRefPtr<WebCLBuffer> createSubBuffer(int ,int ,int, ExceptionCode&);
+    virtual ~WebCLBuffer();
+    static PassRefPtr<WebCLBuffer> create(WebCL*, PlatformComputeObject, bool);
+    PlatformComputeObject getCLBuffer();
+    PassRefPtr<WebCLBuffer> createSubBuffer(int, int, int, ExceptionCode&);
 
 private:
-	WebCLBuffer(WebCL*, cl_mem, bool);
-	//WebCL* m_context;
-	//cl_mem m_cl_mem;
-	//bool m_shared;
+    WebCLBuffer(WebCL*, PlatformComputeObject, bool);
 };
 
 } // namespace WebCore
