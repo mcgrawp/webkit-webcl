@@ -58,7 +58,7 @@ WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    cl_int err = 0;
+    CCerror err = 0;
     switch(platform_info) {
     case WebCL::PLATFORM_PROFILE:
     case WebCL::PLATFORM_VERSION:
@@ -78,26 +78,8 @@ WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_PLATFORM:
-            ec = WebCLException::INVALID_PLATFORM;
-            printf("Error: CL_INVALID_PLATFORM  \n");
-            break;
-        case CL_INVALID_VALUE:
-            ec = WebCLException::INVALID_VALUE;
-            printf("Error: CL_INVALID_VALUE\n");
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            printf("Error: CL_OUT_OF_HOST_MEMORY  \n");
-            break;
-        default:
-            ec = WebCLException::FAILURE;
-            printf("Invaild Error Type\n");
-            break;
-        }
-    }
+    ASSERT(err != CL_SUCCESS);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
 }
 
