@@ -179,8 +179,6 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDeviceList* 
     } else
         clDevice = m_context->getCLDeviceID();
 
-    // FIXME :: Need to validate commandQueueProp.
-
     //  Creates a new command queue for the devices in the given array.
     // If devices is null, the WebCL implementation will select any single WebCLDevice that matches the given properties and is covered by this WebCLContext.
     // If properties is omitted, the command queue is created with out-of-order execution disabled and profiling disabled

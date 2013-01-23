@@ -75,7 +75,7 @@ public:
         return(createBuffer(memFlags , sizeInBytes , 0 , ec));
     }
     PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDeviceList* , int , ExceptionCode&);
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDeviceList* deviceList , ExceptionCode& ec)
+    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDeviceList* deviceList, ExceptionCode& ec)
     {
         return(createCommandQueue(deviceList, 0 , ec));
     }
@@ -83,6 +83,11 @@ public:
     {
         return(createCommandQueue(0, 0, ec));
     }
+    PassRefPtr<WebCLCommandQueue> createCommandQueue(int buildProp, ExceptionCode& ec)
+    {
+        return(createCommandQueue(0, buildProp, ec));
+    }
+
 
     PassRefPtr<WebCLBuffer> createFromGLBuffer(int , WebGLBuffer* , ExceptionCode&);
 

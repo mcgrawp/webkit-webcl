@@ -226,7 +226,6 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties
             clDevices = new cl_device_id[numDevices];
             numDevices = ComputeContext::deviceIDs(clPlatforms[0], CL_DEVICE_TYPE_DEFAULT, 1, clDevices, deviceIdError);
             clDevice =  clDevices;
-            this->setCLDeviceID(clDevice);
             numofDevice = numDevices;
         } else {
             ec = WebCLException::INVALID_DEVICE;
@@ -234,6 +233,7 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties
             return 0;
         }
     }
+    this->setCLDeviceID(clDevice);
 
     CCerror error;
     RefPtr<WebCLContext> webCLContext = WebCLContext::create(this, propIndex ? contextProperties : 0, numofDevice, clDevice, error);

@@ -451,6 +451,7 @@ CCint ComputeContext::deviceIDs(CCPlatformID platform, CCDeviceType deviceType, 
 CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, int properties, CCerror& error)
 {
     cl_command_queue_properties clProperties;
+    cl_int clError;
     switch (properties) {
     case QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE:
         clProperties = CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE;
@@ -458,13 +459,15 @@ CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, int prope
     case QUEUE_PROFILING_ENABLE:
         clProperties = CL_QUEUE_PROFILING_ENABLE;
         break;
-    default:
-        // FIXME
+    case 0:
         clProperties = 0;
         break;
+    default:
+        clError = CL_INVALID_QUEUE_PROPERTIES;
+        error = clToComputeContextError(clError);
+        return 0;
     }
 
-    cl_int clError;
     cl_command_queue clCommandQueue = clCreateCommandQueue(m_clContext, deviceId, clProperties, &clError);
 
     error = clToComputeContextError(clError);
