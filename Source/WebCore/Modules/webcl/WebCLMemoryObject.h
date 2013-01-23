@@ -1,17 +1,17 @@
 /*
 * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
 * are met:
-* 
+*
 * 1.  Redistributions of source code must retain the above copyright
 *     notice, this list of conditions and the following disclaimer.
-* 
+*
 * 2.  Redistributions in binary form must reproduce the above copyright
 *     notice, this list of conditions and the following disclaimer in the
 *     documentation and/or other materials provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
 * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -25,21 +25,11 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef WebCLMemoryObjectoryObject_h
-#define WebCLMemoryObjectoryObject_h
+#ifndef WebCLMemoryObject_h
+#define WebCLMemoryObject_h
 
-//WebCL Inlcudes
+#include "ComputeContext.h"
 #include "WebCLException.h"
-/*
-#include "WebCL.h"
-#include "WebCLGLObjectInfo.h"
-#include "WebCLGetInfo.h"
-*/
-
-#include <OpenCL/opencl.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -50,23 +40,17 @@ class WebCLGetInfo;
 
 class WebCLMemoryObject : public RefCounted<WebCLMemoryObject> {
 public:
-	~WebCLMemoryObject();
-    //WebCLMemoryObject(){ m_cl_mem = NULL; m_shared = false; m_context = NULL; };	
-    static PassRefPtr<WebCLMemoryObject> create(WebCL*, cl_mem, bool);
-	cl_mem getCLMemoryObject();
-	bool isShared(); 
+    ~WebCLMemoryObject();
+    static PassRefPtr<WebCLMemoryObject> create(WebCL*, PlatformComputeObject, bool);
+    PlatformComputeObject getCLMemoryObject();
+    bool isShared();
     WebCLGetInfo getInfo(int, ExceptionCode&);
     PassRefPtr<WebCLGLObjectInfo> getGLObjectInfo(ExceptionCode&);
 protected:
-    // Needs to be visible to child classes
+    WebCLMemoryObject(WebCL*, PlatformComputeObject, bool);
     WebCL* m_context;
-	cl_mem m_cl_mem;
-	bool m_shared;
-	WebCLMemoryObject(WebCL*, cl_mem, bool);
-private:
-    // TO be included in List class.. commenting
-	//long m_num_mems;
-	//Vector<RefPtr<WebCLMemoryObject> > m_mem_list;
+    PlatformComputeObject m_CCMemoryObject;
+    bool m_shared;
 };
 
 } // namespace WebCore

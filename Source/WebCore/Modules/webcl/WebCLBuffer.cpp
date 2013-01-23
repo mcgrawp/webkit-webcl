@@ -51,7 +51,7 @@ WebCLBuffer::WebCLBuffer(WebCL* context, PlatformComputeObject buffer, bool isSh
 
 PlatformComputeObject WebCLBuffer::getCLBuffer()
 {
-	return m_cl_mem;
+    return WebCLMemoryObject::getCLMemoryObject();
 }
 
 PassRefPtr<WebCLBuffer>  WebCLBuffer::createSubBuffer(int flags, int origin, int size, ExceptionCode& ec)

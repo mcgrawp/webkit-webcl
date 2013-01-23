@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+* Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
@@ -52,18 +52,19 @@ WebCLImage::WebCLImage(WebCL* context, PlatformComputeObject image, bool isShare
 
 PlatformComputeObject WebCLImage::getCLImage()
 {
-	return m_cl_mem;
+    return WebCLMemoryObject::getCLMemoryObject();
 }
 
 int WebCLImage::getGLtextureInfo(int paramNameobj, ExceptionCode& ec)
 {
-    CCint err = 0;
-    CCint intUnits = 0;
     if (!m_CCMemoryObject) {
         printf("Error: Invalid CL Memory Object \n");
         ec = WebCLException::INVALID_MEM_OBJECT;
         return 0;
     }
+
+    CCint err = 0;
+    CCint intUnits = 0;
     switch (paramNameobj) {
     case WebCL::TEXTURE_TARGET:
         err = clGetGLTextureInfo(m_CCMemoryObject, CL_GL_TEXTURE_TARGET, sizeof(CCint), &intUnits, 0);
@@ -76,7 +77,7 @@ int WebCLImage::getGLtextureInfo(int paramNameobj, ExceptionCode& ec)
             return ((int)intUnits);
         break;
     default:
-        printf("Error: Unsupported paramName Info type = %d ", paramNameobj);
+        // FIXME: Add a FAILURE exception here?
         return 0;
     }
     if (err != CL_SUCCESS) {
@@ -112,59 +113,62 @@ int WebCLImage::getGLtextureInfo(int paramNameobj, ExceptionCode& ec)
 
 PassRefPtr<WebCLImageDescriptor> WebCLImage::getInfo(ExceptionCode& ec)
 {
-    CCerror err = 0;
-    CCint intUnits = 0;
-    long channelOrder = 0;
-    long channelType = 0;
-    long width = 0;
-    long height = 0;
-    long rowPitch = 0;
-    int iflag = 0;
+    cl_int err = 0;
 
     if (!m_CCMemoryObject) {
         printf("Error: Invalid CL Context\n");
         ec = WebCLException::INVALID_MEM_OBJECT;
-        return 0;
+        return NULL;
     }
-    err = clGetImageInfo(m_CCMemoryObject, CL_IMAGE_FORMAT, sizeof(CCImageFormat), &intUnits, 0);
+    cl_int int_units = 0;
+    long channelOrder;
+    long channelType;
+    long width;
+    long height;
+    long rowPitch;
+    int iflag = 0;
+
+    PassRefPtr<WebCLImageDescriptor> objectWebCLImageDescriptor = WebCLImageDescriptor::create();
+
+    err = clGetImageInfo(m_CCMemoryObject, CL_IMAGE_FORMAT, sizeof(cl_int), &int_units, 0);
     if (err == CL_SUCCESS) {
-        channelOrder = (long)intUnits;
+        channelOrder = (long)int_units;
         iflag = 1;
     }
-    err = clGetImageInfo(m_CCMemoryObject, CL_IMAGE_ELEMENT_SIZE, sizeof(size_t), &intUnits, 0);
-    if (err == CL_SUCCESS && iflag ==1)
-        channelType = (long)intUnits;
+
+    err = clGetImageInfo(m_CCMemoryObject, CL_IMAGE_ELEMENT_SIZE, sizeof(cl_int), &int_units, 0);
+    if (err == CL_SUCCESS && iflag == 1)
+        channelType = (long)int_units;
     else
         iflag = 0;
 
-    err = clGetImageInfo(m_CCMemoryObject, CL_IMAGE_WIDTH, sizeof(size_t), &intUnits, 0);
-    if (err == CL_SUCCESS && iflag ==1)
-        width = (long)intUnits;
+    err = clGetImageInfo(m_CCMemoryObject, CL_IMAGE_WIDTH, sizeof(cl_int), &int_units, 0);
+    if (err == CL_SUCCESS && iflag == 1)
+        width = (long)int_units;
     else
         iflag = 0;
 
-    err = clGetImageInfo(m_CCMemoryObject, CL_IMAGE_HEIGHT, sizeof(size_t), &intUnits, 0);
-    if (err == CL_SUCCESS && iflag ==1)
-        height = (long)intUnits;
+    err = clGetImageInfo(m_CCMemoryObject, CL_IMAGE_HEIGHT, sizeof(cl_int), &int_units, 0);
+    if (err == CL_SUCCESS && iflag == 1)
+        height = (long)int_units;
     else
         iflag = 0;
 
-    err = clGetImageInfo(m_CCMemoryObject, CL_IMAGE_ROW_PITCH, sizeof(size_t), &intUnits, 0);
-    if (err == CL_SUCCESS && iflag ==1)
-        rowPitch = (long)intUnits;
+    err = clGetImageInfo(m_CCMemoryObject, CL_IMAGE_ROW_PITCH, sizeof(cl_int), &int_units, 0);
+    if (err == CL_SUCCESS && iflag == 1)
+        rowPitch = (long)int_units;
     else
         iflag = 0;
 
     if (err == CL_SUCCESS && iflag == 1) {
-        RefPtr<WebCLImageDescriptor> objectWebCLImageDescriptor = WebCLImageDescriptor::create();
         objectWebCLImageDescriptor->setChannelOrder(channelOrder);
         objectWebCLImageDescriptor->setChannelType(channelType);
         objectWebCLImageDescriptor->setWidth(width);
         objectWebCLImageDescriptor->setHeight(height);
         objectWebCLImageDescriptor->setRowPitch(rowPitch);
-        // FIXME :: Returning null as its failing by mem issue. Need to Fix asap
-        return objectWebCLImageDescriptor.release();
+        return (objectWebCLImageDescriptor);
     }
+
     switch (err) {
     case CL_INVALID_MEM_OBJECT:
         ec = WebCLException::INVALID_MEM_OBJECT;
@@ -191,8 +195,10 @@ PassRefPtr<WebCLImageDescriptor> WebCLImage::getInfo(ExceptionCode& ec)
         printf("Invaild Error Type\n");
         break;
     }
-    return 0;
+
+    return objectWebCLImageDescriptor;
 }
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)
