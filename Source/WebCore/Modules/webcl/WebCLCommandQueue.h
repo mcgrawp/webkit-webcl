@@ -271,24 +271,12 @@ public:
         enqueueCopyBufferToImage(sourceBuffer, targetImage, sourceOffset, targetOrigin, region, 0, 0, ec);
     }
 
-    void enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEvent*, ExceptionCode&);
-    void enqueueBarrier(WebCLEventList* eventsWaitList, ExceptionCode& ec)
-    {
-        enqueueBarrier(eventsWaitList, 0, ec);
-    }
-    void enqueueBarrier(ExceptionCode& ec)
-    {
-        enqueueBarrier(0, 0, ec);
-    }
+    void enqueueBarrier(ExceptionCode&);
 
-    void enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent*, ExceptionCode&);
-    void enqueueMarker(WebCLEventList* eventsWaitList, ExceptionCode& ec)
-    {
-        enqueueMarker(eventsWaitList, 0, ec);
-    }
+    void enqueueMarker(WebCLEvent*, ExceptionCode&);
     void enqueueMarker(ExceptionCode& ec)
     {
-        enqueueMarker(0, 0, ec);
+        enqueueMarker(0, ec);
     }
 
     void enqueueTask(WebCLKernel*, WebCLEventList*, WebCLEvent*, ExceptionCode&);

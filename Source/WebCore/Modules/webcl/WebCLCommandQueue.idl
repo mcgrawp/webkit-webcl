@@ -168,11 +168,9 @@ module webcl {
             in [Optional] WebCLEventList eventWaitList,
             in [Optional] WebCLEvent event) raises(DOMException);
 
-    void enqueueBarrier(in [Optional] WebCLEventList eventWaitList,
-            in [Optional] WebCLEvent event) raises(DOMException);
+    void enqueueBarrier() raises(DOMException);
 
-    void enqueueMarker(in [Optional] WebCLEventList eventWaitList,
-            in [Optional] WebCLEvent event) raises(DOMException);
+    void enqueueMarker(in [Optional] WebCLEvent event) raises(DOMException);
 
     void enqueueTask(in WebCLKernel kernel,
             in [Optional] WebCLEventList eventWaitList,

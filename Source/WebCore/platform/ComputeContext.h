@@ -319,8 +319,8 @@ public:
 
     CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
-    CCerror enqueueBarrier(CCCommandQueue, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
-    CCerror enqueueMarker(CCCommandQueue, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueBarrier(CCCommandQueue);
+    CCerror enqueueMarker(CCCommandQueue, CCEvent* event);
     CCerror enqueueTask(CCCommandQueue, CCKernel, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
     // FIXME: bufferSize and offset are to be unsigned/size_t.
     CCerror enqueueWriteBuffer(CCCommandQueue, PlatformComputeObject buffer, bool blockingWrite, int offset, int bufferSize,

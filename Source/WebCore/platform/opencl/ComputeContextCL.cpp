@@ -732,41 +732,26 @@ CCerror ComputeContext::enqueueNDRangeKernel(CCCommandQueue commandQueue, CCKern
     return clToComputeContextError(error);
 }
 
-CCerror ComputeContext::enqueueBarrier(CCCommandQueue commandQueue, int eventsWaitListLength, CCEvent* eventsWaitList, CCEvent* event)
+CCerror ComputeContext::enqueueBarrier(CCCommandQueue commandQueue)
 {
     cl_int error;
 
 #if defined(CL_VERSION_1_2)
-    error = clEnqueueBarrierWithWaitList(commandQueue, eventsWaitListLength, eventsWaitList, event);
+    error = clEnqueueBarrierWithWaitList(commandQueue, 0 /*eventWaitListLength*/, 0 /*eventsWaitList*/, 0 /*event*/);
 #else
-    UNUSED_PARAM(event);
-    // OpenCL 1.1 spec says "... a wait for events (clEnqueueWaitForEvents) or
-    // a barrier (clEnqueueBarrier) command can be enqueued to the command-queue.
-    // The wait for events command ensures that previously enqueued commands
-    // identified by the list of events to wait for have finished before the
-    // next batch of commands is executed. The barrier command ensures that all
-    // previously enqueued commands in a command-queue have finished execution
-    // before the next batch of commands is executed.
-    if (eventsWaitList) {
-        ASSERT(eventsWaitListLength > 0);
-        error = clEnqueueWaitForEvents(commandQueue, eventsWaitListLength, eventsWaitList);
-    } else
-        error = clEnqueueBarrier(commandQueue);
+    error = clEnqueueBarrier(commandQueue);
 #endif
 
     return clToComputeContextError(error);
 }
 
-CCerror ComputeContext::enqueueMarker(CCCommandQueue commandQueue, int eventsWaitListLength, CCEvent* eventsWaitList, CCEvent* event)
+CCerror ComputeContext::enqueueMarker(CCCommandQueue commandQueue, CCEvent* event)
 {
     cl_int error;
 
 #if defined(CL_VERSION_1_2)
-    error = clEnqueueMarkerWithWaitList(commandQueue, eventsWaitListLength, eventsWaitList, event);
+    error = clEnqueueMarkerWithWaitList(commandQueue, 0 /*eventsWaitListLength*/, 0 /*eventsWaitList*/, event);
 #else
-    UNUSED_PARAM(eventsWaitListLength);
-    UNUSED_PARAM(eventsWaitList);
-    // FIXME: This API usage has to be fixed with OpenCL 1.1. All parameters matter.
     error = clEnqueueMarker(commandQueue, event);
 #endif
 

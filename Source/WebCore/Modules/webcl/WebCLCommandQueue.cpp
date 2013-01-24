@@ -926,7 +926,7 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueBarrier(ExceptionCode& ec)
 {
     if (!m_ccCommandQueue) {
         printf("Error: Invalid Command Queue\n");
@@ -934,28 +934,11 @@ void WebCLCommandQueue::enqueueBarrier(WebCLEventList* eventsWaitList, WebCLEven
         return;
     }
 
-    CCEvent* ccEventWaitList = 0;
-    size_t eventsLength = 0;
-    if (eventsWaitList) {
-        ccEventWaitList = eventsWaitList->getCLEvents();
-        eventsLength = eventsWaitList->length();
-    }
-
-    CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
-    if (!ccEvent) {
-        printf("ERROR:: Event passes is NULL or Invalid \n");
-        ec = WebCLException::INVALID_EVENT;
-        return;
-    }
-
-    CCerror computeContextError = m_context->computeContext()->enqueueBarrier(m_ccCommandQueue, eventsLength,
-        ccEventWaitList, ccEvent);
+    CCerror computeContextError = m_context->computeContext()->enqueueBarrier(m_ccCommandQueue);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
-void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueMarker(WebCLEvent* event, ExceptionCode& ec)
 {
     if (!m_ccCommandQueue) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
@@ -970,15 +953,7 @@ void WebCLCommandQueue::enqueueMarker(WebCLEventList* eventsWaitList, WebCLEvent
         return;
     }
 
-    CCEvent* ccEventWaitList = 0;
-    size_t eventsLength = 0;
-    if (eventsWaitList) {
-        ccEventWaitList = eventsWaitList->getCLEvents();
-        eventsLength = eventsWaitList->length();
-    }
-
-    CCerror computeContextError = m_context->computeContext()->enqueueMarker(m_ccCommandQueue, eventsLength,
-        ccEventWaitList, ccEvent);
+    CCerror computeContextError = m_context->computeContext()->enqueueMarker(m_ccCommandQueue, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
