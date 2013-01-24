@@ -1,17 +1,17 @@
 /*
 * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
 * are met:
-* 
+*
 * 1.  Redistributions of source code must retain the above copyright
 *     notice, this list of conditions and the following disclaimer.
-* 
+*
 * 2.  Redistributions in binary form must reproduce the above copyright
 *     notice, this list of conditions and the following disclaimer in the
 *     documentation and/or other materials provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
 * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -28,11 +28,10 @@
 #ifndef WebCLMemoryObjectList_h
 #define WebCLMemoryObjectList_h
 
-#include <OpenCL/opencl.h>
-//#include <wtf/PassRefPtr.h>
+#include "ComputeContext.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-//#include "WebCLMemoryObject.h"
 
 namespace WebCore {
 
@@ -41,17 +40,17 @@ class WebCLMemoryObject;
 class WebCLMemoryObjectList : public RefCounted<WebCLMemoryObjectList> {
 
 public:
-	WebCLMemoryObjectList();
-	~WebCLMemoryObjectList();
-    WebCLMemoryObjectList( WebCLMemoryObjectList& obj);
-	
-    static PassRefPtr<WebCLMemoryObjectList> create( WebCL*,cl_mem* ,cl_uint );
-	unsigned length() const;
-	WebCLMemoryObject* item(unsigned index);
+    ~WebCLMemoryObjectList();
+    WebCLMemoryObjectList();
+    WebCLMemoryObjectList(WebCLMemoryObjectList&);
+
+    static PassRefPtr<WebCLMemoryObjectList> create(WebCL*, PlatformComputeObject*, CCuint);
+    unsigned length() const;
+    WebCLMemoryObject* item(unsigned index);
 private:
-	WebCLMemoryObjectList( WebCL*, cl_mem * ,cl_uint );
-	Vector<RefPtr<WebCLMemoryObject> > m_memory_obj_list;
-	cl_uint m_num_memory_obj;
+    WebCLMemoryObjectList(WebCL*, PlatformComputeObject*, CCuint);
+    Vector<RefPtr<WebCLMemoryObject> > m_memoryObjectList;
+    CCuint m_numMemoryObjects;
     WebCL* m_context;
 };
 

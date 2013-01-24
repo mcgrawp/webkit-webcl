@@ -1,17 +1,17 @@
 /*
 * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
 * are met:
-* 
+*
 * 1.  Redistributions of source code must retain the above copyright
 *     notice, this list of conditions and the following disclaimer.
-* 
+*
 * 2.  Redistributions in binary form must reproduce the above copyright
 *     notice, this list of conditions and the following disclaimer in the
 *     documentation and/or other materials provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
 * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -30,54 +30,50 @@
 #if ENABLE(WEBCL)
 
 #include "WebCLMemoryObjectList.h"
+
 #include "WebCL.h"
 #include "WebCLMemoryObject.h"
 
 namespace WebCore {
 
 WebCLMemoryObjectList::WebCLMemoryObjectList()
+    : m_numMemoryObjects(0)
 {
-    m_num_memory_obj = 0;
 }
 
 WebCLMemoryObjectList::~WebCLMemoryObjectList()
 {
 }
 
-PassRefPtr<WebCLMemoryObjectList> WebCLMemoryObjectList::create(WebCL* ctx ,cl_mem *mem_obj_list,cl_uint num_mem_obj)
+PassRefPtr<WebCLMemoryObjectList> WebCLMemoryObjectList::create(WebCL* context, PlatformComputeObject* memoryObjectList, CCuint numberOfObjects)
 {
-	
-	return adoptRef(new WebCLMemoryObjectList(ctx,mem_obj_list,num_mem_obj));
+    return adoptRef(new WebCLMemoryObjectList(context, memoryObjectList, numberOfObjects));
 }
 
-WebCLMemoryObjectList::WebCLMemoryObjectList(WebCL* ctx ,cl_mem *mem_obj_list,cl_uint num_mem_obj)
-:m_context(ctx)
+WebCLMemoryObjectList::WebCLMemoryObjectList(WebCL* context, PlatformComputeObject* memoryObjectList, CCuint numberOfObjects)
+    : m_context(context)
 {
-	for (unsigned int i = 0 ; i < num_mem_obj ; i++) {
-		RefPtr<WebCLMemoryObject> m_mem_object= WebCLMemoryObject::create(m_context,mem_obj_list[i],false);
-		if (m_mem_object!= NULL) 
-        {
-			m_memory_obj_list.append(m_mem_object);
-            m_num_memory_obj++;
-		} 
-	}
-   printf(" WebCLMemoryObjectList  created with [%d] elements\n",m_num_memory_obj);
+    RefPtr<WebCLMemoryObject> memoryObjectPtr = 0;
+    for (unsigned i = 0 ; i < numberOfObjects; i++) {
+        memoryObjectPtr = WebCLMemoryObject::create(m_context, memoryObjectList[i], false);
+        if (memoryObjectPtr) {
+            m_memoryObjectList.append(memoryObjectPtr);
+            m_numMemoryObjects++;
+        }
+    }
 }
 
 unsigned WebCLMemoryObjectList::length() const
 {
-	return m_num_memory_obj;
+    return m_numMemoryObjects;
 }
 
 WebCLMemoryObject* WebCLMemoryObjectList::item(unsigned index)
 {
-	if (index >= m_num_memory_obj) {
-		return 0;
-	}
-    WebCLMemoryObject *ret = (m_memory_obj_list[index]).get();
-	return ret;
+    if (index >= m_numMemoryObjects)
+        return 0;
+    return (m_memoryObjectList[index]).get();
 }
-
 
 } // namespace WebCore
 
