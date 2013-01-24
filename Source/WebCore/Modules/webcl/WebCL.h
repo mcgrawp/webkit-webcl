@@ -117,9 +117,6 @@ public:
         // cl_platform_info
         PLATFORM_PROFILE                         = 0x0900,
         PLATFORM_VERSION                         = 0x0901,
-        PLATFORM_NAME                            = 0x0902,
-        PLATFORM_VENDOR                          = 0x0903,
-        PLATFORM_EXTENSIONS                      = 0x0904,
 
         // cl_device_type - bitfield
         DEVICE_TYPE_DEFAULT                      = 0x1,

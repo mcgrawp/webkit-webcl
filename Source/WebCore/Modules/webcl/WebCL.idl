@@ -84,9 +84,6 @@ module webcl {
         const unsigned long   VERSION_1_1                              = 1;
         const unsigned long   PLATFORM_PROFILE                         = 0x0900;
         const unsigned long   PLATFORM_VERSION                         = 0x0901;
-        const unsigned long   PLATFORM_NAME                            = 0x0902;
-        const unsigned long   PLATFORM_VENDOR                          = 0x0903;
-        const unsigned long   PLATFORM_EXTENSIONS                      = 0x0904;
         const unsigned long   DEVICE_TYPE_DEFAULT                      = 0x1;
         const unsigned long   DEVICE_TYPE_CPU                          = 0x2;
         const unsigned long   DEVICE_TYPE_GPU                          = 0x4;

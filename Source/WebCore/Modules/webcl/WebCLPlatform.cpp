@@ -62,9 +62,6 @@ WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
     switch(platform_info) {
     case WebCL::PLATFORM_PROFILE:
     case WebCL::PLATFORM_VERSION:
-    case WebCL::PLATFORM_NAME:
-    case WebCL::PLATFORM_VENDOR:
-    case WebCL::PLATFORM_EXTENSIONS:
     {
         char platform_string[1024];
         err = ComputeContext::getPlatformInfo(m_cl_platform_id, platform_info, sizeof(platform_string), &platform_string);
