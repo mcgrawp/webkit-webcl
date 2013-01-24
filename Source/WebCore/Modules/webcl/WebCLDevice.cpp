@@ -75,7 +75,6 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
     case WebCL::DEVICE_EXTENSIONS:
     case WebCL::DEVICE_PROFILE:
     case WebCL::DEVICE_OPENCL_C_VERSION:
-    case WebCL::DRIVER_VERSION:
         err = ComputeContext::getDeviceInfo(m_cl_device_id, infoType, sizeof(deviceString), &deviceString);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(String(deviceString));

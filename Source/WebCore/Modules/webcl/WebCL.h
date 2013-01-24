@@ -152,7 +152,6 @@ public:
         DEVICE_ENDIAN_LITTLE                     = 0x1026,
         DEVICE_AVAILABLE                         = 0x1027,
         DEVICE_QUEUE_PROPERTIES                  = 0x102A,
-        DRIVER_VERSION                           = 0x102D,
         DEVICE_PROFILE                           = 0x102E,
         DEVICE_EXTENSIONS                        = 0x1030,
         DEVICE_PLATFORM                          = 0x1031,

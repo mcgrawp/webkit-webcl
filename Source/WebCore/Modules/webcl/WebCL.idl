@@ -108,14 +108,12 @@ module webcl {
         const unsigned long   DEVICE_IMAGE_SUPPORT                     = 0x1016;
         const unsigned long   DEVICE_MAX_PARAMETER_SIZE                = 0x1017;
         const unsigned long   DEVICE_MAX_SAMPLERS                      = 0x1018;
-        const unsigned long   DEVICE_GLOBAL_MEM_CACHE_TYPE             = 0x101C;
         const unsigned long   DEVICE_MAX_CONSTANT_BUFFER_SIZE          = 0x1020;
         const unsigned long   DEVICE_MAX_CONSTANT_ARGS                 = 0x1021;
         const unsigned long   DEVICE_LOCAL_MEM_TYPE                    = 0x1022;
         const unsigned long   DEVICE_LOCAL_MEM_SIZE                    = 0x1023;
         const unsigned long   DEVICE_ENDIAN_LITTLE                     = 0x1026;
         const unsigned long   DEVICE_AVAILABLE                         = 0x1027;
-        const unsigned long   DRIVER_VERSION                           = 0x102D;
         const unsigned long   DEVICE_PROFILE                           = 0x102E;
         const unsigned long   DEVICE_EXTENSIONS                        = 0x1030;
         const unsigned long   DEVICE_PLATFORM                          = 0x1031;
