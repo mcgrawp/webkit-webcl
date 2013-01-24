@@ -70,16 +70,10 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
     }
 
     CCerror err = 0;
-    CCuint uintUnits = 0;
     CCDeviceID ccDeviceID = 0;
     CCCommandQueueProperties ccCommandQueueProperties = 0;
 
     switch (paramName) {
-    case WebCL::QUEUE_REFERENCE_COUNT:
-        err = ComputeContext::getCommandQueueInfo(m_ccCommandQueue, paramName, sizeof(CCuint), &uintUnits);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(uintUnits));
-        break;
     /*
     // FIXME: We should not create a WebCLContext here.
     case WebCL::QUEUE_CONTEXT:

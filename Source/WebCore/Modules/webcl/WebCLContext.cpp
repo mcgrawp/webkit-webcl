@@ -91,11 +91,6 @@ WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
         return WebCLGetInfo();
     }
     switch (paramName) {
-    case WebCL::CONTEXT_REFERENCE_COUNT:
-        err = clGetContextInfo(m_clContext, CL_CONTEXT_REFERENCE_COUNT, sizeof(cl_uint), &uintUnits, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(uintUnits));
-        break;
     case WebCL::CONTEXT_NUM_DEVICES:
         err = clGetContextInfo(m_clContext, CL_CONTEXT_NUM_DEVICES, sizeof(cl_uint), &uintUnits, 0);
         if (err == CL_SUCCESS)

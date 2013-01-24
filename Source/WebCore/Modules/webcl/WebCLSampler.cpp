@@ -95,11 +95,6 @@ WebCLGetInfo WebCLSampler::getInfo(int param_name, ExceptionCode& ec)
 	//cout<<param_name;
 	switch(param_name)
 	{
-		case WebCL::SAMPLER_REFERENCE_COUNT:
-			err=clGetSamplerInfo (m_cl_sampler, CL_SAMPLER_REFERENCE_COUNT , sizeof(cl_uint), &uint_units, NULL);
-			if (err == CL_SUCCESS)
-				return WebCLGetInfo(static_cast<unsigned int>(uint_units));
-			break;
 		case WebCL::SAMPLER_NORMALIZED_COORDS:
 			err=clGetSamplerInfo(m_cl_sampler, CL_SAMPLER_NORMALIZED_COORDS , sizeof(cl_bool), &bool_units, NULL);
 			if (err == CL_SUCCESS)

@@ -165,10 +165,6 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(uintUnits));
         break;
-    case WebCL::MEM_REFERENCE_COUNT :
-        err = clGetMemObjectInfo(m_CCMemoryObject, CL_MEM_REFERENCE_COUNT, sizeof(CCuint), &uintUnits, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(uintUnits));
     case WebCL::MEM_HOST_PTR :
         err = clGetMemObjectInfo(m_CCMemoryObject, CL_MEM_HOST_PTR, sizeof(memoryPtr), &memoryPtr, 0);
         if (err == CL_SUCCESS)

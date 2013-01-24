@@ -98,7 +98,6 @@ WebCLGetInfo WebCLProgram::getInfo(int paramName, ExceptionCode& ec)
     size_t szParmDataBytes = 0;
 
     switch (paramName) {
-    case WebCL::PROGRAM_REFERENCE_COUNT:
     case WebCL::PROGRAM_NUM_DEVICES:
         err = ComputeContext::getProgramInfo(m_clProgram, paramName, sizeof(cl_uint), &uintUnits, 0);
         if (err == CL_SUCCESS)

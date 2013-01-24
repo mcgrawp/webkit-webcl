@@ -216,7 +216,6 @@ public:
         QUEUE_PROFILING_ENABLE                   = 0x2,
 
         // cl_context_info
-        CONTEXT_REFERENCE_COUNT                  = 0x1080,
         CONTEXT_DEVICES                          = 0x1081,
         CONTEXT_PROPERTIES                       = 0x1082,
         CONTEXT_NUM_DEVICES                      = 0x1083,
@@ -227,7 +226,6 @@ public:
         // cl_command_queue_info
         QUEUE_CONTEXT                            = 0x1090,
         QUEUE_DEVICE                             = 0x1091,
-        QUEUE_REFERENCE_COUNT                    = 0x1092,
         QUEUE_PROPERTIES                         = 0x1093,
 
         // cl_mem_flags - bitfield
@@ -283,7 +281,6 @@ public:
         MEM_SIZE                                 = 0x1102,
         MEM_HOST_PTR                             = 0x1103,
         MEM_MAP_COUNT                            = 0x1104,
-        MEM_REFERENCE_COUNT                      = 0x1105,
         MEM_CONTEXT                              = 0x1106,
         MEM_ASSOCIATED_MEMOBJECT                 = 0x1107,
         MEM_OFFSET                               = 0x1108,
@@ -307,7 +304,6 @@ public:
         FILTER_LINEAR                            = 0x1141,
 
         // cl_sampler_info
-        SAMPLER_REFERENCE_COUNT                  = 0x1150,
         SAMPLER_CONTEXT                          = 0x1151,
         SAMPLER_NORMALIZED_COORDS                = 0x1152,
         SAMPLER_ADDRESSING_MODE                  = 0x1153,
@@ -318,7 +314,6 @@ public:
         MAP_WRITE                                = 0x2,
 
         // cl_program_info
-        PROGRAM_REFERENCE_COUNT                  = 0x1160,
         PROGRAM_CONTEXT                          = 0x1161,
         PROGRAM_NUM_DEVICES                      = 0x1162,
         PROGRAM_DEVICES                          = 0x1163,
@@ -340,7 +335,6 @@ public:
         // cl_kernel_info
         KERNEL_FUNCTION_NAME                     = 0x1190,
         KERNEL_NUM_ARGS                          = 0x1191,
-        KERNEL_REFERENCE_COUNT                   = 0x1192,
         KERNEL_CONTEXT                           = 0x1193,
         KERNEL_PROGRAM                           = 0x1194,
 
@@ -354,7 +348,6 @@ public:
         // cl_event_info
         EVENT_COMMAND_QUEUE                      = 0x11D0,
         EVENT_COMMAND_TYPE                       = 0x11D1,
-        EVENT_REFERENCE_COUNT                    = 0x11D2,
         EVENT_COMMAND_EXECUTION_STATUS           = 0x11D3,
         EVENT_CONTEXT                            = 0x11D4,
 

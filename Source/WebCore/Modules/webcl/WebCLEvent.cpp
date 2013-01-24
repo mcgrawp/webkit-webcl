@@ -109,11 +109,6 @@ WebCLGetInfo WebCLEvent::getInfo(int param_name, ExceptionCode& ec)
             if (err == CL_SUCCESS)
                 return WebCLGetInfo(static_cast<unsigned int>(uint_units));	
             break;
-        case WebCL::EVENT_REFERENCE_COUNT:
-            err=clGetEventInfo(m_cl_Event, CL_EVENT_REFERENCE_COUNT , sizeof(cl_uint), &uint_units, NULL);
-            if (err == CL_SUCCESS)
-                return WebCLGetInfo(static_cast<unsigned int>(uint_units));
-            break;
         case WebCL::EVENT_COMMAND_TYPE:			
             err=clGetEventInfo(m_cl_Event, CL_EVENT_COMMAND_TYPE , sizeof(cl_command_type), &command_type, NULL);;
             if (err == CL_SUCCESS)

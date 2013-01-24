@@ -108,11 +108,6 @@ WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
             if (err == CL_SUCCESS)
                 return WebCLGetInfo(static_cast<unsigned>(uintUnits));
         break;
-    case WebCL::KERNEL_REFERENCE_COUNT:
-        err = clGetKernelInfo(m_clKernel, CL_KERNEL_REFERENCE_COUNT, sizeof(cl_uint), &uintUnits, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(uintUnits));
-        break;
     case WebCL::KERNEL_PROGRAM:
         {
             err = clGetKernelInfo(m_clKernel, CL_KERNEL_PROGRAM, sizeof(clProgramID), &clProgramID, 0);

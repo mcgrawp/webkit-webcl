@@ -167,14 +167,12 @@ module webcl {
         const unsigned long   EXEC_NATIVE_KERNEL                       = 0x2;
         const unsigned long   QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE      = 0x1;
         const unsigned long   QUEUE_PROFILING_ENABLE                   = 0x2;
-        const unsigned long   CONTEXT_REFERENCE_COUNT                  = 0x1080;
         const unsigned long   CONTEXT_DEVICES                          = 0x1081;
         const unsigned long   CONTEXT_PROPERTIES                       = 0x1082;
         const unsigned long   CONTEXT_NUM_DEVICES                      = 0x1083;
         const unsigned long   CONTEXT_PLATFORM                         = 0x1084;
         const unsigned long   QUEUE_CONTEXT                            = 0x1090;
         const unsigned long   QUEUE_DEVICE                             = 0x1091;
-        const unsigned long   QUEUE_REFERENCE_COUNT                    = 0x1092;
         const unsigned long   QUEUE_PROPERTIES                         = 0x1093;
         const unsigned long   MEM_READ_WRITE                           = 0x1;
         const unsigned long   MEM_WRITE_ONLY                           = 0x2;
@@ -221,7 +219,6 @@ module webcl {
         const unsigned long   MEM_SIZE                                 = 0x1102;
         const unsigned long   MEM_HOST_PTR                             = 0x1103;
         const unsigned long   MEM_MAP_COUNT                            = 0x1104;
-        const unsigned long   MEM_REFERENCE_COUNT                      = 0x1105;
         const unsigned long   MEM_CONTEXT                              = 0x1106;
         const unsigned long   MEM_ASSOCIATED_MEMOBJECT                 = 0x1107;
         const unsigned long   MEM_OFFSET                               = 0x1108;
@@ -237,14 +234,12 @@ module webcl {
         const unsigned long   ADDRESS_MIRRORED_REPEAT                  = 0x1134;
         const unsigned long   FILTER_NEAREST                           = 0x1140;
         const unsigned long   FILTER_LINEAR                            = 0x1141;
-        const unsigned long   SAMPLER_REFERENCE_COUNT                  = 0x1150;
         const unsigned long   SAMPLER_CONTEXT                          = 0x1151;
         const unsigned long   SAMPLER_NORMALIZED_COORDS                = 0x1152;
         const unsigned long   SAMPLER_ADDRESSING_MODE                  = 0x1153;
         const unsigned long   SAMPLER_FILTER_MODE                      = 0x1154;
         const unsigned long   MAP_READ                                 = 0x1;
         const unsigned long   MAP_WRITE                                = 0x2;
-        const unsigned long   PROGRAM_REFERENCE_COUNT                  = 0x1160;
         const unsigned long   PROGRAM_CONTEXT                          = 0x1161;
         const unsigned long   PROGRAM_NUM_DEVICES                      = 0x1162;
         const unsigned long   PROGRAM_DEVICES                          = 0x1163;
@@ -260,7 +255,6 @@ module webcl {
         const unsigned long   BUILD_IN_PROGRESS                        = -3;
         const unsigned long   KERNEL_FUNCTION_NAME                     = 0x1190;
         const unsigned long   KERNEL_NUM_ARGS                          = 0x1191;
-        const unsigned long   KERNEL_REFERENCE_COUNT                   = 0x1192;
         const unsigned long   KERNEL_CONTEXT                           = 0x1193;
         const unsigned long   KERNEL_PROGRAM                           = 0x1194;
         const unsigned long   KERNEL_WORK_GROUP_SIZE                   = 0x11B0;
@@ -270,7 +264,6 @@ module webcl {
         const unsigned long   KERNEL_PRIVATE_MEM_SIZE                  = 0x11B4;
         const unsigned long   EVENT_COMMAND_QUEUE                      = 0x11D0;
         const unsigned long   EVENT_COMMAND_TYPE                       = 0x11D1;
-        const unsigned long   EVENT_REFERENCE_COUNT                    = 0x11D2;
         const unsigned long   EVENT_COMMAND_EXECUTION_STATUS           = 0x11D3;
         const unsigned long   EVENT_CONTEXT                            = 0x11D4;
         const unsigned long   COMMAND_NDRANGE_KERNEL                   = 0x11F0;
