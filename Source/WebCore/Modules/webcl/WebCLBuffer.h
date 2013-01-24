@@ -37,12 +37,12 @@ class WebCL;
 class WebCLBuffer : public WebCLMemoryObject  {
 public:
     virtual ~WebCLBuffer();
-    static PassRefPtr<WebCLBuffer> create(WebCL*, PlatformComputeObject, bool);
+    static PassRefPtr<WebCLBuffer> create(WebCLContext*, PlatformComputeObject, bool);
     PlatformComputeObject getCLBuffer();
     PassRefPtr<WebCLBuffer> createSubBuffer(int, int, int, ExceptionCode&);
 
 private:
-    WebCLBuffer(WebCL*, PlatformComputeObject, bool);
+    WebCLBuffer(WebCLContext*, PlatformComputeObject, bool);
 };
 
 } // namespace WebCore

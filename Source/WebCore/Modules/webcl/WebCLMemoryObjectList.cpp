@@ -45,12 +45,12 @@ WebCLMemoryObjectList::~WebCLMemoryObjectList()
 {
 }
 
-PassRefPtr<WebCLMemoryObjectList> WebCLMemoryObjectList::create(WebCL* context, PlatformComputeObject* memoryObjectList, CCuint numberOfObjects)
+PassRefPtr<WebCLMemoryObjectList> WebCLMemoryObjectList::create(WebCLContext* context, PlatformComputeObject* memoryObjectList, CCuint numberOfObjects)
 {
     return adoptRef(new WebCLMemoryObjectList(context, memoryObjectList, numberOfObjects));
 }
 
-WebCLMemoryObjectList::WebCLMemoryObjectList(WebCL* context, PlatformComputeObject* memoryObjectList, CCuint numberOfObjects)
+WebCLMemoryObjectList::WebCLMemoryObjectList(WebCLContext* context, PlatformComputeObject* memoryObjectList, CCuint numberOfObjects)
     : m_context(context)
 {
     RefPtr<WebCLMemoryObject> memoryObjectPtr = 0;

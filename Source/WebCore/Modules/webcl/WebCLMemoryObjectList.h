@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class WebCL;
+class WebCLContext;
 class WebCLMemoryObject;
 class WebCLMemoryObjectList : public RefCounted<WebCLMemoryObjectList> {
 
@@ -44,14 +44,14 @@ public:
     WebCLMemoryObjectList();
     WebCLMemoryObjectList(WebCLMemoryObjectList&);
 
-    static PassRefPtr<WebCLMemoryObjectList> create(WebCL*, PlatformComputeObject*, CCuint);
+    static PassRefPtr<WebCLMemoryObjectList> create(WebCLContext*, PlatformComputeObject*, CCuint);
     unsigned length() const;
     WebCLMemoryObject* item(unsigned index);
 private:
-    WebCLMemoryObjectList(WebCL*, PlatformComputeObject*, CCuint);
+    WebCLMemoryObjectList(WebCLContext*, PlatformComputeObject*, CCuint);
     Vector<RefPtr<WebCLMemoryObject> > m_memoryObjectList;
     CCuint m_numMemoryObjects;
-    WebCL* m_context;
+    WebCLContext* m_context;
 };
 
 } // namespace WebCore

@@ -40,12 +40,12 @@ WebCLImage::~WebCLImage()
 {
 }
 
-PassRefPtr<WebCLImage> WebCLImage::create(WebCL* context, PlatformComputeObject image, bool isShared = false)
+PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, PlatformComputeObject image, bool isShared = false)
 {
     return adoptRef(new WebCLImage(context, image, isShared));
 }
 
-WebCLImage::WebCLImage(WebCL* context, PlatformComputeObject image, bool isShared)
+WebCLImage::WebCLImage(WebCLContext* context, PlatformComputeObject image, bool isShared)
     : WebCLMemoryObject(context, image, isShared)
 {
 }

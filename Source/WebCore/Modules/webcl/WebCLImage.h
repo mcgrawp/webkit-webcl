@@ -43,13 +43,13 @@ class WebCL;
 class WebCLImage : public WebCLMemoryObject {
 public:
     virtual ~WebCLImage();
-    static PassRefPtr<WebCLImage> create(WebCL*, PlatformComputeObject, bool);
+    static PassRefPtr<WebCLImage> create(WebCLContext*, PlatformComputeObject, bool);
     PlatformComputeObject getCLImage();
     PassRefPtr<WebCLImageDescriptor> getInfo(ExceptionCode&);
     int getGLtextureInfo(int, ExceptionCode&);
 
 private:
-    WebCLImage(WebCL*, PlatformComputeObject, bool);
+    WebCLImage(WebCLContext*, PlatformComputeObject, bool);
 };
 
 } // namespace WebCore

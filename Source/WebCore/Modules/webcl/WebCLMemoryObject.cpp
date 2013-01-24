@@ -60,12 +60,12 @@ WebCLMemoryObject::~WebCLMemoryObject()
     m_CCMemoryObject = 0;
 }
 
-PassRefPtr<WebCLMemoryObject> WebCLMemoryObject::create(WebCL* context, PlatformComputeObject CCmem, bool isShared = false)
+PassRefPtr<WebCLMemoryObject> WebCLMemoryObject::create(WebCLContext* context, PlatformComputeObject CCmem, bool isShared = false)
 {
     return adoptRef(new WebCLMemoryObject(context, CCmem, isShared));
 }
 
-WebCLMemoryObject::WebCLMemoryObject(WebCL* context, PlatformComputeObject CCmem, bool isShared)
+WebCLMemoryObject::WebCLMemoryObject(WebCLContext* context, PlatformComputeObject CCmem, bool isShared)
     : m_context(context)
     , m_CCMemoryObject(CCmem)
     , m_shared(isShared)

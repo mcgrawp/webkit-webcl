@@ -39,12 +39,12 @@ WebCLBuffer::~WebCLBuffer()
 {
 }
 
-PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCL* context, PlatformComputeObject buffer, bool isShared = false)
+PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, PlatformComputeObject buffer, bool isShared = false)
 {
     return adoptRef(new WebCLBuffer(context, buffer, isShared));
 }
 
-WebCLBuffer::WebCLBuffer(WebCL* context, PlatformComputeObject buffer, bool isShared)
+WebCLBuffer::WebCLBuffer(WebCLContext* context, PlatformComputeObject buffer, bool isShared)
     : WebCLMemoryObject(context, buffer, isShared)
 {
 }

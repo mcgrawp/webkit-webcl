@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class WebCL;
+class WebCLContext;
 class WebCLException;
 class WebCLGLObjectInfo;
 class WebCLGetInfo;
@@ -41,14 +41,14 @@ class WebCLGetInfo;
 class WebCLMemoryObject : public RefCounted<WebCLMemoryObject> {
 public:
     ~WebCLMemoryObject();
-    static PassRefPtr<WebCLMemoryObject> create(WebCL*, PlatformComputeObject, bool);
+    static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PlatformComputeObject, bool);
     PlatformComputeObject getCLMemoryObject();
     bool isShared();
     WebCLGetInfo getInfo(int, ExceptionCode&);
     PassRefPtr<WebCLGLObjectInfo> getGLObjectInfo(ExceptionCode&);
 protected:
-    WebCLMemoryObject(WebCL*, PlatformComputeObject, bool);
-    WebCL* m_context;
+    WebCLMemoryObject(WebCLContext*, PlatformComputeObject, bool);
+    WebCLContext* m_context;
     PlatformComputeObject m_CCMemoryObject;
     bool m_shared;
 };

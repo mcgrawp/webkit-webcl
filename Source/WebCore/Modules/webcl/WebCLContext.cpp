@@ -241,7 +241,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int flags, int size, ArrayBuf
         return 0;
     }
 
-    RefPtr<WebCLBuffer> bufferObj = WebCLBuffer::create(m_context, clMemID, false);
+    RefPtr<WebCLBuffer> bufferObj = WebCLBuffer::create(this, clMemID, false);
     return bufferObj;
 }
 
@@ -268,7 +268,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, ImageData *ptr,
         return 0;
     }
 
-    RefPtr<WebCLBuffer> bufferObj = WebCLBuffer::create(m_context, clMemID, false);
+    RefPtr<WebCLBuffer> bufferObj = WebCLBuffer::create(this, clMemID, false);
     return bufferObj;
 }
 
@@ -308,7 +308,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, HTMLCanvasEleme
         return 0;
     }
 
-    RefPtr<WebCLBuffer> buferObj = WebCLBuffer::create(m_context, clMemID, false);
+    RefPtr<WebCLBuffer> buferObj = WebCLBuffer::create(this, clMemID, false);
     return buferObj;
 }
 
@@ -324,7 +324,7 @@ PassRefPtr<WebCLMemoryObject> WebCLContext::createImage2DBaseMemory(int flags, i
         return 0;
     }
 
-    RefPtr<WebCLMemoryObject> clMemObj = WebCLMemoryObject::create(m_context, clMemImage, false);
+    RefPtr<WebCLMemoryObject> clMemObj = WebCLMemoryObject::create(this, clMemImage, false);
     return clMemObj;
 }
 
@@ -338,7 +338,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBaseImage(int flags, int width
         return 0;
     }
 
-    RefPtr<WebCLImage> imageObj = WebCLImage::create(m_context, clMemImage, false);
+    RefPtr<WebCLImage> imageObj = WebCLImage::create(this, clMemImage, false);
     return imageObj;
 }
 
@@ -522,7 +522,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(int flags, WebGLBuffer*
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-    RefPtr<WebCLBuffer> bufferObj = WebCLBuffer::create(m_context, clMemID, true);
+    RefPtr<WebCLBuffer> bufferObj = WebCLBuffer::create(this, clMemID, true);
     return bufferObj;
 }
 
@@ -549,7 +549,7 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderBuffer(int flags, WebGLRe
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-    RefPtr<WebCLImage> imageObj = WebCLImage::create(m_context, clMemID, true);
+    RefPtr<WebCLImage> imageObj = WebCLImage::create(this, clMemID, true);
     return imageObj;
 }
 
@@ -591,7 +591,7 @@ PassRefPtr<WebCLMemoryObject> WebCLContext::createFromGLTexture2D(int flags, GC3
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-    RefPtr<WebCLMemoryObject> memoryObject = WebCLMemoryObject::create(m_context, clMemID, true);
+    RefPtr<WebCLMemoryObject> memoryObject = WebCLMemoryObject::create(this, clMemID, true);
     return memoryObject;
 }
 
