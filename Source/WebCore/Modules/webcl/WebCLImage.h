@@ -42,7 +42,7 @@ class WebCL;
 
 class WebCLImage : public WebCLMemoryObject {
 public:
-    virtual ~WebCLImage();
+    ~WebCLImage();
     static PassRefPtr<WebCLImage> create(WebCLContext*, PlatformComputeObject, bool);
     PlatformComputeObject getCLImage();
     PassRefPtr<WebCLImageDescriptor> getInfo(ExceptionCode&);

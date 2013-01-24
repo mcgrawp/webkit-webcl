@@ -40,7 +40,7 @@ class WebCLGetInfo;
 
 class WebCLMemoryObject : public RefCounted<WebCLMemoryObject> {
 public:
-    ~WebCLMemoryObject();
+    virtual ~WebCLMemoryObject();
     static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PlatformComputeObject, bool);
     PlatformComputeObject getCLMemoryObject();
     bool isShared();
