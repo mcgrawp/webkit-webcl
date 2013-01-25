@@ -571,7 +571,7 @@ PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCords, int addrMod
         return 0;
     }
 
-    RefPtr<WebCLSampler> samplerObj = WebCLSampler::create(m_context, clSamplerID);
+    RefPtr<WebCLSampler> samplerObj = WebCLSampler::create(this, clSamplerID);
     return samplerObj;
 }
 

@@ -1,17 +1,17 @@
 /*
 * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
 * are met:
-* 
+*
 * 1.  Redistributions of source code must retain the above copyright
 *     notice, this list of conditions and the following disclaimer.
-* 
+*
 * 2.  Redistributions in binary form must reproduce the above copyright
 *     notice, this list of conditions and the following disclaimer in the
 *     documentation and/or other materials provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
 * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -28,29 +28,26 @@
 #ifndef WebCLSampler_h
 #define WebCLSampler_h
 
-#include <OpenCL/opencl.h>
+#include "WebCLException.h"
+#include "WebCLGetInfo.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-#include "WebCLGetInfo.h"
-
 namespace WebCore {
 
-class WebCL;
+class WebCLContext;
 
 class WebCLSampler : public RefCounted<WebCLSampler> {
 public:
-	virtual ~WebCLSampler();
-	static PassRefPtr<WebCLSampler> create(WebCL*, cl_sampler);
-	WebCLGetInfo getInfo(int, ExceptionCode&);
+    virtual ~WebCLSampler();
+    static PassRefPtr<WebCLSampler> create(WebCLContext*, CCSampler);
+    WebCLGetInfo getInfo(int, ExceptionCode&);
 private:
-	WebCLSampler(WebCL*, cl_sampler);	
-	WebCL* m_context;
-	cl_sampler m_cl_sampler;
-	long m_num_samplers;
-	Vector<RefPtr<WebCLSampler> > m_sampler_list;
-	cl_sampler getCLSampler();
+    WebCLSampler(WebCLContext*, CCSampler);
+    CCSampler getCLSampler();
+    WebCLContext* m_context;
+    CCSampler m_ccSampler;
 };
 
 } // namespace WebCore
