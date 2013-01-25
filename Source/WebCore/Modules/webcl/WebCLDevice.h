@@ -1,17 +1,17 @@
 /*
 * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
 * are met:
-* 
+*
 * 1.  Redistributions of source code must retain the above copyright
 *     notice, this list of conditions and the following disclaimer.
-* 
+*
 * 2.  Redistributions in binary form must reproduce the above copyright
 *     notice, this list of conditions and the following disclaimer in the
 *     documentation and/or other materials provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
 * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -35,8 +35,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#include "ActiveDOMObject.h"
-
 namespace WebCore {
 
 class WebCLContext;
@@ -45,14 +43,14 @@ class WebCLGetInfo;
 class WebCLDevice : public RefCounted<WebCLDevice> {
 public:
     virtual ~WebCLDevice();
-    static PassRefPtr<WebCLDevice> create(cl_device_id device_id);
+    static PassRefPtr<WebCLDevice> create(CCDeviceID);
     WebCLGetInfo getInfo(int, ExceptionCode&);
     Vector<String> getSupportedExtensions(ExceptionCode&);
-    cl_device_id getCLDevice();
+    CCDeviceID getCLDevice();
 
 private:
-    WebCLDevice(cl_device_id device_id);
-    cl_device_id m_cl_device_id;
+    WebCLDevice(CCDeviceID);
+    CCDeviceID m_ccDeviceID;
 };
 
 } // namespace WebCore

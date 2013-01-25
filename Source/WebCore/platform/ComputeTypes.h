@@ -7,7 +7,9 @@ typedef unsigned int CCenum;
 typedef int CCerror;
 
 typedef cl_int CCint;
+typedef cl_bool CCbool;
 typedef cl_uint CCuint;
+typedef cl_ulong CCulong;
 typedef cl_mem PlatformComputeObject;
 typedef cl_platform_id CCPlatformID;
 typedef cl_device_type CCDeviceType;
@@ -23,5 +25,9 @@ typedef cl_kernel CCKernel;
 typedef cl_event CCEvent;
 typedef cl_buffer_region CCBufferRegion;
 typedef cl_mem_object_type CCMemObjectype;
+typedef cl_device_mem_cache_type CCDeviceMemCachetype;
+typedef cl_device_exec_capabilities CCDeviceExecCapabilities;
+typedef cl_device_local_mem_type CCDeviceLocalMemType;
+typedef cl_device_fp_config CCDeviceFPConfig;
 
 #endif
