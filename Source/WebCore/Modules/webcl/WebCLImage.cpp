@@ -169,33 +169,8 @@ PassRefPtr<WebCLImageDescriptor> WebCLImage::getInfo(ExceptionCode& ec)
         return (objectWebCLImageDescriptor);
     }
 
-    switch (err) {
-    case CL_INVALID_MEM_OBJECT:
-        ec = WebCLException::INVALID_MEM_OBJECT;
-        printf("Error: CL_INVALID_MEM_OBJECT  \n");
-        break;
-    case CL_INVALID_GL_OBJECT:
-        ec = WebCLException::INVALID_GL_OBJECT;
-        printf("Error: CL_INVALID_GL_OBJECT \n");
-        break;
-    case CL_INVALID_VALUE:
-        ec = WebCLException::INVALID_VALUE;
-        printf("Error: CL_INVALID_VALUE \n");
-        break;
-    case CL_OUT_OF_RESOURCES:
-        ec = WebCLException::OUT_OF_RESOURCES;
-        printf("Error: CL_OUT_OF_RESOURCES \n");
-        break;
-    case CL_OUT_OF_HOST_MEMORY:
-        ec = WebCLException::OUT_OF_HOST_MEMORY;
-        printf("Error: CL_OUT_OF_HOST_MEMORY  \n");
-        break;
-    default:
-        ec = WebCLException::FAILURE;
-        printf("Invaild Error Type\n");
-        break;
-    }
-
+    ASSERT(err != CL_SUCCESS);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return objectWebCLImageDescriptor;
 }
 
