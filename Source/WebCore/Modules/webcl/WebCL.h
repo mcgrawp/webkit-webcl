@@ -40,7 +40,6 @@
 #include "WebCLProgram.h"
 #include "WebCLSampler.h"
 #include <OpenCL/opencl.h>
-#include <stdlib.h>
 
 using namespace std;
 
@@ -474,7 +473,7 @@ public:
     };
     // virtual WebCL* toWebCL() { return this; }
     PassRefPtr<WebCLPlatformList> getPlatforms(ExceptionCode&);
-    void waitForEvents(WebCLEventList*, ExceptionCode&);
+    void waitForEvents(const Vector<RefPtr<WebCLEvent> >&, ExceptionCode&);
     PassRefPtr<WebCLContext> createContext(WebCLContextProperties*, ExceptionCode&);
     PassRefPtr<WebCLContext> createContext(ExceptionCode& ec)
     {

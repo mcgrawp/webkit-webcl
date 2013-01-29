@@ -46,7 +46,29 @@
 using namespace JSC;
 using namespace std;
 
-namespace WebCore { 
+namespace WebCore {
+
+bool toWebCLEventArray(JSC::ExecState* exec, JSC::JSValue value, Vector<RefPtr<WebCLEvent> >& vector)
+{
+    if (!value.isObject())
+        return false;
+
+    JSC::JSObject* object = asObject(value);
+    int32_t length = object->get(exec, JSC::Identifier(exec, "length")).toInt32(exec);
+
+    if (!vector.tryReserveCapacity(length))
+        return false;
+    vector.resize(length);
+
+    for (int32_t i = 0; i < length; ++i) {
+        JSC::JSValue v = object->get(exec, i);
+        if (exec->hadException())
+            return false;
+        vector[i] = toWebCLEvent(v);
+    }
+
+    return true;
+}
 
 JSValue JSWebCL::getImageInfo(JSC::ExecState* exec)
 {
@@ -114,6 +136,25 @@ JSValue JSWebCL::createContext(JSC::ExecState* exec)
     return jsUndefined();
 }
 
+
+// FIXME: we are not handling the callback yet
+JSValue JSWebCL::waitForEvents(JSC::ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return throwError(exec, createNotEnoughArgumentsError(exec));
+
+    Vector<RefPtr<WebCLEvent> > webCLEventArray;
+    toWebCLEventArray(exec, exec->argument(0), webCLEventArray);
+
+    ExceptionCode ec = 0;
+    WebCL* context = static_cast<WebCL*>(impl());
+    context->waitForEvents(webCLEventArray, ec);
+
+    if (ec)
+        setDOMException(exec, ec);
+
+    return jsUndefined();
+}
 
 JSValue JSWebCL::getSupportedExtensions(ExecState* exec)
 {

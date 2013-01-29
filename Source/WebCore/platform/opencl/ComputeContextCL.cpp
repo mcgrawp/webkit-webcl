@@ -278,6 +278,8 @@ static CCerror clToComputeContextError(cl_int clError)
     case CL_INVALID_KERNEL_DEFINITION:
         computeContextError = ComputeContext::INVALID_KERNEL_DEFINITION;
         break;
+    case CL_INVALID_EVENT:
+        computeContextError = ComputeContext::INVALID_EVENT;
     default:
         ASSERT_NOT_REACHED();
         break;
@@ -484,6 +486,12 @@ CCint ComputeContext::deviceIDs(CCPlatformID platform, CCDeviceType deviceType, 
 
     error = clToComputeContextError(clError);
     return numberOfDevices;
+}
+
+CCerror ComputeContext::waitForEvents(const Vector<CCEvent>& events)
+{
+    cl_int clError = clWaitForEvents(events.size(), events.data());
+    return clToComputeContextError(clError);
 }
 
 CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, int properties, CCerror& error)

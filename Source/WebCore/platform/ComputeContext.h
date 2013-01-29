@@ -6,6 +6,7 @@
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -296,6 +297,7 @@ public:
 
     static CCint platformIDs(CCuint, CCPlatformID*, CCerror&);
     static CCint deviceIDs(CCPlatformID, CCDeviceType, CCuint, CCDeviceID*, CCerror&);
+    static CCerror waitForEvents(const Vector<CCEvent>&);
 
     CCCommandQueue createCommandQueue(CCDeviceID deviceId, int properties, CCerror& error);
     CCProgram createProgram(const String& kernelSource, CCerror& error);

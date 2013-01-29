@@ -125,49 +125,16 @@ WebCLGetInfo WebCL::getImageInfo(WebCLImage* image, cl_image_info paramName, Exc
     return WebCLGetInfo();
 }
 
-void WebCL::waitForEvents(WebCLEventList* events, ExceptionCode& ec)
+void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)
 {
-    cl_int err = 0;
-    cl_event* clEventID = 0;
 
-    if (events) {
-        clEventID = events->getCLEvents();
-        if (!clEventID) {
-            printf("Error: cl_event null in waitForEvents\n");
-            ec = WebCLException::INVALID_EVENT;
-            return;
-        }
-    }
-    err = clWaitForEvents(events->length(), clEventID);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_CONTEXT:
-            printf("Error: CL_INVALID_CONTEXT in waitForEvents\n");
-            ec = WebCLException::INVALID_CONTEXT;
-            break;
-        case CL_INVALID_VALUE:
-            printf("Error: CL_INVALID_VALUE in waitForEvents \n");
-            ec = WebCLException::INVALID_VALUE;
-            break;
-        case CL_INVALID_EVENT :
-            printf("Error: CL_INVALID_EVENT in waitForEvents \n");
-            ec = WebCLException::INVALID_VALUE;
-            break;
-        case CL_OUT_OF_RESOURCES:
-            printf("Error: CL_OUT_OF_RESOURCES in waitForEvents\n");
-            ec = WebCLException::OUT_OF_RESOURCES;
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            printf("Error: CL_OUT_OF_HOST_MEMORY in waitForEvents \n");
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            break;
-        default:
-            printf("Error: Invaild Error Type in waitForEvents\n");
-            ec = WebCLException::FAILURE;
-            break;
-        }
-    }
-    return;
+    Vector<CCEvent> ccEvents;
+
+    for (size_t i = 0; i < events.size(); ++i)
+        ccEvents.append(events[i]->getCLEvent());
+
+    CCerror error = ComputeContext::waitForEvents(ccEvents);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
 }
 
 PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties, ExceptionCode& ec)
