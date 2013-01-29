@@ -320,7 +320,8 @@ PassRefPtr<WebCLMemoryObject> WebCLContext::createImage2DBaseMemory(int flags, i
     cl_mem clMemImage = 0;
     clMemImage = m_computeContext->createImage2D(flags, width, height, imageFormat, data, createImage2DError);
     if (!clMemImage) {
-        ec = createImage2DError;
+        ASSERT(createImage2DError != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(createImage2DError);
         return 0;
     }
 
@@ -334,7 +335,8 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBaseImage(int flags, int width
     cl_mem clMemImage = 0;
     clMemImage = m_computeContext->createImage2D(flags, width, height, imageFormat, data, createImage2DError);
     if (!clMemImage) {
-        ec = createImage2DError;
+        ASSERT(createImage2DError != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(createImage2DError);
         return 0;
     }
 
