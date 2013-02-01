@@ -64,29 +64,6 @@ JSValue JSWebCLContext::getInfo(JSC::ExecState* exec)
     return toJS(exec , globalObject() , info);
 }
 
-JSValue JSWebCLContext::getSupportedImageFormats(ExecState* exec)
-{
-    if (exec->argumentCount() < 2)
-        return throwError(exec, createNotEnoughArgumentsError(exec));
-
-    WebCLContext* context = static_cast<WebCLContext*>(impl());
-    int memFlags = exec->argument(0).toInt32(exec);
-
-    Vector<RefPtr<WebCLImageDescriptor> > imageDescriptors;
-    ExceptionCode ec = 0;
-    context->getSupportedImageFormats(memFlags, imageDescriptors, ec);
-
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsNull();
-    }
-
-    MarkedArgumentBuffer list;
-    for (size_t i = 0; i < imageDescriptors.size(); ++i)
-        list.append(toJS(exec, globalObject(), imageDescriptors[i].get()));
-
-    return constructArray(exec, globalObject(), list);
-}
 JSValue JSWebCLContext::createImageWithDescriptor(JSC::ExecState* exec)
 {
     if (!(exec->argumentCount() == 2 || exec->argumentCount() == 3))

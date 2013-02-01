@@ -43,7 +43,6 @@
 #include "WebCLKernel.h"
 #include "WebCLKernelList.h"
 #include "WebCLEvent.h"
-#include "WebCLEventList.h"
 #include "WebCLSampler.h"
 //#include <wtf/Float32Array.h>
 //#include <wtf/Int32Array.h>

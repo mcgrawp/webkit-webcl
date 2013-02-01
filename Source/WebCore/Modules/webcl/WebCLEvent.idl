@@ -28,6 +28,7 @@
 module webcl {
         interface [
                 Conditional=WEBCL,
+                JSGenerateToArrayNativeObject,
         ] WebCLEvent {
 		[StrictTypeChecking, Custom]  void getInfo(in long param_name) raises(DOMException);
 		[StrictTypeChecking, Custom]  void getProfilingInfo(in long param_name) raises(DOMException);

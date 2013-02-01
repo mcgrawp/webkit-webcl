@@ -1960,8 +1960,6 @@
 		75945398165E625100E5C118 /* WebCLDeviceList.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945336165E618A00E5C118 /* WebCLDeviceList.h */; };
 		7594539A165E625100E5C118 /* WebCLEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75945338165E618A00E5C118 /* WebCLEvent.cpp */; };
 		7594539B165E625100E5C118 /* WebCLEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945339165E618A00E5C118 /* WebCLEvent.h */; };
-		7594539D165E625100E5C118 /* WebCLEventList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7594533B165E618A00E5C118 /* WebCLEventList.cpp */; };
-		7594539E165E625100E5C118 /* WebCLEventList.h in Headers */ = {isa = PBXBuildFile; fileRef = 7594533C165E618A00E5C118 /* WebCLEventList.h */; };
 		759453A0165E625100E5C118 /* WebCLException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7594533E165E618A00E5C118 /* WebCLException.cpp */; };
 		759453A1165E625100E5C118 /* WebCLException.h in Headers */ = {isa = PBXBuildFile; fileRef = 7594533F165E618A00E5C118 /* WebCLException.h */; };
 		759453A3165E625100E5C118 /* WebCLFinishCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945341165E618A00E5C118 /* WebCLFinishCallback.h */; };
@@ -2011,8 +2009,6 @@
 		75945414165E660300E5C118 /* JSWebCLDeviceList.h in Headers */ = {isa = PBXBuildFile; fileRef = 759453E4165E660300E5C118 /* JSWebCLDeviceList.h */; };
 		75945415165E660300E5C118 /* JSWebCLEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759453E5165E660300E5C118 /* JSWebCLEvent.cpp */; };
 		75945416165E660300E5C118 /* JSWebCLEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 759453E6165E660300E5C118 /* JSWebCLEvent.h */; };
-		75945417165E660300E5C118 /* JSWebCLEventList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759453E7165E660300E5C118 /* JSWebCLEventList.cpp */; };
-		75945418165E660300E5C118 /* JSWebCLEventList.h in Headers */ = {isa = PBXBuildFile; fileRef = 759453E8165E660300E5C118 /* JSWebCLEventList.h */; };
 		75945419165E660300E5C118 /* JSWebCLException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759453E9165E660300E5C118 /* JSWebCLException.cpp */; };
 		7594541A165E660300E5C118 /* JSWebCLException.h in Headers */ = {isa = PBXBuildFile; fileRef = 759453EA165E660300E5C118 /* JSWebCLException.h */; };
 		7594541B165E660300E5C118 /* JSWebCLFinishCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759453EB165E660300E5C118 /* JSWebCLFinishCallback.cpp */; };
@@ -9327,9 +9323,6 @@
 		75945338165E618A00E5C118 /* WebCLEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLEvent.cpp; sourceTree = "<group>"; };
 		75945339165E618A00E5C118 /* WebCLEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLEvent.h; sourceTree = "<group>"; };
 		7594533A165E618A00E5C118 /* WebCLEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLEvent.idl; sourceTree = "<group>"; };
-		7594533B165E618A00E5C118 /* WebCLEventList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLEventList.cpp; sourceTree = "<group>"; };
-		7594533C165E618A00E5C118 /* WebCLEventList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLEventList.h; sourceTree = "<group>"; };
-		7594533D165E618A00E5C118 /* WebCLEventList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLEventList.idl; sourceTree = "<group>"; };
 		7594533E165E618A00E5C118 /* WebCLException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLException.cpp; sourceTree = "<group>"; };
 		7594533F165E618A00E5C118 /* WebCLException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLException.h; sourceTree = "<group>"; };
 		75945340165E618A00E5C118 /* WebCLException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLException.idl; sourceTree = "<group>"; };
@@ -9404,8 +9397,6 @@
 		759453E4165E660300E5C118 /* JSWebCLDeviceList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLDeviceList.h; sourceTree = "<group>"; };
 		759453E5165E660300E5C118 /* JSWebCLEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLEvent.cpp; sourceTree = "<group>"; };
 		759453E6165E660300E5C118 /* JSWebCLEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLEvent.h; sourceTree = "<group>"; };
-		759453E7165E660300E5C118 /* JSWebCLEventList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLEventList.cpp; sourceTree = "<group>"; };
-		759453E8165E660300E5C118 /* JSWebCLEventList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLEventList.h; sourceTree = "<group>"; };
 		759453E9165E660300E5C118 /* JSWebCLException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLException.cpp; sourceTree = "<group>"; };
 		759453EA165E660300E5C118 /* JSWebCLException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLException.h; sourceTree = "<group>"; };
 		759453EB165E660300E5C118 /* JSWebCLFinishCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLFinishCallback.cpp; sourceTree = "<group>"; };
@@ -16323,9 +16314,6 @@
 				75945338165E618A00E5C118 /* WebCLEvent.cpp */,
 				75945339165E618A00E5C118 /* WebCLEvent.h */,
 				7594533A165E618A00E5C118 /* WebCLEvent.idl */,
-				7594533B165E618A00E5C118 /* WebCLEventList.cpp */,
-				7594533C165E618A00E5C118 /* WebCLEventList.h */,
-				7594533D165E618A00E5C118 /* WebCLEventList.idl */,
 				7594533E165E618A00E5C118 /* WebCLException.cpp */,
 				7594533F165E618A00E5C118 /* WebCLException.h */,
 				75945340165E618A00E5C118 /* WebCLException.idl */,
@@ -16399,8 +16387,6 @@
 				759453E4165E660300E5C118 /* JSWebCLDeviceList.h */,
 				759453E5165E660300E5C118 /* JSWebCLEvent.cpp */,
 				759453E6165E660300E5C118 /* JSWebCLEvent.h */,
-				759453E7165E660300E5C118 /* JSWebCLEventList.cpp */,
-				759453E8165E660300E5C118 /* JSWebCLEventList.h */,
 				759453E9165E660300E5C118 /* JSWebCLException.cpp */,
 				759453EA165E660300E5C118 /* JSWebCLException.h */,
 				759453EB165E660300E5C118 /* JSWebCLFinishCallback.cpp */,
@@ -26152,7 +26138,6 @@
 				75945395165E625100E5C118 /* WebCLDevice.h in Headers */,
 				75945398165E625100E5C118 /* WebCLDeviceList.h in Headers */,
 				7594539B165E625100E5C118 /* WebCLEvent.h in Headers */,
-				7594539E165E625100E5C118 /* WebCLEventList.h in Headers */,
 				759453A1165E625100E5C118 /* WebCLException.h in Headers */,
 				759453A3165E625100E5C118 /* WebCLFinishCallback.h in Headers */,
 				759453A6165E625100E5C118 /* WebCLGetInfo.h in Headers */,
@@ -26179,7 +26164,6 @@
 				75945412165E660300E5C118 /* JSWebCLDevice.h in Headers */,
 				75945414165E660300E5C118 /* JSWebCLDeviceList.h in Headers */,
 				75945416165E660300E5C118 /* JSWebCLEvent.h in Headers */,
-				75945418165E660300E5C118 /* JSWebCLEventList.h in Headers */,
 				7594541A165E660300E5C118 /* JSWebCLException.h in Headers */,
 				7594541C165E660300E5C118 /* JSWebCLFinishCallback.h in Headers */,
 				7594541E165E660300E5C118 /* JSWebCLGLObjectInfo.h in Headers */,
@@ -29302,7 +29286,6 @@
 				75945394165E625100E5C118 /* WebCLDevice.cpp in Sources */,
 				75945397165E625100E5C118 /* WebCLDeviceList.cpp in Sources */,
 				7594539A165E625100E5C118 /* WebCLEvent.cpp in Sources */,
-				7594539D165E625100E5C118 /* WebCLEventList.cpp in Sources */,
 				759453A0165E625100E5C118 /* WebCLException.cpp in Sources */,
 				759453A5165E625100E5C118 /* WebCLGetInfo.cpp in Sources */,
 				759453A7165E625100E5C118 /* WebCLGLObjectInfo.cpp in Sources */,
@@ -29326,7 +29309,6 @@
 				75945411165E660300E5C118 /* JSWebCLDevice.cpp in Sources */,
 				75945413165E660300E5C118 /* JSWebCLDeviceList.cpp in Sources */,
 				75945415165E660300E5C118 /* JSWebCLEvent.cpp in Sources */,
-				75945417165E660300E5C118 /* JSWebCLEventList.cpp in Sources */,
 				75945419165E660300E5C118 /* JSWebCLException.cpp in Sources */,
 				7594541B165E660300E5C118 /* JSWebCLFinishCallback.cpp in Sources */,
 				7594541D165E660300E5C118 /* JSWebCLGLObjectInfo.cpp in Sources */,

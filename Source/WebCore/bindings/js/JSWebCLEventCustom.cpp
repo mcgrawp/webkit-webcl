@@ -50,7 +50,8 @@
 using namespace JSC;
 using namespace std;
 
-namespace WebCore { 
+namespace WebCore {
+
 
 static PassRefPtr<WebCLFinishCallback> createFinishCallback(ExecState* exec, JSDOMGlobalObject* globalObject, JSValue value)
 {

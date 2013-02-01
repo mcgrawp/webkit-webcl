@@ -114,26 +114,6 @@ JSValue JSWebCL::createContext(JSC::ExecState* exec)
     return jsUndefined();
 }
 
-
-// FIXME: we are not handling the callback yet
-JSValue JSWebCL::waitForEvents(JSC::ExecState* exec)
-{
-    if (exec->argumentCount() < 1)
-        return throwError(exec, createNotEnoughArgumentsError(exec));
-
-    Vector<RefPtr<WebCLEvent> > webCLEventArray;
-    toWebCLEventArray(exec, exec->argument(0), webCLEventArray);
-
-    ExceptionCode ec = 0;
-    WebCL* context = static_cast<WebCL*>(impl());
-    context->waitForEvents(webCLEventArray, ec);
-
-    if (ec)
-        setDOMException(exec, ec);
-
-    return jsUndefined();
-}
-
 JSValue JSWebCL::getSupportedExtensions(ExecState* exec)
 {
     WebCL* cl = static_cast<WebCL*>(impl());

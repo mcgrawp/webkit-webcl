@@ -50,7 +50,6 @@ class WebCLPlatformList;
 class WebCLGetInfo;
 class WebCLImage;
 class WebCLException;
-class WebCLEventList;
 class WebCLContextProperties;
 
 class WebCL : public RefCounted<WebCL> {
@@ -470,7 +469,7 @@ public:
     };
     // virtual WebCL* toWebCL() { return this; }
     PassRefPtr<WebCLPlatformList> getPlatforms(ExceptionCode&);
-    void waitForEvents(const Vector<RefPtr<WebCLEvent> >&, ExceptionCode&);
+    void waitForEvents(const Vector<WebCLEvent*>&, ExceptionCode&);
     PassRefPtr<WebCLContext> createContext(WebCLContextProperties*, ExceptionCode&);
     PassRefPtr<WebCLContext> createContext(ExceptionCode& ec)
     {

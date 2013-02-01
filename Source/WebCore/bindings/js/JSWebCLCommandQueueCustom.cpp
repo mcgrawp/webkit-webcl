@@ -51,6 +51,7 @@
 #include "WebCLProgram.h"
 #include "WebCLDevice.h"
 #include "WebCLGetInfo.h"
+#include "JSWebCLBuffer.h"
 #include "JSWebCLDevice.h"
 #include "JSWebCLCommandQueue.h"
 #include "JSWebCLCustom.h"
@@ -80,6 +81,7 @@ JSValue JSWebCLCommandQueue::getInfo(JSC::ExecState* exec)
 	}
 	return toJS(exec, globalObject(), info);
 }
+
 JSValue JSWebCLCommandQueue::finish(ExecState* exec)
 {
 	/*

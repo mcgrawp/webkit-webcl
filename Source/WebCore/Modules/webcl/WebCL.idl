@@ -359,7 +359,7 @@ module webcl {
 
         [StrictTypeChecking, Custom]  void getImageInfo(in WebCLImage image , in long param_name) raises(DOMException);
 
-        [Custom] void waitForEvents(in WebCLEventList events) raises(DOMException);
+        void waitForEvents(in sequence<WebCLEvent> events) raises(DOMException);
 
         [StrictTypeChecking, Custom] WebCLContext createContext(in [Optional] WebCLContextProperties webclContextProperties )raises(DOMException);
 

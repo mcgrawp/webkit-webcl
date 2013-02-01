@@ -32,7 +32,6 @@
 
 #include "ComputeContext.h"
 #include "WebCLContextProperties.h"
-#include "WebCLEventList.h"
 #include "WebCLException.h"
 #include <wtf/PassRefPtr.h>
 
@@ -125,7 +124,7 @@ WebCLGetInfo WebCL::getImageInfo(WebCLImage* image, cl_image_info paramName, Exc
     return WebCLGetInfo();
 }
 
-void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)
+void WebCL::waitForEvents(const Vector<WebCLEvent*>& events, ExceptionCode& ec)
 {
 
     Vector<CCEvent> ccEvents;
