@@ -114,11 +114,11 @@ module webcl {
         const unsigned long   DEVICE_LOCAL_MEM_SIZE                    = 0x1023;
         const unsigned long   DEVICE_ENDIAN_LITTLE                     = 0x1026;
         const unsigned long   DEVICE_AVAILABLE                         = 0x1027;
+        const unsigned long   DEVICE_QUEUE_PROPERTIES                  = 0x102A;
         const unsigned long   DEVICE_PROFILE                           = 0x102E;
+        const unsigned long   DEVICE_VERSION                           = 0x102F;
         const unsigned long   DEVICE_EXTENSIONS                        = 0x1030;
         const unsigned long   DEVICE_PLATFORM                          = 0x1031;
-        const unsigned long   DEVICE_DOUBLE_FP_CONFIG                  = 0x1032;
-        const unsigned long   DEVICE_HALF_FP_CONFIG                    = 0x1033;
         const unsigned long   DEVICE_PREFERRED_VECTOR_WIDTH_HALF       = 0x1034;
         const unsigned long   DEVICE_HOST_UNIFIED_MEMORY               = 0x1035;
         const unsigned long   DEVICE_OPENCL_C_VERSION                  = 0x103D;

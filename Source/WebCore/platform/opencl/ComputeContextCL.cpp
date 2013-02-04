@@ -159,6 +159,8 @@ static cl_device_info computeDeviceInfoTypeToCL(int deviceInfoType)
         return CL_DEVICE_GLOBAL_MEM_CACHE_TYPE;
     case ComputeContext::DEVICE_LOCAL_MEM_TYPE:
         return CL_DEVICE_LOCAL_MEM_TYPE;
+    case ComputeContext::DEVICE_MAX_WORK_ITEM_SIZES:
+        return CL_DEVICE_MAX_WORK_ITEM_SIZES;
     }
     ASSERT_NOT_REACHED();
     return CL_INVALID_VALUE;
