@@ -25,6 +25,7 @@ typedef cl_kernel CCKernel;
 typedef cl_event CCEvent;
 typedef cl_buffer_region CCBufferRegion;
 typedef cl_mem_object_type CCMemObjectype;
+typedef cl_mem_flags CCMemFlags;
 typedef cl_device_mem_cache_type CCDeviceMemCachetype;
 typedef cl_device_exec_capabilities CCDeviceExecCapabilities;
 typedef cl_device_local_mem_type CCDeviceLocalMemType;

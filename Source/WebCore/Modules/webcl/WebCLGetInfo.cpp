@@ -150,6 +150,12 @@ WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLDevice> value)
 {
 }
 
+WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLMemoryObject> value)
+    : m_type(kTypeWebCLMemoryObject)
+    , m_webCLMemoryObject(value)
+{
+}
+
 WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLDeviceList> value)
     : m_type(kTypeWebCLDeviceList)
     , m_webCLDeviceList(value)
@@ -263,6 +269,12 @@ PassRefPtr<WebCLDeviceList> WebCLGetInfo::getWebCLDeviceList() const
     ASSERT(getType() == kTypeWebCLDeviceList);
     return m_webCLDeviceList;
 }
+PassRefPtr<WebCLMemoryObject> WebCLGetInfo::getWebCLMemoryObject() const
+{
+    ASSERT(getType() == kTypeWebCLMemoryObject);
+    return m_webCLMemoryObject;
+}
+
 
 } // namespace WebCore
 

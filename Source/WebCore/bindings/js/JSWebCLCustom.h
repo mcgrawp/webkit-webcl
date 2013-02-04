@@ -122,6 +122,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebC
         return toJS(exec, globalObject, info.getWebCLDevice());
     case WebCLGetInfo::kTypeWebCLDeviceList:
         return toJS(exec, globalObject, info.getWebCLDeviceList());
+    case WebCLGetInfo::kTypeWebCLMemoryObject:
+        return toJS(exec, globalObject, info.getWebCLMemoryObject());
     default:
         notImplemented();
         return jsUndefined();

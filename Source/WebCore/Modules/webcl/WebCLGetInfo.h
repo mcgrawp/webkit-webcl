@@ -47,7 +47,8 @@ class WebCLDeviceList;
 class WebCLDevice;
 class WebCLImageDescriptor;
 class WebCLProgram;
-
+class WebCLContext;
+class WebCLMemoryObject;
 // A tagged union representing the result of get queries like
 // getParameter (encompassing getBooleanv, getIntegerv, getFloatv) and
 // similar variants. For reference counted types, increments and
@@ -74,7 +75,8 @@ public:
         kTypeWebCLContext,
         kTypeWebCLCommandQueue,
         kTypeWebCLDevice,
-        kTypeWebCLDeviceList
+        kTypeWebCLDeviceList,
+        kTypeWebCLMemoryObject
     };
 
     WebCLGetInfo();
@@ -95,6 +97,7 @@ public:
     explicit WebCLGetInfo(PassRefPtr<WebCLCommandQueue> value);
     explicit WebCLGetInfo(PassRefPtr<WebCLDeviceList> value);
     explicit WebCLGetInfo(PassRefPtr<WebCLDevice> value);
+    explicit WebCLGetInfo(PassRefPtr<WebCLMemoryObject> value);
 
     virtual ~WebCLGetInfo();
     Type getType() const;
@@ -115,6 +118,7 @@ public:
     PassRefPtr<WebCLCommandQueue> getWebCLCommandQueue() const;
     PassRefPtr<WebCLDevice> getWebCLDevice() const;
     PassRefPtr<WebCLDeviceList> getWebCLDeviceList() const;
+    PassRefPtr<WebCLMemoryObject> getWebCLMemoryObject() const;
 
 private:
     Type m_type;
@@ -135,6 +139,7 @@ private:
     RefPtr<WebCLCommandQueue> m_webCLCommandQueue;
     RefPtr<WebCLDevice> m_webCLDevice;
     RefPtr<WebCLDeviceList> m_webCLDeviceList;
+    RefPtr<WebCLMemoryObject> m_webCLMemoryObject;
 };
 
 } // namespace WebCore

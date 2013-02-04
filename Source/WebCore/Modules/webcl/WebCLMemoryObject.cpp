@@ -83,7 +83,7 @@ PassRefPtr<WebCLGLObjectInfo> WebCLMemoryObject::getGLObjectInfo(ExceptionCode& 
     unsigned* glObjectType = 0;
     unsigned* glObjectName = 0;
     if (!m_CCMemoryObject) {
-        ec = WebCL::INVALID_MEM_OBJECT;
+        ec = WebCLException::INVALID_MEM_OBJECT;
         printf("Error: Invalid MEM_OBJECT\n");
         return 0;
     }
@@ -122,31 +122,38 @@ PassRefPtr<WebCLGLObjectInfo> WebCLMemoryObject::getGLObjectInfo(ExceptionCode& 
 
 WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
 {
-    CCerror err = 0;
-    CCuint uintUnits = 0;
-    size_t sizetUnits = 0;
-    CCMemObjectype memType = 0;
-    void* memoryPtr = 0;
-
     if (!m_CCMemoryObject) {
-        ec = WebCL::INVALID_MEM_OBJECT;
+        ec = WebCLException::INVALID_MEM_OBJECT;
         printf("Error: Invalid MEM_OBJECT.\n");
         return WebCLGetInfo();
     }
+
+    CCerror err = 0;
     switch (paramName) {
-    case WebCL::MEM_TYPE :
+    case ComputeContext::MEM_TYPE: {
+        CCMemObjectype memType = 0;
         err = clGetMemObjectInfo(m_CCMemoryObject, CL_MEM_TYPE, sizeof(CCMemObjectype), &memType, 0);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(memType));
+        }
         break;
-    case WebCL::MEM_SIZE :
-        err = clGetMemObjectInfo(m_CCMemoryObject, CL_MEM_SIZE, sizeof(size_t), &sizetUnits, 0);
+    case ComputeContext::MEM_FLAGS: {
+        CCMemFlags memFlags = 0;
+        err = clGetMemObjectInfo(m_CCMemoryObject, CL_MEM_FLAGS, sizeof(memFlags), &memFlags, 0);
         if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(sizetUnits));
+            return WebCLGetInfo(static_cast<unsigned>(memFlags));
+        }
+        break;
+
+    case ComputeContext::MEM_SIZE: {
+        size_t memSizeValue = 0;
+        err = clGetMemObjectInfo(m_CCMemoryObject, CL_MEM_SIZE, sizeof(size_t), &memSizeValue, 0);
+        if (err == CL_SUCCESS)
+            return WebCLGetInfo(static_cast<size_t>(memSizeValue));
+        }
         break;
     /* FIXME:: Context must not be created here.
-    case WebCL::MEM_CONTEXT :
-    {
+    case ComputeContext::MEM_CONTEXT: {
         RefPtr<WebCLContext> contextObj = 0;
         cl_context clContextID = 0;
         err=clGetMemObjectInfo(m_PlatformComputeObject, CL_MEM_CONTEXT, sizeof(cl_context), &clContextID, 0);
@@ -157,44 +164,58 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
         }
         if (err == CL_SUCCESS)
             return WebCLGetInfo(PassRefPtr<WebCLContext>(contextObj));
-    }
+        }
         break;
     */
-    case WebCL::MEM_MAP_COUNT :
-        err = clGetMemObjectInfo(m_CCMemoryObject, CL_MEM_MAP_COUNT, sizeof(CCuint), &uintUnits, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(uintUnits));
+    case ComputeContext::MEM_ASSOCIATED_MEMOBJECT: {
+        PlatformComputeObject associatedMemObj = 0;
+        err = clGetMemObjectInfo(m_CCMemoryObject, CL_MEM_ASSOCIATED_MEMOBJECT, sizeof(associatedMemObj), &associatedMemObj, 0);
+        if (err == CL_SUCCESS) {
+            if (associatedMemObj) {
+                RefPtr<WebCLMemoryObject> memoryObj = WebCLMemoryObject::create(m_context, associatedMemObj);
+                if (!memoryObj) {
+                    printf(" ERROR:: WebCLMemoryObject::getInfo WebCLMemoryObject not created\n");
+                    return WebCLGetInfo();
+                }
+                return WebCLGetInfo(memoryObj.release());
+            }
+            printf("ERROR:: clGetMemObjectInfo with CL_MEM_ASSOCIATED_MEMOBJECT returned null\n");
+            return WebCLGetInfo();
+        }
+        printf(" ERROR:: clGetMemObjectInfo:: CL_MEM_ASSOCIATED_MEMOBJECT failed\n");
+        }
         break;
-    case WebCL::MEM_HOST_PTR :
-        err = clGetMemObjectInfo(m_CCMemoryObject, CL_MEM_HOST_PTR, sizeof(memoryPtr), &memoryPtr, 0);
+    case ComputeContext::MEM_OFFSET: {
+        size_t memOffsetValue = 0;
+        err = clGetMemObjectInfo(m_CCMemoryObject, CL_MEM_OFFSET, sizeof(size_t), &memOffsetValue, 0);
         if (err == CL_SUCCESS)
-            return WebCLGetInfo(memoryPtr);
+            return WebCLGetInfo(static_cast<size_t>(memOffsetValue));
+        }
         break;
-    default :
+    default:
         printf("Error: Unsupported Mem Info type\n");
-        ec = WebCL::INVALID_VALUE;
+        ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
     switch (err) {
     case CL_INVALID_VALUE:
-        ec = WebCL::INVALID_VALUE;
+        ec = WebCLException::INVALID_VALUE;
         printf("Error: CL_INVALID_VALUE   \n");
         break;
-    // FIXME Handle CL_INVALID_D3D10_RESOURCE_KHR Case
     case CL_INVALID_MEM_OBJECT:
-        ec = WebCL::INVALID_MEM_OBJECT;
+        ec = WebCLException::INVALID_MEM_OBJECT;
         printf("Error: CL_INVALID_MEM_OBJECT    \n");
         break;
     case CL_OUT_OF_RESOURCES:
-        ec = WebCL::OUT_OF_RESOURCES;
+        ec = WebCLException::OUT_OF_RESOURCES;
         printf("Error: CL_OUT_OF_RESOURCES   \n");
         break;
     case CL_OUT_OF_HOST_MEMORY:
-        ec = WebCL::OUT_OF_HOST_MEMORY;
+        ec = WebCLException::OUT_OF_HOST_MEMORY;
         printf("Error: CL_OUT_OF_HOST_MEMORY  \n");
         break;
     default:
-        ec = WebCL::FAILURE;
+        ec = WebCLException::FAILURE;
         printf("Error: Invaild Error Type\n");
         break;
     }
