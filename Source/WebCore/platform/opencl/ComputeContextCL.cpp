@@ -166,6 +166,27 @@ static cl_device_info computeDeviceInfoTypeToCL(int deviceInfoType)
     return CL_INVALID_VALUE;
 }
 
+static cl_mem_object_type computeMemoryObjectTypeToCL(int memoryObjectType)
+{
+    switch (memoryObjectType) {
+    case ComputeContext::MEM_OBJECT_BUFFER:
+        return CL_MEM_OBJECT_BUFFER;
+    case ComputeContext::MEM_OBJECT_IMAGE1D:
+        return CL_MEM_OBJECT_IMAGE1D;
+    case ComputeContext::MEM_OBJECT_IMAGE1D_ARRAY:
+        return CL_MEM_OBJECT_IMAGE1D_ARRAY;
+    case ComputeContext::MEM_OBJECT_IMAGE2D:
+        return CL_MEM_OBJECT_IMAGE2D;
+    case ComputeContext::MEM_OBJECT_IMAGE2D_ARRAY:
+        return CL_MEM_OBJECT_IMAGE2D_ARRAY;
+    case ComputeContext::MEM_OBJECT_IMAGE3D:
+        return CL_MEM_OBJECT_IMAGE3D;
+    }
+    ASSERT_NOT_REACHED();
+    return CL_INVALID_VALUE;
+
+}
+
 static cl_platform_info computePlatformInfoTypeToCL(int platformInfoType)
 {
     switch (platformInfoType) {
@@ -676,16 +697,10 @@ PlatformComputeObject ComputeContext::createFromGLTexture2D(int type, GC3Denum t
 CCImageFormat* ComputeContext::supportedImageFormats(int type, int imageType, CCuint& numberOfSupportedImages, CCerror& error)
 {
     cl_mem_flags memoryType = computeMemoryTypeToCL(type);
-
-    if (imageType != ComputeContext::MEM_OBJECT_IMAGE2D) {
-        error = ComputeContext::INVALID_VALUE;
-        return 0;
-    }
-
-    cl_mem_object_type clImageType = CL_MEM_OBJECT_IMAGE2D;
+    cl_mem_object_type clObjectType = computeMemoryObjectTypeToCL(imageType);
 
     cl_int clError;
-    clError = clGetSupportedImageFormats(m_clContext, memoryType, clImageType, 0, 0, &numberOfSupportedImages);
+    clError = clGetSupportedImageFormats(m_clContext, memoryType, clObjectType, 0, 0, &numberOfSupportedImages);
 
     if (clError != CL_SUCCESS) {
         error = clToComputeContextError(clError);
@@ -695,14 +710,9 @@ CCImageFormat* ComputeContext::supportedImageFormats(int type, int imageType, CC
     // FIXME: We should not use malloc
     CCImageFormat* imageFormats = (CCImageFormat*) malloc(sizeof(CCImageFormat) * numberOfSupportedImages);
 
-    clError = clGetSupportedImageFormats(m_clContext, memoryType, clImageType, numberOfSupportedImages, imageFormats, 0);
-    if (clError != CL_SUCCESS) {
-        error = clToComputeContextError(clError);
-        return 0;
-    }
-
+    clError = clGetSupportedImageFormats(m_clContext, memoryType, clObjectType, numberOfSupportedImages, imageFormats, 0);
     error = clToComputeContextError(clError);
-    return imageFormats;
+    return clError == CL_SUCCESS ? imageFormats : 0;
 }
 
 CCerror ComputeContext::getDeviceInfo(CCDeviceID deviceID, int infoType, size_t sizeOfData, void* data)

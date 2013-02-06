@@ -71,11 +71,10 @@ JSValue JSWebCLContext::getSupportedImageFormats(ExecState* exec)
 
     WebCLContext* context = static_cast<WebCLContext*>(impl());
     int memFlags = exec->argument(0).toInt32(exec);
-    int imageType = exec->argument(1).toInt32(exec);
 
     Vector<RefPtr<WebCLImageDescriptor> > imageDescriptors;
     ExceptionCode ec = 0;
-    context->getSupportedImageFormats(memFlags, imageType, imageDescriptors, ec);
+    context->getSupportedImageFormats(memFlags, imageDescriptors, ec);
 
     if (ec) {
         setDOMException(exec, ec);

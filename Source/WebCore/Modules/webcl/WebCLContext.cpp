@@ -679,7 +679,7 @@ void WebCLContext::LRUImageBufferCache::bubbleToFront(int idx)
         m_buffers[i].swap(m_buffers[i-1]);
 }
 
-void WebCLContext::getSupportedImageFormats(int memFlags, int imageType, Vector<RefPtr<WebCLImageDescriptor> >& imageDescriptors, ExceptionCode &ec)
+void WebCLContext::getSupportedImageFormats(int memFlags, Vector<RefPtr<WebCLImageDescriptor> >& imageDescriptors, ExceptionCode &ec)
 {
     //  Get context
     if (!m_clContext) {
@@ -690,7 +690,7 @@ void WebCLContext::getSupportedImageFormats(int memFlags, int imageType, Vector<
 
     CCuint numberOfSupportedImages;
     CCerror error;
-    CCImageFormat* imageFormats = m_computeContext->supportedImageFormats(memFlags, imageType, numberOfSupportedImages, error);
+    CCImageFormat* imageFormats = m_computeContext->supportedImageFormats(memFlags, ComputeContext::MEM_OBJECT_IMAGE2D, numberOfSupportedImages, error);
 
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
