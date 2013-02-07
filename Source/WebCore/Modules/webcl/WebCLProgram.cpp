@@ -90,7 +90,6 @@ WebCLGetInfo WebCLProgram::getInfo(int paramName, ExceptionCode& ec)
 
     cl_int err = 0;
     cl_uint uintUnits = 0;
-    size_t sizetUnits = 0;
     char programString[4096] = {""};
     cl_context clContextID = 0;
     RefPtr<WebCLContext> contextObj  = 0;
@@ -103,13 +102,7 @@ WebCLGetInfo WebCLProgram::getInfo(int paramName, ExceptionCode& ec)
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(uintUnits));
         break;
-    case WebCL::PROGRAM_BINARY_SIZES:
-        err = ComputeContext::getProgramInfo(m_clProgram, CL_PROGRAM_BINARY_SIZES, sizeof(size_t), &sizetUnits, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(sizetUnits));
-        break;
     case WebCL::PROGRAM_SOURCE:
-    case WebCL::PROGRAM_BINARIES:
         err = ComputeContext::getProgramInfo(m_clProgram, paramName, sizeof(programString), &programString, 0);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(String(programString));
@@ -139,11 +132,10 @@ WebCLGetInfo WebCLProgram::getInfo(int paramName, ExceptionCode& ec)
         }
         break;
     default:
-        // FIXME: Is this really the best exception?
-        ec = WebCLException::INVALID_PROGRAM;
+        printf("ERROR:: WebCLProgram::getInfo :: Invalid param value\n");
+        ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
-
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
 }

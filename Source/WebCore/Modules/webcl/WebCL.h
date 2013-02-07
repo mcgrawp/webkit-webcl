@@ -288,8 +288,6 @@ public:
         PROGRAM_NUM_DEVICES                      = 0x1162,
         PROGRAM_DEVICES                          = 0x1163,
         PROGRAM_SOURCE                           = 0x1164,
-        PROGRAM_BINARY_SIZES                     = 0x1165,
-        PROGRAM_BINARIES                         = 0x1166,
 
         // cl_program_build_info
         PROGRAM_BUILD_STATUS                     = 0x1181,

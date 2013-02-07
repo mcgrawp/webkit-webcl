@@ -218,10 +218,6 @@ static cl_program_info computeProgramInfoTypeToCL(int deviceInfoType)
         return CL_PROGRAM_DEVICES;
     case ComputeContext::PROGRAM_SOURCE:
         return CL_PROGRAM_SOURCE;
-    case ComputeContext::PROGRAM_BINARY_SIZES:
-        return CL_PROGRAM_BINARY_SIZES;
-    case ComputeContext::PROGRAM_BINARIES:
-        return CL_PROGRAM_BINARIES;
     }
     ASSERT_NOT_REACHED();
     return CL_INVALID_VALUE;

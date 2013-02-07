@@ -209,8 +209,6 @@ module webcl {
         const unsigned long   PROGRAM_NUM_DEVICES                      = 0x1162;
         const unsigned long   PROGRAM_DEVICES                          = 0x1163;
         const unsigned long   PROGRAM_SOURCE                           = 0x1164;
-        const unsigned long   PROGRAM_BINARY_SIZES                     = 0x1165;
-        const unsigned long   PROGRAM_BINARIES                         = 0x1166;
         const unsigned long   PROGRAM_BUILD_STATUS                     = 0x1181;
         const unsigned long   PROGRAM_BUILD_OPTIONS                    = 0x1182;
         const unsigned long   PROGRAM_BUILD_LOG                        = 0x1183;
