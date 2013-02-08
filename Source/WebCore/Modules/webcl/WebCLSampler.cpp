@@ -31,9 +31,10 @@
 
 #include "WebCLSampler.h"
 
-#include "ExceptionCode.h"
 #include "WebCL.h"
 #include "WebCLException.h"
+
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
@@ -71,6 +72,9 @@ WebCLSampler::WebCLSampler(WebCLContext* context, CCSampler sampler)
     : m_context(context)
     , m_ccSampler(sampler)
 {
+    // FIXME: For now, use it in order to silent a clang compiler warning.
+    // Remove this when SAMPLE_CONTEXT is supported.
+    UNUSED_PARAM(m_context);
 }
 
 WebCLGetInfo WebCLSampler::getInfo(int paramName, ExceptionCode& ec)
@@ -89,6 +93,7 @@ WebCLGetInfo WebCLSampler::getInfo(int paramName, ExceptionCode& ec)
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<bool>(boolUnits));
         break;
+    // FIXME: Implementation needed.
     /*case WebCL::SAMPLER_CONTEXT:
         err = clGetSamplerInfo(m_ccSampler, CL_SAMPLER_CONTEXT, sizeof(cl_context), &cl_context_id, 0);
         contextObj = WebCLContext::create(m_context, cl_context_id);

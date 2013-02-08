@@ -44,6 +44,8 @@ WorkerContextWebCLEnvironment::~WorkerContextWebCLEnvironment()
 WorkerContextWebCLEnvironment::WorkerContextWebCLEnvironment(ScriptExecutionContext* context)
     : m_context(context)
 {
+    // FIXME: For now, use it in order to silent a clang compiler warning.
+    UNUSED_PARAM(m_context);
 }
 
 WorkerContextWebCLEnvironment* WorkerContextWebCLEnvironment::from(ScriptExecutionContext* context)

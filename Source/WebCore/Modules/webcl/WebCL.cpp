@@ -178,7 +178,7 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties
             return 0;
         }
     } else {
-        CCerror platformIdError;
+        CCerror platformIdError = 0;
         CCint numPlatforms = ComputeContext::platformIDs(0, 0, platformIdError);
         CCint numberPlatformId;
         if (numPlatforms) {
@@ -186,7 +186,7 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties
             numberPlatformId = ComputeContext::platformIDs(numPlatforms, clPlatforms, platformIdError);
         }
         cl_int numDevices = 0;
-        CCerror deviceIdError;
+        CCerror deviceIdError = 0;
         if (platformIdError == ComputeContext::SUCCESS)
             numDevices = ComputeContext::deviceIDs(clPlatforms[0], CL_DEVICE_TYPE_DEFAULT, 1, 0, deviceIdError);
         if (deviceIdError == ComputeContext::SUCCESS) {

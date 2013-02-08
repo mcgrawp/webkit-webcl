@@ -436,36 +436,37 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
     Int32Array* globalWorkSize, Int32Array* localWorkSize, WebCLEventList* events,
     WebCLEvent* event, ExceptionCode& ec)
 {
-    CCKernel ccKernel;
-    CCEvent* ccEventWaitList = 0;
-    CCEvent* ccEvent = 0;
-    int eventsLength = 0;
-    int workItemDimensions = 0;
-
+    printf(" DEBUG:: in enqueueNDRangeKernel\n");
     if (!m_ccCommandQueue) {
         printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
-    if (kernel)
-        ccKernel = kernel->getCLKernel();
-    if (!ccKernel) {
+    if (!kernel || !kernel->getCLKernel()) {
         ec = WebCLException::INVALID_KERNEL;
-        printf("Error: Invalid ccKernel passed.\n");
+        printf("Error: Invalid kernel passed.\n");
         return;
     }
 
+    CCKernel ccKernel = kernel->getCLKernel();
+
+    CCEvent* ccEventWaitList = 0;
+    int eventsLength = 0;
     if (events) {
         ccEventWaitList = events->getCLEvents();
         eventsLength = events->length();
     }
 
-    if (event)
+    CCEvent* ccEvent = 0;
+    if (event) {
+        // FIXME: Crash!?
         *ccEvent = event->getCLEvent();
+    }
 
     // FIXME: The block of code is repeated all over this class.
     Vector<size_t> globalWorkSizeCopy;
+    int workItemDimensions = 0;
     if (globalWorkSize) {
         for (size_t i = 0; i < globalWorkSize->length(); ++i)
             globalWorkSizeCopy.append(globalWorkSize->item(i));

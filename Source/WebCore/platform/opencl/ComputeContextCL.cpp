@@ -241,7 +241,7 @@ static cl_command_queue_info computeCommandQueueInfoTypeToCL(int commandQueueInf
 
 static CCerror clToComputeContextError(cl_int clError)
 {
-    int computeContextError;
+    int computeContextError = CL_INVALID_VALUE;
     switch (clError) {
     case CL_SUCCESS:
         computeContextError = ComputeContext::SUCCESS;
@@ -410,7 +410,7 @@ static cl_image_format computeImageFormatToCL(const ComputeContext::ImageFormat&
 
 static cl_mem_flags computeMemoryTypeToCL(int memoryType)
 {
-    cl_int clMemoryType;
+    cl_int clMemoryType = CL_INVALID_VALUE;
     switch (memoryType) {
     case ComputeContext::MEM_READ_ONLY:
         clMemoryType = CL_MEM_READ_ONLY;
@@ -618,7 +618,7 @@ PlatformComputeObject ComputeContext::createFromGLRenderbuffer(int type, GC3Dint
 
 static cl_addressing_mode computeAddressingModeToCL(int addrMode)
 {
-    cl_addressing_mode clAddrMode;
+    cl_addressing_mode clAddrMode = CL_INVALID_VALUE;
     switch (addrMode) {
     case ComputeContext::ADDRESS_NONE:
         clAddrMode = CL_ADDRESS_NONE;
@@ -645,7 +645,7 @@ static cl_addressing_mode computeAddressingModeToCL(int addrMode)
 
 static cl_filter_mode computeFilterModeToCL(int filterMode)
 {
-    cl_filter_mode clFilterMode;
+    cl_filter_mode clFilterMode = CL_INVALID_VALUE;
     switch (filterMode) {
     case ComputeContext::FILTER_LINEAR:
         clFilterMode = CL_FILTER_LINEAR;
