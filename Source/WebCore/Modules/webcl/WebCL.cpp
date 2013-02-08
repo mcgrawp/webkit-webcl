@@ -139,10 +139,6 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCo
 
 PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties, ExceptionCode& ec)
 {
-    cl_device_id* clDevice = 0;
-    cl_platform_id* clPlatforms = 0;
-    cl_device_id* clDevices = 0;
-    int numofDevice = 1;
     cl_context_properties contextProperties[5] = {0};
     int propIndex = 0;
     int deviceType = CL_DEVICE_TYPE_DEFAULT;
@@ -163,47 +159,74 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties
             CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE;
         contextProperties[propIndex++] = (cl_context_properties)kCGLShareGroup;
     }
+
     if (properties && properties->deviceType())
         deviceType = properties->deviceType();
 
-    // FIXME ISSUE #25 ::WebCLContextProperties::objhint  not used.
+    // FIXME: (Issue #25) WebCLContextProperties::objhint not used.
 
+    // FIXME: Once we get rid of WebCLEventList (Issue #73), we will
+    // be able to get rid of 'clDevices'.
+    CCDeviceID* ccDevices = 0;
+    int numberOfDevices = 0;
+    CCerror error = 0;
     if (properties && properties->devices()) {
-        numofDevice = properties->devices()->length();
-        clDevice = (properties->devices())->getCLDevices();
-        if (!clDevice) {
+        numberOfDevices = properties->devices()->length();
+        ccDevices = properties->devices()->getCLDevices();
+        if (!ccDevices) {
             ec = WebCLException::INVALID_DEVICE;
-            printf("Error: no Device pased in WebCLContextProperties \n");
             this->setCLDeviceID(0);
             return 0;
         }
     } else {
-        CCerror platformIdError = 0;
-        CCint numPlatforms = ComputeContext::platformIDs(0, 0, platformIdError);
-        CCint numberPlatformId;
-        if (numPlatforms) {
-            clPlatforms = new cl_platform_id[numPlatforms];
-            numberPlatformId = ComputeContext::platformIDs(numPlatforms, clPlatforms, platformIdError);
-        }
-        cl_int numDevices = 0;
-        CCerror deviceIdError = 0;
-        if (platformIdError == ComputeContext::SUCCESS)
-            numDevices = ComputeContext::deviceIDs(clPlatforms[0], CL_DEVICE_TYPE_DEFAULT, 1, 0, deviceIdError);
-        if (deviceIdError == ComputeContext::SUCCESS) {
-            clDevices = new cl_device_id[numDevices];
-            numDevices = ComputeContext::deviceIDs(clPlatforms[0], CL_DEVICE_TYPE_DEFAULT, 1, clDevices, deviceIdError);
-            clDevice =  clDevices;
-            numofDevice = numDevices;
-        } else {
-            ec = WebCLException::INVALID_DEVICE;
-            printf("Error: Device Type Not Supported \n");
+        CCint numberOfPlatforms = ComputeContext::platformIDs(0, 0, error);
+        if (!numberOfPlatforms) {
+            ec = WebCLException::INVALID_PLATFORM;
             return 0;
         }
-    }
-    this->setCLDeviceID(clDevice);
 
-    CCerror error;
-    RefPtr<WebCLContext> webCLContext = WebCLContext::create(this, propIndex ? contextProperties : 0, numofDevice, clDevice, error);
+        if (error != ComputeContext::SUCCESS) {
+            ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+            return 0;
+        }
+
+        Vector<CCPlatformID> platforms;
+        if (!platforms.tryReserveCapacity(numberOfPlatforms)) {
+            ec = WebCLException::OUT_OF_HOST_MEMORY;
+            return 0;
+        }
+        platforms.resize(numberOfPlatforms);
+
+        // Return value can be ignored this time.
+        ComputeContext::platformIDs(numberOfPlatforms, platforms.data(), error);
+        if (error != ComputeContext::SUCCESS) {
+            ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+            return 0;
+        }
+
+        numberOfDevices = ComputeContext::deviceIDs(platforms[0], ComputeContext::DEVICE_TYPE_DEFAULT, 1, 0, error);
+        if (error != ComputeContext::SUCCESS) {
+            ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+            return 0;
+        }
+
+        // Hardcoding '5' here, as it is enough number of devices in real world.
+        ASSERT(numberOfDevices <= 5);
+        Vector<CCDeviceID, 5> devices;
+
+        // Return value can be ignored this time.
+        ComputeContext::deviceIDs(platforms[0], ComputeContext::DEVICE_TYPE_DEFAULT, 1, devices.data(), error);
+        if (error != ComputeContext::SUCCESS) {
+            ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+            return 0;
+        }
+
+        ccDevices = devices.data();
+    }
+
+    this->setCLDeviceID(ccDevices);
+
+    RefPtr<WebCLContext> webCLContext = WebCLContext::create(this, propIndex ? contextProperties : 0, numberOfDevices, ccDevices, error);
     if (!webCLContext) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
