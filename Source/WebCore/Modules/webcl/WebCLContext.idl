@@ -52,7 +52,6 @@ module webcl {
     WebCLImage createImage(in long flags , in ImageData data) raises(DOMException);
     WebCLImage createImage(in long flags , in HTMLCanvasElement canvasElement) raises (DOMException);
     WebCLImage createImage(in long flags , in HTMLImageElement imageElement) raises(DOMException);
-
     WebCLImage createImage(in long flags , in HTMLVideoElement videoElement) raises(DOMException);
 
     [StrictTypeChecking , Custom] WebCLImage createImageWithDescriptor(

@@ -89,17 +89,14 @@ JSValue JSWebCLContext::getSupportedImageFormats(ExecState* exec)
 }
 JSValue JSWebCLContext::createImageWithDescriptor(JSC::ExecState* exec)
 {
-    if (!exec->argumentCount())
+    if (!(exec->argumentCount() == 2 || exec->argumentCount() == 3))
         return throwSyntaxError(exec);
 
-    ExceptionCode ec = 0;
-    JSObject* jsAttrs = 0;
-    RefPtr<ArrayBuffer> buffer = 0;
-    RefPtr<WebCLMemoryObject> objWebCLImage;
-    unsigned flag  = exec->argument(0).toInt32(exec);
+    unsigned flag = exec->argument(0).toInt32(exec);
+
     RefPtr<WebCore::WebCLImageDescriptor> objWebCLImageDescriptor = WebCLImageDescriptor::create();
-    if (exec->argumentCount() >= 2 && exec->argument(1).isObject()) {
-        jsAttrs = exec->argument(1).getObject();
+    if (exec->argument(1).isObject()) {
+        JSObject* jsAttrs = exec->argument(1).getObject();
         Identifier channelOrder(exec , "channelOrder");
         if (jsAttrs->hasProperty(exec , channelOrder))
             objWebCLImageDescriptor->setChannelOrder(jsAttrs->get(exec , channelOrder).toInt32(exec));
@@ -121,19 +118,19 @@ JSValue JSWebCLContext::createImageWithDescriptor(JSC::ExecState* exec)
             objWebCLImageDescriptor->setRowPitch(jsAttrs->get(exec , rowPitch).toInt32(exec));
     }
 
-    if (exec->argumentCount() == 2)
-        objWebCLImage = m_impl->createImageWithDescriptor(flag , objWebCLImageDescriptor.get() , ec);
-
-    if (exec->argumentCount() == 3) {
+    RefPtr<ArrayBuffer> buffer;
+    if (exec->argumentCount() == 3)
         buffer = toArrayBuffer(exec->argument(2));
-        objWebCLImage = m_impl->createImageWithDescriptor(flag , objWebCLImageDescriptor.get() , buffer.get() , ec);
-    }
+
+    ExceptionCode ec = 0;
+    RefPtr<WebCLMemoryObject> objWebCLImage = m_impl->createImageWithDescriptor(flag, objWebCLImageDescriptor.get(), buffer.get(), ec);
 
     if (ec) {
         setDOMException(exec , ec);
         return jsUndefined();
     }
-    return toJS(exec , globalObject() , objWebCLImage.get());
+
+    return toJS(exec, globalObject(), objWebCLImage.get());
 }
 
 } // namespace WebCore

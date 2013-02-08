@@ -95,11 +95,8 @@ public:
 
     PassRefPtr<WebCLMemoryObject> createFromGLTexture2D(int , GC3Denum , GC3Dint , GC3Duint , ExceptionCode&);
 
-    PassRefPtr<WebCLImage> createImageWithDescriptor(int , WebCLImageDescriptor* , ArrayBuffer* , ExceptionCode&);
-    PassRefPtr<WebCLImage> createImageWithDescriptor(int flag , WebCLImageDescriptor* descriptor , ExceptionCode& ec)
-    {
-        return createImageWithDescriptor( flag , descriptor , 0 , ec);
-    }
+    PassRefPtr<WebCLImage> createImageWithDescriptor(int flag, WebCLImageDescriptor* , ArrayBuffer* , ExceptionCode&);
+
     PassRefPtr<WebCLProgram> createProgram(const String&, ExceptionCode&);
 
     PassRefPtr<WebCLSampler> createSampler(bool, int, int, ExceptionCode&);
