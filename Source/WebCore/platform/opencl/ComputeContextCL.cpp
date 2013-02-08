@@ -171,14 +171,8 @@ static cl_mem_object_type computeMemoryObjectTypeToCL(int memoryObjectType)
     switch (memoryObjectType) {
     case ComputeContext::MEM_OBJECT_BUFFER:
         return CL_MEM_OBJECT_BUFFER;
-    case ComputeContext::MEM_OBJECT_IMAGE1D:
-        return CL_MEM_OBJECT_IMAGE1D;
-    case ComputeContext::MEM_OBJECT_IMAGE1D_ARRAY:
-        return CL_MEM_OBJECT_IMAGE1D_ARRAY;
     case ComputeContext::MEM_OBJECT_IMAGE2D:
         return CL_MEM_OBJECT_IMAGE2D;
-    case ComputeContext::MEM_OBJECT_IMAGE2D_ARRAY:
-        return CL_MEM_OBJECT_IMAGE2D_ARRAY;
     case ComputeContext::MEM_OBJECT_IMAGE3D:
         return CL_MEM_OBJECT_IMAGE3D;
     }
