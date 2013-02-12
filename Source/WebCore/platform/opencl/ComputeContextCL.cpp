@@ -415,6 +415,15 @@ static cl_mem_flags computeMemoryTypeToCL(int memoryType)
     case ComputeContext::MEM_READ_WRITE:
         clMemoryType = CL_MEM_READ_WRITE;
         break;
+    case ComputeContext::MEM_USE_HOST_PTR:
+        clMemoryType = CL_MEM_USE_HOST_PTR;
+        break;
+    case ComputeContext::MEM_ALLOC_HOST_PTR:
+        clMemoryType = CL_MEM_ALLOC_HOST_PTR;
+        break;
+    case ComputeContext::MEM_COPY_HOST_PTR:
+        clMemoryType = CL_MEM_COPY_HOST_PTR;
+        break;
     default:
         ASSERT_NOT_REACHED();
         break;
