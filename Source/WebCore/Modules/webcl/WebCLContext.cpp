@@ -681,13 +681,12 @@ void WebCLContext::LRUImageBufferCache::bubbleToFront(int idx)
         m_buffers[i].swap(m_buffers[i-1]);
 }
 
-void WebCLContext::getSupportedImageFormats(int memFlags, Vector<RefPtr<WebCLImageDescriptor> >& imageDescriptors, ExceptionCode &ec)
+Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(int memFlags, ExceptionCode &ec)
 {
-    //  Get context
+    Vector<RefPtr<WebCLImageDescriptor>> imageDescriptors;
     if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
         ec = WebCLException::INVALID_CONTEXT;
-        return;
+        return imageDescriptors;
     }
 
     CCuint numberOfSupportedImages;
@@ -696,13 +695,12 @@ void WebCLContext::getSupportedImageFormats(int memFlags, Vector<RefPtr<WebCLIma
 
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return;
+        return imageDescriptors;
     }
 
-    for (size_t i = 0; i < numberOfSupportedImages; ++i) {
-        RefPtr<WebCLImageDescriptor> imgDescriptor = WebCLImageDescriptor::create(imageFormats[i]);
-        imageDescriptors.append(imgDescriptor);
-    }
+    for (size_t i = 0; i < numberOfSupportedImages; ++i)
+        imageDescriptors.append(WebCLImageDescriptor::create(imageFormats[i]));
+    return imageDescriptors;
 }
 
 PassRefPtr<WebCLMemoryObject> WebCLContext::createImage2D(int flags, unsigned width, unsigned height, ArrayBuffer* data, ExceptionCode& ec)

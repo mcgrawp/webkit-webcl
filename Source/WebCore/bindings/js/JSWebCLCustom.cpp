@@ -48,28 +48,6 @@ using namespace std;
 
 namespace WebCore {
 
-bool toWebCLEventArray(JSC::ExecState* exec, JSC::JSValue value, Vector<RefPtr<WebCLEvent> >& vector)
-{
-    if (!value.isObject())
-        return false;
-
-    JSC::JSObject* object = asObject(value);
-    int32_t length = object->get(exec, JSC::Identifier(exec, "length")).toInt32(exec);
-
-    if (!vector.tryReserveCapacity(length))
-        return false;
-    vector.resize(length);
-
-    for (int32_t i = 0; i < length; ++i) {
-        JSC::JSValue v = object->get(exec, i);
-        if (exec->hadException())
-            return false;
-        vector[i] = toWebCLEvent(v);
-    }
-
-    return true;
-}
-
 JSValue JSWebCL::getImageInfo(JSC::ExecState* exec)
 {
     if (exec->argumentCount() != 2)

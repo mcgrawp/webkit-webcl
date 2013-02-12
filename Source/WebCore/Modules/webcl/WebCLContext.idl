@@ -32,7 +32,7 @@ module webcl {
     [StrictTypeChecking , Custom]  void getInfo (in long contextinfo) raises(DOMException);
 
     WebCLEvent createUserEvent() raises(DOMException);
-    [Custom] void getSupportedImageFormats(in long memFlags) raises(DOMException);
+    sequence<WebCLImageDescriptor> getSupportedImageFormats(in long memFlags) raises(DOMException);
 
     WebCLCommandQueue createCommandQueue(in [Optional] WebCLDeviceList devices , in [Optional] long prop)
         raises(DOMException);

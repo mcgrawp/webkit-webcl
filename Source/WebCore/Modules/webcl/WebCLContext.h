@@ -105,7 +105,7 @@ public:
 
     WebCLGetInfo getInfo(int, ExceptionCode&);
 
-    void getSupportedImageFormats(int, Vector<RefPtr<WebCLImageDescriptor> >&, ExceptionCode&);
+    Vector<RefPtr<WebCLImageDescriptor> > getSupportedImageFormats(int, ExceptionCode&);
 
     // Strawman proposal
     PassRefPtr<WebCLBuffer> createBuffer(int, ImageData*, ExceptionCode&);

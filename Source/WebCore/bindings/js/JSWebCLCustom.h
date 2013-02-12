@@ -130,8 +130,6 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebC
     }
 }
 
-bool toWebCLEventArray(JSC::ExecState*, JSC::JSValue, Vector<RefPtr<WebCLEvent> >&);
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)
