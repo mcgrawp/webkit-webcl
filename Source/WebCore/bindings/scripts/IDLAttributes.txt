@@ -79,6 +79,7 @@ JSCustomToNativeObject
 JSGenerateIsReachable=|Impl|ImplContext|ImplDocument|ImplElementRoot|ImplFrame|ImplBaseRoot
 JSGenerateToJSObject
 JSGenerateToNativeObject
+JSGenerateToArrayNativeObject
 JSInlineGetOwnPropertySlot
 JSLegacyParent=*
 JSNoStaticTables
