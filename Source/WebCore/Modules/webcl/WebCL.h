@@ -391,15 +391,6 @@ public:
         DEFAULT_OBJECT_WIDTH                     = 0, // CL_DEVICE_IMAGE2D_MAX_WIDTH
         DEFAULT_OBJECT_HEIGHT                    = 0, // CL_DEVICE_IMAGE2D_MAX_HEIGHT
         DEFAULT_OBJECT_ROWPITCH                  = 0,
-
-        // cl_gl_texture_info param value
-
-        OBJECT_BUFFER                            = 0x2000,
-        OBJECT_TEXTURE2D                         = 0x2001,
-        OBJECT_TEXTURE3D                         = 0x2002,
-        OBJECT_RENDERBUFFER                      = 0x2003,
-        TEXTURE_TARGET                           = 0x2004,
-        MIPMAP_LEVEL                             = 0x2005
     };
     // virtual WebCL* toWebCL() { return this; }
     PassRefPtr<WebCLPlatformList> getPlatforms(ExceptionCode&);
