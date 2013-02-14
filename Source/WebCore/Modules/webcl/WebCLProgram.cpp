@@ -32,7 +32,6 @@
 
 #include "WebCL.h"
 #include "WebCLGetInfo.h"
-#include "WebCLKernelList.h"
 
 namespace WebCore {
 
@@ -199,25 +198,28 @@ PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, Exc
     return webclKernel;
 }
 
-PassRefPtr<WebCLKernelList> WebCLProgram::createKernelsInProgram(ExceptionCode& ec)
+Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode& ec)
 {
+    Vector<RefPtr<WebCLKernel> > kernels;
     if (!m_clProgram) {
         printf("Error: Invalid program object\n");
         ec = WebCLException::INVALID_PROGRAM;
-        return 0;
+        return kernels;
     }
 
-    CCerror error = 0;
+    CCerror error;
     CCuint numberOfKernels = 0;
     CCKernel* computeContextKernels = m_context->computeContext()->createKernelsInProgram(m_clProgram, numberOfKernels, error);
     // computeContextKernels can be 0 even if there was not ComputeContext error, e.g. program has 0 kernels.
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
+        return kernels;
     }
 
-    RefPtr<WebCLKernelList> kernalListObject = WebCLKernelList::create(m_context, computeContextKernels, numberOfKernels);
-    return kernalListObject;
+    for (size_t i = 0 ; i < numberOfKernels; i++)
+        kernels.append(WebCLKernel::create(m_context, computeContextKernels[i]));
+
+    return kernels;
 }
 
 void WebCLProgram::finishCallback(cl_program program, void* userData)

@@ -159,7 +159,6 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webcl/WebCLCommandQueue.idl \
     $(WebCore)/Modules/webcl/WebCLProgram.idl \
     $(WebCore)/Modules/webcl/WebCLKernel.idl \
-    $(WebCore)/Modules/webcl/WebCLKernelList.idl \
     $(WebCore)/Modules/webcl/WebCLEvent.idl \
     $(WebCore)/Modules/webcl/WebCLImageDescriptor.idl \
     $(WebCore)/Modules/webcl/WebCLMemoryObject.idl \

@@ -41,7 +41,6 @@ class WebCL;
 class WebCLContext;
 class WebCLGetInfo;
 class WebCLKernel;
-class WebCLKernelList;
 class WebCLDevice;
 class WebCLDeviceList;
 
@@ -69,7 +68,7 @@ public:
 
     PassRefPtr<WebCLKernel> createKernel(const String&, ExceptionCode&);
 
-    PassRefPtr<WebCLKernelList> createKernelsInProgram(ExceptionCode&);
+    Vector<RefPtr<WebCLKernel> > createKernelsInProgram(ExceptionCode&);
 
     void releaseProgram(ExceptionCode&);
 

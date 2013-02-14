@@ -40,7 +40,6 @@
 #include "WebCLCommandQueue.h"
 #include "WebCLProgram.h"
 #include "WebCLKernel.h"
-#include "WebCLKernelList.h"
 #include "WebCLEvent.h"
 #include "WebCLSampler.h"
 //#include <wtf/Float32Array.h>
