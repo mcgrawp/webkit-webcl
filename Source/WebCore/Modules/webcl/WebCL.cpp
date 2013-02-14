@@ -52,17 +52,27 @@ WebCL::~WebCL()
 {
 }
 
-PassRefPtr<WebCLPlatformList> WebCL::getPlatforms(ExceptionCode& ec)
+Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec) const
 {
     CCerror error;
-    RefPtr<WebCLPlatformList> platformListPtr = WebCLPlatformList::create(error);
-    if (!platformListPtr) {
-        ASSERT(error != ComputeContext::SUCCESS);
-        ec = WebCLException::INVALID_PLATFORM;
-        return 0;
+    Vector<RefPtr<WebCLPlatform> > webCLPlatformList;
+    CCint numberOfPlatforms = ComputeContext::platformIDs(0, 0, error);
+    if (error != ComputeContext::SUCCESS) {
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return webCLPlatformList;
     }
 
-    return platformListPtr;
+    Vector<CCPlatformID> platformIDs(numberOfPlatforms);
+    ComputeContext::platformIDs(numberOfPlatforms, platformIDs.data(), error);
+    if (error != ComputeContext::SUCCESS) {
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return webCLPlatformList;
+    }
+
+    for (int i = 0; i < numberOfPlatforms; ++i)
+        webCLPlatformList.append(WebCLPlatform::create(platformIDs[i]));
+
+    return webCLPlatformList;
 }
 
 WebCLGetInfo WebCL::getImageInfo(WebCLImage* image, cl_image_info paramName, ExceptionCode& ec)

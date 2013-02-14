@@ -36,7 +36,7 @@
 #include "WebCLDeviceList.h"
 #include "WebCLEvent.h"
 #include "WebCLMemoryObject.h"
-#include "WebCLPlatformList.h"
+#include "WebCLPlatform.h"
 #include "WebCLProgram.h"
 #include "WebCLSampler.h"
 #include <OpenCL/opencl.h>
@@ -46,7 +46,6 @@ using namespace std;
 namespace WebCore {
 
 class ScriptExecutionContext;
-class WebCLPlatformList;
 class WebCLGetInfo;
 class WebCLImage;
 class WebCLException;
@@ -67,7 +66,7 @@ public:
         DEFAULT_OBJECT_ROWPITCH                  = 0,
     };
     // virtual WebCL* toWebCL() { return this; }
-    PassRefPtr<WebCLPlatformList> getPlatforms(ExceptionCode&);
+    Vector<RefPtr<WebCLPlatform> > getPlatforms(ExceptionCode&) const;
     void waitForEvents(const Vector<WebCLEvent*>&, ExceptionCode&);
     PassRefPtr<WebCLContext> createContext(WebCLContextProperties*, ExceptionCode&);
     PassRefPtr<WebCLContext> createContext(ExceptionCode& ec)

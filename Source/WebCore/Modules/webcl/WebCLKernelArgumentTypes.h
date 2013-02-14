@@ -33,7 +33,6 @@
 #include "ScriptState.h"
 
 #include "ActiveDOMObject.h"
-#include "WebCLPlatformList.h"
 #include "WebCLPlatform.h"
 #include "WebCLDeviceList.h"
 #include "WebCLDevice.h"

@@ -289,7 +289,7 @@ module webcl {
         const unsigned long  DEFAULT_OBJECT_HEIGHT                     = 0;
         const unsigned long  DEFAULT_OBJECT_ROWPITCH                   = 0;
 
-        WebCLPlatformList getPlatforms() raises(DOMException);
+        sequence<WebCLPlatform> getPlatforms() raises(DOMException);
 
         [StrictTypeChecking, Custom]  void getImageInfo(in WebCLImage image , in long param_name) raises(DOMException);
 

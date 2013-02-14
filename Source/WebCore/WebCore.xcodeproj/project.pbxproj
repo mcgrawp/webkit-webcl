@@ -1985,8 +1985,6 @@
 		759453C2165E625200E5C118 /* WebCLMemoryObjectList.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945360165E618A00E5C118 /* WebCLMemoryObjectList.h */; };
 		759453C4165E625200E5C118 /* WebCLPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75945362165E618A00E5C118 /* WebCLPlatform.cpp */; };
 		759453C5165E625200E5C118 /* WebCLPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945363165E618A00E5C118 /* WebCLPlatform.h */; };
-		759453C7165E625200E5C118 /* WebCLPlatformList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75945365165E618A00E5C118 /* WebCLPlatformList.cpp */; };
-		759453C8165E625200E5C118 /* WebCLPlatformList.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945366165E618A00E5C118 /* WebCLPlatformList.h */; };
 		759453CA165E625200E5C118 /* WebCLProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75945368165E618A00E5C118 /* WebCLProgram.cpp */; };
 		759453CB165E625200E5C118 /* WebCLProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945369165E618A00E5C118 /* WebCLProgram.h */; };
 		759453CD165E625200E5C118 /* WebCLSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7594536B165E618A00E5C118 /* WebCLSampler.cpp */; };
@@ -2031,8 +2029,6 @@
 		7594542E165E660300E5C118 /* JSWebCLMemoryObjectList.h in Headers */ = {isa = PBXBuildFile; fileRef = 759453FE165E660300E5C118 /* JSWebCLMemoryObjectList.h */; };
 		7594542F165E660300E5C118 /* JSWebCLPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759453FF165E660300E5C118 /* JSWebCLPlatform.cpp */; };
 		75945430165E660300E5C118 /* JSWebCLPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945400165E660300E5C118 /* JSWebCLPlatform.h */; };
-		75945431165E660300E5C118 /* JSWebCLPlatformList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75945401165E660300E5C118 /* JSWebCLPlatformList.cpp */; };
-		75945432165E660300E5C118 /* JSWebCLPlatformList.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945402165E660300E5C118 /* JSWebCLPlatformList.h */; };
 		75945433165E660300E5C118 /* JSWebCLProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75945403165E660300E5C118 /* JSWebCLProgram.cpp */; };
 		75945434165E660300E5C118 /* JSWebCLProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945404165E660300E5C118 /* JSWebCLProgram.h */; };
 		75945435165E660300E5C118 /* JSWebCLSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75945405165E660300E5C118 /* JSWebCLSampler.cpp */; };
@@ -9359,9 +9355,6 @@
 		75945362165E618A00E5C118 /* WebCLPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLPlatform.cpp; sourceTree = "<group>"; };
 		75945363165E618A00E5C118 /* WebCLPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLPlatform.h; sourceTree = "<group>"; };
 		75945364165E618A00E5C118 /* WebCLPlatform.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLPlatform.idl; sourceTree = "<group>"; };
-		75945365165E618A00E5C118 /* WebCLPlatformList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLPlatformList.cpp; sourceTree = "<group>"; };
-		75945366165E618A00E5C118 /* WebCLPlatformList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLPlatformList.h; sourceTree = "<group>"; };
-		75945367165E618A00E5C118 /* WebCLPlatformList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLPlatformList.idl; sourceTree = "<group>"; };
 		75945368165E618A00E5C118 /* WebCLProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLProgram.cpp; sourceTree = "<group>"; };
 		75945369165E618A00E5C118 /* WebCLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLProgram.h; sourceTree = "<group>"; };
 		7594536A165E618A00E5C118 /* WebCLProgram.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLProgram.idl; sourceTree = "<group>"; };
@@ -9419,8 +9412,6 @@
 		759453FE165E660300E5C118 /* JSWebCLMemoryObjectList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLMemoryObjectList.h; sourceTree = "<group>"; };
 		759453FF165E660300E5C118 /* JSWebCLPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLPlatform.cpp; sourceTree = "<group>"; };
 		75945400165E660300E5C118 /* JSWebCLPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLPlatform.h; sourceTree = "<group>"; };
-		75945401165E660300E5C118 /* JSWebCLPlatformList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLPlatformList.cpp; sourceTree = "<group>"; };
-		75945402165E660300E5C118 /* JSWebCLPlatformList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLPlatformList.h; sourceTree = "<group>"; };
 		75945403165E660300E5C118 /* JSWebCLProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLProgram.cpp; sourceTree = "<group>"; };
 		75945404165E660300E5C118 /* JSWebCLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLProgram.h; sourceTree = "<group>"; };
 		75945405165E660300E5C118 /* JSWebCLSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLSampler.cpp; sourceTree = "<group>"; };
@@ -16350,9 +16341,6 @@
 				75945362165E618A00E5C118 /* WebCLPlatform.cpp */,
 				75945363165E618A00E5C118 /* WebCLPlatform.h */,
 				75945364165E618A00E5C118 /* WebCLPlatform.idl */,
-				75945365165E618A00E5C118 /* WebCLPlatformList.cpp */,
-				75945366165E618A00E5C118 /* WebCLPlatformList.h */,
-				75945367165E618A00E5C118 /* WebCLPlatformList.idl */,
 				75945368165E618A00E5C118 /* WebCLProgram.cpp */,
 				75945369165E618A00E5C118 /* WebCLProgram.h */,
 				7594536A165E618A00E5C118 /* WebCLProgram.idl */,
@@ -16409,8 +16397,6 @@
 				759453FE165E660300E5C118 /* JSWebCLMemoryObjectList.h */,
 				759453FF165E660300E5C118 /* JSWebCLPlatform.cpp */,
 				75945400165E660300E5C118 /* JSWebCLPlatform.h */,
-				75945401165E660300E5C118 /* JSWebCLPlatformList.cpp */,
-				75945402165E660300E5C118 /* JSWebCLPlatformList.h */,
 				75945403165E660300E5C118 /* JSWebCLProgram.cpp */,
 				75945404165E660300E5C118 /* JSWebCLProgram.h */,
 				75945405165E660300E5C118 /* JSWebCLSampler.cpp */,
@@ -26151,7 +26137,6 @@
 				759453BF165E625200E5C118 /* WebCLMemoryObject.h in Headers */,
 				759453C2165E625200E5C118 /* WebCLMemoryObjectList.h in Headers */,
 				759453C5165E625200E5C118 /* WebCLPlatform.h in Headers */,
-				759453C8165E625200E5C118 /* WebCLPlatformList.h in Headers */,
 				759453CB165E625200E5C118 /* WebCLProgram.h in Headers */,
 				759453CE165E625200E5C118 /* WebCLSampler.h in Headers */,
 				759453D4165E647000E5C118 /* ComputeContext.h in Headers */,
@@ -26175,7 +26160,6 @@
 				7594542C165E660300E5C118 /* JSWebCLMemoryObject.h in Headers */,
 				7594542E165E660300E5C118 /* JSWebCLMemoryObjectList.h in Headers */,
 				75945430165E660300E5C118 /* JSWebCLPlatform.h in Headers */,
-				75945432165E660300E5C118 /* JSWebCLPlatformList.h in Headers */,
 				75945434165E660300E5C118 /* JSWebCLProgram.h in Headers */,
 				75945436165E660300E5C118 /* JSWebCLSampler.h in Headers */,
 				616340FB169DEC6000020986 /* DOMWindowWebCLEnvironment.h in Headers */,
@@ -29298,7 +29282,6 @@
 				759453BE165E625200E5C118 /* WebCLMemoryObject.cpp in Sources */,
 				759453C1165E625200E5C118 /* WebCLMemoryObjectList.cpp in Sources */,
 				759453C4165E625200E5C118 /* WebCLPlatform.cpp in Sources */,
-				759453C7165E625200E5C118 /* WebCLPlatformList.cpp in Sources */,
 				759453CA165E625200E5C118 /* WebCLProgram.cpp in Sources */,
 				759453CD165E625200E5C118 /* WebCLSampler.cpp in Sources */,
 				75945407165E660300E5C118 /* JSWebCL.cpp in Sources */,
@@ -29320,7 +29303,6 @@
 				7594542B165E660300E5C118 /* JSWebCLMemoryObject.cpp in Sources */,
 				7594542D165E660300E5C118 /* JSWebCLMemoryObjectList.cpp in Sources */,
 				7594542F165E660300E5C118 /* JSWebCLPlatform.cpp in Sources */,
-				75945431165E660300E5C118 /* JSWebCLPlatformList.cpp in Sources */,
 				75945433165E660300E5C118 /* JSWebCLProgram.cpp in Sources */,
 				75945435165E660300E5C118 /* JSWebCLSampler.cpp in Sources */,
 				7570E5AB165E8A5A00996A15 /* JSCustomWebCLFinishCallback.cpp in Sources */,
