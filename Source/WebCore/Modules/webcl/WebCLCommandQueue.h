@@ -37,7 +37,6 @@
 #include "WebCLImage.h"
 #include "WebCLKernel.h"
 #include "WebCLMemoryObject.h"
-#include "WebCLMemoryObjectList.h"
 #include "WebCLProgram.h"
 #include "WebCLSampler.h"
 
