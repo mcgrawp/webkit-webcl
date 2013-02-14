@@ -60,51 +60,51 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
 
     CCerror err = 0;
     switch (infoType) {
-    case WebCL::DEVICE_EXTENSIONS:
-    case WebCL::DEVICE_OPENCL_C_VERSION: {
+    case ComputeContext::DEVICE_EXTENSIONS:
+    case ComputeContext::DEVICE_OPENCL_C_VERSION: {
         char deviceString[WebCL::CHAR_BUFFER_SIZE];
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(deviceString), &deviceString);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(String(deviceString));
         }
         break;
-    case WebCL::DEVICE_PROFILE:
+    case ComputeContext::DEVICE_PROFILE:
         return WebCLGetInfo(String("WEBCL_PROFILE"));
         break;
-    case WebCL::DEVICE_VERSION:
+    case ComputeContext::DEVICE_VERSION:
         return WebCLGetInfo(String("WebCL 1.0"));
         break;
-    case WebCL::MEM_READ_ONLY:
-    case WebCL::DEVICE_ADDRESS_BITS:
-    case WebCL::DEVICE_MAX_CONSTANT_ARGS:
-    case WebCL::DEVICE_MAX_READ_IMAGE_ARGS: // unsigned int
-    case WebCL::DEVICE_MAX_WRITE_IMAGE_ARGS: // unsigned int
-    case WebCL::DEVICE_MAX_SAMPLERS:
-    case WebCL::DEVICE_PREFERRED_VECTOR_WIDTH_CHAR:
-    case WebCL::DEVICE_PREFERRED_VECTOR_WIDTH_SHORT:
-    case WebCL::DEVICE_PREFERRED_VECTOR_WIDTH_INT:
-    case WebCL::DEVICE_PREFERRED_VECTOR_WIDTH_LONG:
-    case WebCL::DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT:
-    case WebCL::DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE:
-    case WebCL::DEVICE_PREFERRED_VECTOR_WIDTH_HALF: {
+    case ComputeContext::MEM_READ_ONLY:
+    case ComputeContext::DEVICE_ADDRESS_BITS:
+    case ComputeContext::DEVICE_MAX_CONSTANT_ARGS:
+    case ComputeContext::DEVICE_MAX_READ_IMAGE_ARGS: // unsigned int
+    case ComputeContext::DEVICE_MAX_WRITE_IMAGE_ARGS: // unsigned int
+    case ComputeContext::DEVICE_MAX_SAMPLERS:
+    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_CHAR:
+    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_SHORT:
+    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_INT:
+    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_LONG:
+    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT:
+    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE:
+    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_HALF: {
         CCuint infoValue = 0;
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(CCuint), &infoValue);
-        if (err == CL_SUCCESS)
+        if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(infoValue));
         }
         break;
-    case WebCL::DEVICE_IMAGE2D_MAX_HEIGHT:
-    case WebCL::DEVICE_IMAGE2D_MAX_WIDTH:
-    case WebCL::DEVICE_MAX_PARAMETER_SIZE:
-    case WebCL::DEVICE_MAX_WORK_GROUP_SIZE:
-    case WebCL::DEVICE_MAX_WORK_ITEM_DIMENSIONS: { // unsigned int
+    case ComputeContext::DEVICE_IMAGE2D_MAX_HEIGHT:
+    case ComputeContext::DEVICE_IMAGE2D_MAX_WIDTH:
+    case ComputeContext::DEVICE_MAX_PARAMETER_SIZE:
+    case ComputeContext::DEVICE_MAX_WORK_GROUP_SIZE:
+    case ComputeContext::DEVICE_MAX_WORK_ITEM_DIMENSIONS: { // unsigned int
         size_t infoValue = 0;
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(size_t), &infoValue);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(infoValue));
         }
         break;
-    case WebCL::DEVICE_MAX_WORK_ITEM_SIZES: { // size_t[]
+    case ComputeContext::DEVICE_MAX_WORK_ITEM_SIZES: { // size_t[]
         size_t infoItemDim = 0;
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, ComputeContext::DEVICE_MAX_WORK_ITEM_DIMENSIONS, sizeof(size_t), &infoItemDim);
         if (err == ComputeContext::SUCCESS && infoItemDim > 0) {
@@ -119,43 +119,43 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
         }
         }
         break;
-    case WebCL::DEVICE_LOCAL_MEM_SIZE:
-    case WebCL::DEVICE_MAX_CONSTANT_BUFFER_SIZE:
-    case WebCL::DEVICE_MAX_MEM_ALLOC_SIZE: { // unsigned long long
+    case ComputeContext::DEVICE_LOCAL_MEM_SIZE:
+    case ComputeContext::DEVICE_MAX_CONSTANT_BUFFER_SIZE:
+    case ComputeContext::DEVICE_MAX_MEM_ALLOC_SIZE: { // unsigned long long
         CCulong infoValue = 0;
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(CCulong), &infoValue);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned long>(infoValue));
         }
         break;
-    case WebCL::DEVICE_AVAILABLE:
-    case WebCL::DEVICE_ENDIAN_LITTLE:
-    case WebCL::DEVICE_HOST_UNIFIED_MEMORY:
-    case WebCL::DEVICE_IMAGE_SUPPORT:
+    case ComputeContext::DEVICE_AVAILABLE:
+    case ComputeContext::DEVICE_ENDIAN_LITTLE:
+    case ComputeContext::DEVICE_HOST_UNIFIED_MEMORY:
+    case ComputeContext::DEVICE_IMAGE_SUPPORT:
         return WebCLGetInfo(true);
         break;
-    case WebCL::DEVICE_TYPE: {
+    case ComputeContext::DEVICE_TYPE: {
         CCDeviceType type = 0;
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(type), &type);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(type));
         }
         break;
-    case WebCL::DEVICE_QUEUE_PROPERTIES: {
+    case ComputeContext::DEVICE_QUEUE_PROPERTIES: {
         CCCommandQueueProperties queueProperties = 0;
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(CCCommandQueueProperties), &queueProperties);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(queueProperties));
         }
         break;
-    case WebCL::DEVICE_PLATFORM: { // cl_platform_id
+    case ComputeContext::DEVICE_PLATFORM: { // cl_platform_id
         char platformID[WebCL::CHAR_BUFFER_SIZE];
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(platformID), &platformID);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(String(platformID));
         }
         break;
-    case WebCL::DEVICE_LOCAL_MEM_TYPE: {
+    case ComputeContext::DEVICE_LOCAL_MEM_TYPE: {
         CCDeviceLocalMemType localMemoryType = 0;
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(CCDeviceLocalMemType), &localMemoryType);
         if (err == ComputeContext::SUCCESS)
@@ -168,7 +168,7 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    ASSERT(err != CL_SUCCESS);
+    ASSERT(err != ComputeContext::SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
 }

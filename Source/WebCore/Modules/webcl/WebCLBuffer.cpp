@@ -62,43 +62,38 @@ PassRefPtr<WebCLBuffer>  WebCLBuffer::createSubBuffer(int flags, int origin, int
         printf("Error:: getCLBuffer() returned NULL.\n");
         return 0;
     }
+
+    // FIXME: This leaks!
     CCBufferRegion* bufferCreateInfo = new CCBufferRegion();
     if (!bufferCreateInfo) {
+        // FIXME: FAILURE is not the best error here.
         ec = WebCLException::FAILURE;
         printf(" Error:: CCBufferRegion creation failed.\n");
         return 0;
     }
+
     bufferCreateInfo->origin = origin;
     bufferCreateInfo->size = size;
 
-    CCerror errcodeRet = 0;
+    CCerror error = 0;
     PlatformComputeObject resultSubBuffer = 0;
 
     switch (flags) {
-    case WebCL::MEM_READ_ONLY :
-        resultSubBuffer = clCreateSubBuffer(buffer, CL_MEM_READ_ONLY, CL_BUFFER_CREATE_TYPE_REGION, bufferCreateInfo,
-            &errcodeRet);
+    case ComputeContext::MEM_READ_ONLY:
+    case ComputeContext::MEM_WRITE_ONLY:
+    case ComputeContext::MEM_READ_WRITE:
+    case 0: // FIXME: Use a named constant here, instead of 0.
+        resultSubBuffer = clCreateSubBuffer(buffer, flags, ComputeContext::BUFFER_CREATE_TYPE_REGION, bufferCreateInfo, &error);
         break;
-    case WebCL::MEM_WRITE_ONLY :
-        resultSubBuffer = clCreateSubBuffer(buffer, CL_MEM_WRITE_ONLY, CL_BUFFER_CREATE_TYPE_REGION, bufferCreateInfo,
-            &errcodeRet);
-        break;
-    case WebCL::MEM_READ_WRITE :
-        resultSubBuffer = clCreateSubBuffer(buffer, CL_MEM_READ_WRITE, CL_BUFFER_CREATE_TYPE_REGION, bufferCreateInfo,
-            &errcodeRet);
-        break;
-    case 0 :
-        resultSubBuffer = clCreateSubBuffer(buffer, 0, CL_BUFFER_CREATE_TYPE_REGION, bufferCreateInfo, &errcodeRet);
-        break;
-    default :
-        printf("Error : Unsupported Mem Flag\n");
+    default:
         ec = WebCLException::INVALID_VALUE;
         free(bufferCreateInfo);
         break;
     }
-    if (errcodeRet != CL_SUCCESS) {
+
+    if (error != CL_SUCCESS) {
         printf("Error: clCreateBuffer\n");
-        switch (errcodeRet) {
+        switch (error) {
         case CL_INVALID_MEM_OBJECT:
             printf("Error: CL_INVALID_MEM_OBJECT \n");
             ec = WebCLException::INVALID_MEM_OBJECT;

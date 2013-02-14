@@ -91,30 +91,30 @@ WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
         return WebCLGetInfo();
     }
     switch (paramName) {
-    case WebCL::CONTEXT_NUM_DEVICES:
-        err = clGetContextInfo(m_clContext, CL_CONTEXT_NUM_DEVICES, sizeof(cl_uint), &uintUnits, 0);
+    case ComputeContext::CONTEXT_NUM_DEVICES:
+        err = clGetContextInfo(m_clContext, paramName, sizeof(cl_uint), &uintUnits, 0);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(uintUnits));
         break;
-    case WebCL::CONTEXT_DEVICES:
+    case ComputeContext::CONTEXT_DEVICES:
         {
-            err = clGetContextInfo(m_clContext, CL_CONTEXT_DEVICES, 0, 0, &szParmDataBytes);
+            err = clGetContextInfo(m_clContext, paramName, 0, 0, &szParmDataBytes);
             if (err == CL_SUCCESS) {
                 Vector<CCDeviceID> devices(szParmDataBytes);
-                clGetContextInfo(m_clContext, CL_CONTEXT_DEVICES, szParmDataBytes, devices.data(), 0);
+                clGetContextInfo(m_clContext, paramName, szParmDataBytes, devices.data(), 0);
                 deviceList = WebCLDeviceList::create(devices);
                 return WebCLGetInfo(PassRefPtr<WebCLDeviceList>(deviceList));
             }
         }
         break;
-    case WebCL::CONTEXT_PROPERTIES:
+    case ComputeContext::CONTEXT_PROPERTIES:
         {
-            err = clGetContextInfo(m_clContext, CL_CONTEXT_PROPERTIES, 0, 0, &szParmDataBytes);
+            err = clGetContextInfo(m_clContext, paramName, 0, 0, &szParmDataBytes);
             if (err == CL_SUCCESS) {
                 int nd = szParmDataBytes / sizeof(cl_uint);
                 if (!nd)
                     return WebCLGetInfo();
-                err = clGetContextInfo(m_clContext, CL_CONTEXT_PROPERTIES, szParmDataBytes, &uintArray, &szParmDataBytes);
+                err = clGetContextInfo(m_clContext, paramName, szParmDataBytes, &uintArray, &szParmDataBytes);
                 if (err == CL_SUCCESS) {
                     int values[WebCL::CHAR_BUFFER_SIZE] = {0};
                     for (int i = 0; i < ((int)nd); i++)
@@ -256,7 +256,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, ImageData *ptr,
         bufferSize = ptr->data()->length();
     } else {
         printf("Error: Invalid ImageData object in createBuffer.\n");
-        ec = WebCL::FAILURE;
+        ec = ComputeContext::INVALID_VALUE;
         return 0;
     }
 
@@ -296,7 +296,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, HTMLCanvasEleme
     }
     if (!image) {
         printf("Error: Invalid HTMLCanvasElement obj passed in createBuffer.\n ");
-        ec = WebCL::FAILURE;
+        ec = ComputeContext::INVALID_VALUE;
         return 0;
     }
 
@@ -425,7 +425,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLVideoElement* vi
         ec = WebCLException::FAILURE;
         return 0;
     }
-    if (WebCL::MEM_READ_ONLY != flags) {
+    if (ComputeContext::MEM_READ_ONLY != flags) {
         printf("ERROR:: createImage with HTMLVideoElement can use only MEM_READ_ONLY as flags\n");
         ec = WebCLException::INVALID_VALUE;
         return 0;

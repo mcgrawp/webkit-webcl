@@ -68,8 +68,6 @@ PassRefPtr<WebCLPlatformList> WebCL::getPlatforms(ExceptionCode& ec)
 WebCLGetInfo WebCL::getImageInfo(WebCLImage* image, cl_image_info paramName, ExceptionCode& ec)
 {
     cl_mem clImageID = 0;
-    cl_int err = 0;
-    size_t units = 0;
     if (image) {
         clImageID = image->getCLImage();
         if (!clImageID) {
@@ -79,26 +77,22 @@ WebCLGetInfo WebCL::getImageInfo(WebCLImage* image, cl_image_info paramName, Exc
         }
     }
 
+    cl_int err = 0;
     switch (paramName) {
-    case IMAGE_ELEMENT_SIZE:
-        err = clGetImageInfo(clImageID, CL_IMAGE_ELEMENT_SIZE, sizeof(size_t), &units, 0);
+    case ComputeContext::IMAGE_ELEMENT_SIZE:
+    case ComputeContext::IMAGE_WIDTH:
+    case ComputeContext::IMAGE_HEIGHT: {
+        size_t units = 0;
+        err = clGetImageInfo(clImageID, paramName, sizeof(size_t), &units, 0);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<int>(units));
         break;
-    case IMAGE_WIDTH:
-        err = clGetImageInfo(clImageID, CL_IMAGE_WIDTH, sizeof(size_t), &units, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<int>(units));
-        break;
-    case IMAGE_HEIGHT:
-        err = clGetImageInfo(clImageID, CL_IMAGE_HEIGHT, sizeof(size_t), &units, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<int>(units));
-        break;
+    }
     default:
-        printf("Error: Unsupported Image Info type in getImageInfo\n");
+        ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
+
     switch (err) {
     case CL_INVALID_MEM_OBJECT:
         ec = WebCLException::INVALID_MEM_OBJECT;

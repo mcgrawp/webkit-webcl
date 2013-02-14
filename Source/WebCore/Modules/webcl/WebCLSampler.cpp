@@ -77,45 +77,45 @@ WebCLSampler::WebCLSampler(WebCLContext* context, CCSampler sampler)
     UNUSED_PARAM(m_context);
 }
 
-WebCLGetInfo WebCLSampler::getInfo(int paramName, ExceptionCode& ec)
+WebCLGetInfo WebCLSampler::getInfo(int infoType, ExceptionCode& ec)
 {
-    CCerror err = 0;
-    CCuint uintUnits = 0;
-    CCbool boolUnits = false;
     if (!m_ccSampler) {
         ec = WebCLException::INVALID_SAMPLER;
-        printf("Error: Invalid Sampler.\n");
         return WebCLGetInfo();
     }
-    switch (paramName) {
-    case WebCL::SAMPLER_NORMALIZED_COORDS:
-        err = clGetSamplerInfo(m_ccSampler, CL_SAMPLER_NORMALIZED_COORDS, sizeof(CCbool), &boolUnits, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<bool>(boolUnits));
+
+    CCerror error = 0;
+    switch (infoType) {
+    case ComputeContext::SAMPLER_NORMALIZED_COORDS: {
+        CCbool booleanValue = false;
+        error = clGetSamplerInfo(m_ccSampler, infoType, sizeof(CCbool), &booleanValue, 0);
+        if (error == CL_SUCCESS)
+            return WebCLGetInfo(static_cast<bool>(booleanValue));
         break;
+    }
+    /*
     // FIXME: Implementation needed.
-    /*case WebCL::SAMPLER_CONTEXT:
-        err = clGetSamplerInfo(m_ccSampler, CL_SAMPLER_CONTEXT, sizeof(cl_context), &cl_context_id, 0);
+    case ComputeContext::SAMPLER_CONTEXT:
+        error = clGetSamplerInfo(m_ccSampler, infoType, sizeof(cl_context), &cl_context_id, 0);
         contextObj = WebCLContext::create(m_context, cl_context_id);
-        if (err == CL_SUCCESS)
+        if (error == CL_SUCCESS)
             return WebCLGetInfo(PassRefPtr<WebCLContext>(contextObj));
-        break;*/
-    case WebCL::SAMPLER_ADDRESSING_MODE:
-        err = clGetSamplerInfo(m_ccSampler, CL_SAMPLER_ADDRESSING_MODE, sizeof(CCuint), &uintUnits, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(uintUnits));
         break;
-    case WebCL::SAMPLER_FILTER_MODE:
-        err = clGetSamplerInfo(m_ccSampler, CL_SAMPLER_FILTER_MODE, sizeof(CCuint), &uintUnits, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(uintUnits));
+    */
+    case ComputeContext::SAMPLER_ADDRESSING_MODE:
+    case ComputeContext::SAMPLER_FILTER_MODE: {
+        CCuint uintValue = 0;
+        error = clGetSamplerInfo(m_ccSampler, infoType, sizeof(CCuint), &uintValue, 0);
+        if (error == CL_SUCCESS)
+            return WebCLGetInfo(static_cast<unsigned>(uintValue));
         break;
+    }
     default:
-        printf("Error: Unsupported Sampler Info type.\n");
-        ec = WebCLException::INVALID_SAMPLER;
+        ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
-    switch (err) {
+
+    switch (error) {
     case CL_INVALID_VALUE:
         ec = WebCLException::INVALID_VALUE;
         printf("Error: CL_INVALID_VALUE \n");

@@ -55,7 +55,7 @@ PlatformComputeObject WebCLImage::getCLImage()
     return WebCLMemoryObject::getCLMemoryObject();
 }
 
-int WebCLImage::getGLtextureInfo(int paramNameobj, ExceptionCode& ec)
+int WebCLImage::getGLtextureInfo(int textureInfoType, ExceptionCode& ec)
 {
     if (!m_CCMemoryObject) {
         printf("Error: Invalid CL Memory Object \n");
@@ -64,22 +64,20 @@ int WebCLImage::getGLtextureInfo(int paramNameobj, ExceptionCode& ec)
     }
 
     CCint err = 0;
-    CCint intUnits = 0;
-    switch (paramNameobj) {
-    case WebCL::TEXTURE_TARGET:
-        err = clGetGLTextureInfo(m_CCMemoryObject, CL_GL_TEXTURE_TARGET, sizeof(CCint), &intUnits, 0);
+    switch (textureInfoType) {
+    case ComputeContext::GL_TEXTURE_TARGET:
+    case ComputeContext::GL_MIPMAP_LEVEL: {
+        CCint integerValue = 0;
+        err = clGetGLTextureInfo(m_CCMemoryObject, textureInfoType, sizeof(CCint), &integerValue, 0);
         if (err == CL_SUCCESS)
-            return ((int)intUnits);
+            return ((int)integerValue);
         break;
-    case WebCL::MIPMAP_LEVEL:
-        err = clGetGLTextureInfo(m_CCMemoryObject, CL_GL_MIPMAP_LEVEL, sizeof(CCint), &intUnits, 0);
-        if (err == CL_SUCCESS)
-            return ((int)intUnits);
-        break;
+    }
     default:
-        // FIXME: Add a FAILURE exception here?
+        ec = WebCLException::INVALID_VALUE;
         return 0;
     }
+
     if (err != CL_SUCCESS) {
         switch (err) {
         case CL_INVALID_MEM_OBJECT:

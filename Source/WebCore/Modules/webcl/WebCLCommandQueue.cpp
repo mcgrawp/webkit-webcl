@@ -75,7 +75,7 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
     switch (paramName) {
     /*
     // FIXME: We should not create a WebCLContext here.
-    case WebCL::QUEUE_CONTEXT:
+    case ComputeContext::QUEUE_CONTEXT:
         err = clGetCommandQueueInfo(m_ccCommandQueue, paramName, sizeof(cl_context), &cl_context_id, 0);
         if (err == CL_SUCCESS) {
             RefPtr<WebCLContext> contextObj = WebCLContext::create(m_context, cl_context_id);
@@ -83,7 +83,7 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
             return WebCLGetInfo(PassRefPtr<WebCLContext>(contextObj));
         break;
     */
-    case WebCL::QUEUE_DEVICE:
+    case ComputeContext::QUEUE_DEVICE:
         err = ComputeContext::getCommandQueueInfo(m_ccCommandQueue, paramName, sizeof(CCDeviceID), &ccDeviceID);
         if (err == CL_SUCCESS) {
             RefPtr<WebCLDevice> deviceObj = WebCLDevice::create(ccDeviceID);
@@ -91,7 +91,7 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
             return WebCLGetInfo(PassRefPtr<WebCLDevice>(deviceObj));
         }
         break;
-    case WebCL::QUEUE_PROPERTIES:
+    case ComputeContext::QUEUE_PROPERTIES:
         err = ComputeContext::getCommandQueueInfo(m_ccCommandQueue, paramName, sizeof(CCCommandQueueProperties), &ccCommandQueueProperties);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccCommandQueueProperties));
@@ -234,7 +234,7 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead
         bufferSize =  ptr->data()->length();
     } else {
         printf("Error: Invalid ImageData\n");
-        ec = WebCL::FAILURE;
+        ec = ComputeContext::INVALID_VALUE;
         return;
     }
 
@@ -456,7 +456,7 @@ void WebCLCommandQueue::flush(ExceptionCode& ec)
 {
     if (!m_ccCommandQueue) {
         printf("Error: Invalid Command Queue\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 

@@ -60,9 +60,8 @@ WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
 
     CCerror err = 0;
     switch(platform_info) {
-    case WebCL::PLATFORM_PROFILE:
-    case WebCL::PLATFORM_VERSION:
-    {
+    case ComputeContext::PLATFORM_PROFILE:
+    case ComputeContext::PLATFORM_VERSION: {
         char platform_string[1024];
         err = ComputeContext::getPlatformInfo(m_cl_platform_id, platform_info, sizeof(platform_string), &platform_string);
         if (err == CL_SUCCESS)
@@ -71,7 +70,7 @@ WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
     }
     default:
         printf("Error: Unsupported Platform Info type = %d ", platform_info);
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
 
@@ -88,7 +87,7 @@ PassRefPtr<WebCLDeviceList> WebCLPlatform::getDevices(int device_type, Exception
     }
 
     if (!device_type)
-        device_type = WebCL::DEVICE_TYPE_DEFAULT;
+        device_type = ComputeContext::DEVICE_TYPE_DEFAULT;
 
     CCerror error;
     RefPtr<WebCLDeviceList> webCLDeviceList = WebCLDeviceList::create(m_cl_platform_id, device_type, error);

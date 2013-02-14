@@ -80,7 +80,7 @@ WebCLProgram::WebCLProgram(WebCLContext* context, cl_program program)
 {
 }
 
-WebCLGetInfo WebCLProgram::getInfo(int paramName, ExceptionCode& ec)
+WebCLGetInfo WebCLProgram::getInfo(int infoType, ExceptionCode& ec)
 {
     if (!m_clProgram) {
         ec = WebCLException::INVALID_PROGRAM;
@@ -88,71 +88,64 @@ WebCLGetInfo WebCLProgram::getInfo(int paramName, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    cl_int err = 0;
-    cl_uint uintUnits = 0;
-    char programString[4096] = {""};
-    cl_context clContextID = 0;
-    RefPtr<WebCLContext> contextObj  = 0;
-    RefPtr<WebCLDeviceList> deviceList =  0;
-    size_t szParmDataBytes = 0;
-
-    switch (paramName) {
-    case WebCL::PROGRAM_NUM_DEVICES:
-        err = ComputeContext::getProgramInfo(m_clProgram, paramName, sizeof(cl_uint), &uintUnits, 0);
-        if (err == CL_SUCCESS)
+    CCerror error = 0;
+    switch (infoType) {
+    case ComputeContext::PROGRAM_NUM_DEVICES: {
+        CCuint uintUnits = 0;
+        error = ComputeContext::getProgramInfo(m_clProgram, infoType, sizeof(CCuint), &uintUnits, 0);
+        if (error == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(uintUnits));
         break;
-    case WebCL::PROGRAM_SOURCE:
-        err = ComputeContext::getProgramInfo(m_clProgram, paramName, sizeof(programString), &programString, 0);
-        if (err == CL_SUCCESS)
+    }
+    case ComputeContext::PROGRAM_SOURCE: {
+        char programString[4096] = {""};
+        error = ComputeContext::getProgramInfo(m_clProgram, infoType, sizeof(programString), &programString, 0);
+        if (error == ComputeContext::SUCCESS)
             return WebCLGetInfo(String(programString));
         break;
-    case WebCL::PROGRAM_CONTEXT:
-        {
-            err = ComputeContext::getProgramInfo(m_clProgram, CL_PROGRAM_CONTEXT, sizeof(cl_context), &clContextID, 0);
-            // FIXME Need a create API taking cl_context in WebCLContext interface.
-            // contextObj = WebCLContext::create(m_context->webclObject(), clContextID, 1, 0, err );
-            if (!contextObj) {
-                printf("Error : CL program context not NULL\n");
-                return WebCLGetInfo();
-            }
-            if (err == CL_SUCCESS)
-                return WebCLGetInfo(PassRefPtr<WebCLContext>(contextObj));
+    }
+    case ComputeContext::PROGRAM_CONTEXT: {
+        CCContext ccContextID = 0;
+        error = ComputeContext::getProgramInfo(m_clProgram, infoType, sizeof(CCContext), &ccContextID, 0);
+        RefPtr<WebCLContext> contextObj  = 0;
+        // FIXME Need a create API taking cl_context in WebCLContext interface.
+        // contextObj = WebCLContext::create(m_context->webclObject(), ccContextID, 1, 0, error);
+        if (!contextObj)
+            return WebCLGetInfo();
+        if (error == ComputeContext::SUCCESS)
+            return WebCLGetInfo(PassRefPtr<WebCLContext>(contextObj));
+        break;
+    }
+    case ComputeContext::PROGRAM_DEVICES: {
+        size_t szParmDataBytes = 0;
+        error = ComputeContext::getProgramInfo(m_clProgram, infoType, 0, 0, &szParmDataBytes);
+        if (error == ComputeContext::SUCCESS) {
+            Vector<CCDeviceID> devices(szParmDataBytes);
+            ComputeContext::getProgramInfo(m_clProgram, infoType, szParmDataBytes, devices.data(), 0);
+            RefPtr<WebCLDeviceList> deviceList = WebCLDeviceList::create(devices);
+            return WebCLGetInfo(PassRefPtr<WebCLDeviceList>(deviceList));
         }
         break;
-    case WebCL::PROGRAM_DEVICES:
-        {
-            err = ComputeContext::getProgramInfo(m_clProgram, CL_PROGRAM_DEVICES, 0, 0, &szParmDataBytes);
-            if (err == CL_SUCCESS) {
-                Vector<CCDeviceID> devices(szParmDataBytes);
-                ComputeContext::getProgramInfo(m_clProgram, CL_PROGRAM_DEVICES, szParmDataBytes, devices.data(), 0);
-                deviceList = WebCLDeviceList::create(devices);
-                return WebCLGetInfo(PassRefPtr<WebCLDeviceList>(deviceList));
-            }
-        }
-        break;
+    }
     default:
-        printf("ERROR:: WebCLProgram::getInfo :: Invalid param value\n");
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
     return WebCLGetInfo();
 }
 
 
-WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int paramName, ExceptionCode& ec)
+WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int infoType, ExceptionCode& ec)
 {
-    cl_device_id deviceID = 0;
-    cl_uint err = 0;
-    char buffer[8192];
-    size_t len = 0;
-
     if (!m_clProgram) {
         printf("Error: Invalid program object\n");
         ec = WebCLException::INVALID_PROGRAM;
         return WebCLGetInfo();
     }
+
+    CCDeviceID deviceID = 0;
     if (device) {
         deviceID = device->getCLDevice();
         if (!deviceID) {
@@ -162,32 +155,27 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int paramName, Exce
         }
     }
 
-    switch (paramName) {
-    case WebCL::PROGRAM_BUILD_LOG:
-        err = clGetProgramBuildInfo(m_clProgram, deviceID, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
-        if (err == CL_SUCCESS)
+    CCerror error = 0;
+    switch (infoType) {
+    case ComputeContext::PROGRAM_BUILD_LOG:
+        char buffer[8192];
+        error = clGetProgramBuildInfo(m_clProgram, deviceID, infoType, sizeof(buffer), buffer, 0);
+        if (error == CL_SUCCESS)
             return WebCLGetInfo(String(buffer));
         break;
-    case WebCL::PROGRAM_BUILD_OPTIONS:
-        err = clGetProgramBuildInfo(m_clProgram, deviceID, CL_PROGRAM_BUILD_OPTIONS, sizeof(buffer), &buffer, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(String(buffer));
-        break;
-    case WebCL::PROGRAM_BUILD_STATUS:
-        cl_build_status buildStatus;
-        err = clGetProgramBuildInfo(m_clProgram, deviceID, CL_PROGRAM_BUILD_STATUS, sizeof(cl_build_status),
-            &buildStatus, 0);
-        if (err == CL_SUCCESS)
+    case ComputeContext::PROGRAM_BUILD_STATUS:
+        CCBuildStatus buildStatus;
+        error = clGetProgramBuildInfo(m_clProgram, deviceID, infoType, sizeof(CCBuildStatus), &buildStatus, 0);
+        if (error == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(buildStatus));
         break;
     default:
-        ec = WebCLException::INVALID_PROGRAM;
-        printf("Error: UNSUPPORTED Program Build Info   Type = %d ", paramName);
+        ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
 
-    ASSERT(err != CL_SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    ASSERT(error != CL_SUCCESS);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
     return WebCLGetInfo();
 }
 
@@ -310,7 +298,7 @@ void WebCLProgram::build(WebCLDeviceList* clDevices, const String& options,
 
 void WebCLProgram::releaseProgram(ExceptionCode& ec)
 {
-    cl_int err = 0;
+    CCerror err = 0;
     if (!m_clProgram) {
         printf("Error: Invalid program object\n");
         ec = WebCLException::INVALID_PROGRAM;

@@ -88,7 +88,6 @@ WebCLContext* WebCLEvent::getContext()
 
 WebCLGetInfo WebCLEvent::getInfo(int param_name, ExceptionCode& ec)
 {
-    printf("111111getInfo Called = %d\n", param_name);
     cl_int err = 0;
     cl_uint uint_units = 0;
     cl_command_type command_type = 0;
@@ -104,18 +103,18 @@ WebCLGetInfo WebCLEvent::getInfo(int param_name, ExceptionCode& ec)
 
 
     switch(param_name) {
-        case WebCL::EVENT_COMMAND_EXECUTION_STATUS :
-            err=clGetEventInfo(m_cl_Event, CL_EVENT_COMMAND_EXECUTION_STATUS  , sizeof(cl_uint), &uint_units, NULL);
+        case ComputeContext::EVENT_COMMAND_EXECUTION_STATUS:
+            err = clGetEventInfo(m_cl_Event, param_name, sizeof(cl_uint), &uint_units, NULL);
             if (err == CL_SUCCESS)
                 return WebCLGetInfo(static_cast<unsigned int>(uint_units));	
             break;
-        case WebCL::EVENT_COMMAND_TYPE:			
-            err=clGetEventInfo(m_cl_Event, CL_EVENT_COMMAND_TYPE , sizeof(cl_command_type), &command_type, NULL);;
+        case ComputeContext::EVENT_COMMAND_TYPE:
+            err=clGetEventInfo(m_cl_Event, param_name, sizeof(cl_command_type), &command_type, NULL);
             if (err == CL_SUCCESS)
                 return WebCLGetInfo(static_cast<unsigned int>(command_type));
             break;
-        case WebCL::EVENT_COMMAND_QUEUE:			
-            err = clGetEventInfo(m_cl_Event, CL_EVENT_COMMAND_QUEUE , sizeof(cl_command_queue), &command_queue, NULL);;
+        case ComputeContext::EVENT_COMMAND_QUEUE:
+            err = clGetEventInfo(m_cl_Event, param_name, sizeof(cl_command_queue), &command_queue, NULL);
             cqObj = WebCLCommandQueue::create(m_context, command_queue);
             if(cqObj == NULL)
             {
@@ -125,21 +124,19 @@ WebCLGetInfo WebCLEvent::getInfo(int param_name, ExceptionCode& ec)
             if (err == CL_SUCCESS)
                 return WebCLGetInfo(PassRefPtr<WebCLCommandQueue>(cqObj));
             break;
-            /*		case 4564://WebCL::EVENT_CONTEXT:
-                    printf(" before event_context call ");
-                    err=clGetEventInfo(m_cl_Event,CL_EVENT_CONTEXT , sizeof(my_context), my_context, NULL);;
-                    printf("After event_context call ");
-                    if (err == CL_SUCCESS)
+            /*
+            case 4564://ComputeContext::EVENT_CONTEXT:
+                err = clGetEventInfo(m_cl_Event, param_name, sizeof(my_context), my_context, NULL);;
+                printf("After event_context call ");
+                if (err == CL_SUCCESS)
                     return WebCLGetInfo((String)my_context);
-                    break;
-                    */            
+                break;
+            */
         default:
             printf("Error: Unsupported Event Info type\n");
             ec = WebCLException::FAILURE;
             return WebCLGetInfo();
     }
-
-    printf("333333333getInfo Called = %d\n", param_name); 
 
     switch (err) {
         case CL_INVALID_VALUE:
@@ -180,31 +177,18 @@ WebCLGetInfo WebCLEvent::getProfilingInfo(int param_name, ExceptionCode& ec)
         return WebCLGetInfo();
     }
     switch(param_name)
-    {   
-        case WebCL::PROFILING_COMMAND_QUEUED:
-            err=clGetEventProfilingInfo(m_cl_Event, CL_PROFILING_COMMAND_QUEUED, sizeof(cl_ulong), &ulong_units, NULL);
-            if (err == CL_SUCCESS)
-                return WebCLGetInfo(static_cast<unsigned long>(ulong_units));
-            break;
-        case WebCL::PROFILING_COMMAND_SUBMIT:
-            err=clGetEventProfilingInfo(m_cl_Event, CL_PROFILING_COMMAND_SUBMIT, sizeof(cl_ulong), &ulong_units, NULL);
-            if (err == CL_SUCCESS)
-                return WebCLGetInfo(static_cast<unsigned long>(ulong_units));
-            break;
-        case WebCL::PROFILING_COMMAND_START:
-            err=clGetEventProfilingInfo(m_cl_Event, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &ulong_units, NULL);
-            if (err == CL_SUCCESS)
-                return WebCLGetInfo(static_cast<unsigned long>(ulong_units));
-            break;
-        case WebCL::PROFILING_COMMAND_END:
-            err=clGetEventProfilingInfo(m_cl_Event, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &ulong_units, NULL);
+    {
+        case ComputeContext::PROFILING_COMMAND_QUEUED:
+        case ComputeContext::PROFILING_COMMAND_SUBMIT:
+        case ComputeContext::PROFILING_COMMAND_START:
+        case ComputeContext::PROFILING_COMMAND_END:
+            err=clGetEventProfilingInfo(m_cl_Event, param_name, sizeof(cl_ulong), &ulong_units, NULL);
             if (err == CL_SUCCESS)
                 return WebCLGetInfo(static_cast<unsigned int>(ulong_units));
             break;
         default:
             printf("Error: Unsupported Profiling Info type\n");
             return WebCLGetInfo();
-
     }
 
     switch (err) {
@@ -345,8 +329,8 @@ void WebCLEvent::setUserEventStatus (int exec_status, ExceptionCode& ec)
     }
     // TODO (siba samal) To be uncommented for  OpenCL 1.1	
     // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clSetUserEventStatus.html
-    if(exec_status == WebCL::COMPLETE)	{   
-        //err = clSetUserEventStatus(m_cl_Event , CL_COMPLETE)
+    if(exec_status == ComputeContext::COMPLETE) {
+        //err = clSetUserEventStatus(m_cl_Event , ComputeContext::COMPLETE)
     }
     else if (exec_status < 0) {
         //err = clSetUserEventStatus(m_cl_Event , exec_status)
