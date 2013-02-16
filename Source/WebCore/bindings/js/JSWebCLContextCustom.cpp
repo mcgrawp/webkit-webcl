@@ -100,7 +100,7 @@ JSValue JSWebCLContext::createImageWithDescriptor(JSC::ExecState* exec)
         buffer = toArrayBuffer(exec->argument(2));
 
     ExceptionCode ec = 0;
-    RefPtr<WebCLMemoryObject> objWebCLImage = m_impl->createImageWithDescriptor(flag, objWebCLImageDescriptor.get(), buffer.get(), ec);
+    RefPtr<WebCLImage> objWebCLImage = m_impl->createImageWithDescriptor(flag, objWebCLImageDescriptor.get(), buffer.get(), ec);
 
     if (ec) {
         setDOMException(exec , ec);
