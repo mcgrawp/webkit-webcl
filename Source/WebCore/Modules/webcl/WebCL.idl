@@ -282,12 +282,6 @@ module webcl {
         const unsigned long  GL_OBJECT_RENDERBUFFER                    = 0x2003;
         const unsigned long  GL_TEXTURE_TARGET                         = 0x2004;
         const unsigned long  GL_MIPMAP_LEVEL                           = 0x2005;
-        const unsigned long  CHAR_BUFFER_SIZE                          = 1024;
-        const unsigned long  DEFAULT_OBJECT_CHANNELORDER               = 0x10B5;
-        const unsigned long  DEFAULT_OBJECT_CHANNELTYPE                = 0x10D2;
-        const unsigned long  DEFAULT_OBJECT_WIDTH                      = 0;
-        const unsigned long  DEFAULT_OBJECT_HEIGHT                     = 0;
-        const unsigned long  DEFAULT_OBJECT_ROWPITCH                   = 0;
 
         sequence<WebCLPlatform> getPlatforms() raises(DOMException);
 
