@@ -102,7 +102,7 @@ JSValue JSWebCLProgram::build(JSC::ExecState* exec)
     if (exec->argumentCount() < 1)
         return throwSyntaxError(exec);
 
-    WebCLDeviceList* devices = toWebCLDeviceList(exec->argument(0));
+    Vector<WebCLDevice*> devices = toWebCLDeviceArray(exec, exec->argument(0));
     if (exec->hadException())
         return jsUndefined();
 

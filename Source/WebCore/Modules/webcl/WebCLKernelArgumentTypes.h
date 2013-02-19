@@ -34,7 +34,6 @@
 
 #include "ActiveDOMObject.h"
 #include "WebCLPlatform.h"
-#include "WebCLDeviceList.h"
 #include "WebCLDevice.h"
 #include "WebCLContext.h"
 #include "WebCLCommandQueue.h"

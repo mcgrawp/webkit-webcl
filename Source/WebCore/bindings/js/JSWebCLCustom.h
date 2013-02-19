@@ -54,7 +54,6 @@
 #include "JSWebCLKernel.h"
 #include "JSWebCLProgram.h"
 #include "JSWebCLCommandQueue.h"
-#include "JSWebCLDeviceList.h"
 #include "JSWebCLContext.h"
 #include "JSWebCLMemoryObject.h"
 #include "JSWebCLEvent.h"
@@ -66,7 +65,6 @@
 #include "WebCLProgram.h"
 #include "WebCLDevice.h"
 #include "WebCLCommandQueue.h"
-#include "WebCLDeviceList.h"
 #include "WebCLContext.h"
 #include "WebCLMemoryObject.h"
 #include "WebCLEvent.h"
@@ -120,8 +118,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebC
         return toJS(exec, globalObject, info.getWebCLCommandQueue());
     case WebCLGetInfo::kTypeWebCLDevice:
         return toJS(exec, globalObject, info.getWebCLDevice());
-    case WebCLGetInfo::kTypeWebCLDeviceList:
-        return toJS(exec, globalObject, info.getWebCLDeviceList());
+    case WebCLGetInfo::kTypeWebCLDevices:
+        return jsArray(exec, globalObject, info.getWebCLDevices());
     case WebCLGetInfo::kTypeWebCLMemoryObject:
         return toJS(exec, globalObject, info.getWebCLMemoryObject());
     default:

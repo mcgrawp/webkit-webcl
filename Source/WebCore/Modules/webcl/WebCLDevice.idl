@@ -28,6 +28,7 @@
 module webcl {
     interface [
         Conditional=WEBCL,
+        JSGenerateToArrayNativeObject,
     ] WebCLDevice {
     [StrictTypeChecking, Custom] void getInfo(in long deviceType) raises(DOMException);
     [StrictTypeChecking, Custom] void getSupportedExtensions() raises(DOMException);

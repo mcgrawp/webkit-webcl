@@ -1082,7 +1082,7 @@ sub GenerateHeader
     }
 
     if ($dataNode->extendedAttributes->{"JSGenerateToArrayNativeObject"}) {
-        push(@headerContent, "Vector<$implType*> to${interfaceName}Array(JSC::JSValue);\n");
+        push(@headerContent, "Vector<$implType*> to${interfaceName}Array(JSC::ExecState*, JSC::JSValue);\n");
     }
     if ($usesToJSNewlyCreated{$interfaceName}) {
         push(@headerContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName*);\n");
@@ -2571,16 +2571,18 @@ sub GenerateImplementation
     }
 
     if ($dataNode->extendedAttributes->{"JSGenerateToArrayNativeObject"}) {
-        push(@implContent, "Vector<$implType*> to${interfaceName}Array(JSC::JSValue value)\n");
+        push(@implContent, "Vector<$implType*> to${interfaceName}Array(ExecState* exec, JSC::JSValue value)\n");
         push(@implContent, "{\n");
         push(@implContent, "    unsigned length = 0;\n");
+        push(@implContent, "    JSC::JSArray* array;\n");
         push(@implContent, "    if (isJSArray(value)) {\n");
-        push(@implContent, "        JSC::JSArray* array = asArray(value);\n");
+        push(@implContent, "        array = asArray(value);\n");
         push(@implContent, "        length = array->length();\n");
         push(@implContent, "    }\n");
         push(@implContent, "    Vector<$implType*> result;\n");
         push(@implContent, "    for (unsigned i = 0; i < length; ++i) {\n");
-        push(@implContent, "        $implType* indexValue = to${interfaceName}(value);\n");
+        push(@implContent, "        JSC::JSValue indexObject = array->getIndex(exec, i);\n");
+        push(@implContent, "        $implType* indexValue = to${interfaceName}(indexObject);\n");
         push(@implContent, "        result.append(indexValue);\n");
         push(@implContent, "    }\n");
         push(@implContent, "    return result;\n");
@@ -3244,7 +3246,7 @@ sub JSValueToNative
             return "toNativeArray<$sequenceType>(exec, $value)";
         } else {
             AddToImplIncludes("JS${sequenceType}.h", $conditional);
-            return "to${sequenceType}Array($value)";
+            return "to${sequenceType}Array(exec, $value)";
         }
     }
 

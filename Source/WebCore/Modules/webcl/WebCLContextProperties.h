@@ -36,7 +36,6 @@
 #include "WebCLDevice.h"
 #include "WebCLPlatform.h"
 #include <wtf/text/WTFString.h>
-#include "WebCLDeviceList.h"
 
 using namespace std ;
 
@@ -47,42 +46,32 @@ class WebCL;
 class WebCLContextProperties : public RefCounted<WebCLContextProperties>
 {
 public:
-    virtual ~WebCLContextProperties();
-    static PassRefPtr<WebCLContextProperties> create();
+    ~WebCLContextProperties();
+    static PassRefPtr<WebCLContextProperties> create(WebCLPlatform*, const Vector<RefPtr<WebCLDevice> >&, int, int, const String&);
 
-    WebCLContextProperties();
-
-    WebCLPlatform* platform() const; 
+    WebCLPlatform* platform() const;
     void setPlatform(WebCLPlatform*);
 
-    WebCLDeviceList* devices() const;    
-    void setDevices(WebCLDeviceList*);
+    Vector<RefPtr<WebCLDevice> > devices() const;
 
-    int deviceType() const;             
-    void setDeviceType(int);
+    int deviceType() const;
+    void setDeviceType(int type);
 
-    int shareGroup() const;            
+    int shareGroup() const;
     void setShareGroup(int);
 
-    String hint() const;      
-    void setHint(String);
+    String hint() const;
+    void setHint(const String&);
 
 private:
+    WebCLContextProperties(WebCLPlatform*, const Vector<RefPtr<WebCLDevice> >&, int, int, const String&);
 
     WebCLPlatform* objplatform;
-    WebCLDeviceList* objdevices;
+    Vector<RefPtr<WebCLDevice> > objdevices;
     int objdeviceType;
     int objshareGroup;
-    String objhint;		
-
-
-
-
+    String objhint;
 };
-
-
-
-
 
 }// namespace WebCore
 

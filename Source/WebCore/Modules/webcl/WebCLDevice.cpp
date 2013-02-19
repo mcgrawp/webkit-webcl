@@ -184,6 +184,14 @@ CCDeviceID WebCLDevice::getCLDevice()
     return m_ccDeviceID;
 }
 
+
+void toWebCLDeviceArray(const Vector<CCDeviceID>& ccDevices, Vector<RefPtr<WebCLDevice> >& devices)
+{
+    for (size_t i = 0; i < ccDevices.size(); i++) {
+        RefPtr<WebCLDevice> webCLDevice = WebCLDevice::create(ccDevices[i]);
+        devices.append(webCLDevice);
+    }
+}
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

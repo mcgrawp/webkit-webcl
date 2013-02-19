@@ -170,17 +170,14 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties
 
     // FIXME: Once we get rid of WebCLEventList (Issue #73), we will
     // be able to get rid of 'clDevices'.
-    CCDeviceID* ccDevices = 0;
     int numberOfDevices = 0;
     CCerror error = 0;
-    if (properties && properties->devices()) {
-        numberOfDevices = properties->devices()->length();
-        ccDevices = properties->devices()->getCLDevices();
-        if (!ccDevices) {
-            ec = WebCLException::INVALID_DEVICE;
-            this->setCLDeviceID(0);
-            return 0;
-        }
+    // FIXME: Hardcoding '5' here, as it is enough number of devices in real world.
+    Vector<CCDeviceID, 5> ccDevices;
+    if (properties && properties->devices().size()) {
+        numberOfDevices = properties->devices().size();
+        for (int i = 0; i < numberOfDevices; ++i)
+            ccDevices.append(properties->devices()[i]->getCLDevice());
     } else {
         CCint numberOfPlatforms = ComputeContext::platformIDs(0, 0, error);
         if (!numberOfPlatforms) {
@@ -215,21 +212,18 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties
 
         // Hardcoding '5' here, as it is enough number of devices in real world.
         ASSERT(numberOfDevices <= 5);
-        Vector<CCDeviceID, 5> devices;
 
         // Return value can be ignored this time.
-        ComputeContext::deviceIDs(platforms[0], ComputeContext::DEVICE_TYPE_DEFAULT, 1, devices.data(), error);
+        ComputeContext::deviceIDs(platforms[0], ComputeContext::DEVICE_TYPE_DEFAULT, 1, ccDevices.data(), error);
         if (error != ComputeContext::SUCCESS) {
             ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
             return 0;
         }
-
-        ccDevices = devices.data();
     }
 
-    this->setCLDeviceID(ccDevices);
+    this->setCLDeviceID(ccDevices.data());
 
-    RefPtr<WebCLContext> webCLContext = WebCLContext::create(this, propIndex ? contextProperties : 0, numberOfDevices, ccDevices, error);
+    RefPtr<WebCLContext> webCLContext = WebCLContext::create(this, propIndex ? contextProperties : 0, numberOfDevices, ccDevices.data(), error);
     if (!webCLContext) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);

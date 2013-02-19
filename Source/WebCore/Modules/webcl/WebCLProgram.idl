@@ -37,7 +37,7 @@ interface [
     sequence<WebCLKernel> createKernelsInProgram() raises(DOMException);
 
     [StrictTypeChecking, Custom] void build(
-            in WebCLDeviceList devices,
+            in sequence<WebCLDevice> devices,
             in [Optional,TreatNullAs = NullString, TreatUndefinedAs = NullString] DOMString options,
             in [Optional] WebCLFinishCallback whenFinished,
             in [Optional] long userdata) raises(DOMException);

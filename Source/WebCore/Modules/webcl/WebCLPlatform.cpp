@@ -79,24 +79,31 @@ WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-PassRefPtr<WebCLDeviceList> WebCLPlatform::getDevices(int device_type, ExceptionCode& ec)
+Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(int deviceType, ExceptionCode& ec) const
 {
+    Vector<RefPtr<WebCLDevice> > devices;
     if (!m_cl_platform_id) {
         ec = WebCLException::INVALID_PLATFORM;
-        return 0;
+        return devices;
     }
 
-    if (!device_type)
-        device_type = ComputeContext::DEVICE_TYPE_DEFAULT;
-
+    deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
     CCerror error;
-    RefPtr<WebCLDeviceList> webCLDeviceList = WebCLDeviceList::create(m_cl_platform_id, device_type, error);
-    if (!webCLDeviceList) {
+    CCint devicesSize = ComputeContext::deviceIDs(m_cl_platform_id, deviceType, 0, 0, error);
+    if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
+        return devices;
     }
 
-    return webCLDeviceList;
+    Vector<CCDeviceID> ccDevices(devicesSize);
+    ComputeContext::deviceIDs(m_cl_platform_id, deviceType, ccDevices.size(), ccDevices.data(), error);
+    if (error != ComputeContext::SUCCESS) {
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return devices;
+    }
+
+    toWebCLDeviceArray(ccDevices, devices);
+    return devices;
 }
 
 Vector<String> WebCLPlatform::getSupportedExtensions(ExceptionCode&)

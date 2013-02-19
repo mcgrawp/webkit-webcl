@@ -34,7 +34,7 @@ module webcl {
     WebCLEvent createUserEvent() raises(DOMException);
     sequence<WebCLImageDescriptor> getSupportedImageFormats(in long memFlags) raises(DOMException);
 
-    WebCLCommandQueue createCommandQueue(in [Optional] WebCLDeviceList devices , in [Optional] long prop)
+    WebCLCommandQueue createCommandQueue(in [Optional] WebCLDevice device, in [Optional] long prop)
         raises(DOMException);
 
     WebCLProgram createProgram(in DOMString kernelSource) raises(DOMException);

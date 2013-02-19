@@ -36,7 +36,6 @@
 #include "WebCLDevice.h"
 #include "WebCLPlatform.h"
 #include <wtf/text/WTFString.h>
-#include "WebCLDeviceList.h"
 
 using namespace std ;
 

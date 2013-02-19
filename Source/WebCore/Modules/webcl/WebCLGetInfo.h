@@ -31,6 +31,7 @@
 #include "ComputeTypes.h"
 #include "ComputeContext.h"
 
+#include "WebCLDevice.h"
 #include <wtf/Float32Array.h>
 #include <wtf/Int32Array.h>
 #include <wtf/Int8Array.h>
@@ -43,7 +44,6 @@ namespace WebCore {
 
 class WebCLCommandQueue;
 class WebCLContext;
-class WebCLDeviceList;
 class WebCLDevice;
 class WebCLImageDescriptor;
 class WebCLProgram;
@@ -75,7 +75,7 @@ public:
         kTypeWebCLContext,
         kTypeWebCLCommandQueue,
         kTypeWebCLDevice,
-        kTypeWebCLDeviceList,
+        kTypeWebCLDevices,
         kTypeWebCLMemoryObject
     };
 
@@ -95,7 +95,7 @@ public:
     explicit WebCLGetInfo(PassRefPtr<WebCLProgram> value);
     explicit WebCLGetInfo(PassRefPtr<WebCLContext> value);
     explicit WebCLGetInfo(PassRefPtr<WebCLCommandQueue> value);
-    explicit WebCLGetInfo(PassRefPtr<WebCLDeviceList> value);
+    explicit WebCLGetInfo(const Vector<RefPtr<WebCLDevice> >& value);
     explicit WebCLGetInfo(PassRefPtr<WebCLDevice> value);
     explicit WebCLGetInfo(PassRefPtr<WebCLMemoryObject> value);
 
@@ -117,7 +117,7 @@ public:
     PassRefPtr<WebCLContext> getWebCLContext() const;
     PassRefPtr<WebCLCommandQueue> getWebCLCommandQueue() const;
     PassRefPtr<WebCLDevice> getWebCLDevice() const;
-    PassRefPtr<WebCLDeviceList> getWebCLDeviceList() const;
+    Vector<RefPtr<WebCLDevice> > getWebCLDevices() const;
     PassRefPtr<WebCLMemoryObject> getWebCLMemoryObject() const;
 
 private:
@@ -138,7 +138,7 @@ private:
     RefPtr<WebCLContext> m_webclContext;
     RefPtr<WebCLCommandQueue> m_webCLCommandQueue;
     RefPtr<WebCLDevice> m_webCLDevice;
-    RefPtr<WebCLDeviceList> m_webCLDeviceList;
+    Vector<RefPtr<WebCLDevice> > m_webCLDevices;
     RefPtr<WebCLMemoryObject> m_webCLMemoryObject;
 };
 

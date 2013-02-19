@@ -33,7 +33,6 @@
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
 #include "WebCLDevice.h"
-#include "WebCLDeviceList.h"
 #include "WebCLEvent.h"
 #include "WebCLMemoryObject.h"
 #include "WebCLPlatform.h"

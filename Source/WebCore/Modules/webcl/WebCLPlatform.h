@@ -35,7 +35,6 @@
 #include <OpenCL/opencl.h>
 
 #include "WebCLGetInfo.h"
-#include "WebCLDeviceList.h"
 
 namespace WebCore {
 
@@ -46,10 +45,10 @@ public:
     virtual ~WebCLPlatform();
     static PassRefPtr<WebCLPlatform> create(cl_platform_id platform_id);
     WebCLGetInfo getInfo (int, ExceptionCode&);
-    PassRefPtr<WebCLDeviceList> getDevices(int, ExceptionCode&);
-    PassRefPtr<WebCLDeviceList> getDevices(ExceptionCode& ec)
+    Vector<RefPtr<WebCLDevice> > getDevices(int, ExceptionCode&) const;
+    Vector<RefPtr<WebCLDevice> > getDevices(ExceptionCode& ec) const
     {
-            return(getDevices(0,ec));
+        return getDevices(ComputeContext::DEVICE_TYPE_DEFAULT, ec);
     }
     Vector<String> getSupportedExtensions(ExceptionCode&);
     cl_platform_id getCLPlatform();

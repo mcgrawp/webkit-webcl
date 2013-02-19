@@ -90,7 +90,7 @@ function InitCL() {
 
     // Create a command queue
     //
-    queue = context.createCommandQueue(devices, null);
+    queue = context.createCommandQueue(device, null);
 
     // Create the compute program from the source buffer
     //

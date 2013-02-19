@@ -32,86 +32,62 @@
 
 namespace WebCore {
 
-PassRefPtr<WebCLContextProperties> WebCLContextProperties::create()
+PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(WebCLPlatform* platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, int shareGroup, const String& hint)
 {
-    return adoptRef(new WebCLContextProperties());
+    return adoptRef(new WebCLContextProperties(platform, devices, deviceType, shareGroup, hint));
 }
 
 WebCLContextProperties::~WebCLContextProperties()
 {
-        
 }
-WebCLContextProperties::WebCLContextProperties()
+WebCLContextProperties::WebCLContextProperties(WebCLPlatform* platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, int shareGroup, const String& hint)
+    : objplatform(platform)
+    , objdevices(devices)
+    , objdeviceType(deviceType)
+    , objshareGroup(shareGroup)
+    , objhint(hint)
 {
-	this->objplatform = NULL;
-	this->objdevices =  NULL;
-	this->objdeviceType = 0;
-	this->objshareGroup = 0;
-	// TODO Is it needed?
-	//	this->hint = 0;
 }
 
-
-void WebCLContextProperties::setPlatform(WebCLPlatform* platform)
+WebCLPlatform* WebCLContextProperties::platform() const
 {
-	this->objplatform = platform;
+    return objplatform;
 }
 
-void WebCLContextProperties::setDevices(WebCLDeviceList* devices)
+Vector<RefPtr<WebCLDevice> > WebCLContextProperties::devices() const
 {
-	this->objdevices = devices;
+    return objdevices;
 }
 
-void WebCLContextProperties::setDeviceType(int deviceType)
+int WebCLContextProperties::deviceType() const
 {
-	this->objdeviceType =deviceType;
+    return objdeviceType;
+}
+
+void WebCLContextProperties::setDeviceType(int type)
+{
+    objdeviceType = type;
+}
+
+int WebCLContextProperties::shareGroup() const
+{
+    return objshareGroup;
 }
 
 void WebCLContextProperties::setShareGroup(int shareGroup)
 {
-	this->objshareGroup =shareGroup;
+    objshareGroup = shareGroup;
 }
-
-void WebCLContextProperties::setHint(String hint)
-{
-	this->objhint = hint;
-}
-
-
-WebCLPlatform* WebCLContextProperties::platform() const
-{
-	return this->objplatform;
-} 
-	 
-	  
-WebCLDeviceList* WebCLContextProperties::devices() const
-{
-	return this->objdevices;
-}   
-	 
-
-int WebCLContextProperties::deviceType() const
-{
-	return this->objdeviceType;
-}             
-	  
-
-int WebCLContextProperties::shareGroup() const
-{
-	return this->objshareGroup;
-}            
-	  
 
 String WebCLContextProperties::hint() const
 {
-	return this->objhint;
-}      
-	  
+    return objhint;
+}
 
-
-
-
-
+void WebCLContextProperties::setHint(const String& hint)
+{
+    objhint = hint;
+}
 
 }
 #endif // ENABLE(WEBCL)

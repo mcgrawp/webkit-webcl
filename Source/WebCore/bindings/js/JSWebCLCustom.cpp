@@ -83,25 +83,40 @@ JSValue JSWebCL::createContext(JSC::ExecState* exec)
     }
 
     if (exec->argumentCount() == 1) {
-        RefPtr<WebCore::WebCLContextProperties> objWebCLContextProperties = WebCLContextProperties::create();
+
         if (exec->argumentCount() == 1 && exec->argument(0).isObject()) {
             JSObject* jsAttrs = exec->argument(0).getObject();
-            Identifier platform(exec, "platform");
-            if (jsAttrs->hasProperty(exec, platform))
-                objWebCLContextProperties->setPlatform(toWebCLPlatform(jsAttrs->get(exec, platform)));
-            Identifier devices(exec, "devices");
-            if (jsAttrs->hasProperty(exec, devices))
-                objWebCLContextProperties->setDevices(toWebCLDeviceList(jsAttrs->get(exec, devices)));
-            Identifier deviceType(exec, "deviceType");
-            if (jsAttrs->hasProperty(exec, deviceType))
-                objWebCLContextProperties->setDeviceType(jsAttrs->get(exec, deviceType).toInt32(exec));
-            Identifier shareGroup(exec, "shareGroup");
-            if (jsAttrs->hasProperty(exec, shareGroup))
-                objWebCLContextProperties->setShareGroup(jsAttrs->get(exec, shareGroup).toInt32(exec));
-            Identifier hint(exec, "hint");
-            if (jsAttrs->hasProperty(exec, hint))
-                objWebCLContextProperties->setHint(jsAttrs->get(exec, hint).toString(exec)->value(exec));
+            WebCLPlatform* platform;
+            Identifier platformIdentifier(exec, "platform");
+            if (jsAttrs->hasProperty(exec, platformIdentifier))
+                platform = toWebCLPlatform(jsAttrs->get(exec, platformIdentifier));
 
+            // FIXME: toTypeArray needs to return a Vector<RefPtr<Type> >
+            Vector<WebCLDevice*> devicesPtr;
+            Identifier devicesIdentifier(exec, "devices");
+            if (jsAttrs->hasProperty(exec, devicesIdentifier))
+                devicesPtr = toWebCLDeviceArray(exec, jsAttrs->get(exec, devicesIdentifier));
+            
+            Vector<RefPtr<WebCLDevice> > devices;
+            for (size_t i = 0; i < devicesPtr.size(); ++i)
+                devices.append(devicesPtr[i]);
+
+            int deviceType;
+            Identifier deviceTypeIdentifier(exec, "deviceType");
+            if (jsAttrs->hasProperty(exec, deviceTypeIdentifier))
+                deviceType = jsAttrs->get(exec, deviceTypeIdentifier).toInt32(exec);
+
+            int sharedGroup;
+            Identifier shareGroupIdentifier(exec, "shareGroup");
+            if (jsAttrs->hasProperty(exec, shareGroupIdentifier))
+                sharedGroup = jsAttrs->get(exec, shareGroupIdentifier).toInt32(exec);
+
+            String hint;
+            Identifier hintIdentifier(exec, "hint");
+            if (jsAttrs->hasProperty(exec, hintIdentifier))
+                hint = jsAttrs->get(exec, hintIdentifier).toString(exec)->value(exec);
+
+            RefPtr<WebCore::WebCLContextProperties> objWebCLContextProperties = WebCLContextProperties::create(platform, devices, deviceType, sharedGroup, hint);
             objWebCLContext  = m_impl->createContext(objWebCLContextProperties.get(), ec);
             if (ec) {
                 setDOMException(exec, ec);

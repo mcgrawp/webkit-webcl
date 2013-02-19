@@ -53,6 +53,8 @@ private:
     CCDeviceID m_ccDeviceID;
 };
 
+void toWebCLDeviceArray(const Vector<CCDeviceID>&, Vector<RefPtr<WebCLDevice> >&);
+
 } // namespace WebCore
 
 #endif // WebCLDevice_h

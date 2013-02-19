@@ -32,7 +32,7 @@ module webcl {
 	] WebCLContextProperties {
 	
 		readonly attribute WebCLPlatform platform;
-		readonly attribute WebCLDeviceList devices;
+		readonly attribute WebCLDevice[] devices;
 		attribute long deviceType;
 		attribute long shareGroup;
 		attribute DOMString hint;

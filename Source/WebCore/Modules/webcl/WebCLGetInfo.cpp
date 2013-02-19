@@ -32,7 +32,6 @@
 #include "WebCLGetInfo.h"
 
 #include "WebCLCommandQueue.h"
-#include "WebCLDeviceList.h"
 #include "WebCLDevice.h"
 #include "WebCLProgram.h"
 #include "WebCLContext.h"
@@ -156,9 +155,9 @@ WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLMemoryObject> value)
 {
 }
 
-WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLDeviceList> value)
-    : m_type(kTypeWebCLDeviceList)
-    , m_webCLDeviceList(value)
+WebCLGetInfo::WebCLGetInfo(const Vector<RefPtr<WebCLDevice> >& value)
+    : m_type(kTypeWebCLDevices)
+    , m_webCLDevices(value)
 {
 }
 
@@ -264,10 +263,10 @@ PassRefPtr<WebCLDevice> WebCLGetInfo::getWebCLDevice() const
     ASSERT(getType() == kTypeWebCLDevice);
     return m_webCLDevice;
 }
-PassRefPtr<WebCLDeviceList> WebCLGetInfo::getWebCLDeviceList() const
+Vector<RefPtr<WebCLDevice> > WebCLGetInfo::getWebCLDevices() const
 {
-    ASSERT(getType() == kTypeWebCLDeviceList);
-    return m_webCLDeviceList;
+    ASSERT(getType() == kTypeWebCLDevices);
+    return m_webCLDevices;
 }
 PassRefPtr<WebCLMemoryObject> WebCLGetInfo::getWebCLMemoryObject() const
 {

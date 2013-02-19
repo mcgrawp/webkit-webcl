@@ -127,7 +127,7 @@ function InitCL()
 
         // Create a command queue
         //
-        queue = context.createCommandQueue(devices, null);
+        queue = context.createCommandQueue(device, null);
 
         // Create the compute program from the source buffer
         //
@@ -141,7 +141,7 @@ function InitCL()
 
         // Build the program executable
         //
-        program.build(devices);
+        program.build(device);
         // also allow the following form since can provide a device list
         //program.build(devices,"-cl-single-precision-constant");
         //program.build(devices,null);

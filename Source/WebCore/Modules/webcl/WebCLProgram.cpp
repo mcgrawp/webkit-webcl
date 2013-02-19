@@ -116,13 +116,14 @@ WebCLGetInfo WebCLProgram::getInfo(int infoType, ExceptionCode& ec)
         break;
     }
     case ComputeContext::PROGRAM_DEVICES: {
-        size_t szParmDataBytes = 0;
-        error = ComputeContext::getProgramInfo(m_clProgram, infoType, 0, 0, &szParmDataBytes);
+        size_t devicesSize = 0;
+        error = ComputeContext::getProgramInfo(m_clProgram, ComputeContext::PROGRAM_DEVICES, 0, 0, &devicesSize);
         if (error == ComputeContext::SUCCESS) {
-            Vector<CCDeviceID> devices(szParmDataBytes);
-            ComputeContext::getProgramInfo(m_clProgram, infoType, szParmDataBytes, devices.data(), 0);
-            RefPtr<WebCLDeviceList> deviceList = WebCLDeviceList::create(devices);
-            return WebCLGetInfo(PassRefPtr<WebCLDeviceList>(deviceList));
+            Vector<CCDeviceID> ccDevices(devicesSize);
+            ComputeContext::getProgramInfo(m_clProgram, infoType, devicesSize, ccDevices.data(), 0);
+            Vector<RefPtr<WebCLDevice> > devices;
+            toWebCLDeviceArray(ccDevices, devices);
+            return WebCLGetInfo(devices);
         }
         break;
     }
@@ -242,24 +243,14 @@ void WebCLProgram::finishCallback(cl_program program, void* userData)
 
 WebCLProgram* WebCLProgram::thisPointer = 0;
 
-void WebCLProgram::build(WebCLDeviceList* clDevices, const String& options,
+void WebCLProgram::build(const Vector<WebCLDevice*>& devices, const String& options,
     PassRefPtr<WebCLFinishCallback> finishCallback, int userData, ExceptionCode& ec)
 {
-    cl_int err = 0;
-    cl_device_id* clDevice = 0;
     WebCLProgram::thisPointer = static_cast<WebCLProgram*>(this);
 
     m_finishCallback = finishCallback;
     if (!m_clProgram) {
-        printf("Error: Invalid program object\n");
         ec = WebCLException::INVALID_PROGRAM;
-        return;
-    }
-    if (clDevices)
-        clDevice = clDevices->getCLDevices();
-    if (!clDevice) {
-        ec = WebCLException::INVALID_DEVICE;
-        printf("Error: devices null\n");
         return;
     }
 
@@ -283,10 +274,15 @@ void WebCLProgram::build(WebCLDeviceList* clDevices, const String& options,
         }
     }
 
+    Vector<CCDeviceID> ccDevices;
+    for (size_t i = 0; i < devices.size(); i++)
+        ccDevices.append(devices[i]->getCLDevice());
+
+    CCerror err;
     if (!m_finishCallback)
-        err = clBuildProgram(m_clProgram, clDevices->length(), clDevice, optionsStr, 0, &userData);
+        err = clBuildProgram(m_clProgram, ccDevices.size(), ccDevices.data(), optionsStr, 0, &userData);
     else
-        err = clBuildProgram(m_clProgram, clDevices->length(), clDevice, optionsStr,
+        err = clBuildProgram(m_clProgram, ccDevices.size(), ccDevices.data(), optionsStr,
             &(WebCLProgram::finishCallback), &userData);
 
     // Free memory allocated by strdup.

@@ -153,7 +153,6 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webcl/WorkerContextWebCLEnvironment.idl\
     $(WebCore)/Modules/webcl/WebCLKernelArgumentTypes.idl \
     $(WebCore)/Modules/webcl/WebCLPlatform.idl \
-    $(WebCore)/Modules/webcl/WebCLDeviceList.idl \
     $(WebCore)/Modules/webcl/WebCLDevice.idl \
     $(WebCore)/Modules/webcl/WebCLContext.idl \
     $(WebCore)/Modules/webcl/WebCLCommandQueue.idl \

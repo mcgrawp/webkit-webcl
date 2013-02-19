@@ -42,7 +42,6 @@ class WebCLContext;
 class WebCLGetInfo;
 class WebCLKernel;
 class WebCLDevice;
-class WebCLDeviceList;
 
 class WebCLProgram : public RefCounted<WebCLProgram> {
 public:
@@ -52,16 +51,16 @@ public:
     WebCLGetInfo getInfo(int, ExceptionCode&);
     WebCLGetInfo getBuildInfo(WebCLDevice*, int, ExceptionCode&);
 
-    void build(WebCLDeviceList*, const String&, PassRefPtr<WebCLFinishCallback>, int, ExceptionCode&);
-    void build(WebCLDeviceList* devices, const String& options, PassRefPtr<WebCLFinishCallback> finishCallback, ExceptionCode& ec)
+    void build(const Vector<WebCLDevice*>&, const String&, PassRefPtr<WebCLFinishCallback>, int, ExceptionCode&);
+    void build(const Vector<WebCLDevice*>& devices, const String& options, PassRefPtr<WebCLFinishCallback> finishCallback, ExceptionCode& ec)
     {
         return build(devices, options, finishCallback, 0, ec);
     }
-    void build(WebCLDeviceList* devices, const String& options, ExceptionCode& ec)
+    void build(const Vector<WebCLDevice*>& devices, const String& options, ExceptionCode& ec)
     {
         return build(devices, options, 0, 0, ec);
     }
-    void build(WebCLDeviceList* devices, ExceptionCode& ec)
+    void build(const Vector<WebCLDevice*>& devices, ExceptionCode& ec)
     {
         return build(devices, "", 0, 0, ec);
     }

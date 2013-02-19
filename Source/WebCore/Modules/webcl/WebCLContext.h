@@ -58,7 +58,6 @@ class HTMLVideoElement;
 class WebGLRenderbuffer;
 class WebGLBuffer;
 class WebCLDevice;
-class WebCLDeviceList;
 class WebCLGetInfo;
 
 class WebCLContext : public RefCounted<WebCLContext> {
@@ -74,10 +73,10 @@ public:
     {
         return(createBuffer(memFlags , sizeInBytes , 0 , ec));
     }
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDeviceList* , int , ExceptionCode&);
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDeviceList* deviceList, ExceptionCode& ec)
+    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, int , ExceptionCode&);
+    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice* devices, ExceptionCode& ec)
     {
-        return(createCommandQueue(deviceList, 0 , ec));
+        return(createCommandQueue(devices, 0 , ec));
     }
     PassRefPtr<WebCLCommandQueue> createCommandQueue(ExceptionCode& ec)
     {
