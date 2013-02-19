@@ -36,10 +36,16 @@
 #include "ScriptState.h"
 #include "SharedBuffer.h"
 #include "WebCLException.h"
+
 #include <OpenCL/opencl.h>
 
 namespace WebCore {
 
+class ImageData;
+class ImageBuffer;
+class HTMLCanvasElement;
+class HTMLImageElement;
+class HTMLVideoElement;
 class WebCL;
 class WebCLCommandQueue;
 class WebCLProgram;
@@ -47,14 +53,9 @@ class WebCLMemoryObject;
 class WebCLImage;
 class WebCLSampler;
 class WebCLEvent;
-class ImageData;
-class ImageBuffer;
-class IntSize;
+class WebCLContextProperties;
 class WebCLBuffer;
 class WebCLImageDescriptor;
-class HTMLCanvasElement;
-class HTMLImageElement;
-class HTMLVideoElement;
 class WebGLRenderbuffer;
 class WebGLBuffer;
 class WebCLDevice;
@@ -139,16 +140,17 @@ public:
 private:
     WebCLContext(WebCL*, RefPtr<ComputeContext>& computeContext);
     // WebCLContext(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType, int* error);
-    PassRefPtr<WebCLMemoryObject> createImage2DBaseMemory(int , int , int , const ComputeContext::ImageFormat& , void*
-        , ExceptionCode&);
-    PassRefPtr<WebCLImage> createImage2DBaseImage(int , int , int , const ComputeContext::ImageFormat& , void*
-        , ExceptionCode&);
+    PassRefPtr<WebCLMemoryObject> createImage2DBaseMemory(int , int , int , const ComputeContext::ImageFormat& , void*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage2DBaseImage(int , int , int , const ComputeContext::ImageFormat& , void*, ExceptionCode&);
+
+    void ensureCachedContextProperties();
 
     WebCL* m_context;
     cl_context m_clContext;
     RefPtr<WebCLCommandQueue> m_commandQueue;
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
     RefPtr<ComputeContext> m_computeContext;
+    RefPtr<WebCLContextProperties> m_cachedContextProperties;
 
     /* FIXME : These are not used. Check if needed for garbage collection. If not delete it.
     RefPtr<WebCLDevice> m_device_id;
@@ -167,7 +169,6 @@ private:
     Vector<RefPtr<WebCLContext> > m_context_list;
     long m_num_contexts;*/
 };
-
 
 } // namespace WebCore
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -28,19 +28,18 @@
 #include "config.h"
 #include "WebCLContextProperties.h"
 
+#include "WebCLDevice.h"
+
 #if ENABLE(WEBCL)
 
 namespace WebCore {
 
-PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(WebCLPlatform* platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, int shareGroup, const String& hint)
+PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, int shareGroup, const String& hint)
 {
     return adoptRef(new WebCLContextProperties(platform, devices, deviceType, shareGroup, hint));
 }
 
-WebCLContextProperties::~WebCLContextProperties()
-{
-}
-WebCLContextProperties::WebCLContextProperties(WebCLPlatform* platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, int shareGroup, const String& hint)
+WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, int shareGroup, const String& hint)
     : objplatform(platform)
     , objdevices(devices)
     , objdeviceType(deviceType)
@@ -51,7 +50,7 @@ WebCLContextProperties::WebCLContextProperties(WebCLPlatform* platform, const Ve
 
 WebCLPlatform* WebCLContextProperties::platform() const
 {
-    return objplatform;
+    return objplatform.get();
 }
 
 Vector<RefPtr<WebCLDevice> > WebCLContextProperties::devices() const
@@ -91,7 +90,3 @@ void WebCLContextProperties::setHint(const String& hint)
 
 }
 #endif // ENABLE(WEBCL)
-
-
-
-

@@ -30,6 +30,7 @@
 
 #include "ComputeTypes.h"
 #include "ComputeContext.h"
+#include "WebCLContextProperties.h"
 
 #include "WebCLDevice.h"
 #include <wtf/Float32Array.h>
@@ -44,11 +45,12 @@ namespace WebCore {
 
 class WebCLCommandQueue;
 class WebCLContext;
+class WebCLContextProperties;
 class WebCLDevice;
 class WebCLImageDescriptor;
-class WebCLProgram;
-class WebCLContext;
 class WebCLMemoryObject;
+class WebCLProgram;
+
 // A tagged union representing the result of get queries like
 // getParameter (encompassing getBooleanv, getIntegerv, getFloatv) and
 // similar variants. For reference counted types, increments and
@@ -76,7 +78,8 @@ public:
         kTypeWebCLCommandQueue,
         kTypeWebCLDevice,
         kTypeWebCLDevices,
-        kTypeWebCLMemoryObject
+        kTypeWebCLMemoryObject,
+        kTypeWebCLContextProperties
     };
 
     WebCLGetInfo();
@@ -98,6 +101,7 @@ public:
     explicit WebCLGetInfo(const Vector<RefPtr<WebCLDevice> >& value);
     explicit WebCLGetInfo(PassRefPtr<WebCLDevice> value);
     explicit WebCLGetInfo(PassRefPtr<WebCLMemoryObject> value);
+    explicit WebCLGetInfo(PassRefPtr<WebCLContextProperties> value);
 
     virtual ~WebCLGetInfo();
     Type getType() const;
@@ -119,6 +123,7 @@ public:
     PassRefPtr<WebCLDevice> getWebCLDevice() const;
     Vector<RefPtr<WebCLDevice> > getWebCLDevices() const;
     PassRefPtr<WebCLMemoryObject> getWebCLMemoryObject() const;
+    PassRefPtr<WebCLContextProperties> getWebCLContextProperties() const;
 
 private:
     Type m_type;
@@ -140,6 +145,7 @@ private:
     RefPtr<WebCLDevice> m_webCLDevice;
     Vector<RefPtr<WebCLDevice> > m_webCLDevices;
     RefPtr<WebCLMemoryObject> m_webCLMemoryObject;
+    RefPtr<WebCLContextProperties> m_webCLContextProperties;
 };
 
 } // namespace WebCore

@@ -26,16 +26,14 @@
 */
 
 module webcl {
-	interface [
-		Conditional=WEBCL,
-//		OmitConstructor,
-	] WebCLContextProperties {
-	
-		readonly attribute WebCLPlatform platform;
-		readonly attribute WebCLDevice[] devices;
-		attribute long deviceType;
-		attribute long shareGroup;
-		attribute DOMString hint;
-	
+    interface [
+        Conditional=WEBCL,
+        //OmitConstructor,
+    ] WebCLContextProperties {
+        readonly attribute WebCLPlatform platform;
+        readonly attribute WebCLDevice[] devices;
+        attribute long deviceType;
+        attribute long shareGroup;
+        attribute DOMString hint;
     };
 }

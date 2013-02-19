@@ -30,6 +30,7 @@
 #if ENABLE(WEBCL)
 
 #include "WebCLContext.h"
+#include "WebCLContextProperties.h"
 
 #include "CachedImage.h"
 #include "HTMLImageElement.h"
@@ -51,6 +52,7 @@ WebCLContext::~WebCLContext()
 {
 }
 
+// FIXME: Use Vector<CCDeviceID> and collapse 'numberDevices' and 'devices'.
 PassRefPtr<WebCLContext> WebCLContext::create(WebCL* context, CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID *devices, CCerror& error)
 {
     RefPtr<ComputeContext> computeContext = ComputeContext::create(contextProperties, numberDevices, devices, error);
@@ -68,6 +70,63 @@ WebCLContext::WebCLContext(WebCL* context, RefPtr<ComputeContext>& computeContex
 {
     m_computeContext = computeContext;
     m_clContext = m_computeContext->context();
+
+    // Cache all properties since they are immutable.
+    ensureCachedContextProperties();
+}
+
+void WebCLContext::ensureCachedContextProperties()
+{
+    if (m_cachedContextProperties)
+        return;
+
+    CCerror err = 0;
+    size_t dataSizeInBytes = 0;
+
+    // 1) Devices.
+    err = clGetContextInfo(m_clContext, ComputeContext::CONTEXT_DEVICES, 0, 0, &dataSizeInBytes);
+    ASSERT(err == CL_SUCCESS);
+
+    size_t numberOfDevices = dataSizeInBytes / sizeof(CCDeviceID);
+    ASSERT(numberOfDevices);
+
+    Vector<CCDeviceID, 5> ccDevices;
+    err = clGetContextInfo(m_clContext, ComputeContext::CONTEXT_DEVICES, dataSizeInBytes, ccDevices.data(), 0);
+    ASSERT(err == ComputeContext::SUCCESS);
+    ccDevices.resize(numberOfDevices);
+
+    Vector<RefPtr<WebCLDevice> > devices;
+    toWebCLDeviceArray(ccDevices, devices);
+
+    // 2) Platform.
+    CCPlatformID ccPlatformID = 0;
+    err = clGetContextInfo(m_clContext, ComputeContext::CONTEXT_PROPERTIES, 0, 0, &dataSizeInBytes);
+    ASSERT(err == CL_SUCCESS);
+    size_t numberOfProperties = dataSizeInBytes / sizeof(CCContextProperties);
+    if (numberOfProperties) {
+        CCContextProperties contextProperties[numberOfProperties];
+        err = clGetContextInfo(m_clContext, ComputeContext::CONTEXT_PROPERTIES, dataSizeInBytes, &contextProperties, 0);
+        ASSERT(err == CL_SUCCESS);
+        for (size_t i = 0; i < numberOfProperties && contextProperties[i]; ++i) {
+            if (contextProperties[i] == ComputeContext::CONTEXT_PLATFORM)
+                ccPlatformID = (CCPlatformID) contextProperties[++i];
+        }
+    } else
+        err = ComputeContext::getDeviceInfo(ccDevices[0], ComputeContext::DEVICE_PLATFORM, sizeof(ccPlatformID), &ccPlatformID);
+
+    RefPtr<WebCLPlatform> platform = WebCLPlatform::create(ccPlatformID);
+
+    // 3) Device type - bitfield'ed.
+    CCulong deviceType = 0;
+    for (size_t i = 0; i < numberOfDevices; ++i) {
+        CCDeviceType type = 0;
+        err = ComputeContext::getDeviceInfo(ccDevices[i], ComputeContext::DEVICE_TYPE, sizeof(CCDeviceType), &type);
+        ASSERT(err == ComputeContext::SUCCESS);
+        deviceType |= type;
+    }
+
+    // FIXME: 4/5) Needs to implement support for 'shareGroup' and 'hits'.
+    m_cachedContextProperties = WebCLContextProperties::create(platform.release(), devices, deviceType, 0 /*sharedGroup*/, String() /*hints*/);
 }
 
 /*WebCLContext::WebCLContext(WebCL* compute_context, CCContextProperties* contextProperties, unsigned deviceType, int* error)
@@ -80,82 +139,24 @@ WebCLContext::WebCLContext(WebCL* context, RefPtr<ComputeContext>& computeContex
 
 WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
 {
-    cl_int err = 0;
-    cl_uint uintUnits = 0;
-    size_t szParmDataBytes = 0;
-    size_t uintArray[WebCL::CHAR_BUFFER_SIZE] = {0};
     if (!m_clContext) {
         printf("Error: Invalid CL Context\n");
         ec = WebCLException::INVALID_CONTEXT;
         return WebCLGetInfo();
     }
+
     switch (paramName) {
     case ComputeContext::CONTEXT_NUM_DEVICES:
-        err = clGetContextInfo(m_clContext, paramName, sizeof(cl_uint), &uintUnits, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(uintUnits));
-        break;
+        return WebCLGetInfo(m_cachedContextProperties->devices().size());
     case ComputeContext::CONTEXT_DEVICES:
-    {
-        err = clGetContextInfo(m_clContext, CL_CONTEXT_DEVICES, 0, 0, &szParmDataBytes);
-        if (err)
-            break;
-
-        Vector<CCDeviceID> ccDevices(szParmDataBytes);
-        err = clGetContextInfo(m_clContext, CL_CONTEXT_DEVICES, szParmDataBytes, ccDevices.data(), 0);
-        if (err)
-            break;
-
-        Vector<RefPtr<WebCLDevice> > devices;
-        toWebCLDeviceArray(ccDevices, devices);
-        return WebCLGetInfo(devices);
-    }
-
-    break;
+        return WebCLGetInfo(m_cachedContextProperties->devices());
     case ComputeContext::CONTEXT_PROPERTIES:
-        {
-            err = clGetContextInfo(m_clContext, paramName, 0, 0, &szParmDataBytes);
-            if (err == CL_SUCCESS) {
-                int nd = szParmDataBytes / sizeof(cl_uint);
-                if (!nd)
-                    return WebCLGetInfo();
-                err = clGetContextInfo(m_clContext, paramName, szParmDataBytes, &uintArray, &szParmDataBytes);
-                if (err == CL_SUCCESS) {
-                    int values[WebCL::CHAR_BUFFER_SIZE] = {0};
-                    for (int i = 0; i < ((int)nd); i++)
-                        values[i] = (int)uintArray[i];
-                    return WebCLGetInfo(Int32Array::create(values, nd));
-                }
-            }
-        }
-        break;
+        // FIXME: Is this cast needed?
+        return WebCLGetInfo(PassRefPtr<WebCLContextProperties>(m_cachedContextProperties));
     default:
-        printf("Error: Unsupported Context Info type\n");
-        ec = WebCLException::FAILURE;
-        return WebCLGetInfo();
-    }
-    switch (err) {
-    case CL_INVALID_CONTEXT:
-        ec = WebCLException::INVALID_CONTEXT;
-        printf("Error: CL_INVALID_CONTEXT \n");
-        break;
-    case CL_INVALID_VALUE:
         ec = WebCLException::INVALID_VALUE;
-        printf("Error: CL_INVALID_VALUE\n");
-        break;
-    case CL_OUT_OF_RESOURCES:
-        ec = WebCLException::OUT_OF_RESOURCES;
-        printf("Error: CL_OUT_OF_RESOURCES \n");
-        break;
-    case CL_OUT_OF_HOST_MEMORY:
-        ec = WebCLException::OUT_OF_HOST_MEMORY;
-        printf("Error: CL_OUT_OF_HOST_MEMORY  \n");
-        break;
-    default:
-        ec = WebCLException::FAILURE;
-        printf("Error: Invaild Error Type\n");
-        break;
     }
+
     return WebCLGetInfo();
 }
 

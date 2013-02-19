@@ -28,13 +28,14 @@
 #ifndef WebCLPlatform_h
 #define WebCLPlatform_h
 
+#include "WebCLGetInfo.h"
+#include "WebCLDevice.h"
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/Vector.h>
 #include <OpenCL/opencl.h>
-
-#include "WebCLGetInfo.h"
 
 namespace WebCore {
 

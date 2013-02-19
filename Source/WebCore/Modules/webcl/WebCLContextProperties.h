@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -28,30 +28,31 @@
 #ifndef WebCLContextProperties_h
 #define WebCLContextProperties_h
 
-#include <OpenCL/opencl.h>
+#include "WebCLException.h"
+#include "WebCLPlatform.h"
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include "WebCLException.h"
-#include "WebCLDevice.h"
-#include "WebCLPlatform.h"
 #include <wtf/text/WTFString.h>
 
-using namespace std ;
+#include <OpenCL/opencl.h>
 
-namespace WebCore{
+using namespace std;
+
+namespace WebCore {
 
 class WebCL;
+class WebCLDevice;
+class WebCLPlatform;
 
 class WebCLContextProperties : public RefCounted<WebCLContextProperties>
 {
 public:
-    ~WebCLContextProperties();
-    static PassRefPtr<WebCLContextProperties> create(WebCLPlatform*, const Vector<RefPtr<WebCLDevice> >&, int, int, const String&);
+    static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int, int, const String&);
+    ~WebCLContextProperties() { }
 
     WebCLPlatform* platform() const;
-    void setPlatform(WebCLPlatform*);
-
     Vector<RefPtr<WebCLDevice> > devices() const;
 
     int deviceType() const;
@@ -64,16 +65,16 @@ public:
     void setHint(const String&);
 
 private:
-    WebCLContextProperties(WebCLPlatform*, const Vector<RefPtr<WebCLDevice> >&, int, int, const String&);
+    WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int, int, const String&);
 
-    WebCLPlatform* objplatform;
+    RefPtr<WebCLPlatform> objplatform;
     Vector<RefPtr<WebCLDevice> > objdevices;
     int objdeviceType;
     int objshareGroup;
+    // FIXME: spec says DOMString[].
     String objhint;
 };
 
 }// namespace WebCore
 
 #endif // WebCLContextProperties_h
-

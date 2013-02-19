@@ -126,8 +126,9 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(CCulong), &infoValue);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned long>(infoValue));
-        }
         break;
+    }
+    // FIXME: 3 options below are mis implemented.
     case ComputeContext::DEVICE_AVAILABLE:
     case ComputeContext::DEVICE_ENDIAN_LITTLE:
     case ComputeContext::DEVICE_HOST_UNIFIED_MEMORY:

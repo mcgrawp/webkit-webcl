@@ -38,17 +38,6 @@
 #include <runtime/JSArray.h>
 
 #include "JSWebCLContext.h"
-
-#include "JSWebKitCSSMatrix.h"
-#include "NotImplemented.h"
-#include "OESStandardDerivatives.h"
-#include "OESTextureFloat.h"
-#include <wtf/Float32Array.h>
-#include "WebCLGetInfo.h"
-#include <wtf/Int32Array.h>
-#include <runtime/Error.h>
-#include <runtime/JSArray.h>
-#include <wtf/FastMalloc.h>
 #include "JSWebCLPlatform.h"
 #include "JSWebCLDevice.h"
 #include "JSWebCLKernel.h"
@@ -60,20 +49,31 @@
 #include "JSWebCLSampler.h"
 #include "JSWebCLImage.h"
 #include "JSWebCLImageDescriptor.h"
-#include "WebCLPlatform.h"
-#include "WebCLKernel.h"  //not needeed
-#include "WebCLProgram.h"
-#include "WebCLDevice.h"
+#include "JSWebCLContextProperties.h"
+#include "JSWebKitCSSMatrix.h"
+#include "ScriptValue.h"  //not needeed
+#include "NotImplemented.h"
+#include "OESStandardDerivatives.h"
+#include "OESTextureFloat.h"
+#include "WebCLBuffer.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
-#include "WebCLMemoryObject.h"
+#include "WebCLDevice.h"
 #include "WebCLEvent.h"
-#include "WebCLSampler.h"
+#include "WebCLGetInfo.h"
 #include "WebCLImage.h"
-#include "WebCLBuffer.h"
 #include "WebCLKernelTypes.h" //not needeed
-#include "ScriptValue.h"  //not needeed
+#include "WebCLKernel.h"  //not needeed
+#include "WebCLMemoryObject.h"
+#include "WebCLPlatform.h"
+#include "WebCLProgram.h"
+#include "WebCLSampler.h"
 
+#include <runtime/Error.h>
+#include <runtime/JSArray.h>
+#include <wtf/Float32Array.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Int32Array.h>
 
 using namespace JSC;
 using namespace std;
@@ -122,6 +122,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebC
         return jsArray(exec, globalObject, info.getWebCLDevices());
     case WebCLGetInfo::kTypeWebCLMemoryObject:
         return toJS(exec, globalObject, info.getWebCLMemoryObject());
+    case WebCLGetInfo::kTypeWebCLContextProperties:
+        return toJS(exec, globalObject, info.getWebCLContextProperties());
     default:
         notImplemented();
         return jsUndefined();

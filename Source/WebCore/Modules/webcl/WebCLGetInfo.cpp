@@ -32,9 +32,10 @@
 #include "WebCLGetInfo.h"
 
 #include "WebCLCommandQueue.h"
+#include "WebCLContext.h"
 #include "WebCLDevice.h"
 #include "WebCLProgram.h"
-#include "WebCLContext.h"
+#include "WebCLContextProperties.h"
 
 #include <wtf/Float32Array.h>
 #include <wtf/Int32Array.h>
@@ -161,6 +162,13 @@ WebCLGetInfo::WebCLGetInfo(const Vector<RefPtr<WebCLDevice> >& value)
 {
 }
 
+
+WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLContextProperties> value)
+    : m_type(kTypeWebCLContextProperties)
+    , m_webCLContextProperties(value)
+{
+}
+
 WebCLGetInfo::~WebCLGetInfo()
 {
 }
@@ -273,7 +281,11 @@ PassRefPtr<WebCLMemoryObject> WebCLGetInfo::getWebCLMemoryObject() const
     ASSERT(getType() == kTypeWebCLMemoryObject);
     return m_webCLMemoryObject;
 }
-
+PassRefPtr<WebCLContextProperties> WebCLGetInfo::getWebCLContextProperties() const
+{
+    ASSERT(getType() == kTypeWebCLContextProperties);
+    return m_webCLContextProperties;
+}
 
 } // namespace WebCore
 
