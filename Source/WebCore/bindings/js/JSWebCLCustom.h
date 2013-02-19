@@ -122,6 +122,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebC
         return jsArray(exec, globalObject, info.getWebCLDevices());
     case WebCLGetInfo::kTypeWebCLMemoryObject:
         return toJS(exec, globalObject, info.getWebCLMemoryObject());
+    case WebCLGetInfo::kTypeWebCLPlatform:
+        return toJS(exec, globalObject, info.getWebCLPlatform());
     case WebCLGetInfo::kTypeWebCLContextProperties:
         return toJS(exec, globalObject, info.getWebCLContextProperties());
     default:

@@ -35,6 +35,7 @@
 #include "WebCLContext.h"
 #include "WebCLDevice.h"
 #include "WebCLProgram.h"
+#include "WebCLPlatform.h"
 #include "WebCLContextProperties.h"
 
 #include <wtf/Float32Array.h>
@@ -162,6 +163,11 @@ WebCLGetInfo::WebCLGetInfo(const Vector<RefPtr<WebCLDevice> >& value)
 {
 }
 
+WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLPlatform> value)
+    : m_type(kTypeWebCLPlatform)
+    , m_webCLPlatform(value)
+{
+}
 
 WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLContextProperties> value)
     : m_type(kTypeWebCLContextProperties)
@@ -280,6 +286,11 @@ PassRefPtr<WebCLMemoryObject> WebCLGetInfo::getWebCLMemoryObject() const
 {
     ASSERT(getType() == kTypeWebCLMemoryObject);
     return m_webCLMemoryObject;
+}
+PassRefPtr<WebCLPlatform> WebCLGetInfo::getWebCLPlatform() const
+{
+    ASSERT(getType() == kTypeWebCLPlatform);
+    return m_webCLPlatform;
 }
 PassRefPtr<WebCLContextProperties> WebCLGetInfo::getWebCLContextProperties() const
 {

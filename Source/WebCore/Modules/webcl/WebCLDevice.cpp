@@ -70,10 +70,8 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
         break;
     case ComputeContext::DEVICE_PROFILE:
         return WebCLGetInfo(String("WEBCL_PROFILE"));
-        break;
     case ComputeContext::DEVICE_VERSION:
         return WebCLGetInfo(String("WebCL 1.0"));
-        break;
     case ComputeContext::MEM_READ_ONLY:
     case ComputeContext::DEVICE_ADDRESS_BITS:
     case ComputeContext::DEVICE_MAX_CONSTANT_ARGS:
@@ -134,35 +132,34 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_HOST_UNIFIED_MEMORY:
     case ComputeContext::DEVICE_IMAGE_SUPPORT:
         return WebCLGetInfo(true);
-        break;
     case ComputeContext::DEVICE_TYPE: {
         CCDeviceType type = 0;
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(type), &type);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(type));
-        }
         break;
+    }
     case ComputeContext::DEVICE_QUEUE_PROPERTIES: {
         CCCommandQueueProperties queueProperties = 0;
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(CCCommandQueueProperties), &queueProperties);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(queueProperties));
-        }
         break;
-    case ComputeContext::DEVICE_PLATFORM: { // cl_platform_id
-        char platformID[WebCL::CHAR_BUFFER_SIZE];
+    }
+    case ComputeContext::DEVICE_PLATFORM: {
+        CCPlatformID platformID = 0;
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(platformID), &platformID);
         if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(String(platformID));
-        }
+            return WebCLGetInfo(WebCLPlatform::create(platformID));
         break;
+    }
     case ComputeContext::DEVICE_LOCAL_MEM_TYPE: {
         CCDeviceLocalMemType localMemoryType = 0;
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(CCDeviceLocalMemType), &localMemoryType);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(localMemoryType));
-        }
         break;
+    }
     default:
         ec = WebCLException::FAILURE;
         ASSERT_NOT_REACHED();

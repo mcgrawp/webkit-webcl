@@ -50,6 +50,7 @@ class WebCLDevice;
 class WebCLImageDescriptor;
 class WebCLMemoryObject;
 class WebCLProgram;
+class WebCLPlatform;
 
 // A tagged union representing the result of get queries like
 // getParameter (encompassing getBooleanv, getIntegerv, getFloatv) and
@@ -79,6 +80,7 @@ public:
         kTypeWebCLDevice,
         kTypeWebCLDevices,
         kTypeWebCLMemoryObject,
+        kTypeWebCLPlatform,
         kTypeWebCLContextProperties
     };
 
@@ -101,6 +103,7 @@ public:
     explicit WebCLGetInfo(const Vector<RefPtr<WebCLDevice> >& value);
     explicit WebCLGetInfo(PassRefPtr<WebCLDevice> value);
     explicit WebCLGetInfo(PassRefPtr<WebCLMemoryObject> value);
+    explicit WebCLGetInfo(PassRefPtr<WebCLPlatform> value);
     explicit WebCLGetInfo(PassRefPtr<WebCLContextProperties> value);
 
     virtual ~WebCLGetInfo();
@@ -123,6 +126,7 @@ public:
     PassRefPtr<WebCLDevice> getWebCLDevice() const;
     Vector<RefPtr<WebCLDevice> > getWebCLDevices() const;
     PassRefPtr<WebCLMemoryObject> getWebCLMemoryObject() const;
+    PassRefPtr<WebCLPlatform> getWebCLPlatform() const;
     PassRefPtr<WebCLContextProperties> getWebCLContextProperties() const;
 
 private:
@@ -145,6 +149,7 @@ private:
     RefPtr<WebCLDevice> m_webCLDevice;
     Vector<RefPtr<WebCLDevice> > m_webCLDevices;
     RefPtr<WebCLMemoryObject> m_webCLMemoryObject;
+    RefPtr<WebCLPlatform> m_webCLPlatform;
     RefPtr<WebCLContextProperties> m_webCLContextProperties;
 };
 
