@@ -101,12 +101,12 @@ JSValue JSWebCL::createContext(JSC::ExecState* exec)
             for (size_t i = 0; i < devicesPtr.size(); ++i)
                 devices.append(devicesPtr[i]);
 
-            int deviceType;
+            int deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
             Identifier deviceTypeIdentifier(exec, "deviceType");
             if (jsAttrs->hasProperty(exec, deviceTypeIdentifier))
                 deviceType = jsAttrs->get(exec, deviceTypeIdentifier).toInt32(exec);
 
-            int sharedGroup;
+            int sharedGroup = 0;
             Identifier shareGroupIdentifier(exec, "shareGroup");
             if (jsAttrs->hasProperty(exec, shareGroupIdentifier))
                 sharedGroup = jsAttrs->get(exec, shareGroupIdentifier).toInt32(exec);
