@@ -126,10 +126,15 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
             return WebCLGetInfo(static_cast<unsigned long>(infoValue));
         break;
     }
-    // FIXME: 3 options below are mis implemented.
     case ComputeContext::DEVICE_AVAILABLE:
     case ComputeContext::DEVICE_ENDIAN_LITTLE:
-    case ComputeContext::DEVICE_HOST_UNIFIED_MEMORY:
+    case ComputeContext::DEVICE_HOST_UNIFIED_MEMORY: {
+        CCbool infoValue = 0;
+        err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(CCbool), &infoValue);
+        if (err == ComputeContext::SUCCESS)
+            return WebCLGetInfo(static_cast<bool>(infoValue));
+        break;
+    }
     case ComputeContext::DEVICE_IMAGE_SUPPORT:
         return WebCLGetInfo(true);
     case ComputeContext::DEVICE_TYPE: {
