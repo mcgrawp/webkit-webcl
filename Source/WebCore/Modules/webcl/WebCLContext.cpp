@@ -334,6 +334,11 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBaseImage(int flags, int width
 {
     CCerror createImage2DError;
     cl_mem clMemImage = 0;
+
+    if (!width || !height) {
+        ec = WebCLException::INVALID_IMAGE_SIZE;
+        return 0;
+    }
     clMemImage = m_computeContext->createImage2D(flags, width, height, imageFormat, data, createImage2DError);
     if (!clMemImage) {
         ASSERT(createImage2DError != ComputeContext::SUCCESS);
@@ -479,23 +484,22 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, ImageData* data, Exc
 // FIXME ISSUE #35 Need to rename this to createImage(int flags, WebCLImageDescriptor* descriptor...)
 PassRefPtr<WebCLImage> WebCLContext::createImageWithDescriptor(int flags, WebCLImageDescriptor* descriptor, ArrayBuffer* data, ExceptionCode& ec)
 {
-    int width = 0;
-    int height = 0;
-
     if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
-        ec = WebCLException::FAILURE;
-        return 0;
-    }
-    if (descriptor) {
-        width =  descriptor->width();
-        height = descriptor->height();
-    } else {
-        printf("Error: descriptor is null\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
     ComputeContext::ImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
+    int width = 0;
+    int height = 0;
+    if (descriptor) {
+        width =  descriptor->width();
+        height = descriptor->height();
+        imageFormat.channelOrder = descriptor->channelOrder();
+        imageFormat.channelDataType = descriptor->channelType();
+    } else {
+        ec = WebCLException::INVALID_IMAGE_FORMAT_DESCRIPTOR;
+        return 0;
+    }
     return createImage2DBaseImage(flags, width, height, imageFormat, data->data(), ec);
 }
 
