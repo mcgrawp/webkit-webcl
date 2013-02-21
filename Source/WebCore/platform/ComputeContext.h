@@ -319,8 +319,8 @@ public:
     static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, unsigned int deviceType, CCerror& error);
     ~ComputeContext();
 
-    static CCint platformIDs(CCuint, CCPlatformID*, CCerror&);
-    static CCint deviceIDs(CCPlatformID, CCDeviceType, CCuint, CCDeviceID*, CCerror&);
+    static CCerror getPlatformIDs(Vector<CCPlatformID>&);
+    static CCerror getDeviceIDs(CCPlatformID, CCDeviceType, Vector<CCDeviceID>&);
     static CCerror waitForEvents(const Vector<CCEvent>&);
 
     CCCommandQueue createCommandQueue(CCDeviceID deviceId, int properties, CCerror& error);

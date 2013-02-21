@@ -55,24 +55,19 @@ WebCL::~WebCL()
 Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec) const
 {
     CCerror error;
-    Vector<RefPtr<WebCLPlatform> > webCLPlatformList;
-    CCint numberOfPlatforms = ComputeContext::platformIDs(0, 0, error);
+    Vector<RefPtr<WebCLPlatform> > webCLPlatforms;
+    Vector<CCPlatformID> ccPlatforms;
+
+    error = ComputeContext::getPlatformIDs(ccPlatforms);
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return webCLPlatformList;
+        return webCLPlatforms;
     }
 
-    Vector<CCPlatformID> platformIDs(numberOfPlatforms);
-    ComputeContext::platformIDs(numberOfPlatforms, platformIDs.data(), error);
-    if (error != ComputeContext::SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return webCLPlatformList;
-    }
+    for (size_t i = 0; i < ccPlatforms.size(); ++i)
+        webCLPlatforms.append(WebCLPlatform::create(ccPlatforms[i]));
 
-    for (int i = 0; i < numberOfPlatforms; ++i)
-        webCLPlatformList.append(WebCLPlatform::create(platformIDs[i]));
-
-    return webCLPlatformList;
+    return webCLPlatforms;
 }
 
 WebCLGetInfo WebCL::getImageInfo(WebCLImage* image, cl_image_info paramName, ExceptionCode& ec)
@@ -173,52 +168,29 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties
     int numberOfDevices = 0;
     CCerror error = 0;
     // FIXME: Hardcoding '5' here, as it is enough number of devices in real world.
-    Vector<CCDeviceID, 5> ccDevices;
+    Vector<CCDeviceID> ccDevices;
     if (properties && properties->devices().size()) {
         numberOfDevices = properties->devices().size();
         for (int i = 0; i < numberOfDevices; ++i)
             ccDevices.append(properties->devices()[i]->getCLDevice());
     } else {
-        CCint numberOfPlatforms = ComputeContext::platformIDs(0, 0, error);
-        if (!numberOfPlatforms) {
-            ec = WebCLException::INVALID_PLATFORM;
-            return 0;
-        }
-
+        Vector<CCPlatformID> ccPlatforms;
+        error = ComputeContext::getPlatformIDs(ccPlatforms);
         if (error != ComputeContext::SUCCESS) {
             ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
             return 0;
         }
 
-        Vector<CCPlatformID> platforms;
-        if (!platforms.tryReserveCapacity(numberOfPlatforms)) {
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            return 0;
-        }
-        platforms.resize(numberOfPlatforms);
-
-        // Return value can be ignored this time.
-        ComputeContext::platformIDs(numberOfPlatforms, platforms.data(), error);
+        error = ComputeContext::getDeviceIDs(ccPlatforms[0], ComputeContext::DEVICE_TYPE_DEFAULT, ccDevices);
         if (error != ComputeContext::SUCCESS) {
             ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
             return 0;
         }
 
-        numberOfDevices = ComputeContext::deviceIDs(platforms[0], ComputeContext::DEVICE_TYPE_DEFAULT, 1, 0, error);
-        if (error != ComputeContext::SUCCESS) {
-            ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-            return 0;
-        }
-
+        numberOfDevices = ccDevices.size();
         // Hardcoding '5' here, as it is enough number of devices in real world.
         ASSERT(numberOfDevices <= 5);
 
-        // Return value can be ignored this time.
-        ComputeContext::deviceIDs(platforms[0], ComputeContext::DEVICE_TYPE_DEFAULT, 1, ccDevices.data(), error);
-        if (error != ComputeContext::SUCCESS) {
-            ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-            return 0;
-        }
     }
 
     this->setCLDeviceID(ccDevices.data());

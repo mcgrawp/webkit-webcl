@@ -524,22 +524,34 @@ PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextPr
     return computeContext.release();
 }
 
-CCint ComputeContext::platformIDs(CCuint numberEntries, CCPlatformID* platforms, CCerror& error)
+CCerror ComputeContext::getPlatformIDs(Vector<CCPlatformID>& ccPlatforms)
 {
     cl_uint numberOfPlatforms;
-    cl_int clError = clGetPlatformIDs(numberEntries, platforms, &numberOfPlatforms);
+    cl_int clError = clGetPlatformIDs(0, 0, &numberOfPlatforms);
+    if (clError != CL_SUCCESS)
+        return clToComputeContextError(clError);
 
-    error = clToComputeContextError(clError);
-    return numberOfPlatforms;
+    if (!ccPlatforms.tryReserveCapacity(numberOfPlatforms))
+        return OUT_OF_HOST_MEMORY;
+    ccPlatforms.resize(numberOfPlatforms);
+
+    clError = clGetPlatformIDs(numberOfPlatforms, ccPlatforms.data(), 0);
+    return clToComputeContextError(clError);
 }
 
-CCint ComputeContext::deviceIDs(CCPlatformID platform, CCDeviceType deviceType, CCuint numberEntries, CCDeviceID* devices, CCerror& error)
+CCerror ComputeContext::getDeviceIDs(CCPlatformID platform, CCDeviceType deviceType, Vector<CCDeviceID>& ccDevices)
 {
     cl_uint numberOfDevices;
-    cl_int clError = clGetDeviceIDs(platform, deviceType, numberEntries, devices, &numberOfDevices);
+    cl_int clError = clGetDeviceIDs(platform, deviceType, 0, 0, &numberOfDevices);
+    if (clError != CL_SUCCESS)
+        return clToComputeContextError(clError);
 
-    error = clToComputeContextError(clError);
-    return numberOfDevices;
+    if (!ccDevices.tryReserveCapacity(numberOfDevices))
+        return OUT_OF_HOST_MEMORY;
+    ccDevices.resize(numberOfDevices);
+
+    clError = clGetDeviceIDs(platform, deviceType, numberOfDevices, ccDevices.data(), 0);
+    return clToComputeContextError(clError);
 }
 
 CCerror ComputeContext::waitForEvents(const Vector<CCEvent>& events)

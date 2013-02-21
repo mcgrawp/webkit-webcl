@@ -88,15 +88,8 @@ Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(int deviceType, Exception
     }
 
     deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
-    CCerror error;
-    CCint devicesSize = ComputeContext::deviceIDs(m_cl_platform_id, deviceType, 0, 0, error);
-    if (error != ComputeContext::SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return devices;
-    }
-
-    Vector<CCDeviceID> ccDevices(devicesSize);
-    ComputeContext::deviceIDs(m_cl_platform_id, deviceType, ccDevices.size(), ccDevices.data(), error);
+    Vector<CCDeviceID> ccDevices;
+    CCerror error = ComputeContext::getDeviceIDs(m_cl_platform_id, deviceType, ccDevices);
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return devices;
