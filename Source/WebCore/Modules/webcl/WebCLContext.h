@@ -115,14 +115,6 @@ public:
     PassRefPtr<WebCLImage> createImage(int, HTMLImageElement*, ExceptionCode&);
     PassRefPtr<WebCLImage> createImage(int, HTMLVideoElement*, ExceptionCode&);
 
-    // FIXME :: API not in Specs but used in Conformance test suit. Please
-    // remove it in future
-    PassRefPtr<WebCLMemoryObject> createImage2D(int, HTMLCanvasElement*, ExceptionCode&);
-    PassRefPtr<WebCLMemoryObject> createImage2D(int, HTMLImageElement*, ExceptionCode&);
-    PassRefPtr<WebCLMemoryObject> createImage2D(int, HTMLVideoElement*, ExceptionCode&);
-    PassRefPtr<WebCLMemoryObject> createImage2D(int, ImageData*, ExceptionCode&);
-    PassRefPtr<WebCLMemoryObject> createImage2D(int , unsigned , unsigned , ArrayBuffer* , ExceptionCode&);
-
     class LRUImageBufferCache {
     public:
         LRUImageBufferCache(int capacity);

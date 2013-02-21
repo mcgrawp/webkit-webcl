@@ -396,18 +396,25 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLImageElement* im
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
+
     if (image) {
         width = (cl_uint) image->width();
         height = (cl_uint) image->height();
         cachedImage = image->cachedImage();
         if (cachedImage) {
+#if 0
+            // FIXME: Is this useful?
+            data = (void*) cachedImage->image()->data()->data();
+#else
             IntRect rect(0, 0, width, height);
             buffer = ImageBuffer::create(IntSize(width, height));
             buffer->context()->drawImage(cachedImage->image(), ColorSpaceDeviceRGB, rect);
             byteArray = buffer->getUnmultipliedImageData(rect);
             data = byteArray->data();
+#endif
         }
     }
+
     if (!data) {
         ec = WebCLException::FAILURE;
         printf("Error: Invalid HTMLImageElement object in createImage\n");
@@ -704,139 +711,6 @@ Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(int
     for (size_t i = 0; i < numberOfSupportedImages; ++i)
         imageDescriptors.append(WebCLImageDescriptor::create(imageFormats[i]));
     return imageDescriptors;
-}
-
-PassRefPtr<WebCLMemoryObject> WebCLContext::createImage2D(int flags, unsigned width, unsigned height, ArrayBuffer* data, ExceptionCode& ec)
-{
-    if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
-        ec = WebCLException::FAILURE;
-        return 0;
-    }
-    ComputeContext::ImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBaseMemory(flags, width, height, imageFormat, data->data(), ec);
-}
-
-
-PassRefPtr<WebCLMemoryObject> WebCLContext::createImage2D(int flags, HTMLCanvasElement* canvasElement, ExceptionCode& ec)
-{
-    cl_uint width = 0;
-    cl_uint height = 0;
-    ImageBuffer* imageBuffer = 0;
-    RefPtr<Uint8ClampedArray> bytearray = 0;
-    void* image = 0;
-
-    if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
-        ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-
-    if (canvasElement) {
-        width = (cl_uint) canvasElement->width();
-        height = (cl_uint) canvasElement->height();
-        imageBuffer = canvasElement->buffer();
-        if (imageBuffer) {
-            bytearray = imageBuffer->getUnmultipliedImageData(IntRect(0, 0, width, height));
-            if (bytearray)
-                image = (void*) bytearray->data();
-        }
-    }
-    if (!image) {
-        printf("Error:: createImage2D canvasElement is invalid.\n");
-        ec = WebCLException::FAILURE;
-        return 0;
-    }
-    ComputeContext::ImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBaseMemory(flags, width, height, imageFormat, image, ec);
-}
-
-PassRefPtr<WebCLMemoryObject> WebCLContext::createImage2D(int flags, HTMLImageElement* image, ExceptionCode& ec)
-{
-    int width = 0;
-    int height = 0;
-    CachedImage* cachedImage = 0;
-    void* imageObj = 0;
-    if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
-        ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-    if (image) {
-        width = (cl_uint) image->width();
-        height = (cl_uint) image->height();
-        cachedImage = image->cachedImage();
-        if (cachedImage)
-            imageObj = (void*)cachedImage->image()->data()->data();
-    }
-    if (!imageObj) {
-        ec = WebCLException::FAILURE;
-        printf("Error: Invalid image object in createImage2D\n");
-        return 0;
-    }
-    ComputeContext::ImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBaseMemory(flags, width, height, imageFormat, imageObj, ec);
-}
-
-PassRefPtr<WebCLMemoryObject> WebCLContext::createImage2D(int flags, HTMLVideoElement* video, ExceptionCode& ec)
-{
-    int width = 0;
-    int height = 0;
-    RefPtr<Image> image = 0;
-    SharedBuffer* sharedBuffer = 0;
-    void* imageData = 0;
-
-    if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
-        ec = WebCLException::FAILURE;
-        return 0;
-    }
-    if (video) {
-        width =  video->width();
-        height = video->height();
-        image = videoFrameToImage(video);
-        if (image) {
-            sharedBuffer = image->data();
-            if (sharedBuffer)
-                imageData = (void*) sharedBuffer->data();
-        }
-    }
-    if (!imageData) {
-        printf("Error: videoFrameToImage failed to convert.\n");
-        ec = WebCLException::FAILURE;
-        return 0;
-    }
-    ComputeContext::ImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBaseMemory(flags, width, height, imageFormat, imageData, ec);
-}
-
-PassRefPtr<WebCLMemoryObject> WebCLContext::createImage2D(int flags, ImageData* data, ExceptionCode& ec)
-{
-    int width = 0;
-    int height = 0;
-    Uint8ClampedArray* bytearray = 0;
-
-    if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
-        ec = WebCLException::FAILURE;
-        return 0;
-    }
-    if (data) {
-        if (data->data()) {
-            bytearray = data->data();
-            if (!bytearray)
-                return 0;
-        }
-        width = (cl_uint) data->width();
-        height = (cl_uint) data->height();
-    } else {
-        printf("Error: canvasElement null\n");
-        ec = WebCLException::FAILURE;
-        return 0;
-    }
-
-    ComputeContext::ImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBaseMemory(flags, width, height, imageFormat, bytearray->data(), ec);
 }
 
 } // namespace WebCore
