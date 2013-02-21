@@ -629,10 +629,8 @@ PassRefPtr<WebCLEvent> WebCLContext::createUserEvent(ExceptionCode& ec)
             break;
         }
     } else {
-        // FIXME:: Need to solve once WebCLEvent is merged.
-        // RefPtr<WebCLEvent> result_event = WebCLEvent::create(m_context, event);
-        // return result_event;
-        return 0;
+        RefPtr<WebCLEvent> resultEvent = WebCLEvent::create(this, event);
+        return resultEvent;
     }
     return 0;
 }

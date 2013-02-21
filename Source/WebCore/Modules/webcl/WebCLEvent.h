@@ -1,17 +1,17 @@
 /*
 * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
 * are met:
-* 
+*
 * 1.  Redistributions of source code must retain the above copyright
 *     notice, this list of conditions and the following disclaimer.
-* 
+*
 * 2.  Redistributions in binary form must reproduce the above copyright
 *     notice, this list of conditions and the following disclaimer in the
 *     documentation and/or other materials provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
 * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -32,41 +32,27 @@
 #include "WebCLFinishCallback.h"
 #include "WebCLGetInfo.h"
 
-#include <OpenCL/opencl.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-
 namespace WebCore {
 
-class WebCL;
-class WebCLEvent;
 class WebCLContext;
 
 class WebCLEvent : public RefCounted<WebCLEvent> {
 public:
     virtual ~WebCLEvent();
-    static PassRefPtr<WebCLEvent> create(WebCLContext*, cl_event);
+    static PassRefPtr<WebCLEvent> create(WebCLContext*, CCEvent);
     WebCLGetInfo getInfo(int, ExceptionCode&);
     WebCLGetInfo getProfilingInfo(int, ExceptionCode&);
+    void setUserEventStatus(int, ExceptionCode&);
     void setCallback(int, PassRefPtr<WebCLFinishCallback>, int , ExceptionCode&);
-    void setUserEventStatus (int, ExceptionCode&);
-    cl_event getCLEvent();
+
+    CCEvent getCLEvent();
     RefPtr<WebCLFinishCallback> m_finishCallback;
     WebCLContext* getContext();
-    int b;
-
 private:
-    WebCLEvent(WebCLContext*, cl_event);
-    //void CL_CALLBACK execComplete(cl_event ev, cl_int event_status, void* user_data) const;
-    //static void CL_CALLBACK execComplete(cl_event ev, cl_int event_status, void* this_pointer);
-    static void execComplete(cl_event ev, cl_int event_status, void* this_pointer);
-    static void callme(void* this_poonter);
+    WebCLEvent(WebCLContext*, CCEvent);
     WebCLContext* m_context;
-    Vector<RefPtr<WebCLEvent> > m_event_list;
-    cl_event m_cl_Event;
-    long m_num_events;
-    static WebCLEvent *this_pointer;
+    CCEvent m_clEvent;
+    static WebCLEvent* thisPointer;
 };
 
 } // namespace WebCore

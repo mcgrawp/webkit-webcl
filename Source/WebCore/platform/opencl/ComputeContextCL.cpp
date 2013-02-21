@@ -741,6 +741,11 @@ CCerror ComputeContext::getCommandQueueInfo(CCCommandQueue queue, int infoType, 
    cl_int error = clGetCommandQueueInfo(queue, clCommandQueueInfoType, sizeOfData, data, 0);
    return clToComputeContextError(error);
 }
+CCerror ComputeContext::releaseEvent(CCEvent ccevent)
+{
+    cl_int error = clReleaseEvent(ccevent);
+    return clToComputeContextError(error);
+}
 
 CCerror ComputeContext::enqueueNDRangeKernel(CCCommandQueue commandQueue, CCKernel kernelID, int workItemDimensions,
     size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event)

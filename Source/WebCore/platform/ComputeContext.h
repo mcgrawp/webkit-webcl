@@ -380,6 +380,7 @@ public:
         int targetRowPitch, int targetSlicePitch, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
 
     CCerror releaseCommandQueue(CCCommandQueue);
+    CCerror releaseEvent(CCEvent);
     CCerror finishCommandQueue(CCCommandQueue);
     CCerror flushCommandQueue(CCCommandQueue);
 
