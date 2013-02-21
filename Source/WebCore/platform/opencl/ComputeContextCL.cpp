@@ -233,6 +233,38 @@ static cl_command_queue_info computeCommandQueueInfoTypeToCL(int commandQueueInf
     return CL_INVALID_VALUE;
 }
 
+static cl_event_info computeEventInfoTypeToCL(int eventInfoType)
+{
+    switch (eventInfoType) {
+    case ComputeContext::EVENT_COMMAND_QUEUE:
+        return CL_EVENT_COMMAND_QUEUE;
+    case ComputeContext::EVENT_COMMAND_TYPE:
+        return CL_EVENT_COMMAND_TYPE;
+    case ComputeContext::EVENT_REFERENCE_COUNT:
+        return CL_EVENT_REFERENCE_COUNT;
+    case ComputeContext::EVENT_COMMAND_EXECUTION_STATUS:
+        return CL_EVENT_COMMAND_EXECUTION_STATUS;
+    }
+    ASSERT_NOT_REACHED();
+    return CL_INVALID_VALUE;
+}
+
+static cl_profiling_info computeEventProfilingInfoTypeToCL(int eventProfilingInfoType)
+{
+    switch (eventProfilingInfoType) {
+    case ComputeContext::PROFILING_COMMAND_QUEUED:
+        return CL_PROFILING_COMMAND_QUEUED;
+    case ComputeContext::PROFILING_COMMAND_SUBMIT:
+        return CL_PROFILING_COMMAND_SUBMIT;
+    case ComputeContext::PROFILING_COMMAND_START:
+        return CL_PROFILING_COMMAND_START;
+    case ComputeContext::PROFILING_COMMAND_END:
+        return CL_PROFILING_COMMAND_END;
+    }
+    ASSERT_NOT_REACHED();
+    return CL_INVALID_VALUE;
+}
+
 static CCerror clToComputeContextError(cl_int clError)
 {
     int computeContextError = CL_INVALID_VALUE;
@@ -741,6 +773,21 @@ CCerror ComputeContext::getCommandQueueInfo(CCCommandQueue queue, int infoType, 
    cl_int error = clGetCommandQueueInfo(queue, clCommandQueueInfoType, sizeOfData, data, 0);
    return clToComputeContextError(error);
 }
+
+CCerror ComputeContext::getEventInfo(CCEvent event, int infoType, size_t sizeOfData, void* data)
+{
+    cl_event_info clEventInfoType = computeEventInfoTypeToCL(infoType);
+    cl_int error = clGetEventInfo(event, clEventInfoType, sizeOfData, data, 0);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::getEventProfilingInfo(CCEvent event, int infoType, size_t sizeOfData, void* data)
+{
+    cl_profiling_info clEventProfilingInfoType = computeEventProfilingInfoTypeToCL(infoType);
+    cl_int error = clGetEventProfilingInfo(event, clEventProfilingInfoType, sizeOfData, data, 0);
+    return clToComputeContextError(error);
+}
+
 CCerror ComputeContext::releaseEvent(CCEvent ccevent)
 {
     cl_int error = clReleaseEvent(ccevent);

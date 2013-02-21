@@ -71,21 +71,21 @@ WebCLGetInfo WebCLEvent::getInfo(int paramName, ExceptionCode& ec)
     switch (paramName) {
     case ComputeContext::EVENT_COMMAND_EXECUTION_STATUS: {
         CCuint ccExecStatus = 0;
-        err = clGetEventInfo(m_clEvent, paramName, sizeof(CCuint), &ccExecStatus, 0);
+        err = ComputeContext::getEventInfo(m_clEvent, paramName, sizeof(CCuint), &ccExecStatus);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccExecStatus));
         }
         break;
     case ComputeContext::EVENT_COMMAND_TYPE: {
         CCCommandType ccCommandType = 0;
-        err = clGetEventInfo(m_clEvent, paramName, sizeof(CCCommandType), &ccCommandType, 0);
+        err= ComputeContext::getEventInfo(m_clEvent, paramName, sizeof(CCCommandType), &ccCommandType);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccCommandType));
         }
         break;
     case ComputeContext::EVENT_COMMAND_QUEUE: {
         CCCommandQueue ccCommandQueue = 0;
-        err = clGetEventInfo(m_clEvent, paramName, sizeof(CCCommandQueue), &ccCommandQueue, 0);
+        err = ComputeContext::getEventInfo(m_clEvent, paramName, sizeof(CCCommandQueue), &ccCommandQueue);
         RefPtr<WebCLCommandQueue> commandQueue = WebCLCommandQueue::create(m_context, ccCommandQueue);
         if (!commandQueue) {
             printf("SUCCESS: Cl Event Command Queue\n");
@@ -97,13 +97,12 @@ WebCLGetInfo WebCLEvent::getInfo(int paramName, ExceptionCode& ec)
         break;
     /* FIXME:: Cannot create Context here.
     case ComputeContext::EVENT_CONTEXT: {
-        err = clGetEventInfo(m_clEvent, paramName, sizeof(my_context), my_context, 0);;
+        err = ComputeContext::getEventInfo(m_clEvent, paramName, sizeof(myContext), myContext);;
         if (err == CL_SUCCESS)
-            return WebCLGetInfo((String)my_context);
+            return WebCLGetInfo((String)myContext);
         }
         break; */
     default:
-        printf("Error: Unsupported Event Info type\n");
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
@@ -125,19 +124,17 @@ WebCLGetInfo WebCLEvent::getProfilingInfo(int paramName, ExceptionCode& ec)
     case ComputeContext::PROFILING_COMMAND_START:
     case ComputeContext::PROFILING_COMMAND_END: {
         CCulong eventProfilingInfo = 0;
-        err = clGetEventProfilingInfo(m_clEvent, paramName, sizeof(CCulong), &eventProfilingInfo, 0);
+        err = ComputeContext::getEventProfilingInfo(m_clEvent, paramName, sizeof(CCulong), &eventProfilingInfo);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(eventProfilingInfo));
         }
         break;
     default:
-        printf("Error: Unsupported Profiling Info type\n");
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
     ASSERT(err != CL_SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-
     return WebCLGetInfo();
 }
 
