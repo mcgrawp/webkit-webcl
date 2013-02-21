@@ -488,8 +488,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, ImageData* data, Exc
     return createImage2DBaseImage(flags, width, height, imageFormat, (void*) bytearray->data(), ec);
 }
 
-// FIXME ISSUE #35 Need to rename this to createImage(int flags, WebCLImageDescriptor* descriptor...)
-PassRefPtr<WebCLImage> WebCLContext::createImageWithDescriptor(int flags, WebCLImageDescriptor* descriptor, ArrayBuffer* data, ExceptionCode& ec)
+PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, WebCLImageDescriptor* descriptor, ArrayBuffer* data, ExceptionCode& ec)
 {
     if (!m_clContext) {
         ec = WebCLException::INVALID_CONTEXT;

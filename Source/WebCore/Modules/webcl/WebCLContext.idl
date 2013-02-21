@@ -49,16 +49,14 @@ module webcl {
 
     WebCLSampler createSampler(in boolean normCords , in long addrMode , in long fltrMode) raises(DOMException);
 
-    WebCLImage createImage(in long flags , in ImageData data) raises(DOMException);
-    WebCLImage createImage(in long flags , in HTMLCanvasElement canvasElement) raises (DOMException);
-    WebCLImage createImage(in long flags , in HTMLImageElement imageElement) raises(DOMException);
-    WebCLImage createImage(in long flags , in HTMLVideoElement videoElement) raises(DOMException);
-
-    [StrictTypeChecking , Custom] WebCLImage createImageWithDescriptor(
-        in long flags
-        , in WebCLImageDescriptor descriptor
-        , in [Optional] ArrayBuffer srcBuffer ) raises(DOMException);
-
+    // FIXME: Use overloading provided by our IDL code generator when
+    // WebIDL dictionary gets fully supported: issue #110.
+    [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in HTMLCanvasElement canvasElement) raises (DOMException);
+    [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in ImageData data) raises(DOMException);
+    [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in HTMLVideoElement videoElement) raises(DOMException);
+    [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in HTMLImageElement imageElement) raises(DOMException);
+    [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in WebCLImageDescriptor descriptor,
+        in [Optional] ArrayBuffer srcBuffer) raises(DOMException);
 
     WebCLBuffer createFromGLBuffer(in long flags , in WebGLBuffer bufobj) raises(DOMException);
 
