@@ -591,6 +591,8 @@ PlatformComputeObject ComputeContext::createBuffer(int type, size_t size, void* 
     cl_mem clMemoryBuffer;
     cl_int clError;
     cl_int memoryType = computeMemoryTypeToCL(type);
+    if (data)
+        memoryType = memoryType | ComputeContext::MEM_COPY_HOST_PTR;
 
     clMemoryBuffer = clCreateBuffer(m_clContext, memoryType, size, data, &clError);
     error = clToComputeContextError(clError);
@@ -604,8 +606,9 @@ PlatformComputeObject ComputeContext::createImage2D(int type, int width, int hei
     cl_int memoryImageError = CL_SUCCESS;
     cl_image_format clImageFormat = computeImageFormatToCL(imageFormat);
 
-    // FIXME: verify if CL_MEM_USE_HOST_PTR is necessary
     cl_int memoryType = computeMemoryTypeToCL(type);
+    if (data)
+        memoryType = memoryType | ComputeContext::MEM_COPY_HOST_PTR;
 
 #if defined(CL_VERSION_1_2)
     cl_image_desc clImageDescriptor;
