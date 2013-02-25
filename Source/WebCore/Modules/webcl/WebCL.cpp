@@ -163,19 +163,13 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties
 
     // FIXME: (Issue #25) WebCLContextProperties::objhint not used.
 
-    // FIXME: Once we get rid of WebCLEventList (Issue #73), we will
-    // be able to get rid of 'clDevices'.
-    int numberOfDevices = 0;
-    CCerror error = 0;
-    // FIXME: Hardcoding '5' here, as it is enough number of devices in real world.
     Vector<CCDeviceID> ccDevices;
     if (properties && properties->devices().size()) {
-        numberOfDevices = properties->devices().size();
-        for (int i = 0; i < numberOfDevices; ++i)
+        for (size_t i = 0; i < properties->devices().size(); ++i)
             ccDevices.append(properties->devices()[i]->getCLDevice());
     } else {
         Vector<CCPlatformID> ccPlatforms;
-        error = ComputeContext::getPlatformIDs(ccPlatforms);
+        CCerror error = ComputeContext::getPlatformIDs(ccPlatforms);
         if (error != ComputeContext::SUCCESS) {
             ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
             return 0;
@@ -186,16 +180,10 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties
             ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
             return 0;
         }
-
-        numberOfDevices = ccDevices.size();
-        // Hardcoding '5' here, as it is enough number of devices in real world.
-        ASSERT(numberOfDevices <= 5);
-
     }
 
-    this->setCLDeviceID(ccDevices.data());
-
-    RefPtr<WebCLContext> webCLContext = WebCLContext::create(this, propIndex ? contextProperties : 0, numberOfDevices, ccDevices.data(), error);
+    CCerror error = ComputeContext::SUCCESS;
+    RefPtr<WebCLContext> webCLContext = WebCLContext::create(this, propIndex ? contextProperties : 0, ccDevices, error);
     if (!webCLContext) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
@@ -216,15 +204,6 @@ Vector<String> WebCL::getSupportedExtensions(ExceptionCode&)
     return Vector<String>();
 }
 
-void WebCL::setCLDeviceID(cl_device_id* deviceID)
-{
-    this->m_cldeviceid = deviceID;
-}
-
-cl_device_id* WebCL::getCLDeviceID()
-{
-    return this->m_cldeviceid;
-}
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

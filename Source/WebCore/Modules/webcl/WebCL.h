@@ -75,14 +75,11 @@ public:
     Vector<String> getSupportedExtensions(ExceptionCode&);
 
     static PassRefPtr<WebCL> create();
-    void setCLDeviceID(cl_device_id*);
-    cl_device_id* getCLDeviceID();
     WebCLGetInfo getImageInfo(WebCLImage*, cl_image_info, ExceptionCode&);
 private:
     WebCL();
     void checkMemObject(cl_mem);
     RefPtr<WebCLContext> m_context;
-    cl_device_id* m_cldeviceid;
 };
 
 } // namespace WebCore

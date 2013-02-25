@@ -54,20 +54,21 @@ WebCLContext::~WebCLContext()
 }
 
 // FIXME: Use Vector<CCDeviceID> and collapse 'numberDevices' and 'devices'.
-PassRefPtr<WebCLContext> WebCLContext::create(WebCL* context, CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID *devices, CCerror& error)
+PassRefPtr<WebCLContext> WebCLContext::create(WebCL* context, CCContextProperties* contextProperties, const Vector<CCDeviceID>& devices, CCerror& error)
 {
-    RefPtr<ComputeContext> computeContext = ComputeContext::create(contextProperties, numberDevices, devices, error);
+    RefPtr<ComputeContext> computeContext = ComputeContext::create(contextProperties, devices, error);
     if (!computeContext) {
         ASSERT(error != ComputeContext::SUCCESS);
         return 0;
     }
 
-    return adoptRef(new WebCLContext(context, computeContext));
+    return adoptRef(new WebCLContext(context, computeContext, devices));
 }
 
-WebCLContext::WebCLContext(WebCL* context, RefPtr<ComputeContext>& computeContext)
+WebCLContext::WebCLContext(WebCL* context, RefPtr<ComputeContext>& computeContext, const Vector<CCDeviceID>& devices)
     : m_videoCache(4) // FIXME: Why '4'?
     , m_context(context)
+    , m_devices(devices)
 {
     m_computeContext = computeContext;
     m_clContext = m_computeContext->context();
@@ -163,24 +164,27 @@ WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
 
 PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* device, int commandQueueProp, ExceptionCode& ec)
 {
-    UNUSED_PARAM(device);
-
     if (!m_clContext) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
 
     CCDeviceID ccDevice;
-    if (device)
+    if (!device) {
+        CCCommandQueueProperties queueProperties = 0;
+        // NOTE: This can be slow, depending the number of 'devices' available.
+        for (size_t i = 0; i < m_devices.size(); ++i) {
+            CCerror error = ComputeContext::getDeviceInfo(m_devices[i], ComputeContext::DEVICE_QUEUE_PROPERTIES, sizeof(CCCommandQueueProperties), &queueProperties);
+            if (error == ComputeContext::SUCCESS
+                && queueProperties == static_cast<CCCommandQueueProperties>(commandQueueProp)) {
+                ccDevice = m_devices[i];
+                break;
+            }
+        }
+    } else
         ccDevice = device->getCLDevice();
-    else
-        ccDevice = *m_context->getCLDeviceID();
 
-    //  Creates a new command queue for the devices in the given array.
-    // If devices is null, the WebCL implementation will select any single WebCLDevice that matches the given properties and is covered by this WebCLContext.
-    // If properties is omitted, the command queue is created with out-of-order execution disabled and profiling disabled
-
-    CCerror error = 0;
+    CCerror error = ComputeContext::SUCCESS;
     CCCommandQueue clCommandqueueID = m_computeContext->createCommandQueue(ccDevice, commandQueueProp, error);
     if (!clCommandqueueID) {
         ASSERT(error != ComputeContext::SUCCESS);

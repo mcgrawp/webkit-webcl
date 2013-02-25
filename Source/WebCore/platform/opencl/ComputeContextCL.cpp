@@ -237,10 +237,10 @@ static cl_mem_flags computeMemoryTypeToCL(int memoryType)
     return clMemoryType;
 }
 
-ComputeContext::ComputeContext(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror& error)
+ComputeContext::ComputeContext(CCContextProperties* contextProperties, const Vector<CCDeviceID>& devices, CCerror& error)
 {
     cl_int clError;
-    m_clContext = clCreateContext(contextProperties, numberDevices, devices, 0, 0, &clError);
+    m_clContext = clCreateContext(contextProperties, devices.size(), devices.data(), 0, 0, &clError);
     error = clToComputeContextError(clError);
 }
 
@@ -277,9 +277,9 @@ ComputeContext::~ComputeContext()
     clReleaseContext(m_clContext);
 }
 
-PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, CCuint numberDevices, CCDeviceID* devices, CCerror& error)
+PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, const Vector<CCDeviceID>& devices, CCerror& error)
 {
-    RefPtr<ComputeContext> computeContext =  adoptRef(new ComputeContext(contextProperties, numberDevices, devices, error));
+    RefPtr<ComputeContext> computeContext =  adoptRef(new ComputeContext(contextProperties, devices, error));
     if (!computeContext) {
         ASSERT(error != ComputeContext::SUCCESS);
         return 0;
