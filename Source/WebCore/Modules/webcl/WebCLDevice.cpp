@@ -78,7 +78,6 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
         return WebCLGetInfo(String("WEBCL_PROFILE"));
     case ComputeContext::DEVICE_VERSION:
         return WebCLGetInfo(String("WebCL 1.0"));
-    case ComputeContext::MEM_READ_ONLY:
     case ComputeContext::DEVICE_ADDRESS_BITS:
     case ComputeContext::DEVICE_MAX_CONSTANT_ARGS:
     case ComputeContext::DEVICE_MAX_READ_IMAGE_ARGS: // unsigned int
@@ -172,8 +171,7 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
         break;
     }
     default:
-        ec = WebCLException::FAILURE;
-        ASSERT_NOT_REACHED();
+        ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
 
