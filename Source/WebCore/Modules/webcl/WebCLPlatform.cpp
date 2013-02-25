@@ -54,28 +54,20 @@ WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
 {
     if (!m_cl_platform_id) {
         ec = WebCLException::INVALID_PLATFORM;
-        printf("Error: Invalid Platform ID\n");
         return WebCLGetInfo();
     }
 
-    CCerror err = 0;
     switch(platform_info) {
     case ComputeContext::PLATFORM_PROFILE:
-    case ComputeContext::PLATFORM_VERSION: {
-        char platform_string[1024];
-        err = ComputeContext::getPlatformInfo(m_cl_platform_id, platform_info, sizeof(platform_string), &platform_string);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(String(platform_string));
-        break;
-    }
+        return WebCLGetInfo(String("WEBCL_PROFILE"));
+    case ComputeContext::PLATFORM_VERSION:
+        return WebCLGetInfo(String("WebCL 1.0"));
     default:
-        printf("Error: Unsupported Platform Info type = %d ", platform_info);
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
 
-    ASSERT(err != CL_SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    ASSERT_NOT_REACHED();
     return WebCLGetInfo();
 }
 
