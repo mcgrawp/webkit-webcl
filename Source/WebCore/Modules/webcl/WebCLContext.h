@@ -132,8 +132,7 @@ public:
 private:
     WebCLContext(WebCL*, RefPtr<ComputeContext>& computeContext);
     // WebCLContext(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType, int* error);
-    PassRefPtr<WebCLMemoryObject> createImage2DBaseMemory(int , int , int , const ComputeContext::ImageFormat& , void*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createImage2DBaseImage(int , int , int , const ComputeContext::ImageFormat& , void*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage2DBase(int , int , int , const ComputeContext::ImageFormat& , void*, ExceptionCode&);
 
     void ensureCachedContextProperties();
 
