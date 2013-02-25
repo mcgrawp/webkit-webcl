@@ -33,6 +33,7 @@
 
 #include "WebCL.h"
 #include "WebCLException.h"
+#include "WebCLInputChecker.h"
 
 namespace WebCore {
 
@@ -55,6 +56,11 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
     if (!m_ccDeviceID) {
         printf("Error: Invalid Device ID\n");
         ec = WebCLException::INVALID_DEVICE;
+        return WebCLGetInfo();
+    }
+
+    if (!WebCLInputChecker::isValidDeviceInfoType(infoType)) {
+        ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
 

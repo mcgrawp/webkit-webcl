@@ -37,150 +37,6 @@
 
 namespace WebCore {
 
-static cl_device_info computeDeviceInfoTypeToCL(int deviceInfoType)
-{
-    switch (deviceInfoType) {
-    case ComputeContext::MEM_READ_ONLY:
-        return CL_MEM_READ_ONLY;
-    case ComputeContext::DEVICE_EXTENSIONS:
-        return CL_DEVICE_EXTENSIONS;
-    case ComputeContext::DEVICE_NAME:
-        return CL_DEVICE_NAME;
-    case ComputeContext::DEVICE_PROFILE:
-        return CL_DEVICE_PROFILE;
-    case ComputeContext::DEVICE_VENDOR:
-        return CL_DEVICE_VENDOR;
-    case ComputeContext::DEVICE_VERSION:
-        return CL_DEVICE_VERSION;
-    case ComputeContext::DEVICE_OPENCL_C_VERSION:
-        return CL_DEVICE_OPENCL_C_VERSION;
-    case ComputeContext::DRIVER_VERSION:
-        return CL_DRIVER_VERSION;
-    case ComputeContext::DEVICE_ADDRESS_BITS:
-        return CL_DEVICE_ADDRESS_BITS;
-    case ComputeContext::DEVICE_GLOBAL_MEM_CACHELINE_SIZE:
-        return CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE;
-    case ComputeContext::DEVICE_MAX_CLOCK_FREQUENCY:
-        return CL_DEVICE_MAX_CLOCK_FREQUENCY;
-    case ComputeContext::DEVICE_MAX_CONSTANT_ARGS:
-        return CL_DEVICE_MAX_CONSTANT_ARGS;
-    case ComputeContext::DEVICE_MAX_READ_IMAGE_ARGS:
-        return CL_DEVICE_MAX_READ_IMAGE_ARGS;
-    case ComputeContext::DEVICE_MAX_SAMPLERS:
-        return CL_DEVICE_MAX_SAMPLERS;
-    case ComputeContext::DEVICE_MAX_WRITE_IMAGE_ARGS:
-        return CL_DEVICE_MAX_WRITE_IMAGE_ARGS;
-    case ComputeContext::DEVICE_MEM_BASE_ADDR_ALIGN:
-        return CL_DEVICE_MEM_BASE_ADDR_ALIGN;
-    case ComputeContext::DEVICE_MIN_DATA_TYPE_ALIGN_SIZE:
-        return CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE;
-    case ComputeContext::DEVICE_VENDOR_ID:
-        return CL_DEVICE_VENDOR_ID;
-    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_CHAR:
-        return CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR;
-    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_SHORT:
-        return CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT;
-    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_INT:
-        return CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT;
-    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_LONG:
-        return CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG;
-    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT:
-        return CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT;
-    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE:
-        return CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE;
-    case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_SHORT:
-        return CL_DEVICE_NATIVE_VECTOR_WIDTH_SHORT;
-    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_HALF:
-        return CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF;
-    case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_CHAR:
-        return CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR;
-    case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_INT:
-        return CL_DEVICE_NATIVE_VECTOR_WIDTH_INT;
-    case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_LONG:
-        return CL_DEVICE_NATIVE_VECTOR_WIDTH_LONG;
-    case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_FLOAT:
-        return CL_DEVICE_NATIVE_VECTOR_WIDTH_FLOAT;
-    case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE:
-        return CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE;
-    case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_HALF:
-        return CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF;
-    case ComputeContext::DEVICE_MAX_COMPUTE_UNITS:
-        return CL_DEVICE_MAX_COMPUTE_UNITS;
-    case ComputeContext::DEVICE_IMAGE2D_MAX_HEIGHT:
-        return CL_DEVICE_IMAGE2D_MAX_HEIGHT;
-    case ComputeContext::DEVICE_IMAGE2D_MAX_WIDTH:
-        return CL_DEVICE_IMAGE2D_MAX_WIDTH;
-    case ComputeContext::DEVICE_MAX_PARAMETER_SIZE:
-        return CL_DEVICE_MAX_PARAMETER_SIZE;
-    case ComputeContext::DEVICE_MAX_WORK_GROUP_SIZE:
-        return CL_DEVICE_MAX_WORK_GROUP_SIZE;
-    case ComputeContext::DEVICE_MAX_WORK_ITEM_DIMENSIONS:
-        return CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS;
-    case ComputeContext::DEVICE_PROFILING_TIMER_RESOLUTION:
-        return CL_DEVICE_PROFILING_TIMER_RESOLUTION;
-    case ComputeContext::DEVICE_LOCAL_MEM_SIZE:
-        return CL_DEVICE_LOCAL_MEM_SIZE;
-    case ComputeContext::DEVICE_MAX_CONSTANT_BUFFER_SIZE:
-        return CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE;
-    case ComputeContext::DEVICE_MAX_MEM_ALLOC_SIZE:
-        return CL_DEVICE_MAX_MEM_ALLOC_SIZE;
-    case ComputeContext::DEVICE_GLOBAL_MEM_CACHE_SIZE:
-        return CL_DEVICE_GLOBAL_MEM_CACHE_SIZE;
-    case ComputeContext::DEVICE_GLOBAL_MEM_SIZE:
-        return CL_DEVICE_GLOBAL_MEM_SIZE;
-    case ComputeContext::DEVICE_AVAILABLE:
-        return CL_DEVICE_AVAILABLE;
-    case ComputeContext::DEVICE_COMPILER_AVAILABLE:
-        return CL_DEVICE_COMPILER_AVAILABLE;
-    case ComputeContext::DEVICE_ENDIAN_LITTLE:
-        return CL_DEVICE_ENDIAN_LITTLE;
-    case ComputeContext::DEVICE_ERROR_CORRECTION_SUPPORT:
-        return CL_DEVICE_ERROR_CORRECTION_SUPPORT;
-    case ComputeContext::DEVICE_HOST_UNIFIED_MEMORY:
-        return CL_DEVICE_HOST_UNIFIED_MEMORY;
-    case ComputeContext::DEVICE_IMAGE_SUPPORT:
-        return CL_DEVICE_IMAGE_SUPPORT;
-    case ComputeContext::DEVICE_TYPE:
-        return CL_DEVICE_TYPE;
-    case ComputeContext::DEVICE_QUEUE_PROPERTIES:
-        return CL_DEVICE_QUEUE_PROPERTIES;
-    case ComputeContext::DEVICE_DOUBLE_FP_CONFIG:
-        return CL_DEVICE_DOUBLE_FP_CONFIG;
-    case ComputeContext::DEVICE_HALF_FP_CONFIG: // Part of cl_ext.h (which isn't available in Khronos).
-        return CL_DEVICE_HALF_FP_CONFIG;
-    case ComputeContext::DEVICE_SINGLE_FP_CONFIG:
-        return CL_DEVICE_SINGLE_FP_CONFIG;
-    // Platform ID is not supported.
-    case ComputeContext::DEVICE_PLATFORM:
-        return CL_DEVICE_PLATFORM;
-    case ComputeContext::DEVICE_EXECUTION_CAPABILITIES:
-        return CL_DEVICE_EXECUTION_CAPABILITIES;
-    case ComputeContext::DEVICE_GLOBAL_MEM_CACHE_TYPE:
-        return CL_DEVICE_GLOBAL_MEM_CACHE_TYPE;
-    case ComputeContext::DEVICE_LOCAL_MEM_TYPE:
-        return CL_DEVICE_LOCAL_MEM_TYPE;
-    case ComputeContext::DEVICE_MAX_WORK_ITEM_SIZES:
-        return CL_DEVICE_MAX_WORK_ITEM_SIZES;
-    }
-    ASSERT_NOT_REACHED();
-    return CL_INVALID_VALUE;
-}
-
-static cl_mem_object_type computeMemoryObjectTypeToCL(int memoryObjectType)
-{
-    switch (memoryObjectType) {
-    case ComputeContext::MEM_OBJECT_BUFFER:
-        return CL_MEM_OBJECT_BUFFER;
-    case ComputeContext::MEM_OBJECT_IMAGE2D:
-        return CL_MEM_OBJECT_IMAGE2D;
-    case ComputeContext::MEM_OBJECT_IMAGE3D:
-        return CL_MEM_OBJECT_IMAGE3D;
-    }
-    ASSERT_NOT_REACHED();
-    return CL_INVALID_VALUE;
-
-}
-
 static cl_platform_info computePlatformInfoTypeToCL(int platformInfoType)
 {
     switch (platformInfoType) {
@@ -598,29 +454,33 @@ CCProgram ComputeContext::createProgram(const String& kernelSource, CCerror& err
     return clProgram;
 }
 
-PlatformComputeObject ComputeContext::createBuffer(int type, size_t size, void* data, CCerror& error)
+PlatformComputeObject ComputeContext::createBuffer(int memoryFlags, size_t size, void* data, CCerror& error)
 {
     cl_mem clMemoryBuffer;
     cl_int clError;
-    cl_int memoryType = computeMemoryTypeToCL(type);
-    if (data)
-        memoryType = memoryType | ComputeContext::MEM_COPY_HOST_PTR;
 
-    clMemoryBuffer = clCreateBuffer(m_clContext, memoryType, size, data, &clError);
+    // FIXME: Move operation below to Modules/webcl/WebCLContext::createBuffer
+    cl_int clMemoryFlags = memoryFlags;
+    if (data)
+        clMemoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
+
+    clMemoryBuffer = clCreateBuffer(m_clContext, clMemoryFlags, size, data, &clError);
     error = clToComputeContextError(clError);
 
     return clMemoryBuffer;
 }
 
-PlatformComputeObject ComputeContext::createImage2D(int type, int width, int height, const ImageFormat& imageFormat, void* data, CCerror& error)
+// FIXME: ComputeContext::createImage
+PlatformComputeObject ComputeContext::createImage2D(int memoryFlags, int width, int height, const ImageFormat& imageFormat, void* data, CCerror& error)
 {
     cl_mem clMemoryImage = 0;
     cl_int memoryImageError = CL_SUCCESS;
     cl_image_format clImageFormat = computeImageFormatToCL(imageFormat);
 
-    cl_int memoryType = computeMemoryTypeToCL(type);
+    // FIXME: Move operation below to Modules/webcl/WebCLContext::createBuffer
+    cl_int clMemoryFlags = memoryFlags;
     if (data)
-        memoryType = memoryType | ComputeContext::MEM_COPY_HOST_PTR;
+        clMemoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
 
 #if defined(CL_VERSION_1_2)
     cl_image_desc clImageDescriptor;
@@ -631,10 +491,10 @@ PlatformComputeObject ComputeContext::createImage2D(int type, int width, int hei
     // FIXME: we are hardcoding the image stride (i.e. row_pitch) as 0.
     // This is either a bug on the spec, or a bug in our implementation.
     clImageDescriptor.image_row_pitch = 0;
-    clMemoryImage = clCreateImage(m_clContext, memoryType, &clImageFormat, &clImageDescriptor,
+    clMemoryImage = clCreateImage(m_clContext, clMemoryFlags, &clImageFormat, &clImageDescriptor,
         data, &memoryImageError);
 #else
-    clMemoryImage = clCreateImage2D(m_clContext, memoryType, &clImageFormat, width, height, 0,
+    clMemoryImage = clCreateImage2D(m_clContext, clMemoryFlags, &clImageFormat, width, height, 0,
         data, &memoryImageError);
 #endif
 
@@ -740,14 +600,10 @@ PlatformComputeObject ComputeContext::createFromGLTexture2D(int type, GC3Denum t
     return memory;
 }
 
-CCImageFormat* ComputeContext::supportedImageFormats(int type, int imageType, CCuint& numberOfSupportedImages, CCerror& error)
+CCImageFormat* ComputeContext::supportedImageFormats(int memoryFlags, int imageType, CCuint& numberOfSupportedImages, CCerror& error)
 {
-    cl_mem_flags memoryType = computeMemoryTypeToCL(type);
-    cl_mem_object_type clObjectType = computeMemoryObjectTypeToCL(imageType);
-
     cl_int clError;
-    clError = clGetSupportedImageFormats(m_clContext, memoryType, clObjectType, 0, 0, &numberOfSupportedImages);
-
+    clError = clGetSupportedImageFormats(m_clContext, memoryFlags, imageType, 0, 0, &numberOfSupportedImages);
     if (clError != CL_SUCCESS) {
         error = clToComputeContextError(clError);
         return 0;
@@ -756,15 +612,14 @@ CCImageFormat* ComputeContext::supportedImageFormats(int type, int imageType, CC
     // FIXME: We should not use malloc
     CCImageFormat* imageFormats = (CCImageFormat*) malloc(sizeof(CCImageFormat) * numberOfSupportedImages);
 
-    clError = clGetSupportedImageFormats(m_clContext, memoryType, clObjectType, numberOfSupportedImages, imageFormats, 0);
+    clError = clGetSupportedImageFormats(m_clContext, memoryFlags, imageType, numberOfSupportedImages, imageFormats, 0);
     error = clToComputeContextError(clError);
     return clError == CL_SUCCESS ? imageFormats : 0;
 }
 
 CCerror ComputeContext::getDeviceInfo(CCDeviceID deviceID, int infoType, size_t sizeOfData, void* data)
 {
-   cl_device_info clDeviceInfoType = computeDeviceInfoTypeToCL(infoType);
-   cl_int error = clGetDeviceInfo(deviceID, clDeviceInfoType, sizeOfData, data, 0 /*param_value_size_ret)*/);
+   cl_int error = clGetDeviceInfo(deviceID, infoType, sizeOfData, data, 0 /*param_value_size_ret)*/);
    return clToComputeContextError(error);
 }
 

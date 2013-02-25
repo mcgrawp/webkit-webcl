@@ -2021,6 +2021,8 @@
 		75945434165E660300E5C118 /* JSWebCLProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945404165E660300E5C118 /* JSWebCLProgram.h */; };
 		75945435165E660300E5C118 /* JSWebCLSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75945405165E660300E5C118 /* JSWebCLSampler.cpp */; };
 		75945436165E660300E5C118 /* JSWebCLSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 75945406165E660300E5C118 /* JSWebCLSampler.h */; };
+		75DE538116DBCACB00D64456 /* WebCLInputChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75DE537F16DBC52000D64456 /* WebCLInputChecker.cpp */; };
+		75DE538216DBCACF00D64456 /* WebCLInputChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 75DE538016DBC52000D64456 /* WebCLInputChecker.h */; };
 		762F1ED7159D960A007408F2 /* HTMLDialogElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 762F1ED6159D960A007408F2 /* HTMLDialogElement.h */; };
 		762F1EDB159D968A007408F2 /* HTMLDialogElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 762F1EDA159D968A007408F2 /* HTMLDialogElement.cpp */; };
 		7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */; };
@@ -9389,6 +9391,8 @@
 		75945404165E660300E5C118 /* JSWebCLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLProgram.h; sourceTree = "<group>"; };
 		75945405165E660300E5C118 /* JSWebCLSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLSampler.cpp; sourceTree = "<group>"; };
 		75945406165E660300E5C118 /* JSWebCLSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLSampler.h; sourceTree = "<group>"; };
+		75DE537F16DBC52000D64456 /* WebCLInputChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLInputChecker.cpp; sourceTree = "<group>"; };
+		75DE538016DBC52000D64456 /* WebCLInputChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLInputChecker.h; sourceTree = "<group>"; };
 		762F1ED6159D960A007408F2 /* HTMLDialogElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDialogElement.h; sourceTree = "<group>"; };
 		762F1ED8159D961A007408F2 /* HTMLDialogElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDialogElement.idl; sourceTree = "<group>"; };
 		762F1EDA159D968A007408F2 /* HTMLDialogElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDialogElement.cpp; sourceTree = "<group>"; };
@@ -16248,6 +16252,8 @@
 		75945322165E618A00E5C118 /* webcl */ = {
 			isa = PBXGroup;
 			children = (
+				75DE537F16DBC52000D64456 /* WebCLInputChecker.cpp */,
+				75DE538016DBC52000D64456 /* WebCLInputChecker.h */,
 				616340F4169DEC6000020986 /* DOMWindowWebCLEnvironment.cpp */,
 				616340F5169DEC6000020986 /* DOMWindowWebCLEnvironment.h */,
 				616340F6169DEC6000020986 /* DOMWindowWebCLEnvironment.idl */,
@@ -26118,6 +26124,7 @@
 				616340FE169DEC6000020986 /* WorkerContextWebCLEnvironment.h in Headers */,
 				61634104169DECF900020986 /* JSDOMWindowWebCLEnvironment.h in Headers */,
 				61634108169DEDA200020986 /* JSWorkerContextWebCLEnvironment.h in Headers */,
+				75DE538216DBCACF00D64456 /* WebCLInputChecker.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29257,6 +29264,7 @@
 				616340FD169DEC6000020986 /* WorkerContextWebCLEnvironment.cpp in Sources */,
 				61634103169DECF900020986 /* JSDOMWindowWebCLEnvironment.cpp in Sources */,
 				61634107169DEDA200020986 /* JSWorkerContextWebCLEnvironment.cpp in Sources */,
+				75DE538116DBCACB00D64456 /* WebCLInputChecker.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -39,6 +39,7 @@
 #include "WebCLCommandQueue.h"
 #include "WebCLEvent.h"
 #include "WebCLImage.h"
+#include "WebCLInputChecker.h"
 #include "WebCLKernel.h"
 #include "WebCLMemoryObject.h"
 #include "WebCLProgram.h"
@@ -217,7 +218,7 @@ PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource,
     return clProgramObj;
 }
 
-PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int flags, int size, ArrayBuffer* data, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, int size, ArrayBuffer* data, ExceptionCode& ec)
 {
     cl_mem clMemID = 0;
     void* vData = 0;
@@ -226,16 +227,17 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int flags, int size, ArrayBuf
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
-    if (!flags) {
-        printf("Error:: CL_INVALID_VALUE \n");
+
+    if (!WebCLInputChecker::isValidMemoryObjectFlag(memoryFlags)) {
         ec = WebCLException::INVALID_VALUE;
         return 0;
     }
+
     if (data)
         vData = data->data();
 
     CCerror error;
-    clMemID = m_computeContext->createBuffer(flags, size, vData, error);
+    clMemID = m_computeContext->createBuffer(memoryFlags, size, vData, error);
     if (!clMemID) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
@@ -323,6 +325,12 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(int flags, int width, int
         ec = WebCLException::INVALID_IMAGE_SIZE;
         return 0;
     }
+
+    if (!WebCLInputChecker::isValidMemoryObjectFlag(flags)) {
+        ec = WebCLException::INVALID_VALUE;
+        return 0;
+    }
+
     clMemImage = m_computeContext->createImage2D(flags, width, height, imageFormat, data, createImage2DError);
     if (!clMemImage) {
         ASSERT(createImage2DError != ComputeContext::SUCCESS);
@@ -674,7 +682,7 @@ void WebCLContext::LRUImageBufferCache::bubbleToFront(int idx)
         m_buffers[i].swap(m_buffers[i-1]);
 }
 
-Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(int memFlags, ExceptionCode &ec)
+Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(int memoryFlags, ExceptionCode &ec)
 {
     Vector<RefPtr<WebCLImageDescriptor>> imageDescriptors;
     if (!m_clContext) {
@@ -682,9 +690,14 @@ Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(int
         return imageDescriptors;
     }
 
+    if (!WebCLInputChecker::isValidMemoryObjectFlag(memoryFlags)) {
+        ec = WebCLException::INVALID_VALUE;
+        return imageDescriptors;
+    }
+
     CCuint numberOfSupportedImages;
     CCerror error;
-    CCImageFormat* imageFormats = m_computeContext->supportedImageFormats(memFlags, ComputeContext::MEM_OBJECT_IMAGE2D, numberOfSupportedImages, error);
+    CCImageFormat* imageFormats = m_computeContext->supportedImageFormats(memoryFlags, ComputeContext::MEM_OBJECT_IMAGE2D, numberOfSupportedImages, error);
 
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
