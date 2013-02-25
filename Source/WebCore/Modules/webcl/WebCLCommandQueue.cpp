@@ -73,16 +73,16 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
     CCCommandQueueProperties ccCommandQueueProperties = 0;
 
     switch (paramName) {
-    /*
-    // FIXME: We should not create a WebCLContext here.
     case ComputeContext::QUEUE_CONTEXT:
+        // FIXME: We should not create a WebCLContext here.
+        /*
         err = clGetCommandQueueInfo(m_ccCommandQueue, paramName, sizeof(cl_context), &cl_context_id, 0);
         if (err == CL_SUCCESS) {
             RefPtr<WebCLContext> contextObj = WebCLContext::create(m_context, cl_context_id);
             // FIXME: The the wrapping PassRefPtr below REALLY needed?
             return WebCLGetInfo(PassRefPtr<WebCLContext>(contextObj));
+        */
         break;
-    */
     case ComputeContext::QUEUE_DEVICE:
         err = ComputeContext::getCommandQueueInfo(m_ccCommandQueue, paramName, sizeof(CCDeviceID), &ccDeviceID);
         if (err == CL_SUCCESS) {
@@ -97,7 +97,7 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
             return WebCLGetInfo(static_cast<unsigned>(ccCommandQueueProperties));
         break;
     default:
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
 

@@ -37,90 +37,6 @@
 
 namespace WebCore {
 
-static cl_platform_info computePlatformInfoTypeToCL(int platformInfoType)
-{
-    switch (platformInfoType) {
-    case ComputeContext::PLATFORM_PROFILE:
-        return CL_PLATFORM_PROFILE;
-    case ComputeContext::PLATFORM_VERSION:
-        return CL_PLATFORM_VERSION;
-    case ComputeContext::PLATFORM_NAME:
-        return CL_PLATFORM_NAME;
-    case ComputeContext::PLATFORM_VENDOR:
-        return CL_PLATFORM_VENDOR;
-    case ComputeContext::PLATFORM_EXTENSIONS:
-        return CL_PLATFORM_EXTENSIONS;
-    }
-    ASSERT_NOT_REACHED();
-    return CL_INVALID_VALUE;
-}
-
-static cl_program_info computeProgramInfoTypeToCL(int deviceInfoType)
-{
-    switch (deviceInfoType) {
-    case ComputeContext::PROGRAM_REFERENCE_COUNT:
-        return CL_PROGRAM_REFERENCE_COUNT;
-    case ComputeContext::PROGRAM_CONTEXT:
-        return CL_PROGRAM_CONTEXT;
-    case ComputeContext::PROGRAM_NUM_DEVICES:
-        return CL_PROGRAM_NUM_DEVICES;
-    case ComputeContext::PROGRAM_DEVICES:
-        return CL_PROGRAM_DEVICES;
-    case ComputeContext::PROGRAM_SOURCE:
-        return CL_PROGRAM_SOURCE;
-    }
-    ASSERT_NOT_REACHED();
-    return CL_INVALID_VALUE;
-}
-
-static cl_command_queue_info computeCommandQueueInfoTypeToCL(int commandQueueInfoType)
-{
-    switch (commandQueueInfoType) {
-    case ComputeContext::QUEUE_CONTEXT:
-        return CL_QUEUE_CONTEXT;
-    case ComputeContext::QUEUE_DEVICE:
-        return CL_QUEUE_DEVICE;
-    case ComputeContext::QUEUE_REFERENCE_COUNT:
-        return CL_QUEUE_REFERENCE_COUNT;
-    case ComputeContext::QUEUE_PROPERTIES:
-        return CL_QUEUE_PROPERTIES;
-    }
-    ASSERT_NOT_REACHED();
-    return CL_INVALID_VALUE;
-}
-
-static cl_event_info computeEventInfoTypeToCL(int eventInfoType)
-{
-    switch (eventInfoType) {
-    case ComputeContext::EVENT_COMMAND_QUEUE:
-        return CL_EVENT_COMMAND_QUEUE;
-    case ComputeContext::EVENT_COMMAND_TYPE:
-        return CL_EVENT_COMMAND_TYPE;
-    case ComputeContext::EVENT_REFERENCE_COUNT:
-        return CL_EVENT_REFERENCE_COUNT;
-    case ComputeContext::EVENT_COMMAND_EXECUTION_STATUS:
-        return CL_EVENT_COMMAND_EXECUTION_STATUS;
-    }
-    ASSERT_NOT_REACHED();
-    return CL_INVALID_VALUE;
-}
-
-static cl_profiling_info computeEventProfilingInfoTypeToCL(int eventProfilingInfoType)
-{
-    switch (eventProfilingInfoType) {
-    case ComputeContext::PROFILING_COMMAND_QUEUED:
-        return CL_PROFILING_COMMAND_QUEUED;
-    case ComputeContext::PROFILING_COMMAND_SUBMIT:
-        return CL_PROFILING_COMMAND_SUBMIT;
-    case ComputeContext::PROFILING_COMMAND_START:
-        return CL_PROFILING_COMMAND_START;
-    case ComputeContext::PROFILING_COMMAND_END:
-        return CL_PROFILING_COMMAND_END;
-    }
-    ASSERT_NOT_REACHED();
-    return CL_INVALID_VALUE;
-}
-
 static CCerror clToComputeContextError(cl_int clError)
 {
     int computeContextError = CL_INVALID_VALUE;
@@ -290,6 +206,7 @@ static cl_image_format computeImageFormatToCL(const ComputeContext::ImageFormat&
     return clImageFormat;
 }
 
+// FIXME: Remove it when the CL<->GL interoperability turns to be an extension.
 static cl_mem_flags computeMemoryTypeToCL(int memoryType)
 {
     cl_int clMemoryType = CL_INVALID_VALUE;
@@ -625,36 +542,31 @@ CCerror ComputeContext::getDeviceInfo(CCDeviceID deviceID, int infoType, size_t 
 
 CCerror ComputeContext::getPlatformInfo(CCPlatformID platformID, int infoType, size_t sizeOfData, void* data)
 {
-   cl_platform_info clPlatformInfoType = computePlatformInfoTypeToCL(infoType);
-   cl_int error = clGetPlatformInfo(platformID, clPlatformInfoType, sizeOfData, data, 0 /*param_value_size_ret)*/);
+   cl_int error = clGetPlatformInfo(platformID, infoType, sizeOfData, data, 0 /*param_value_size_ret)*/);
    return clToComputeContextError(error);
 }
 
 CCerror ComputeContext::getProgramInfo(CCProgram program, int infoType, size_t sizeOfData, void* data, size_t* actualSizeOfData)
 {
-   cl_program_info clProgramInfoType = computeProgramInfoTypeToCL(infoType);
-   cl_int error = clGetProgramInfo(program, clProgramInfoType, sizeOfData, data, actualSizeOfData);
+   cl_int error = clGetProgramInfo(program, infoType, sizeOfData, data, actualSizeOfData);
    return clToComputeContextError(error);
 }
 
 CCerror ComputeContext::getCommandQueueInfo(CCCommandQueue queue, int infoType, size_t sizeOfData, void* data)
 {
-   cl_command_queue_info clCommandQueueInfoType = computeCommandQueueInfoTypeToCL(infoType);
-   cl_int error = clGetCommandQueueInfo(queue, clCommandQueueInfoType, sizeOfData, data, 0);
+   cl_int error = clGetCommandQueueInfo(queue, infoType, sizeOfData, data, 0);
    return clToComputeContextError(error);
 }
 
 CCerror ComputeContext::getEventInfo(CCEvent event, int infoType, size_t sizeOfData, void* data)
 {
-    cl_event_info clEventInfoType = computeEventInfoTypeToCL(infoType);
-    cl_int error = clGetEventInfo(event, clEventInfoType, sizeOfData, data, 0);
+    cl_int error = clGetEventInfo(event, infoType, sizeOfData, data, 0);
     return clToComputeContextError(error);
 }
 
 CCerror ComputeContext::getEventProfilingInfo(CCEvent event, int infoType, size_t sizeOfData, void* data)
 {
-    cl_profiling_info clEventProfilingInfoType = computeEventProfilingInfoTypeToCL(infoType);
-    cl_int error = clGetEventProfilingInfo(event, clEventProfilingInfoType, sizeOfData, data, 0);
+    cl_int error = clGetEventProfilingInfo(event, infoType, sizeOfData, data, 0);
     return clToComputeContextError(error);
 }
 

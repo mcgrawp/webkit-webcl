@@ -74,39 +74,42 @@ WebCLGetInfo WebCLEvent::getInfo(int paramName, ExceptionCode& ec)
         err = ComputeContext::getEventInfo(m_clEvent, paramName, sizeof(CCuint), &ccExecStatus);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccExecStatus));
-        }
         break;
+    }
     case ComputeContext::EVENT_COMMAND_TYPE: {
         CCCommandType ccCommandType = 0;
         err= ComputeContext::getEventInfo(m_clEvent, paramName, sizeof(CCCommandType), &ccCommandType);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccCommandType));
-        }
         break;
+    }
     case ComputeContext::EVENT_COMMAND_QUEUE: {
         CCCommandQueue ccCommandQueue = 0;
         err = ComputeContext::getEventInfo(m_clEvent, paramName, sizeof(CCCommandQueue), &ccCommandQueue);
         RefPtr<WebCLCommandQueue> commandQueue = WebCLCommandQueue::create(m_context, ccCommandQueue);
-        if (!commandQueue) {
-            printf("SUCCESS: Cl Event Command Queue\n");
+        if (!commandQueue)
             return WebCLGetInfo();
-        }
+
         if (err == CL_SUCCESS)
             return WebCLGetInfo(commandQueue.release());
-        }
+
         break;
-    /* FIXME:: Cannot create Context here.
+    }
     case ComputeContext::EVENT_CONTEXT: {
+        /* FIXME: Cannot create Context here.
         err = ComputeContext::getEventInfo(m_clEvent, paramName, sizeof(myContext), myContext);;
         if (err == CL_SUCCESS)
             return WebCLGetInfo((String)myContext);
         }
-        break; */
+        */
+        break;
+    }
     default:
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
-    ASSERT(err != CL_SUCCESS);
+
+    ASSERT(err != ComputeContext::SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
 }

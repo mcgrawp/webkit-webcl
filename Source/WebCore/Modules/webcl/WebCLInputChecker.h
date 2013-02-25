@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Samsung Electronics Corporation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
  * are met:
@@ -34,7 +34,6 @@ namespace WebCore {
 namespace WebCLInputChecker {
 
 bool isValidDeviceInfoType(int);
-
 bool isValidMemoryObjectFlag(int);
 
 }
