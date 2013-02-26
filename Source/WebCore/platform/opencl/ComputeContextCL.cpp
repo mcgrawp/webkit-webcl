@@ -598,6 +598,13 @@ CCerror ComputeContext::getWorkGroupInfo(CCKernel kernel, CCDeviceID device, int
     return clToComputeContextError(error);
 }
 
+CCerror ComputeContext::getSamplerInfo(CCSampler sampler, int infoType, size_t sizeOfData, void* data)
+{
+    cl_sampler_info clSamplerInfoType = infoType;
+    cl_int error = clGetSamplerInfo(sampler, clSamplerInfoType, sizeOfData, data, 0);
+    return clToComputeContextError(error);
+}
+
 CCerror ComputeContext::releaseKernel(CCKernel kernel)
 {
     cl_int error = clReleaseKernel(kernel);
@@ -607,6 +614,12 @@ CCerror ComputeContext::releaseKernel(CCKernel kernel)
 CCerror ComputeContext::releaseEvent(CCEvent ccevent)
 {
     cl_int error = clReleaseEvent(ccevent);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::releaseSampler(CCSampler sampler)
+{
+    cl_int error = clReleaseSampler(sampler);
     return clToComputeContextError(error);
 }
 

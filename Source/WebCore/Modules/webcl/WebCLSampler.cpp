@@ -33,34 +33,16 @@
 
 #include "WebCL.h"
 #include "WebCLException.h"
-
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
 WebCLSampler::~WebCLSampler()
 {
-    CCerror err = 0;
     ASSERT(m_ccSampler);
-    err = clReleaseSampler(m_ccSampler);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_SAMPLER:
-            printf("Error: CL_INVALID_SAMPLER\n");
-            break;
-        case CL_OUT_OF_RESOURCES:
-            printf("Error: CL_OUT_OF_RESOURCES\n");
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-            break;
-
-        default:
-            printf("Error: Invaild Error Type\n");
-            break;
-        }
-    } else
-        m_ccSampler = 0;
+    CCerror computeContextErrorCode = m_context->computeContext()->releaseSampler(m_ccSampler);
+    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+    m_ccSampler = 0;
 }
 
 PassRefPtr<WebCLSampler> WebCLSampler::create(WebCLContext* context, CCSampler sampler)
@@ -88,55 +70,36 @@ WebCLGetInfo WebCLSampler::getInfo(int infoType, ExceptionCode& ec)
     switch (infoType) {
     case ComputeContext::SAMPLER_NORMALIZED_COORDS: {
         CCbool booleanValue = false;
-        error = clGetSamplerInfo(m_ccSampler, infoType, sizeof(CCbool), &booleanValue, 0);
+        error = ComputeContext::getSamplerInfo(m_ccSampler, infoType, sizeof(CCbool), &booleanValue);
         if (error == CL_SUCCESS)
             return WebCLGetInfo(static_cast<bool>(booleanValue));
         break;
     }
-    /*
-    // FIXME: Implementation needed.
-    case ComputeContext::SAMPLER_CONTEXT:
-        error = clGetSamplerInfo(m_ccSampler, infoType, sizeof(cl_context), &cl_context_id, 0);
-        contextObj = WebCLContext::create(m_context, cl_context_id);
-        if (error == CL_SUCCESS)
-            return WebCLGetInfo(PassRefPtr<WebCLContext>(contextObj));
+    /* FIXME: Implementation needed.
+    case ComputeContext::SAMPLER_CONTEXT: {
+        CCContext ccContext;
+        error = ComputeContext::getSamplerInfo(m_ccSampler, infoType, sizeof(CCContext), &ccContext);
+        if (error == CL_SUCCESS) {
+            RefPtr<WebCLContext> contextObj = WebCLContext::create(m_context, ccContext);
+            return WebCLGetInfo(contextObj.release());
+        }
         break;
+    }
     */
     case ComputeContext::SAMPLER_ADDRESSING_MODE:
     case ComputeContext::SAMPLER_FILTER_MODE: {
-        CCuint uintValue = 0;
-        error = clGetSamplerInfo(m_ccSampler, infoType, sizeof(CCuint), &uintValue, 0);
+        CCuint samplerInfo = 0;
+        error = ComputeContext::getSamplerInfo(m_ccSampler, infoType, sizeof(CCuint), &samplerInfo);
         if (error == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(uintValue));
+            return WebCLGetInfo(static_cast<unsigned>(samplerInfo));
         break;
     }
     default:
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
-
-    switch (error) {
-    case CL_INVALID_VALUE:
-        ec = WebCLException::INVALID_VALUE;
-        printf("Error: CL_INVALID_VALUE \n");
-        break;
-    case CL_INVALID_SAMPLER:
-        ec = WebCLException::INVALID_SAMPLER;
-        printf("Error: CL_INVALID_SAMPLER\n");
-        break;
-    case CL_OUT_OF_RESOURCES:
-        ec = WebCLException::OUT_OF_RESOURCES;
-        printf("Error: CL_OUT_OF_RESOURCES\n");
-        break;
-    case CL_OUT_OF_HOST_MEMORY:
-        ec = WebCLException::OUT_OF_HOST_MEMORY;
-        printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-        break;
-    default:
-        ec = WebCLException::INVALID_SAMPLER;
-        printf("Error: Invaild Error Type\n");
-        break;
-    }
+    ASSERT(error != CL_SUCCESS);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
     return WebCLGetInfo();
 }
 
