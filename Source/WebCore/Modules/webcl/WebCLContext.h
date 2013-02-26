@@ -135,7 +135,6 @@ private:
 
     void ensureCachedContextProperties();
 
-    WebCL* m_context;
     cl_context m_clContext;
     RefPtr<WebCLCommandQueue> m_commandQueue;
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);

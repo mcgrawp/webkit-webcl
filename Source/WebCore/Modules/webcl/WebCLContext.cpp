@@ -65,9 +65,8 @@ PassRefPtr<WebCLContext> WebCLContext::create(WebCL* context, CCContextPropertie
     return adoptRef(new WebCLContext(context, computeContext, devices));
 }
 
-WebCLContext::WebCLContext(WebCL* context, RefPtr<ComputeContext>& computeContext, const Vector<CCDeviceID>& devices)
+WebCLContext::WebCLContext(WebCL*, RefPtr<ComputeContext>& computeContext, const Vector<CCDeviceID>& devices)
     : m_videoCache(4) // FIXME: Why '4'?
-    , m_context(context)
     , m_devices(devices)
 {
     m_computeContext = computeContext;
@@ -131,9 +130,8 @@ void WebCLContext::ensureCachedContextProperties()
     m_cachedContextProperties = WebCLContextProperties::create(platform.release(), devices, deviceType, 0 /*sharedGroup*/, String() /*hints*/);
 }
 
-/*WebCLContext::WebCLContext(WebCL* compute_context, CCContextProperties* contextProperties, unsigned deviceType, int* error)
+/*WebCLContext::WebCLContext(WebCL*, CCContextProperties* contextProperties, unsigned deviceType, int* error)
     : m_videoCache(4)
-    , m_context(compute_context)
 {
     m_computeContext = ComputeContext::create(contextProperties, deviceType, error);
     m_clContext = m_computeContext->context();
@@ -169,7 +167,7 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
         return 0;
     }
 
-    CCDeviceID ccDevice;
+    CCDeviceID ccDevice = nullptr;
     if (!device) {
         CCCommandQueueProperties queueProperties = 0;
         // NOTE: This can be slow, depending the number of 'devices' available.

@@ -70,7 +70,6 @@ private:
     cl_kernel m_clKernel;
     RefPtr<WebCLDevice> m_deviceID;
     Vector<RefPtr<WebCLKernel> > m_kernelList;
-    long m_numKernels;
 };
 
 } // namespace WebCore

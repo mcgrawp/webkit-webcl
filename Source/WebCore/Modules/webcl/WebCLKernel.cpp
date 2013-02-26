@@ -52,7 +52,6 @@ PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, cl_kernel ker
 WebCLKernel::WebCLKernel(WebCLContext* context, cl_kernel kernel)
     : m_context(context)
     , m_clKernel(kernel)
-    , m_numKernels(0)
 {
 }
 
