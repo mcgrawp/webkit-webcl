@@ -95,5 +95,31 @@ bool isValidMemoryObjectFlag(int memoryObjectFlag)
     return false;
 }
 
+bool isValidAddressingMode(int value)
+{
+    switch(value) {
+    case ComputeContext::ADDRESS_NONE:
+    case ComputeContext::ADDRESS_CLAMP_TO_EDGE:
+    case ComputeContext::ADDRESS_CLAMP:
+    case ComputeContext::ADDRESS_REPEAT:
+    case ComputeContext::ADDRESS_MIRRORED_REPEAT:
+        return true;
+    }
+
+    return false;
+}
+
+bool isValidFilterMode(int value)
+{
+    switch(value) {
+    case ComputeContext::FILTER_NEAREST:
+    case ComputeContext::FILTER_LINEAR:
+        return true;
+    }
+
+    return false;
+
+}
+
 }
 }

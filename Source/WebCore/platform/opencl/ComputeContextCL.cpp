@@ -443,58 +443,10 @@ PlatformComputeObject ComputeContext::createFromGLRenderbuffer(int type, GC3Dint
     return clMemory;
 }
 
-static cl_addressing_mode computeAddressingModeToCL(int addrMode)
-{
-    cl_addressing_mode clAddrMode = CL_INVALID_VALUE;
-    switch (addrMode) {
-    case ComputeContext::ADDRESS_NONE:
-        clAddrMode = CL_ADDRESS_NONE;
-        break;
-    case ComputeContext::ADDRESS_CLAMP_TO_EDGE:
-        clAddrMode = CL_ADDRESS_CLAMP_TO_EDGE;
-        break;
-    case ComputeContext::ADDRESS_CLAMP:
-        clAddrMode = CL_ADDRESS_CLAMP;
-        break;
-    case ComputeContext::ADDRESS_REPEAT:
-        clAddrMode = CL_ADDRESS_REPEAT;
-        break;
-    case ComputeContext::ADDRESS_MIRRORED_REPEAT:
-        clAddrMode = CL_ADDRESS_MIRRORED_REPEAT;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return clAddrMode;
-}
-
-static cl_filter_mode computeFilterModeToCL(int filterMode)
-{
-    cl_filter_mode clFilterMode = CL_INVALID_VALUE;
-    switch (filterMode) {
-    case ComputeContext::FILTER_LINEAR:
-        clFilterMode = CL_FILTER_LINEAR;
-        break;
-    case ComputeContext::FILTER_NEAREST:
-        clFilterMode = CL_FILTER_NEAREST;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return clFilterMode;
-}
-
 CCSampler ComputeContext::createSampler(bool normalizedCoords, int addressingMode, int filterMode, CCerror& error)
 {
-    cl_addressing_mode clAddressingMode = computeAddressingModeToCL(addressingMode);
-    cl_filter_mode clFilterMode = computeFilterModeToCL(filterMode);
     cl_int clError;
-
-    cl_sampler sampler = clCreateSampler(m_clContext, TO_CL_BOOL(normalizedCoords), clAddressingMode, clFilterMode, &clError);
+    cl_sampler sampler = clCreateSampler(m_clContext, TO_CL_BOOL(normalizedCoords), addressingMode, filterMode, &clError);
     error = clToComputeContextError(clError);
 
     return sampler;

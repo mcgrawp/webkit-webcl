@@ -35,7 +35,8 @@ namespace WebCLInputChecker {
 
 bool isValidDeviceInfoType(int);
 bool isValidMemoryObjectFlag(int);
-
+bool isValidAddressingMode(int);
+bool isValidFilterMode(int);
 }
 
 }

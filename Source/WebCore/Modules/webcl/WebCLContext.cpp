@@ -535,26 +535,33 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderBuffer(int flags, WebGLRe
     return imageObj;
 }
 
-PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCords, int addrMode, int fltrMode, ExceptionCode& ec)
+PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCords, int addressingMode, int filterMode, ExceptionCode& ec)
 {
-    cl_sampler clSamplerID = 0;
-
     if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_CONTEXT;
+        return 0;
+    }
+
+    if (!WebCLInputChecker::isValidAddressingMode(addressingMode)) {
+        ec = WebCLException::INVALID_VALUE;
+        return 0;
+    }
+
+    if (!WebCLInputChecker::isValidFilterMode(filterMode)) {
+        ec = WebCLException::INVALID_VALUE;
         return 0;
     }
 
     CCerror error;
-    clSamplerID = m_computeContext->createSampler(normCords, addrMode, fltrMode, error);
+    CCSampler clSamplerID = m_computeContext->createSampler(normCords, addressingMode, filterMode, error);
     if (!clSamplerID) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
 
-    RefPtr<WebCLSampler> samplerObj = WebCLSampler::create(this, clSamplerID);
-    return samplerObj;
+    RefPtr<WebCLSampler> sampler = WebCLSampler::create(this, clSamplerID);
+    return sampler;
 }
 
 PassRefPtr<WebCLMemoryObject> WebCLContext::createFromGLTexture2D(int flags, GC3Denum textureTarget, GC3Dint miplevel, GC3Duint texture, ExceptionCode& ec)
