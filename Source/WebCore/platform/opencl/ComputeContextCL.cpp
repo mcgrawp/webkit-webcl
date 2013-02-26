@@ -570,6 +570,20 @@ CCerror ComputeContext::getEventProfilingInfo(CCEvent event, int infoType, size_
     return clToComputeContextError(error);
 }
 
+CCerror ComputeContext::getImageInfo(PlatformComputeObject image, int infoType, size_t sizeOfData, void* data)
+{
+    cl_image_info clImageInfoType = infoType;
+    cl_int error = clGetImageInfo(image, clImageInfoType, sizeOfData, data, 0);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::getGLtextureInfo(PlatformComputeObject image, int textureInfoType, size_t sizeOfData, void* data)
+{
+    cl_gl_texture_info clglTextureInfoType = textureInfoType;
+    cl_int error = clGetGLTextureInfo(image, clglTextureInfoType, sizeOfData, data, 0);
+    return clToComputeContextError(error);
+}
+
 CCerror ComputeContext::releaseEvent(CCEvent ccevent)
 {
     cl_int error = clReleaseEvent(ccevent);

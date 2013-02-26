@@ -58,7 +58,6 @@ PlatformComputeObject WebCLImage::getCLImage()
 int WebCLImage::getGLtextureInfo(int textureInfoType, ExceptionCode& ec)
 {
     if (!m_CCMemoryObject) {
-        printf("Error: Invalid CL Memory Object \n");
         ec = WebCLException::INVALID_MEM_OBJECT;
         return 0;
     }
@@ -67,52 +66,24 @@ int WebCLImage::getGLtextureInfo(int textureInfoType, ExceptionCode& ec)
     switch (textureInfoType) {
     case ComputeContext::GL_TEXTURE_TARGET:
     case ComputeContext::GL_MIPMAP_LEVEL: {
-        CCint integerValue = 0;
-        err = clGetGLTextureInfo(m_CCMemoryObject, textureInfoType, sizeof(CCint), &integerValue, 0);
+        CCint glTextureInfo = 0;
+        err = ComputeContext::getGLtextureInfo(m_CCMemoryObject, textureInfoType, sizeof(CCint), &glTextureInfo);
         if (err == CL_SUCCESS)
-            return ((int)integerValue);
+            return ((int)glTextureInfo);
         break;
     }
     default:
         ec = WebCLException::INVALID_VALUE;
         return 0;
     }
-
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_MEM_OBJECT:
-            ec = WebCLException::INVALID_MEM_OBJECT;
-            printf("Error: CL_INVALID_MEM_OBJECT  \n");
-            break;
-        case CL_INVALID_GL_OBJECT:
-            ec = WebCLException::INVALID_GL_OBJECT;
-            printf("Error: CL_INVALID_GL_OBJECT \n");
-            break;
-        case CL_INVALID_VALUE:
-            ec = WebCLException::INVALID_VALUE;
-            printf("Error: CL_INVALID_VALUE \n");
-            break;
-        case CL_OUT_OF_RESOURCES:
-            ec = WebCLException::OUT_OF_RESOURCES;
-            printf("Error: CL_OUT_OF_RESOURCES \n");
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            printf("Error: CL_OUT_OF_HOST_MEMORY  \n");
-            break;
-        default:
-            ec = WebCLException::FAILURE;
-            printf("Invaild Error Type\n");
-            break;
-        }
-    }
+    ASSERT(err != CL_SUCCESS);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return 0;
 }
 
 PassRefPtr<WebCLImageDescriptor> WebCLImage::getInfo(ExceptionCode& ec)
 {
     if (!m_CCMemoryObject) {
-        printf("Error: Invalid CL Context\n");
         ec = WebCLException::INVALID_MEM_OBJECT;
         return 0;
     }
@@ -121,7 +92,7 @@ PassRefPtr<WebCLImageDescriptor> WebCLImage::getInfo(ExceptionCode& ec)
     RefPtr<WebCLImageDescriptor> objectWebCLImageDescriptor = WebCLImageDescriptor::create();
     CCerror err = 0;
     CCImageFormat imageFormat;
-    err = clGetImageInfo(m_CCMemoryObject, ComputeContext::IMAGE_FORMAT, sizeof(CCImageFormat), &imageFormat, 0);
+    err = ComputeContext::getImageInfo(m_CCMemoryObject, ComputeContext::IMAGE_FORMAT, sizeof(CCImageFormat), &imageFormat);
     if (err == CL_SUCCESS) {
         iflag = 1;
         objectWebCLImageDescriptor->setChannelOrder(imageFormat.image_channel_order);
@@ -129,19 +100,19 @@ PassRefPtr<WebCLImageDescriptor> WebCLImage::getInfo(ExceptionCode& ec)
     }
 
     size_t imageInfoValue = 0;
-    err = clGetImageInfo(m_CCMemoryObject, ComputeContext::IMAGE_WIDTH, sizeof(size_t), &imageInfoValue, 0);
+    err = ComputeContext::getImageInfo(m_CCMemoryObject, ComputeContext::IMAGE_WIDTH, sizeof(size_t), &imageInfoValue);
     if (err == CL_SUCCESS && iflag == 1)
         objectWebCLImageDescriptor->setWidth((long)imageInfoValue);
     else
         iflag = 0;
 
-    err = clGetImageInfo(m_CCMemoryObject, ComputeContext::IMAGE_HEIGHT, sizeof(size_t), &imageInfoValue, 0);
+    err = ComputeContext::getImageInfo(m_CCMemoryObject, ComputeContext::IMAGE_HEIGHT, sizeof(size_t), &imageInfoValue);
     if (err == CL_SUCCESS && iflag == 1)
         objectWebCLImageDescriptor->setHeight((long)imageInfoValue);
     else
         iflag = 0;
 
-    err = clGetImageInfo(m_CCMemoryObject, ComputeContext::IMAGE_ROW_PITCH, sizeof(size_t), &imageInfoValue, 0);
+    err = ComputeContext::getImageInfo(m_CCMemoryObject, ComputeContext::IMAGE_ROW_PITCH, sizeof(size_t), &imageInfoValue);
     if (err == CL_SUCCESS && iflag == 1)
         objectWebCLImageDescriptor->setRowPitch((long)imageInfoValue);
     else
@@ -152,7 +123,7 @@ PassRefPtr<WebCLImageDescriptor> WebCLImage::getInfo(ExceptionCode& ec)
 
     ASSERT(err != CL_SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-    return objectWebCLImageDescriptor.release();
+    return 0;
 }
 
 } // namespace WebCore

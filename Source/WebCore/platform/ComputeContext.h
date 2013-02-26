@@ -344,6 +344,8 @@ public:
     static CCerror getCommandQueueInfo(CCCommandQueue, int infoType, size_t sizeOfData, void* data);
     static CCerror getEventInfo(CCEvent event, int infoType, size_t sizeOfData, void* data);
     static CCerror getEventProfilingInfo(CCEvent event, int infoType, size_t sizeOfData, void* data);
+    static CCerror getImageInfo(PlatformComputeObject image, int infoType, size_t sizeOfData, void* data);
+    static CCerror getGLtextureInfo(PlatformComputeObject image, int textureInfoType, size_t sizeOfData, void* data);
 
     CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
