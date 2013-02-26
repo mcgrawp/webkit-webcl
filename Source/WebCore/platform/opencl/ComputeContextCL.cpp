@@ -584,6 +584,26 @@ CCerror ComputeContext::getGLtextureInfo(PlatformComputeObject image, int textur
     return clToComputeContextError(error);
 }
 
+CCerror ComputeContext::getKernelInfo(CCKernel kernel, int infoType, size_t sizeOfData, void* data)
+{
+    cl_kernel_info clKernelInfoType = infoType;
+    cl_int error = clGetKernelInfo(kernel, clKernelInfoType, sizeOfData, data, 0);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::getWorkGroupInfo(CCKernel kernel, CCDeviceID device, int infoType, size_t sizeOfData, void* data)
+{
+    cl_kernel_work_group_info clKernelWorkGroupInfoType = infoType;
+    cl_int error = clGetKernelWorkGroupInfo(kernel, device, clKernelWorkGroupInfoType, sizeOfData, data, 0);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::releaseKernel(CCKernel kernel)
+{
+    cl_int error = clReleaseKernel(kernel);
+    return clToComputeContextError(error);
+}
+
 CCerror ComputeContext::releaseEvent(CCEvent ccevent)
 {
     cl_int error = clReleaseEvent(ccevent);

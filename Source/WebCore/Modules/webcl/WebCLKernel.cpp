@@ -38,35 +38,10 @@ namespace WebCore {
 
 WebCLKernel::~WebCLKernel()
 {
-    CCerror err = 0;
-
     ASSERT(m_clKernel);
-
-    err = clReleaseKernel(m_clKernel);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_KERNEL:
-            printf("Error: CL_INVALID_KERNEL \n");
-            break;
-        case CL_OUT_OF_RESOURCES:
-            printf("Error: CL_OUT_OF_RESOURCES  \n");
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            printf("Error: CL_OUT_OF_HOST_MEMORY  \n");
-            break;
-        default:
-            printf("Error: Invaild Error Type\n");
-            break;
-        }
-    } else {
-        for (int i = 0; i < m_numKernels; i++) {
-            if ((m_kernelList[i].get())->getCLKernel() == m_clKernel) {
-                m_kernelList.remove(i);
-                m_numKernels = m_kernelList.size();
-                break;
-            }
-        }
-    }
+    CCerror computeContextErrorCode = m_context->computeContext()->releaseKernel(m_clKernel);
+    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+    m_clKernel = 0;
 }
 
 PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, cl_kernel kernel)
@@ -84,7 +59,6 @@ WebCLKernel::WebCLKernel(WebCLContext* context, cl_kernel kernel)
 WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
 {
     if (!m_clKernel) {
-        printf("Error: Invalid kernel\n");
         ec = WebCLException::INVALID_KERNEL;
         return WebCLGetInfo();
     }
@@ -93,36 +67,34 @@ WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
     switch (kernelInfo) {
     case ComputeContext::KERNEL_FUNCTION_NAME: {
         char functionName[WebCL::CHAR_BUFFER_SIZE] = {""};
-        err = clGetKernelInfo(m_clKernel, kernelInfo, sizeof(functionName), &functionName, 0);
+        err = ComputeContext::getKernelInfo(m_clKernel, kernelInfo, sizeof(functionName), &functionName);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(String(functionName));
         break;
     }
     case ComputeContext::KERNEL_NUM_ARGS: {
-        cl_uint uintUnits = 0;
-        err = clGetKernelInfo(m_clKernel, kernelInfo, sizeof(cl_uint), &uintUnits, 0);
+        CCuint numberOfArgs = 0;
+        err = ComputeContext::getKernelInfo(m_clKernel, kernelInfo, sizeof(CCuint), &numberOfArgs);
         if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(uintUnits));
+            return WebCLGetInfo(static_cast<unsigned>(numberOfArgs));
         break;
     }
     case ComputeContext::KERNEL_PROGRAM: {
-        RefPtr<WebCLProgram> programObj = 0;
-        cl_program clProgramID = 0;
-        err = clGetKernelInfo(m_clKernel, kernelInfo, sizeof(clProgramID), &clProgramID, 0);
+        CCProgram ccProgramID = 0;
+        err = ComputeContext::getKernelInfo(m_clKernel, kernelInfo, sizeof(CCProgram), &ccProgramID);
         if (err == CL_SUCCESS) {
-            programObj = WebCLProgram::create(m_context, clProgramID);
-            return WebCLGetInfo(PassRefPtr<WebCLProgram>(programObj));
+            RefPtr<WebCLProgram> programObj = WebCLProgram::create(m_context, ccProgramID);
+            return WebCLGetInfo(programObj.release());
         }
         break;
     }
     /* FIXME: we should not create a context here
     case ComputeContext::KERNEL_CONTEXT: {
-        RefPtr<WebCLContext> contextObj = 0;
-        cl_context clContextID = 0;
-        err = clGetKernelInfo(m_clKernel, kernelInfo, sizeof(cl_context), &clContextID, 0);
+        CCContext ccContextID = 0;
+        err = ComputeContext::getKernelInfo(m_clKernel, kernelInfo, sizeof(CCContext), &ccContextID);
         if (err == CL_SUCCESS) {
-            contextObj = WebCLContext::create(m_context, clContextID);
-            return WebCLGetInfo(PassRefPtr<WebCLContext>(contextObj));
+            RefPtr<WebCLContext> contextObj = WebCLContext::create(m_context, ccContextID);
+            return WebCLGetInfo(contextObj.release());
         }
         break;
     }
@@ -139,40 +111,48 @@ WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
 
 WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, int paramName, ExceptionCode& ec)
 {
-    CCerror err = 0;
-    cl_device_id clDevice = 0;
-    size_t sizetUnits = 0;
-    cl_ulong ulongUnits = 0;
-
     if (!m_clKernel) {
-        printf("Error: Invalid kernel\n");
         ec = WebCLException::INVALID_KERNEL;
         return WebCLGetInfo();
     }
 
-    if (device) {
-        // FIXME: s/getCLDevice/getComputeContextDevice
-        clDevice = device->getCLDevice();
-    }
-
-    if (!clDevice) {
-        printf("Error: cl_device null\n");
+    CCDeviceID ccDevice = 0;
+    // FIXME: s/getCLDevice/getComputeContextDevice
+    if (device)
+        ccDevice = device->getCLDevice();
+    if (!ccDevice) {
         ec = WebCLException::INVALID_DEVICE;
         return WebCLGetInfo();
     }
-
+    CCerror err = 0;
     switch (paramName) {
     case ComputeContext::KERNEL_WORK_GROUP_SIZE:
-    case ComputeContext::KERNEL_COMPILE_WORK_GROUP_SIZE:
-        err = clGetKernelWorkGroupInfo(m_clKernel, clDevice, paramName, sizeof(size_t), &sizetUnits, 0);
+    case ComputeContext::KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE: {
+        size_t kernelInfo = 0;
+        err = ComputeContext::getWorkGroupInfo(m_clKernel, ccDevice, paramName, sizeof(size_t), &kernelInfo);
         if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(sizetUnits));
+            return WebCLGetInfo(static_cast<unsigned>(kernelInfo));
         break;
-    case ComputeContext::KERNEL_LOCAL_MEM_SIZE:
-        err = clGetKernelWorkGroupInfo(m_clKernel, clDevice, paramName, sizeof(cl_ulong), &ulongUnits, 0);
+    }
+    case ComputeContext::KERNEL_COMPILE_WORK_GROUP_SIZE: {
+        size_t workGroupSize[3] = {0, 0, 0};
+        err = ComputeContext::getWorkGroupInfo(m_clKernel, ccDevice, paramName, sizeof(size_t) * 3, workGroupSize);
+        if (err == CL_SUCCESS) {
+            RefPtr<Int32Array> values = Int32Array::create(3);
+            for (int i = 0; i < 3; i++)
+                values->set(i, workGroupSize[i]);
+            return WebCLGetInfo(values.release());
+        }
+        break;
+    }
+    case ComputeContext::KERNEL_PRIVATE_MEM_SIZE:
+    case ComputeContext::KERNEL_LOCAL_MEM_SIZE: {
+        CCulong localMemSize = 0;
+        err = ComputeContext::getWorkGroupInfo(m_clKernel, ccDevice, paramName, sizeof(CCulong), &localMemSize);
         if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned long>(ulongUnits));
+            return WebCLGetInfo(static_cast<unsigned long>(localMemSize));
         break;
+    }
     default:
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();

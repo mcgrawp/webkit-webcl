@@ -346,6 +346,8 @@ public:
     static CCerror getEventProfilingInfo(CCEvent event, int infoType, size_t sizeOfData, void* data);
     static CCerror getImageInfo(PlatformComputeObject image, int infoType, size_t sizeOfData, void* data);
     static CCerror getGLtextureInfo(PlatformComputeObject image, int textureInfoType, size_t sizeOfData, void* data);
+    static CCerror getKernelInfo(CCKernel, int infoType, size_t sizeOfData, void* data);
+    static CCerror getWorkGroupInfo(CCKernel, CCDeviceID, int infoType, size_t sizeOfData, void* data);
 
     CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
@@ -385,6 +387,7 @@ public:
 
     CCerror releaseCommandQueue(CCCommandQueue);
     CCerror releaseEvent(CCEvent);
+    CCerror releaseKernel(CCKernel);
     CCerror finishCommandQueue(CCCommandQueue);
     CCerror flushCommandQueue(CCCommandQueue);
 
