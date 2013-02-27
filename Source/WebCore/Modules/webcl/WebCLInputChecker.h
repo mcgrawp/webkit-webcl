@@ -37,6 +37,8 @@ bool isValidDeviceInfoType(int);
 bool isValidMemoryObjectFlag(int);
 bool isValidAddressingMode(int);
 bool isValidFilterMode(int);
+bool isValidChannelType(int);
+bool isValidChannelOrder(int);
 }
 
 }

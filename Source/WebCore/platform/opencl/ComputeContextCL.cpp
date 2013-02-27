@@ -32,9 +32,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-// FIXME: it is really necessary?
-#define TO_CL_BOOL(var) var ? CL_TRUE : CL_FALSE
-
 namespace WebCore {
 
 static CCerror clToComputeContextError(cl_int clError)
@@ -102,108 +99,6 @@ static CCerror clToComputeContextError(cl_int clError)
         break;
     }
     return computeContextError;
-}
-
-static cl_image_format computeImageFormatToCL(const ComputeContext::ImageFormat& imageFormat)
-{
-    cl_image_format clImageFormat;
-    switch (imageFormat.channelOrder) {
-    case ComputeContext::R:
-        clImageFormat.image_channel_order = CL_R;
-        break;
-    case ComputeContext::A:
-        clImageFormat.image_channel_order = CL_A;
-        break;
-    case ComputeContext::RG:
-        clImageFormat.image_channel_order = CL_RG;
-        break;
-    case ComputeContext::RA:
-        clImageFormat.image_channel_order = CL_RA;
-        break;
-    case ComputeContext::RGB:
-        clImageFormat.image_channel_order = CL_RGB;
-        break;
-    case ComputeContext::RGBA:
-        clImageFormat.image_channel_order = CL_RGBA;
-        break;
-    case ComputeContext::BGRA:
-        clImageFormat.image_channel_order = CL_BGRA;
-        break;
-    case ComputeContext::ARGB:
-        clImageFormat.image_channel_order = CL_ARGB;
-        break;
-    case ComputeContext::INTENSITY:
-        clImageFormat.image_channel_order = CL_INTENSITY;
-        break;
-    case ComputeContext::LUMINANCE:
-        clImageFormat.image_channel_order = CL_LUMINANCE;
-        break;
-    case ComputeContext::Rx:
-        clImageFormat.image_channel_order = CL_Rx;
-        break;
-    case ComputeContext::RGx:
-        clImageFormat.image_channel_order = CL_RGx;
-        break;
-    case ComputeContext::RGBx:
-        clImageFormat.image_channel_order = CL_RGBx;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    switch (imageFormat.channelDataType) {
-    case ComputeContext::SNORM_INT8:
-        clImageFormat.image_channel_data_type = CL_SNORM_INT8;
-        break;
-    case ComputeContext::SNORM_INT16:
-        clImageFormat.image_channel_data_type = CL_SNORM_INT16;
-        break;
-    case ComputeContext::UNORM_INT8:
-        clImageFormat.image_channel_data_type = CL_UNORM_INT8;
-        break;
-    case ComputeContext::UNORM_INT16:
-        clImageFormat.image_channel_data_type = CL_UNORM_INT16;
-        break;
-    case ComputeContext::UNORM_SHORT_565:
-        clImageFormat.image_channel_data_type = CL_UNORM_SHORT_565;
-        break;
-    case ComputeContext::UNORM_SHORT_555:
-        clImageFormat.image_channel_data_type = CL_UNORM_SHORT_555;
-        break;
-    case ComputeContext::UNORM_INT_101010:
-        clImageFormat.image_channel_data_type = CL_UNORM_INT_101010;
-        break;
-    case ComputeContext::SIGNED_INT8:
-        clImageFormat.image_channel_data_type = CL_SIGNED_INT8;
-        break;
-    case ComputeContext::SIGNED_INT16:
-        clImageFormat.image_channel_data_type = CL_SIGNED_INT16;
-        break;
-    case ComputeContext::SIGNED_INT32:
-        clImageFormat.image_channel_data_type = CL_SIGNED_INT32;
-        break;
-    case ComputeContext::UNSIGNED_INT8:
-        clImageFormat.image_channel_data_type = CL_UNSIGNED_INT8;
-        break;
-    case ComputeContext::UNSIGNED_INT16:
-        clImageFormat.image_channel_data_type = CL_UNSIGNED_INT16;
-        break;
-    case ComputeContext::UNSIGNED_INT32:
-        clImageFormat.image_channel_data_type = CL_UNSIGNED_INT32;
-        break;
-    case ComputeContext::HALF_FLOAT:
-        clImageFormat.image_channel_data_type = CL_HALF_FLOAT;
-        break;
-    case ComputeContext::FLOAT:
-        clImageFormat.image_channel_data_type = CL_FLOAT;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return clImageFormat;
 }
 
 // FIXME: Remove it when the CL<->GL interoperability turns to be an extension.
@@ -388,11 +283,10 @@ PlatformComputeObject ComputeContext::createBuffer(int memoryFlags, size_t size,
 }
 
 // FIXME: ComputeContext::createImage
-PlatformComputeObject ComputeContext::createImage2D(int memoryFlags, int width, int height, const ImageFormat& imageFormat, void* data, CCerror& error)
+PlatformComputeObject ComputeContext::createImage2D(int memoryFlags, int width, int height, const CCImageFormat& imageFormat, void* data, CCerror& error)
 {
     cl_mem clMemoryImage = 0;
     cl_int memoryImageError = CL_SUCCESS;
-    cl_image_format clImageFormat = computeImageFormatToCL(imageFormat);
 
     // FIXME: Move operation below to Modules/webcl/WebCLContext::createBuffer
     cl_int clMemoryFlags = memoryFlags;
@@ -408,10 +302,10 @@ PlatformComputeObject ComputeContext::createImage2D(int memoryFlags, int width, 
     // FIXME: we are hardcoding the image stride (i.e. row_pitch) as 0.
     // This is either a bug on the spec, or a bug in our implementation.
     clImageDescriptor.image_row_pitch = 0;
-    clMemoryImage = clCreateImage(m_clContext, clMemoryFlags, &clImageFormat, &clImageDescriptor,
+    clMemoryImage = clCreateImage(m_clContext, clMemoryFlags, &imageFormat, &clImageDescriptor,
         data, &memoryImageError);
 #else
-    clMemoryImage = clCreateImage2D(m_clContext, clMemoryFlags, &clImageFormat, width, height, 0,
+    clMemoryImage = clCreateImage2D(m_clContext, clMemoryFlags, &imageFormat, width, height, 0,
         data, &memoryImageError);
 #endif
 
@@ -446,7 +340,7 @@ PlatformComputeObject ComputeContext::createFromGLRenderbuffer(int type, GC3Dint
 CCSampler ComputeContext::createSampler(bool normalizedCoords, int addressingMode, int filterMode, CCerror& error)
 {
     cl_int clError;
-    cl_sampler sampler = clCreateSampler(m_clContext, TO_CL_BOOL(normalizedCoords), addressingMode, filterMode, &clError);
+    cl_sampler sampler = clCreateSampler(m_clContext, normalizedCoords, addressingMode, filterMode, &clError);
     error = clToComputeContextError(clError);
 
     return sampler;

@@ -300,7 +300,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, HTMLCanvasEleme
 }
 
 
-PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(int flags, int width, int height, const ComputeContext::ImageFormat& imageFormat, void *data, ExceptionCode& ec)
+PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(int flags, int width, int height, const CCImageFormat& imageFormat, void *data, ExceptionCode& ec)
 {
     CCerror createImage2DError;
     cl_mem clMemImage = 0;
@@ -354,7 +354,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLCanvasElement* c
         return 0;
     }
 
-    ComputeContext::ImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
+    CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
     return createImage2DBase(flags, width, height, imageFormat, image, ec);
 }
 
@@ -397,7 +397,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLImageElement* im
         return 0;
     }
 
-    ComputeContext::ImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
+    CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
     return createImage2DBase(flags, width, height, imageFormat, data, ec);
 }
 
@@ -435,7 +435,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLVideoElement* vi
         return 0;
     }
 
-    ComputeContext::ImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
+    CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
     return createImage2DBase(flags, width, height, imageFormat, (void*) imageData, ec);
 }
 
@@ -460,7 +460,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, ImageData* data, Exc
         return 0;
     }
 
-    ComputeContext::ImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
+    CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
     return createImage2DBase(flags, width, height, imageFormat, (void*) bytearray->data(), ec);
 }
 
@@ -470,18 +470,23 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, WebCLImageDescriptor
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
-    ComputeContext::ImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    int width = 0;
-    int height = 0;
-    if (descriptor) {
-        width =  descriptor->width();
-        height = descriptor->height();
-        imageFormat.channelOrder = descriptor->channelOrder();
-        imageFormat.channelDataType = descriptor->channelType();
-    } else {
+
+    if (!descriptor) {
         ec = WebCLException::INVALID_IMAGE_FORMAT_DESCRIPTOR;
         return 0;
     }
+
+    int width = descriptor->width();
+    int height = descriptor->height();
+    CCenum channelOrder = static_cast<CCenum>(descriptor->channelOrder());
+    CCenum channelType = static_cast<CCenum>(descriptor->channelType());
+    if (!WebCLInputChecker::isValidChannelOrder(channelOrder) || !WebCLInputChecker::isValidChannelType(channelType)) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return 0;
+    }
+
+
+    CCImageFormat imageFormat = {channelOrder, channelType};
     return createImage2DBase(flags, width, height, imageFormat, data->data(), ec);
 }
 

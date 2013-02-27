@@ -120,6 +120,51 @@ bool isValidFilterMode(int value)
     return false;
 
 }
+bool isValidChannelOrder(int value)
+{
+    switch (value) {
+    case ComputeContext::R:
+    case ComputeContext::A:
+    case ComputeContext::RG:
+    case ComputeContext::RA:
+    case ComputeContext::RGB:
+    case ComputeContext::RGBA:
+    case ComputeContext::BGRA:
+    case ComputeContext::ARGB:
+    case ComputeContext::INTENSITY:
+    case ComputeContext::LUMINANCE:
+    case ComputeContext::Rx:
+    case ComputeContext::RGx:
+    case ComputeContext::RGBx:
+        return true;
+    }
+
+    return false;
+}
+
+bool isValidChannelType(int value)
+{
+    switch (value) {
+    case ComputeContext::SNORM_INT8:
+    case ComputeContext::SNORM_INT16:
+    case ComputeContext::UNORM_INT8:
+    case ComputeContext::UNORM_INT16:
+    case ComputeContext::UNORM_SHORT_565:
+    case ComputeContext::UNORM_SHORT_555:
+    case ComputeContext::UNORM_INT_101010:
+    case ComputeContext::SIGNED_INT8:
+    case ComputeContext::SIGNED_INT16:
+    case ComputeContext::SIGNED_INT32:
+    case ComputeContext::UNSIGNED_INT8:
+    case ComputeContext::UNSIGNED_INT16:
+    case ComputeContext::UNSIGNED_INT32:
+    case ComputeContext::HALF_FLOAT:
+    case ComputeContext::FLOAT:
+        return true;
+    }
+
+    return false;
+}
 
 }
 }

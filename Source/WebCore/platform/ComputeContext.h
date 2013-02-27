@@ -310,11 +310,6 @@ public:
         VEC16 = 0x1000,
     };
 
-    typedef struct {
-        CCenum channelOrder;
-        CCenum channelDataType;
-    } ImageFormat;
-
     static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, const Vector<CCDeviceID>& devices, CCerror& error);
     static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, unsigned int deviceType, CCerror& error);
     ~ComputeContext();
@@ -327,7 +322,7 @@ public:
     CCProgram createProgram(const String& kernelSource, CCerror& error);
 
     PlatformComputeObject createBuffer(int type, size_t size, void* data, CCerror& error);
-    PlatformComputeObject createImage2D(int type, int width, int height, const ImageFormat& imageFormat, void* data, CCerror& error);
+    PlatformComputeObject createImage2D(int type, int width, int height, const CCImageFormat& imageFormat, void* data, CCerror& error);
     PlatformComputeObject createFromGLBuffer(int type, int bufferId, CCerror& error);
     PlatformComputeObject createFromGLRenderbuffer(int type, GC3Dint renderbufferId, CCerror& error);
     CCSampler createSampler(bool normalizedCoords, int addressingMode, int filterMode, CCerror& error);
