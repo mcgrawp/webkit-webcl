@@ -37,35 +37,11 @@ namespace WebCore {
 
 WebCLProgram::~WebCLProgram()
 {
-    /* FIXME Causing crashes. Need to investigate.
-    cl_int err = 0;
     ASSERT(m_clProgram);
+    CCerror computeContextErrorCode = m_context->computeContext()->releaseProgram(m_clProgram);
 
-    err = clReleaseProgram(m_clProgram);
-    if (err != CL_SUCCESS)
-        switch (err) {
-        case CL_INVALID_PROGRAM:
-            printf("Error: CL_INVALID_PROGRAM  \n");
-            break;
-        case CL_OUT_OF_RESOURCES:
-            printf("Error: CL_OUT_OF_RESOURCES  \n");
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            printf("Error: CL_OUT_OF_HOST_MEMORY  \n");
-            break;
-        default:
-            printf("Error: Invaild Error Type\n");
-            break;
-        }
-    } else {
-        for (int i = 0; i < m_num_programs; i++) {
-            if ((m_program_list[i].get())->getCLProgram() == m_clProgram) {
-                m_program_list.remove(i);
-                m_num_programs = m_program_list.size();
-                break;
-            }
-        }
-    }*/
+    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+    m_clProgram = 0;
 }
 
 PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, cl_program program)
@@ -83,7 +59,6 @@ WebCLGetInfo WebCLProgram::getInfo(int infoType, ExceptionCode& ec)
 {
     if (!m_clProgram) {
         ec = WebCLException::INVALID_PROGRAM;
-        printf("Error: Invalid program object\n");
         return WebCLGetInfo();
     }
 
@@ -106,13 +81,12 @@ WebCLGetInfo WebCLProgram::getInfo(int infoType, ExceptionCode& ec)
     case ComputeContext::PROGRAM_CONTEXT: {
         CCContext ccContextID = 0;
         error = ComputeContext::getProgramInfo(m_clProgram, infoType, sizeof(CCContext), &ccContextID, 0);
-        RefPtr<WebCLContext> contextObj  = 0;
-        // FIXME Need a create API taking cl_context in WebCLContext interface.
-        // contextObj = WebCLContext::create(m_context->webclObject(), ccContextID, 1, 0, error);
-        if (!contextObj)
-            return WebCLGetInfo();
-        if (error == ComputeContext::SUCCESS)
-            return WebCLGetInfo(PassRefPtr<WebCLContext>(contextObj));
+        if (error == ComputeContext::SUCCESS) {
+            RefPtr<WebCLContext> contextObj = 0;
+            // FIXME Need a create API taking cl_context in WebCLContext interface.
+            // contextObj = WebCLContext::create(m_context->webclObject(), ccContextID, 1, 0, error);
+            return WebCLGetInfo(contextObj.release());
+        }
         break;
     }
     case ComputeContext::PROGRAM_DEVICES: {
@@ -140,35 +114,35 @@ WebCLGetInfo WebCLProgram::getInfo(int infoType, ExceptionCode& ec)
 WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int infoType, ExceptionCode& ec)
 {
     if (!m_clProgram) {
-        printf("Error: Invalid program object\n");
         ec = WebCLException::INVALID_PROGRAM;
         return WebCLGetInfo();
     }
 
-    CCDeviceID deviceID = 0;
-    if (device) {
-        deviceID = device->getCLDevice();
-        if (!deviceID) {
-            ec = WebCLException::INVALID_DEVICE;
-            printf("Error: device id null\n");
-            return WebCLGetInfo();
-        }
+    CCDeviceID ccDeviceID = 0;
+    if (device)
+        ccDeviceID = device->getCLDevice();
+    if (!ccDeviceID) {
+        ec = WebCLException::INVALID_DEVICE;
+        return WebCLGetInfo();
     }
 
     CCerror error = 0;
     switch (infoType) {
-    case ComputeContext::PROGRAM_BUILD_LOG:
-        char buffer[8192];
-        error = clGetProgramBuildInfo(m_clProgram, deviceID, infoType, sizeof(buffer), buffer, 0);
+    case ComputeContext::PROGRAM_BUILD_OPTIONS:
+    case ComputeContext::PROGRAM_BUILD_LOG: {
+        char buffer[WebCL::CHAR_BUFFER_SIZE];
+        error = ComputeContext::getBuildInfo(m_clProgram, ccDeviceID, infoType, sizeof(char) * WebCL::CHAR_BUFFER_SIZE, buffer);
         if (error == CL_SUCCESS)
             return WebCLGetInfo(String(buffer));
         break;
-    case ComputeContext::PROGRAM_BUILD_STATUS:
+    }
+    case ComputeContext::PROGRAM_BUILD_STATUS: {
         CCBuildStatus buildStatus;
-        error = clGetProgramBuildInfo(m_clProgram, deviceID, infoType, sizeof(CCBuildStatus), &buildStatus, 0);
+        error = ComputeContext::getBuildInfo(m_clProgram, ccDeviceID, infoType, sizeof(CCBuildStatus), &buildStatus);
         if (error == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(buildStatus));
         break;
+    }
     default:
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
@@ -182,7 +156,6 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int infoType, Excep
 PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, ExceptionCode& ec)
 {
     if (!m_clProgram) {
-        printf("Error: Invalid program object\n");
         ec = WebCLException::INVALID_PROGRAM;
         return 0;
     }
@@ -203,7 +176,6 @@ Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode&
 {
     Vector<RefPtr<WebCLKernel> > kernels;
     if (!m_clProgram) {
-        printf("Error: Invalid program object\n");
         ec = WebCLException::INVALID_PROGRAM;
         return kernels;
     }
@@ -268,7 +240,6 @@ void WebCLProgram::build(const Vector<WebCLDevice*>& devices, const String& opti
         || !strcmp(optionsStr, "-w")
         || !strcmp(optionsStr, "-Werror")
         || !strcmp(optionsStr, "-cl-std="))) {
-            printf("Error: CL_INVALID_BUILD_OPTIONS\n");
             ec = WebCLException::INVALID_BUILD_OPTIONS;
             return;
         }
@@ -296,34 +267,11 @@ void WebCLProgram::build(const Vector<WebCLDevice*>& devices, const String& opti
 
 void WebCLProgram::releaseProgram(ExceptionCode& ec)
 {
-    CCerror err = 0;
-    if (!m_clProgram) {
-        printf("Error: Invalid program object\n");
-        ec = WebCLException::INVALID_PROGRAM;
-        return;
-    }
-    err = clReleaseProgram(m_clProgram);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_PROGRAM:
-            printf("Error: CL_INVALID_PROGRAM\n");
-            ec = WebCLException::INVALID_PROGRAM;
-            break;
-        case CL_OUT_OF_RESOURCES:
-            printf("Error: CL_OUT_OF_RESOURCES\n");
-            ec = WebCLException::OUT_OF_RESOURCES;
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            break;
-        default:
-            printf("Error: Invaild Error Type\n");
-            ec = WebCLException::FAILURE;
-            break;
-        }
-    } else
-        printf(" SUCCESS:: clReleaseProgram was successfull\n");
+    ASSERT(m_clProgram);
+    CCerror computeContextErrorCode = m_context->computeContext()->releaseProgram(m_clProgram);
+    if (computeContextErrorCode == CL_SUCCESS)
+        m_clProgram = 0;
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextErrorCode);
 }
 
 } // namespace WebCore

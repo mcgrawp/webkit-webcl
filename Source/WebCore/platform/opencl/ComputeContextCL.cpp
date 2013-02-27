@@ -552,6 +552,13 @@ CCerror ComputeContext::getProgramInfo(CCProgram program, int infoType, size_t s
    return clToComputeContextError(error);
 }
 
+CCerror ComputeContext::getBuildInfo(CCProgram program, CCDeviceID device, int infoType, size_t sizeOfData, void* data)
+{
+    cl_program_build_info clProgramBuildInfoType = infoType;
+    cl_int error = clGetProgramBuildInfo(program, device, clProgramBuildInfoType, sizeOfData, data, 0);
+    return clToComputeContextError(error);
+}
+
 CCerror ComputeContext::getCommandQueueInfo(CCCommandQueue queue, int infoType, size_t sizeOfData, void* data)
 {
    cl_int error = clGetCommandQueueInfo(queue, infoType, sizeOfData, data, 0);
@@ -632,6 +639,12 @@ CCerror ComputeContext::releaseSampler(CCSampler sampler)
 CCerror ComputeContext::releaseMemoryObject(PlatformComputeObject memmory)
 {
     cl_int error = clReleaseMemObject(memmory);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::releaseProgram(CCProgram program)
+{
+    cl_int error = clReleaseProgram(program);
     return clToComputeContextError(error);
 }
 

@@ -341,6 +341,7 @@ public:
     static CCerror getDeviceInfo(CCDeviceID, int infoType, size_t sizeOfData, void* data);
     static CCerror getPlatformInfo(CCPlatformID, int infoType, size_t sizeOfData, void* data);
     static CCerror getProgramInfo(CCProgram, int infoType, size_t sizeOfData, void* data, size_t* actualSizeOfData);
+    static CCerror getBuildInfo(CCProgram, CCDeviceID, int infoType, size_t sizeOfData, void* data);
     static CCerror getCommandQueueInfo(CCCommandQueue, int infoType, size_t sizeOfData, void* data);
     static CCerror getEventInfo(CCEvent event, int infoType, size_t sizeOfData, void* data);
     static CCerror getEventProfilingInfo(CCEvent event, int infoType, size_t sizeOfData, void* data);
@@ -392,6 +393,7 @@ public:
     CCerror releaseKernel(CCKernel);
     CCerror releaseSampler(CCSampler);
     CCerror releaseMemoryObject(PlatformComputeObject);
+    CCerror releaseProgram(CCProgram);
     CCerror finishCommandQueue(CCCommandQueue);
     CCerror flushCommandQueue(CCCommandQueue);
 
