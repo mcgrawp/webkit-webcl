@@ -604,6 +604,12 @@ CCerror ComputeContext::getSamplerInfo(CCSampler sampler, int infoType, size_t s
     cl_int error = clGetSamplerInfo(sampler, clSamplerInfoType, sizeOfData, data, 0);
     return clToComputeContextError(error);
 }
+CCerror ComputeContext::getMemoryObjectInfo(PlatformComputeObject memObject, int infoType, size_t sizeOfData, void* data)
+{
+    cl_mem_info clMemInfoType = infoType;
+    cl_int error = clGetMemObjectInfo(memObject, clMemInfoType, sizeOfData, data, 0);
+    return clToComputeContextError(error);
+}
 
 CCerror ComputeContext::releaseKernel(CCKernel kernel)
 {
@@ -620,6 +626,12 @@ CCerror ComputeContext::releaseEvent(CCEvent ccevent)
 CCerror ComputeContext::releaseSampler(CCSampler sampler)
 {
     cl_int error = clReleaseSampler(sampler);
+    return clToComputeContextError(error);
+}
+
+CCerror ComputeContext::releaseMemoryObject(PlatformComputeObject memmory)
+{
+    cl_int error = clReleaseMemObject(memmory);
     return clToComputeContextError(error);
 }
 

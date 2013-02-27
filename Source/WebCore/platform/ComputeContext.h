@@ -349,6 +349,7 @@ public:
     static CCerror getKernelInfo(CCKernel, int infoType, size_t sizeOfData, void* data);
     static CCerror getWorkGroupInfo(CCKernel, CCDeviceID, int infoType, size_t sizeOfData, void* data);
     static CCerror getSamplerInfo(CCSampler, int infoType, size_t sizeOfData, void* data);
+    static CCerror getMemoryObjectInfo(PlatformComputeObject, int infoType, size_t sizeOfData, void* data);
 
     CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
@@ -390,6 +391,7 @@ public:
     CCerror releaseEvent(CCEvent);
     CCerror releaseKernel(CCKernel);
     CCerror releaseSampler(CCSampler);
+    CCerror releaseMemoryObject(PlatformComputeObject);
     CCerror finishCommandQueue(CCCommandQueue);
     CCerror flushCommandQueue(CCCommandQueue);
 
