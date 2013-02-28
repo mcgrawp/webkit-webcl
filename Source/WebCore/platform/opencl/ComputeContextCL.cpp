@@ -270,11 +270,7 @@ PlatformComputeObject ComputeContext::createBuffer(int memoryFlags, size_t size,
 {
     cl_mem clMemoryBuffer;
     cl_int clError;
-
-    // FIXME: Move operation below to Modules/webcl/WebCLContext::createBuffer
     cl_int clMemoryFlags = memoryFlags;
-    if (data)
-        clMemoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
 
     clMemoryBuffer = clCreateBuffer(m_clContext, clMemoryFlags, size, data, &clError);
     error = clToComputeContextError(clError);
@@ -287,11 +283,7 @@ PlatformComputeObject ComputeContext::createImage2D(int memoryFlags, int width, 
 {
     cl_mem clMemoryImage = 0;
     cl_int memoryImageError = CL_SUCCESS;
-
-    // FIXME: Move operation below to Modules/webcl/WebCLContext::createBuffer
     cl_int clMemoryFlags = memoryFlags;
-    if (data)
-        clMemoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
 
 #if defined(CL_VERSION_1_2)
     cl_image_desc clImageDescriptor;

@@ -100,7 +100,7 @@ void WebCLContext::ensureCachedContextProperties()
     toWebCLDeviceArray(ccDevices, devices);
 
     // 2) Platform.
-    CCPlatformID ccPlatformID = 0;
+    CCPlatformID ccPlatformID = nullptr;
     err = clGetContextInfo(m_clContext, ComputeContext::CONTEXT_PROPERTIES, 0, 0, &dataSizeInBytes);
     ASSERT(err == CL_SUCCESS);
     size_t numberOfProperties = dataSizeInBytes / sizeof(CCContextProperties);
@@ -223,30 +223,30 @@ PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource,
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, int size, ArrayBuffer* data, ExceptionCode& ec)
 {
     if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
-
     if (!WebCLInputChecker::isValidMemoryObjectFlag(memoryFlags)) {
         ec = WebCLException::INVALID_VALUE;
         return 0;
     }
 
-    void* arrayData = nullptr;
-    if (data)
-        arrayData = data->data();
+    void* arrayBufferData = nullptr;
+    if (data) {
+        memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
+        arrayBufferData = data->data();
+    }
 
     CCerror error;
-    RefPtr<WebCLBuffer> webCLBuffer = WebCLBuffer::create(this, memoryFlags, size, arrayData, error);
+    RefPtr<WebCLBuffer> webCLBuffer = WebCLBuffer::create(this, memoryFlags, size, arrayBufferData, error);
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-    return webCLBuffer;
+    return webCLBuffer.release();
 }
 
-PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, ImageData *ptr, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, ImageData *ptr, ExceptionCode& ec)
 {
     if (!ptr || !ptr->data() || !ptr->data()->data()) {
         ec = WebCLException::INVALID_HOST_PTR;
@@ -255,18 +255,18 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, ImageData *ptr,
 
     void* buffer = ptr->data()->data();
     int bufferSize = ptr->data()->length();
+    memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
 
     CCerror error;
-    RefPtr<WebCLBuffer> webCLBuffer = WebCLBuffer::create(this, memFlags, bufferSize, buffer, error);
+    RefPtr<WebCLBuffer> webCLBuffer = WebCLBuffer::create(this, memoryFlags, bufferSize, buffer, error);
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-
-    return webCLBuffer;
+    return webCLBuffer.release();
 }
 
-PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
 {
     if (!srcCanvas || !srcCanvas->buffer()) {
         ec = ComputeContext::INVALID_HOST_PTR;
@@ -286,22 +286,30 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memFlags, HTMLCanvasEleme
 
     void* imageData = byteArray->data();
     int bufferSize = byteArray->length();
+    if (!imageData || !bufferSize) {
+        ec = ComputeContext::INVALID_HOST_PTR;
+        return 0;
+    }
+    memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
 
     CCerror error;
-    RefPtr<WebCLBuffer> webCLBuffer = WebCLBuffer::create(this, memFlags, bufferSize, imageData, error);
+    RefPtr<WebCLBuffer> webCLBuffer = WebCLBuffer::create(this, memoryFlags, bufferSize, imageData, error);
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
 
-    return webCLBuffer;
+    return webCLBuffer.release();
 }
 
 
-PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(int flags, int width, int height, const CCImageFormat& imageFormat, void *data, ExceptionCode& ec)
+PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(int flags, int width, int height, const CCImageFormat&
+    imageFormat, void *data, ExceptionCode& ec)
 {
-    CCerror createImage2DError;
-    cl_mem clMemImage = 0;
+    if (!m_clContext) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return 0;
+    }
 
     if (!width || !height) {
         ec = WebCLException::INVALID_IMAGE_SIZE;
@@ -312,86 +320,77 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(int flags, int width, int
         ec = WebCLException::INVALID_VALUE;
         return 0;
     }
+    if (data)
+        flags |= ComputeContext::MEM_COPY_HOST_PTR;
 
-    clMemImage = m_computeContext->createImage2D(flags, width, height, imageFormat, data, createImage2DError);
-    if (!clMemImage) {
+    CCerror createImage2DError;
+    PlatformComputeObject ccMemoryImage = m_computeContext->createImage2D(flags, width, height, imageFormat, data, createImage2DError);
+    if (!ccMemoryImage) {
         ASSERT(createImage2DError != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(createImage2DError);
         return 0;
     }
 
-    RefPtr<WebCLImage> imageObj = WebCLImage::create(this, clMemImage, false);
-    return imageObj;
+    RefPtr<WebCLImage> imageObject = WebCLImage::create(this, ccMemoryImage, false);
+    return imageObject.release();
 }
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLCanvasElement* canvasElement, ExceptionCode& ec)
 {
-    int width = 0;
-    int height = 0;
-    RefPtr<Uint8ClampedArray> bytearray = 0;
-    ImageBuffer* imageBuffer = 0;
-    void* image = 0;
-    if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
-        ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-    if (canvasElement) {
-        width = (cl_uint) canvasElement->width();
-        height = (cl_uint) canvasElement->height();
-        imageBuffer = canvasElement->buffer();
-        if (imageBuffer) {
-            bytearray = imageBuffer->getUnmultipliedImageData(IntRect(0, 0, width, height));
-            if (bytearray)
-                image = (void*) bytearray->data();
-        }
-    }
-    if (!image) {
-        printf("Error:: createImage2D canvasElement is invalid.\n");
-        ec = WebCLException::FAILURE;
+    if (!canvasElement || !canvasElement->buffer()) {
+        ec = ComputeContext::INVALID_HOST_PTR;
         return 0;
     }
 
+    CCuint width = canvasElement->width();
+    CCuint height = canvasElement->height();
+
+    ImageBuffer* imageBuffer = canvasElement->buffer();
+    RefPtr<Uint8ClampedArray> byteArray = imageBuffer->getUnmultipliedImageData(IntRect(0, 0, width, height));
+
+    if (!byteArray) {
+        ec = ComputeContext::INVALID_HOST_PTR;
+        return 0;
+    }
+
+    void* imageData = byteArray->data();
+    int bufferSize = byteArray->length();
+
+    if (!imageData || !bufferSize) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
     CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBase(flags, width, height, imageFormat, image, ec);
+    return createImage2DBase(flags, width, height, imageFormat, imageData, ec);
 }
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLImageElement* image, ExceptionCode& ec)
 {
-    int width = 0;
-    int height = 0;
-    CachedImage* cachedImage = 0;
-    void* data = 0;
-    RefPtr<Uint8ClampedArray> byteArray;
-    OwnPtr<ImageBuffer> buffer;
-
-    if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
-        ec = WebCLException::INVALID_CONTEXT;
+    if (!image || !image->cachedImage()) {
+        ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
+    CCuint width = image->width();
+    CCuint height = image->height();
+    CachedImage* cachedImage = image->cachedImage();
 
-    if (image) {
-        width = (cl_uint) image->width();
-        height = (cl_uint) image->height();
-        cachedImage = image->cachedImage();
-        if (cachedImage) {
+    IntRect rect(0, 0, width, height);
+    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(rect.size());
+    buffer->context()->drawImage(cachedImage->image(), ColorSpaceDeviceRGB, rect);
+
+    RefPtr<Uint8ClampedArray> byteArray =  buffer->getUnmultipliedImageData(rect);
+    if (!byteArray) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
 #if 0
             // FIXME: Is this useful?
             data = (void*) cachedImage->image()->data()->data();
 #else
-            IntRect rect(0, 0, width, height);
-            buffer = ImageBuffer::create(IntSize(width, height));
-            buffer->context()->drawImage(cachedImage->image(), ColorSpaceDeviceRGB, rect);
-            byteArray = buffer->getUnmultipliedImageData(rect);
-            data = byteArray->data();
+    void* data = byteArray->data();
 #endif
-        }
-    }
-
     if (!data) {
-        ec = WebCLException::FAILURE;
-        printf("Error: Invalid HTMLImageElement object in createImage\n");
+        ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
 
@@ -401,81 +400,58 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLImageElement* im
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLVideoElement* video, ExceptionCode& ec)
 {
-    int width = 0;
-    int height = 0;
-    RefPtr<Image> image = 0;
-    SharedBuffer* sharedBuffer = 0;
-    void* imageData = 0;
-
-    if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
-        ec = WebCLException::FAILURE;
-        return 0;
-    }
     if (ComputeContext::MEM_READ_ONLY != flags) {
         printf("ERROR:: createImage with HTMLVideoElement can use only MEM_READ_ONLY as flags\n");
         ec = WebCLException::INVALID_VALUE;
         return 0;
     }
-    if (video) {
-        width =  video->width();
-        height = video->height();
-        image = videoFrameToImage(video);
-        if (image) {
-            sharedBuffer = image->data();
-            if (sharedBuffer)
-                imageData = (void*) sharedBuffer->data();
-        }
+    if (!video) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
     }
+    CCuint width =  video->width();
+    CCuint height = video->height();
+    RefPtr<Image> image = videoFrameToImage(video);
+
+    if (!image || !image->data()) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
+    SharedBuffer* sharedBuffer = image->data();
+    void* imageData = (void*)sharedBuffer->data();
+
     if (!imageData) {
-        printf("Error: videoFrameToImage failed to convert in createImage.\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
 
     CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBase(flags, width, height, imageFormat, (void*) imageData, ec);
+    return createImage2DBase(flags, width, height, imageFormat, imageData, ec);
 }
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, ImageData* data, ExceptionCode& ec)
 {
-    int width = 0;
-    int height = 0;
-    Uint8ClampedArray* bytearray = 0;
-
-    if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
-        ec = WebCLException::FAILURE;
+    if (!data || !data->data() || !data->data()->data()) {
+        ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
-    if (data && data->data() && data->data()->data()) {
-        bytearray = data->data();
-        width = (cl_uint) data->width();
-        height = (cl_uint) data->height();
-    } else {
-        printf("Error: canvasElement is  null \n");
-        ec = WebCLException::FAILURE;
-        return 0;
-    }
+    CCuint width = data->width();
+    CCuint height = data->height();
+    Uint8ClampedArray* byteArray = data->data();
 
     CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBase(flags, width, height, imageFormat, (void*) bytearray->data(), ec);
+    return createImage2DBase(flags, width, height, imageFormat, (void*) byteArray->data(), ec);
 }
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, WebCLImageDescriptor* descriptor, ArrayBuffer* data, ExceptionCode& ec)
 {
-    if (!m_clContext) {
-        ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-
     if (!descriptor) {
         ec = WebCLException::INVALID_IMAGE_FORMAT_DESCRIPTOR;
         return 0;
     }
+    CCuint width =  descriptor->width();
+    CCuint height = descriptor->height();
 
-    int width = descriptor->width();
-    int height = descriptor->height();
     CCenum channelOrder = static_cast<CCenum>(descriptor->channelOrder());
     CCenum channelType = static_cast<CCenum>(descriptor->channelType());
     if (!WebCLInputChecker::isValidChannelOrder(channelOrder) || !WebCLInputChecker::isValidChannelType(channelType)) {
@@ -483,9 +459,8 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, WebCLImageDescriptor
         return 0;
     }
 
-
     CCImageFormat imageFormat = {channelOrder, channelType};
-    return createImage2DBase(flags, width, height, imageFormat, data->data(), ec);
+    return createImage2DBase(flags, width, height, imageFormat, data ? data->data() : 0, ec);
 }
 
 
@@ -508,34 +483,33 @@ PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(int flags, WebGLBuffer*
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-    return webCLBuffer;
+    return webCLBuffer.release();
 }
 
 
-PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderBuffer(int flags, WebGLRenderbuffer* renderbufferobj, ExceptionCode& ec)
+PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderBuffer(int flags, WebGLRenderbuffer* renderBuffer, ExceptionCode& ec)
 {
-    PlatformComputeObject clMemID = 0;
-    GLuint rbufID = 0;
-
     if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
-    if (!renderbufferobj) {
-        rbufID =  renderbufferobj->getInternalFormat();
-
+    GLuint renderBufferID = 0;
+    if (renderBuffer)
+        renderBufferID =  renderBuffer->getInternalFormat();
+    if (!renderBufferID) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
     }
 
     CCerror error;
-    clMemID = m_computeContext->createFromGLRenderbuffer(flags, rbufID, error);
-    if (!clMemID) {
+    PlatformComputeObject ccMemoryID = m_computeContext->createFromGLRenderbuffer(flags, renderBufferID, error);
+    if (!ccMemoryID) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-    RefPtr<WebCLImage> imageObj = WebCLImage::create(this, clMemID, true);
-    return imageObj;
+    RefPtr<WebCLImage> imageObject = WebCLImage::create(this, ccMemoryID, true);
+    return imageObject.release();
 }
 
 PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCords, int addressingMode, int filterMode, ExceptionCode& ec)
@@ -569,22 +543,20 @@ PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCords, int address
 
 PassRefPtr<WebCLMemoryObject> WebCLContext::createFromGLTexture2D(int flags, GC3Denum textureTarget, GC3Dint miplevel, GC3Duint texture, ExceptionCode& ec)
 {
-    cl_mem clMemID = 0;
     if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
 
     CCerror error;
-    clMemID = m_computeContext->createFromGLTexture2D(flags, textureTarget, miplevel, texture, error);
-    if (!clMemID) {
+    PlatformComputeObject ccMemoryImage = m_computeContext->createFromGLTexture2D(flags, textureTarget, miplevel, texture, error);
+    if (!ccMemoryImage) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-    RefPtr<WebCLMemoryObject> memoryObject = WebCLMemoryObject::create(this, clMemID, true);
-    return memoryObject;
+    RefPtr<WebCLMemoryObject> memoryObject = WebCLMemoryObject::create(this, ccMemoryImage, true);
+    return memoryObject.release();
 }
 
 PassRefPtr<WebCLEvent> WebCLContext::createUserEvent(ExceptionCode& ec)
