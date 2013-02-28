@@ -45,7 +45,6 @@ using namespace std;
 namespace WebCore {
 
 class ScriptExecutionContext;
-class WebCLGetInfo;
 class WebCLImage;
 class WebCLException;
 class WebCLContextProperties;
@@ -75,7 +74,7 @@ public:
     Vector<String> getSupportedExtensions(ExceptionCode&);
 
     static PassRefPtr<WebCL> create();
-    WebCLGetInfo getImageInfo(WebCLImage*, cl_image_info, ExceptionCode&);
+
 private:
     WebCL();
     void checkMemObject(cl_mem);

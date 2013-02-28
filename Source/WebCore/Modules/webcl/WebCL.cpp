@@ -70,59 +70,6 @@ Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec) const
     return webCLPlatforms;
 }
 
-WebCLGetInfo WebCL::getImageInfo(WebCLImage* image, cl_image_info paramName, ExceptionCode& ec)
-{
-    cl_mem clImageID = 0;
-    if (image) {
-        clImageID = image->getCLImage();
-        if (!clImageID) {
-            printf("Error: cl_Image_id null in getImageInfo\n");
-            ec = WebCLException::INVALID_MEM_OBJECT;
-            return WebCLGetInfo();
-        }
-    }
-
-    cl_int err = 0;
-    switch (paramName) {
-    case ComputeContext::IMAGE_ELEMENT_SIZE:
-    case ComputeContext::IMAGE_WIDTH:
-    case ComputeContext::IMAGE_HEIGHT: {
-        size_t units = 0;
-        err = clGetImageInfo(clImageID, paramName, sizeof(size_t), &units, 0);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<int>(units));
-        break;
-    }
-    default:
-        ec = WebCLException::INVALID_VALUE;
-        return WebCLGetInfo();
-    }
-
-    switch (err) {
-    case CL_INVALID_MEM_OBJECT:
-        ec = WebCLException::INVALID_MEM_OBJECT;
-        printf("Error: CL_INVALID_MEM_OBJECT in getImageInfo \n");
-        break;
-    case CL_INVALID_VALUE:
-        ec = WebCLException::INVALID_VALUE;
-        printf("Error: CL_INVALID_VALUE in getImageInfo\n");
-        break;
-    case CL_OUT_OF_RESOURCES:
-        ec = WebCLException::OUT_OF_RESOURCES;
-        printf("Error: CL_OUT_OF_RESOURCES in getImageInfo\n");
-        break;
-    case CL_OUT_OF_HOST_MEMORY:
-        ec = WebCLException::OUT_OF_HOST_MEMORY;
-        printf("Error: CL_OUT_OF_HOST_MEMORY in getImageInfo \n");
-        break;
-    default:
-        printf("Error: Invaild Error Type in getImageInfo\n");
-        ec = WebCLException::FAILURE;
-        break;
-    }
-    return WebCLGetInfo();
-}
-
 void WebCL::waitForEvents(const Vector<WebCLEvent*>& events, ExceptionCode& ec)
 {
 
