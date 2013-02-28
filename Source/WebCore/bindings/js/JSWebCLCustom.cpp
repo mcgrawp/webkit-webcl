@@ -29,8 +29,6 @@
 
 #if ENABLE(WEBCL)
 #include "JSWebCLCustom.h"
-
-
 #include "JSWebCL.h"
 #include "JSWebCLContext.h"
 #include "JSWebCLDevice.h"
@@ -48,26 +46,6 @@ using namespace std;
 
 namespace WebCore {
 
-JSValue JSWebCL::getImageInfo(JSC::ExecState* exec)
-{
-    if (exec->argumentCount() != 2)
-        return throwSyntaxError(exec);
-
-    ExceptionCode ec = 0;
-    WebCL* context = static_cast<WebCL*>(impl());
-    WebCLImage* wimage  = toWebCLImage(exec->argument(0));
-    if (exec->hadException())
-        return jsUndefined();
-    unsigned imageInfo  = exec->argument(1).toInt32(exec);
-    if (exec->hadException())
-        return jsUndefined();
-    WebCLGetInfo info = context->getImageInfo(wimage, imageInfo, ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-    return toJS(exec, globalObject(), info);
-}
 JSValue JSWebCL::createContext(JSC::ExecState* exec)
 {
     ExceptionCode ec = 0;
@@ -124,7 +102,6 @@ JSValue JSWebCL::createContext(JSC::ExecState* exec)
             }
             return toJS(exec, globalObject(), objWebCLContext.get());
         }
-        return jsUndefined();
     }
     return jsUndefined();
 }
