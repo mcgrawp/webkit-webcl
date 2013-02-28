@@ -28,81 +28,92 @@
 #include "config.h"
 
 #if ENABLE(WEBCL)
-#include "JSWebCLCustom.h"
 #include "JSWebCL.h"
-#include "JSWebCLContext.h"
+
+#include "JSWebCLCommandQueue.h"
+#include "JSWebCLContextProperties.h"
+#include "JSWebCLCustom.h"
 #include "JSWebCLDevice.h"
+#include "JSWebCLEvent.h"
 #include "JSWebCLImage.h"
+#include "JSWebCLImageDescriptor.h"
 #include "JSWebCLKernel.h"
+#include "JSWebCLMemoryObject.h"
 #include "JSWebCLPlatform.h"
-#include "WebCL.h"
-#include "WebCLContext.h"
-#include "WebCLContextProperties.h"
-#include "WebCLGetInfo.h"
-#include "WebCLImage.h"
+#include "JSWebCLProgram.h"
+#include "JSWebCLSampler.h"
+
+#include "JSFloat32Array.h"
+#include "JSInt32Array.h"
+#include "JSUint8Array.h"
 
 using namespace JSC;
 using namespace std;
 
 namespace WebCore {
 
-JSValue JSWebCL::createContext(JSC::ExecState* exec)
+JSValue JSWebCL::createContext(ExecState* exec)
 {
     ExceptionCode ec = 0;
-    RefPtr<WebCLContext> objWebCLContext;
+    RefPtr<WebCLContext> webCLContext;
 
-    if (!exec->argumentCount()) {
-        objWebCLContext  = m_impl->createContext(0, ec);
+    unsigned argumentCount = exec->argumentCount();
+    if (!(!argumentCount || argumentCount == 1))
+        return throwSyntaxError(exec);
+
+    if (!argumentCount) {
+        webCLContext  = m_impl->createContext(0, ec);
         if (ec) {
             setDOMException(exec, ec);
             return jsUndefined();
         }
-        return toJS(exec, globalObject(), objWebCLContext.get());
+        return toJS(exec, globalObject(), webCLContext.get());
     }
 
-    if (exec->argumentCount() == 1) {
+    ASSERT(exec->argumentCount() == 1);
+    if (exec->argument(0).isObject()) {
+        JSObject* jsAttrs = exec->argument(0).getObject();
+        WebCLPlatform* platform;
+        Identifier platformIdentifier(exec, "platform");
+        if (jsAttrs->hasProperty(exec, platformIdentifier))
+            platform = toWebCLPlatform(jsAttrs->get(exec, platformIdentifier));
 
-        if (exec->argumentCount() == 1 && exec->argument(0).isObject()) {
-            JSObject* jsAttrs = exec->argument(0).getObject();
-            WebCLPlatform* platform;
-            Identifier platformIdentifier(exec, "platform");
-            if (jsAttrs->hasProperty(exec, platformIdentifier))
-                platform = toWebCLPlatform(jsAttrs->get(exec, platformIdentifier));
+        // FIXME: toTypeArray needs to return a Vector<RefPtr<Type> >
+        Vector<WebCLDevice*> rawPtrDevices;
+        Identifier devicesIdentifier(exec, "devices");
+        if (jsAttrs->hasProperty(exec, devicesIdentifier))
+            rawPtrDevices = toWebCLDeviceArray(exec, jsAttrs->get(exec, devicesIdentifier));
 
-            // FIXME: toTypeArray needs to return a Vector<RefPtr<Type> >
-            Vector<WebCLDevice*> devicesPtr;
-            Identifier devicesIdentifier(exec, "devices");
-            if (jsAttrs->hasProperty(exec, devicesIdentifier))
-                devicesPtr = toWebCLDeviceArray(exec, jsAttrs->get(exec, devicesIdentifier));
-            
-            Vector<RefPtr<WebCLDevice> > devices;
-            for (size_t i = 0; i < devicesPtr.size(); ++i)
-                devices.append(devicesPtr[i]);
+        Vector<RefPtr<WebCLDevice> > devices;
+        for (size_t i = 0; i < devices.size(); ++i)
+            devices.append(rawPtrDevices[i]);
 
-            int deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
-            Identifier deviceTypeIdentifier(exec, "deviceType");
-            if (jsAttrs->hasProperty(exec, deviceTypeIdentifier))
-                deviceType = jsAttrs->get(exec, deviceTypeIdentifier).toInt32(exec);
+        int deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
+        Identifier deviceTypeIdentifier(exec, "deviceType");
+        if (jsAttrs->hasProperty(exec, deviceTypeIdentifier))
+            deviceType = jsAttrs->get(exec, deviceTypeIdentifier).toInt32(exec);
 
-            int sharedGroup = 0;
-            Identifier shareGroupIdentifier(exec, "shareGroup");
-            if (jsAttrs->hasProperty(exec, shareGroupIdentifier))
-                sharedGroup = jsAttrs->get(exec, shareGroupIdentifier).toInt32(exec);
+        int sharedGroup = 0;
+        Identifier shareGroupIdentifier(exec, "shareGroup");
+        if (jsAttrs->hasProperty(exec, shareGroupIdentifier))
+            sharedGroup = jsAttrs->get(exec, shareGroupIdentifier).toInt32(exec);
 
-            String hint;
-            Identifier hintIdentifier(exec, "hint");
-            if (jsAttrs->hasProperty(exec, hintIdentifier))
-                hint = jsAttrs->get(exec, hintIdentifier).toString(exec)->value(exec);
+        // FIXME: Vector of strings.
+        String hint;
+        Identifier hintIdentifier(exec, "hint");
+        if (jsAttrs->hasProperty(exec, hintIdentifier))
+            hint = jsAttrs->get(exec, hintIdentifier).toString(exec)->value(exec);
 
-            RefPtr<WebCore::WebCLContextProperties> objWebCLContextProperties = WebCLContextProperties::create(platform, devices, deviceType, sharedGroup, hint);
-            objWebCLContext  = m_impl->createContext(objWebCLContextProperties.get(), ec);
-            if (ec) {
-                setDOMException(exec, ec);
-                return jsUndefined();
-            }
-            return toJS(exec, globalObject(), objWebCLContext.get());
+        RefPtr<WebCore::WebCLContextProperties> webCLContextProperties = WebCLContextProperties::create(platform, devices, deviceType, sharedGroup, hint);
+        webCLContext = m_impl->createContext(webCLContextProperties.get(), ec);
+        if (ec) {
+            setDOMException(exec, ec);
+            return jsUndefined();
         }
+
+        return toJS(exec, globalObject(), webCLContext.get());
     }
+
     return jsUndefined();
 }
 
@@ -111,14 +122,67 @@ JSValue JSWebCL::getSupportedExtensions(ExecState* exec)
     WebCL* cl = static_cast<WebCL*>(impl());
     ExceptionCode ec = 0;
     Vector<String> value = cl->getSupportedExtensions(ec);
-    MarkedArgumentBuffer list;
-    for (size_t ii = 0; ii < value.size(); ++ii)
-        list.append(jsString(exec, value[ii]));
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
     }
+
+    MarkedArgumentBuffer list;
+    for (size_t i = 0; i < value.size(); ++i)
+        list.append(jsString(exec, value[i]));
+
     return constructArray(exec, globalObject(), list);
+}
+
+JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInfo& info)
+{
+    switch (info.getType()) {
+    case WebCLGetInfo::kTypeBool:
+        return jsBoolean(info.getBool());
+    case WebCLGetInfo::kTypeBoolArray: {
+        MarkedArgumentBuffer list;
+        const Vector<bool>& value = info.getBoolArray();
+        for (size_t ii = 0; ii < value.size(); ++ii)
+            list.append(jsBoolean(value[ii]));
+        return constructArray(exec, list);
+    }
+    case WebCLGetInfo::kTypeFloat:
+        return jsNumber(info.getFloat());
+    case WebCLGetInfo::kTypeInt:
+        return jsNumber(info.getInt());
+    case WebCLGetInfo::kTypeNull:
+        return jsNull();
+    case WebCLGetInfo::kTypeString:
+        return jsString(exec, info.getString());
+    case WebCLGetInfo::kTypeUnsignedInt:
+        return jsNumber(info.getUnsignedInt());
+    case WebCLGetInfo::kTypeUnsignedLong:
+        return jsNumber(info.getUnsignedLong());
+    case WebCLGetInfo::kTypeWebCLFloatArray:
+        return toJS(exec, globalObject, info.getWebCLFloatArray());
+    case WebCLGetInfo::kTypeWebCLImageDescriptor:
+        return toJS(exec, globalObject, info.getWebCLImageDescriptor());
+    case WebCLGetInfo::kTypeWebCLIntArray:
+        return toJS(exec, globalObject, info.getWebCLIntArray());
+    case WebCLGetInfo::kTypeWebCLProgram:
+        return toJS(exec, globalObject, info.getWebCLProgram());
+    case WebCLGetInfo::kTypeWebCLContext:
+        return toJS(exec, globalObject, info.getWebCLContext());
+    case WebCLGetInfo::kTypeWebCLCommandQueue:
+        return toJS(exec, globalObject, info.getWebCLCommandQueue());
+    case WebCLGetInfo::kTypeWebCLDevice:
+        return toJS(exec, globalObject, info.getWebCLDevice());
+    case WebCLGetInfo::kTypeWebCLDevices:
+        return jsArray(exec, globalObject, info.getWebCLDevices());
+    case WebCLGetInfo::kTypeWebCLMemoryObject:
+        return toJS(exec, globalObject, info.getWebCLMemoryObject());
+    case WebCLGetInfo::kTypeWebCLPlatform:
+        return toJS(exec, globalObject, info.getWebCLPlatform());
+    case WebCLGetInfo::kTypeWebCLContextProperties:
+        return toJS(exec, globalObject, info.getWebCLContextProperties());
+    default:
+        return jsUndefined();
+    }
 }
 
 } // namespace WebCore

@@ -25,114 +25,20 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef JSWebCLCustom_h
+#define JSWebCLCustom_h
 
 #if ENABLE(WEBCL)
 
+#include "JSWebCLContext.h"
 
-#include "JSUint8Array.h"
-#include "JSInt32Array.h"
-#include "JSFloat32Array.h"
 #include <runtime/JSFunction.h>
-#include <runtime/Error.h>
-#include <runtime/JSArray.h>
-
-#include "JSWebCLContext.h"
-#include "JSWebCLPlatform.h"
-#include "JSWebCLDevice.h"
-#include "JSWebCLKernel.h"
-#include "JSWebCLProgram.h"
-#include "JSWebCLCommandQueue.h"
-#include "JSWebCLContext.h"
-#include "JSWebCLMemoryObject.h"
-#include "JSWebCLEvent.h"
-#include "JSWebCLSampler.h"
-#include "JSWebCLImage.h"
-#include "JSWebCLImageDescriptor.h"
-#include "JSWebCLContextProperties.h"
-#include "JSWebKitCSSMatrix.h"
-#include "ScriptValue.h"  //not needeed
-#include "NotImplemented.h"
-#include "OESStandardDerivatives.h"
-#include "OESTextureFloat.h"
-#include "WebCLBuffer.h"
-#include "WebCLCommandQueue.h"
-#include "WebCLContext.h"
-#include "WebCLDevice.h"
-#include "WebCLEvent.h"
-#include "WebCLGetInfo.h"
-#include "WebCLImage.h"
-#include "WebCLKernelTypes.h" //not needeed
-#include "WebCLKernel.h"  //not needeed
-#include "WebCLMemoryObject.h"
-#include "WebCLPlatform.h"
-#include "WebCLProgram.h"
-#include "WebCLSampler.h"
-
-#include <runtime/Error.h>
-#include <runtime/JSArray.h>
-#include <wtf/Float32Array.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/Int32Array.h>
-
-using namespace JSC;
-using namespace std;
 
 namespace WebCore {
 
-static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInfo& info)
-{
-    switch (info.getType()) {
-    case WebCLGetInfo::kTypeBool:
-        return jsBoolean(info.getBool());
-    case WebCLGetInfo::kTypeBoolArray: {
-        MarkedArgumentBuffer list;
-        const Vector<bool>& value = info.getBoolArray();
-        for (size_t ii = 0; ii < value.size(); ++ii)
-            list.append(jsBoolean(value[ii]));
-        return constructArray(exec, list);
-    }
-    case WebCLGetInfo::kTypeFloat:
-        return jsNumber(info.getFloat());
-    case WebCLGetInfo::kTypeInt:
-        return jsNumber(info.getInt());
-    case WebCLGetInfo::kTypeNull:
-        return jsNull();
-    case WebCLGetInfo::kTypeString:
-        return jsString(exec, info.getString());
-    case WebCLGetInfo::kTypeUnsignedInt:
-        return jsNumber(info.getUnsignedInt());
-    case WebCLGetInfo::kTypeUnsignedLong:
-        return jsNumber(info.getUnsignedLong());
-    case WebCLGetInfo::kTypeWebCLFloatArray:
-        return toJS(exec, globalObject, info.getWebCLFloatArray());
-    case WebCLGetInfo::kTypeWebCLImageDescriptor:
-        return toJS(exec, globalObject, info.getWebCLImageDescriptor());
-    case WebCLGetInfo::kTypeWebCLIntArray:
-        return toJS(exec, globalObject, info.getWebCLIntArray());
-    case WebCLGetInfo::kTypeWebCLProgram:
-        return toJS(exec, globalObject, info.getWebCLProgram());
-    case WebCLGetInfo::kTypeWebCLContext:
-        return toJS(exec, globalObject, info.getWebCLContext());
-    case WebCLGetInfo::kTypeWebCLCommandQueue:
-        return toJS(exec, globalObject, info.getWebCLCommandQueue());
-    case WebCLGetInfo::kTypeWebCLDevice:
-        return toJS(exec, globalObject, info.getWebCLDevice());
-    case WebCLGetInfo::kTypeWebCLDevices:
-        return jsArray(exec, globalObject, info.getWebCLDevices());
-    case WebCLGetInfo::kTypeWebCLMemoryObject:
-        return toJS(exec, globalObject, info.getWebCLMemoryObject());
-    case WebCLGetInfo::kTypeWebCLPlatform:
-        return toJS(exec, globalObject, info.getWebCLPlatform());
-    case WebCLGetInfo::kTypeWebCLContextProperties:
-        return toJS(exec, globalObject, info.getWebCLContextProperties());
-    default:
-        notImplemented();
-        return jsUndefined();
-    }
-}
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const WebCLGetInfo&);
 
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)
-
+#endif

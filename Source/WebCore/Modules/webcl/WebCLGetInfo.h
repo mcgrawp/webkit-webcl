@@ -30,9 +30,12 @@
 
 #include "ComputeTypes.h"
 #include "ComputeContext.h"
-#include "WebCLContextProperties.h"
 
+#include "WebCLContextProperties.h"
 #include "WebCLDevice.h"
+#include "WebCLImageDescriptor.h"
+#include "WebCLProgram.h"
+
 #include <wtf/Float32Array.h>
 #include <wtf/Int32Array.h>
 #include <wtf/Int8Array.h>
@@ -47,9 +50,7 @@ class WebCLCommandQueue;
 class WebCLContext;
 class WebCLContextProperties;
 class WebCLDevice;
-class WebCLImageDescriptor;
 class WebCLMemoryObject;
-class WebCLProgram;
 class WebCLPlatform;
 
 // A tagged union representing the result of get queries like

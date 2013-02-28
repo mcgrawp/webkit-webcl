@@ -36,6 +36,7 @@
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
 #include "JSHTMLVideoElement.h"
+#include "JSWebCLImage.h"
 #include "JSWebCLCustom.h"
 #include "NotImplemented.h"
 #include "WebCLBuffer.h"

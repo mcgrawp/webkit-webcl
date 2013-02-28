@@ -35,6 +35,8 @@
 #include "ScriptObject.h"
 #include "ScriptState.h"
 #include "SharedBuffer.h"
+#include "WebCLBuffer.h"
+#include "WebCLCommandQueue.h"
 #include "WebCLException.h"
 
 #include <OpenCL/opencl.h>
@@ -47,14 +49,12 @@ class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class WebCL;
-class WebCLCommandQueue;
 class WebCLProgram;
 class WebCLMemoryObject;
 class WebCLImage;
 class WebCLSampler;
 class WebCLEvent;
 class WebCLContextProperties;
-class WebCLBuffer;
 class WebCLImageDescriptor;
 class WebGLRenderbuffer;
 class WebGLBuffer;
@@ -87,7 +87,6 @@ public:
     {
         return(createCommandQueue(0, buildProp, ec));
     }
-
 
     PassRefPtr<WebCLBuffer> createFromGLBuffer(int , WebGLBuffer* , ExceptionCode&);
 
