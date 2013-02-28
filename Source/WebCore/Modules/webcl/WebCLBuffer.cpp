@@ -39,9 +39,26 @@ WebCLBuffer::~WebCLBuffer()
 {
 }
 
-PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, PlatformComputeObject buffer, bool isShared = false)
+PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, int size, void* data, CCerror& error)
 {
-    return adoptRef(new WebCLBuffer(context, buffer, isShared));
+    PlatformComputeObject buffer = context->computeContext()->createBuffer(memoryFlags, size, data, error);
+    if (!buffer) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        return 0;
+    }
+
+    return adoptRef(new WebCLBuffer(context, buffer, false));
+}
+
+PassRefPtr<WebCLBuffer> WebCLBuffer::createFromGLBuffer(WebCLContext* context, CCenum memoryFlags, const Platform3DObject& platform3DObject, CCerror& error)
+{
+    PlatformComputeObject buffer = context->computeContext()->createFromGLBuffer(memoryFlags, platform3DObject, error);
+    if (!buffer) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        return 0;
+    }
+
+    return adoptRef(new WebCLBuffer(context, buffer, true));
 }
 
 WebCLBuffer::WebCLBuffer(WebCLContext* context, PlatformComputeObject buffer, bool isShared)
@@ -124,7 +141,7 @@ PassRefPtr<WebCLBuffer>  WebCLBuffer::createSubBuffer(int flags, int origin, int
             break;
         }
     } else {
-        RefPtr<WebCLBuffer> resultMemPtr = WebCLBuffer::create(m_context, resultSubBuffer, false);
+        RefPtr<WebCLBuffer> resultMemPtr = adoptRef(new WebCLBuffer(m_context, resultSubBuffer, false));
         return resultMemPtr;
     }
     return 0;

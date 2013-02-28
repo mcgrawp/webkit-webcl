@@ -37,7 +37,8 @@ class WebCL;
 class WebCLBuffer : public WebCLMemoryObject  {
 public:
     ~WebCLBuffer();
-    static PassRefPtr<WebCLBuffer> create(WebCLContext*, PlatformComputeObject, bool);
+    static PassRefPtr<WebCLBuffer> create(WebCLContext*, CCenum, int, void*, CCerror&);
+    static PassRefPtr<WebCLBuffer> createFromGLBuffer(WebCLContext*, CCenum, const Platform3DObject&, CCerror&);
     PlatformComputeObject getCLBuffer();
     PassRefPtr<WebCLBuffer> createSubBuffer(int, int, int, ExceptionCode&);
 
