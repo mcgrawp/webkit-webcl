@@ -54,18 +54,12 @@ WebCL::~WebCL()
 
 Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec) const
 {
-    CCerror error;
     Vector<RefPtr<WebCLPlatform> > webCLPlatforms;
-    Vector<CCPlatformID> ccPlatforms;
-
-    error = ComputeContext::getPlatformIDs(ccPlatforms);
+    CCerror error = WebCore::getPlatforms(webCLPlatforms);
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return webCLPlatforms;
     }
-
-    for (size_t i = 0; i < ccPlatforms.size(); ++i)
-        webCLPlatforms.append(WebCLPlatform::create(ccPlatforms[i]));
 
     return webCLPlatforms;
 }
@@ -82,62 +76,57 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCo
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(WebCLContextProperties* properties, ExceptionCode& ec)
+RefPtr<WebCLContextProperties>& WebCL::defaultProperties(ExceptionCode& ec)
 {
-    cl_context_properties contextProperties[5] = {0};
-    int propIndex = 0;
-    int deviceType = CL_DEVICE_TYPE_DEFAULT;
+    if (m_defaultProperties)
+        return m_defaultProperties;
 
-    if (properties && properties->platform()) {
-        // append properties->platform to cl_context_properties variable.
-        contextProperties[propIndex++] = CL_CONTEXT_PLATFORM;
-        contextProperties[propIndex++] =
-            (cl_context_properties)(properties->platform()->getCLPlatform());
-    }
+    Vector<RefPtr<WebCLPlatform> > webCLPlatforms = getPlatforms(ec);
+    if (ec != WebCLException::SUCCESS)
+        return m_defaultProperties;
 
-    if (properties && properties->shareGroup()) {
-        // Set shareGroup in contextProperties. Currently only OpenGL
-        // context can be shared.
-        CGLContextObj kCGLContext = CGLGetCurrentContext();
-        CGLShareGroupObj kCGLShareGroup = CGLGetShareGroup(kCGLContext);
-        contextProperties[propIndex++] =
-            CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE;
-        contextProperties[propIndex++] = (cl_context_properties)kCGLShareGroup;
-    }
+    Vector<RefPtr<WebCLDevice> > webCLDevices = webCLPlatforms[0]->getDevices(ec);
+    if (ec != WebCLException::SUCCESS)
+        return m_defaultProperties;
 
-    if (properties && properties->deviceType())
-        deviceType = properties->deviceType();
+    m_defaultProperties = WebCLContextProperties::create(webCLPlatforms[0], webCLDevices, ComputeContext::DEVICE_TYPE_DEFAULT, 1 /*shareGroup*/, emptyString());
+    return m_defaultProperties;
+}
 
-    // FIXME: (Issue #25) WebCLContextProperties::objhint not used.
+PassRefPtr<WebCLContext> WebCL::createContext(PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec)
+{
+    RefPtr<WebCLContextProperties> refProperties = properties;
+    if (refProperties) {
+        if (!refProperties->platform()) {
+            Vector<RefPtr<WebCLPlatform> > webCLPlatforms = getPlatforms(ec);
+            if (ec != WebCLException::SUCCESS)
+                return 0;
 
-    Vector<CCDeviceID> ccDevices;
-    if (properties && properties->devices().size()) {
-        for (size_t i = 0; i < properties->devices().size(); ++i)
-            ccDevices.append(properties->devices()[i]->getCLDevice());
+            refProperties->setPlatform(webCLPlatforms[0]);
+        }
+
+        if (!refProperties->devices().size()) {
+            Vector<RefPtr<WebCLDevice> > webCLDevices = refProperties->platform()->getDevices(ec);
+            if (ec != WebCLException::SUCCESS)
+                return 0;
+
+            refProperties->devices().append(webCLDevices[0]);
+        }
     } else {
-        Vector<CCPlatformID> ccPlatforms;
-        CCerror error = ComputeContext::getPlatformIDs(ccPlatforms);
-        if (error != ComputeContext::SUCCESS) {
-            ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        refProperties = defaultProperties(ec);
+        if (ec != WebCLException::SUCCESS)
             return 0;
-        }
-
-        error = ComputeContext::getDeviceIDs(ccPlatforms[0], ComputeContext::DEVICE_TYPE_DEFAULT, ccDevices);
-        if (error != ComputeContext::SUCCESS) {
-            ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-            return 0;
-        }
     }
 
     CCerror error = ComputeContext::SUCCESS;
-    RefPtr<WebCLContext> webCLContext = WebCLContext::create(this, propIndex ? contextProperties : 0, ccDevices, error);
+    RefPtr<WebCLContext> webCLContext = WebCLContext::create(this, refProperties.release(), error);
     if (!webCLContext) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
 
-    m_context = webCLContext;
+    m_context.append(webCLContext);
     return webCLContext;
 }
 

@@ -52,6 +52,8 @@ class WebCLContextProperties;
 class WebCL : public RefCounted<WebCL> {
 public:
     virtual ~WebCL();
+
+    // FIXME: Remove the enum below in favor of constants.
     enum {
         // Buffer size
         CHAR_BUFFER_SIZE                         = 1024,
@@ -63,13 +65,13 @@ public:
         DEFAULT_OBJECT_HEIGHT                    = 0, // CL_DEVICE_IMAGE2D_MAX_HEIGHT
         DEFAULT_OBJECT_ROWPITCH                  = 0,
     };
-    // virtual WebCL* toWebCL() { return this; }
+
     Vector<RefPtr<WebCLPlatform> > getPlatforms(ExceptionCode&) const;
     void waitForEvents(const Vector<RefPtr<WebCLEvent> >&, ExceptionCode&);
-    PassRefPtr<WebCLContext> createContext(WebCLContextProperties*, ExceptionCode&);
+    PassRefPtr<WebCLContext> createContext(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
     PassRefPtr<WebCLContext> createContext(ExceptionCode& ec)
     {
-        return(createContext(0, ec));
+        return createContext(0, ec);
     }
     Vector<String> getSupportedExtensions(ExceptionCode&);
 
@@ -77,8 +79,9 @@ public:
 
 private:
     WebCL();
-    void checkMemObject(cl_mem);
-    RefPtr<WebCLContext> m_context;
+    RefPtr<WebCLContextProperties>& defaultProperties(ExceptionCode&);
+    Vector<RefPtr<WebCLContext> > m_context;
+    RefPtr<WebCLContextProperties> m_defaultProperties;
 };
 
 } // namespace WebCore

@@ -157,10 +157,12 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
         break;
     }
     case ComputeContext::DEVICE_PLATFORM: {
+        /*FIXME: This code will be handled later.
         CCPlatformID platformID = 0;
         err = ComputeContext::getDeviceInfo(m_ccDeviceID, infoType, sizeof(platformID), &platformID);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(WebCLPlatform::create(platformID));
+        */
         break;
     }
     case ComputeContext::DEVICE_LOCAL_MEM_TYPE: {

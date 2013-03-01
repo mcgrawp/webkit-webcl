@@ -64,7 +64,7 @@ class WebCLGetInfo;
 class WebCLContext : public RefCounted<WebCLContext> {
 public:
     virtual ~WebCLContext();
-    static PassRefPtr<WebCLContext> create(WebCL*, CCContextProperties* , const Vector<CCDeviceID>& , CCerror&);
+    static PassRefPtr<WebCLContext> create(WebCL*, PassRefPtr<WebCLContextProperties>, CCerror&);
     /* FIXME :: not needed as CCContextProperties contains deviceType field.
        static PassRefPtr<WebCLContext> create(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType
        , int* error);*/
@@ -129,18 +129,16 @@ public:
     ComputeContext* computeContext() const { return m_computeContext.get(); }
 
 private:
-    WebCLContext(WebCL*, RefPtr<ComputeContext>&, const Vector<CCDeviceID>&);
+    WebCLContext(WebCL*, RefPtr<ComputeContext>&, PassRefPtr<WebCLContextProperties>, const Vector<CCDeviceID>&);
     // WebCLContext(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType, int* error);
     PassRefPtr<WebCLImage> createImage2DBase(int , int , int , const CCImageFormat& , void*, ExceptionCode&);
-
-    void ensureCachedContextProperties();
 
     cl_context m_clContext;
     RefPtr<WebCLCommandQueue> m_commandQueue;
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
     RefPtr<ComputeContext> m_computeContext;
     Vector<CCDeviceID> m_devices;
-    RefPtr<WebCLContextProperties> m_cachedContextProperties;
+    RefPtr<WebCLContextProperties> m_contextProperties;
 };
 
 } // namespace WebCore

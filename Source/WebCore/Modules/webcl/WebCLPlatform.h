@@ -45,7 +45,6 @@ class WebCLGetInfo;
 class WebCLPlatform : public RefCounted<WebCLPlatform> {
 public:
     virtual ~WebCLPlatform();
-    static PassRefPtr<WebCLPlatform> create(cl_platform_id platform_id);
     WebCLGetInfo getInfo (int, ExceptionCode&);
     Vector<RefPtr<WebCLDevice> > getDevices(int, ExceptionCode&) const;
     Vector<RefPtr<WebCLDevice> > getDevices(ExceptionCode& ec) const
@@ -56,9 +55,15 @@ public:
     cl_platform_id getCLPlatform();
 
 private:
+    friend CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);
+
+    static PassRefPtr<WebCLPlatform> create(cl_platform_id platform_id);
     WebCLPlatform(cl_platform_id platform_id);
     cl_platform_id m_cl_platform_id;
+    Vector<RefPtr<WebCLDevice> > m_webCLDevices;
 };
+
+CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);
 
 } // namespace WebCore
 

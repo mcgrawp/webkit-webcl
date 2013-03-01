@@ -53,81 +53,31 @@ WebCLContext::~WebCLContext()
 {
 }
 
-// FIXME: Use Vector<CCDeviceID> and collapse 'numberDevices' and 'devices'.
-PassRefPtr<WebCLContext> WebCLContext::create(WebCL* context, CCContextProperties* contextProperties, const Vector<CCDeviceID>& devices, CCerror& error)
+PassRefPtr<WebCLContext> WebCLContext::create(WebCL* context, PassRefPtr<WebCLContextProperties> properties, CCerror& error)
 {
-    RefPtr<ComputeContext> computeContext = ComputeContext::create(contextProperties, devices, error);
+    ASSERT(context);
+    ASSERT(properties);
+
+    Vector<CCDeviceID> ccDevices;
+    for (size_t i = 0; i < properties->devices().size(); ++i)
+        ccDevices.append(properties->devices()[i]->getCLDevice());
+
+    RefPtr<ComputeContext> computeContext = ComputeContext::create(properties->computeContextProperties().data(), ccDevices, error);
     if (!computeContext) {
         ASSERT(error != ComputeContext::SUCCESS);
         return 0;
     }
 
-    return adoptRef(new WebCLContext(context, computeContext, devices));
+    return adoptRef(new WebCLContext(context, computeContext, properties, ccDevices));
 }
 
-WebCLContext::WebCLContext(WebCL*, RefPtr<ComputeContext>& computeContext, const Vector<CCDeviceID>& devices)
+WebCLContext::WebCLContext(WebCL*, RefPtr<ComputeContext>& computeContext, PassRefPtr<WebCLContextProperties> properties, const Vector<CCDeviceID>& devices)
     : m_videoCache(4) // FIXME: Why '4'?
     , m_devices(devices)
+    , m_contextProperties(properties)
 {
     m_computeContext = computeContext;
     m_clContext = m_computeContext->context();
-
-    // Cache all properties since they are immutable.
-    ensureCachedContextProperties();
-}
-
-void WebCLContext::ensureCachedContextProperties()
-{
-    if (m_cachedContextProperties)
-        return;
-
-    CCerror err = 0;
-    size_t dataSizeInBytes = 0;
-
-    // 1) Devices.
-    err = clGetContextInfo(m_clContext, ComputeContext::CONTEXT_DEVICES, 0, 0, &dataSizeInBytes);
-    ASSERT(err == CL_SUCCESS);
-
-    size_t numberOfDevices = dataSizeInBytes / sizeof(CCDeviceID);
-    ASSERT(numberOfDevices);
-
-    Vector<CCDeviceID, 5> ccDevices;
-    err = clGetContextInfo(m_clContext, ComputeContext::CONTEXT_DEVICES, dataSizeInBytes, ccDevices.data(), 0);
-    ASSERT(err == ComputeContext::SUCCESS);
-    ccDevices.resize(numberOfDevices);
-
-    Vector<RefPtr<WebCLDevice> > devices;
-    toWebCLDeviceArray(ccDevices, devices);
-
-    // 2) Platform.
-    CCPlatformID ccPlatformID = nullptr;
-    err = clGetContextInfo(m_clContext, ComputeContext::CONTEXT_PROPERTIES, 0, 0, &dataSizeInBytes);
-    ASSERT(err == CL_SUCCESS);
-    size_t numberOfProperties = dataSizeInBytes / sizeof(CCContextProperties);
-    if (numberOfProperties) {
-        CCContextProperties contextProperties[numberOfProperties];
-        err = clGetContextInfo(m_clContext, ComputeContext::CONTEXT_PROPERTIES, dataSizeInBytes, &contextProperties, 0);
-        ASSERT(err == CL_SUCCESS);
-        for (size_t i = 0; i < numberOfProperties && contextProperties[i]; ++i) {
-            if (contextProperties[i] == ComputeContext::CONTEXT_PLATFORM)
-                ccPlatformID = (CCPlatformID) contextProperties[++i];
-        }
-    } else
-        err = ComputeContext::getDeviceInfo(ccDevices[0], ComputeContext::DEVICE_PLATFORM, sizeof(ccPlatformID), &ccPlatformID);
-
-    RefPtr<WebCLPlatform> platform = WebCLPlatform::create(ccPlatformID);
-
-    // 3) Device type - bitfield'ed.
-    CCulong deviceType = 0;
-    for (size_t i = 0; i < numberOfDevices; ++i) {
-        CCDeviceType type = 0;
-        err = ComputeContext::getDeviceInfo(ccDevices[i], ComputeContext::DEVICE_TYPE, sizeof(CCDeviceType), &type);
-        ASSERT(err == ComputeContext::SUCCESS);
-        deviceType |= type;
-    }
-
-    // FIXME: 4/5) Needs to implement support for 'shareGroup' and 'hits'.
-    m_cachedContextProperties = WebCLContextProperties::create(platform.release(), devices, deviceType, 0 /*sharedGroup*/, String() /*hints*/);
 }
 
 /*WebCLContext::WebCLContext(WebCL*, CCContextProperties* contextProperties, unsigned deviceType, int* error)
@@ -147,12 +97,12 @@ WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
 
     switch (paramName) {
     case ComputeContext::CONTEXT_NUM_DEVICES:
-        return WebCLGetInfo(m_cachedContextProperties->devices().size());
+        return WebCLGetInfo(m_contextProperties->devices().size());
     case ComputeContext::CONTEXT_DEVICES:
-        return WebCLGetInfo(m_cachedContextProperties->devices());
+        return WebCLGetInfo(m_contextProperties->devices());
     case ComputeContext::CONTEXT_PROPERTIES:
         // FIXME: Is this cast needed?
-        return WebCLGetInfo(PassRefPtr<WebCLContextProperties>(m_cachedContextProperties));
+        return WebCLGetInfo(PassRefPtr<WebCLContextProperties>(m_contextProperties));
     default:
         ec = WebCLException::INVALID_VALUE;
     }
