@@ -30,6 +30,8 @@
 
 #include "WebCLDevice.h"
 
+#include <OpenGL/OpenGL.h>
+
 #if ENABLE(WEBCL)
 
 namespace WebCore {
@@ -48,9 +50,15 @@ WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platfor
 {
 }
 
-WebCLPlatform* WebCLContextProperties::platform() const
+RefPtr<WebCLPlatform>& WebCLContextProperties::platform()
 {
-    return objplatform.get();
+    return objplatform;
+}
+
+void WebCLContextProperties::setPlatform(PassRefPtr<WebCLPlatform> platform)
+{
+    objplatform = platform;
+    m_ccProperties.clear();
 }
 
 Vector<RefPtr<WebCLDevice> > WebCLContextProperties::devices() const
@@ -66,6 +74,7 @@ int WebCLContextProperties::deviceType() const
 void WebCLContextProperties::setDeviceType(int type)
 {
     objdeviceType = type;
+    m_ccProperties.clear();
 }
 
 int WebCLContextProperties::shareGroup() const
@@ -76,6 +85,7 @@ int WebCLContextProperties::shareGroup() const
 void WebCLContextProperties::setShareGroup(int shareGroup)
 {
     objshareGroup = shareGroup;
+    m_ccProperties.clear();
 }
 
 String WebCLContextProperties::hint() const
@@ -86,6 +96,28 @@ String WebCLContextProperties::hint() const
 void WebCLContextProperties::setHint(const String& hint)
 {
     objhint = hint;
+}
+
+Vector<CCContextProperties>& WebCLContextProperties::computeContextProperties()
+{
+    if (m_ccProperties.size())
+        return m_ccProperties;
+
+    if (objplatform) {
+        m_ccProperties.append(ComputeContext::CONTEXT_PLATFORM);
+        m_ccProperties.append(reinterpret_cast<CCContextProperties>(platform()->getCLPlatform()));
+    }
+
+    if (objshareGroup) {
+        CGLContextObj kCGLContext = CGLGetCurrentContext();
+        CGLShareGroupObj kCGLShareGroup = CGLGetShareGroup(kCGLContext);
+        m_ccProperties.append(CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE);
+        m_ccProperties.append(reinterpret_cast<CCContextProperties>(kCGLShareGroup));
+    }
+
+    m_ccProperties.append(0);
+
+    return m_ccProperties;
 }
 
 }

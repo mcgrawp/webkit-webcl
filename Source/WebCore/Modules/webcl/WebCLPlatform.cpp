@@ -102,6 +102,20 @@ cl_platform_id WebCLPlatform::getCLPlatform()
     return m_cl_platform_id;
 }
 
+CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >& platforms)
+{
+    Vector<CCPlatformID> ccPlatforms;
+
+    CCerror error = ComputeContext::getPlatformIDs(ccPlatforms);
+    if (error != ComputeContext::SUCCESS)
+        return error;
+
+    for (size_t i = 0; i < ccPlatforms.size(); ++i)
+        platforms.append(WebCLPlatform::create(ccPlatforms[i]));
+
+    return error;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

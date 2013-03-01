@@ -52,8 +52,11 @@ public:
     static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int, int, const String&);
     ~WebCLContextProperties() { }
 
-    WebCLPlatform* platform() const;
+
     Vector<RefPtr<WebCLDevice> > devices() const;
+
+    RefPtr<WebCLPlatform>& platform();
+    void setPlatform(PassRefPtr<WebCLPlatform> platform);
 
     int deviceType() const;
     void setDeviceType(int type);
@@ -64,6 +67,8 @@ public:
     String hint() const;
     void setHint(const String&);
 
+    Vector<CCContextProperties>& computeContextProperties();
+
 private:
     WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int, int, const String&);
 
@@ -71,6 +76,7 @@ private:
     Vector<RefPtr<WebCLDevice> > objdevices;
     int objdeviceType;
     int objshareGroup;
+    Vector<CCContextProperties> m_ccProperties;
     // FIXME: spec says DOMString[].
     String objhint;
 };

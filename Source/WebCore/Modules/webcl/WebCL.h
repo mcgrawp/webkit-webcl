@@ -66,7 +66,7 @@ public:
     // virtual WebCL* toWebCL() { return this; }
     Vector<RefPtr<WebCLPlatform> > getPlatforms(ExceptionCode&) const;
     void waitForEvents(const Vector<WebCLEvent*>&, ExceptionCode&);
-    PassRefPtr<WebCLContext> createContext(WebCLContextProperties*, ExceptionCode&);
+    PassRefPtr<WebCLContext> createContext(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
     PassRefPtr<WebCLContext> createContext(ExceptionCode& ec)
     {
         return(createContext(0, ec));
@@ -77,8 +77,9 @@ public:
 
 private:
     WebCL();
-    void checkMemObject(cl_mem);
-    RefPtr<WebCLContext> m_context;
+    RefPtr<WebCLContextProperties>& defaultProperties(ExceptionCode&);
+    Vector<RefPtr<WebCLContext> > m_context;
+    RefPtr<WebCLContextProperties> m_defaultProperties;
 };
 
 } // namespace WebCore
