@@ -266,6 +266,17 @@ CCProgram ComputeContext::createProgram(const String& kernelSource, CCerror& err
     return clProgram;
 }
 
+CCerror ComputeContext::buildProgram(CCProgram program, const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, void* userData)
+{
+    // FIXME :: Usage of strdup ensures it works on platforms. Need to investigate on first 8 char string getting corrupted
+    // without strdup in certain platforms.
+    char* optionsStr = strdup(options.utf8().data());
+    cl_int clError = clBuildProgram(program, devices.size(), devices.data(), optionsStr, notifyFunction, userData);
+    free(optionsStr);
+    optionsStr = 0;
+    return clToComputeContextError(clError);
+}
+
 PlatformComputeObject ComputeContext::createBuffer(int memoryFlags, size_t size, void* data, CCerror& error)
 {
     cl_mem clMemoryBuffer;

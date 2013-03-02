@@ -60,5 +60,6 @@ typedef cl_device_local_mem_type CCDeviceLocalMemType;
 typedef cl_device_fp_config CCDeviceFPConfig;
 typedef cl_build_status CCBuildStatus;
 typedef cl_context CCContext;
+typedef void (*pfnNotify)(CCProgram, void*);
 
 #endif

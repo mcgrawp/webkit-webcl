@@ -215,31 +215,29 @@ void WebCLProgram::finishCallback(cl_program program, void* userData)
 
 WebCLProgram* WebCLProgram::thisPointer = 0;
 
-void WebCLProgram::build(const Vector<WebCLDevice*>& devices, const String& options,
+void WebCLProgram::build(const Vector<WebCLDevice*>& devices, const String& buildOptions,
     PassRefPtr<WebCLFinishCallback> finishCallback, int userData, ExceptionCode& ec)
 {
-    WebCLProgram::thisPointer = static_cast<WebCLProgram*>(this);
-
-    m_finishCallback = finishCallback;
     if (!m_clProgram) {
         ec = WebCLException::INVALID_PROGRAM;
         return;
     }
+    WebCLProgram::thisPointer = static_cast<WebCLProgram*>(this);
 
-    char* optionsStr = 0;
-    if (options.utf8().length() > 0) {
-        optionsStr = strdup(options.utf8().data());
-        if (!(!strcmp(optionsStr, "-cl-single-precision-constant")
-        || !strcmp(optionsStr, "-cl-denorms-are-zero")
-        || !strcmp(optionsStr, "-cl-opt-disable")
-        || !strcmp(optionsStr, "-cl-mad-enable")
-        || !strcmp(optionsStr, "-cl-no-signed-zeros")
-        || !strcmp(optionsStr, "-cl-unsafe-math-optimizations")
-        || !strcmp(optionsStr, "-cl-finite-math-only")
-        || !strcmp(optionsStr, "-cl-fast-relaxed-math")
-        || !strcmp(optionsStr, "-w")
-        || !strcmp(optionsStr, "-Werror")
-        || !strcmp(optionsStr, "-cl-std="))) {
+    m_finishCallback = finishCallback;
+
+    if (buildOptions.length() > 0) {
+        if (!((buildOptions == "-cl-single-precision-constant")
+        || (buildOptions == "-cl-denorms-are-zero")
+        || (buildOptions == "-cl-opt-disable")
+        || (buildOptions == "-cl-mad-enable")
+        || (buildOptions == "-cl-no-signed-zeros")
+        || (buildOptions == "-cl-unsafe-math-optimizations")
+        || (buildOptions == "-cl-finite-math-only")
+        || (buildOptions == "-cl-fast-relaxed-math")
+        || (buildOptions == "-w")
+        || (buildOptions == "-Werror")
+        || (buildOptions == "-cl-std="))) {
             ec = WebCLException::INVALID_BUILD_OPTIONS;
             return;
         }
@@ -251,15 +249,10 @@ void WebCLProgram::build(const Vector<WebCLDevice*>& devices, const String& opti
 
     CCerror err;
     if (!m_finishCallback)
-        err = clBuildProgram(m_clProgram, ccDevices.size(), ccDevices.data(), optionsStr, 0, &userData);
+        err =  m_context->computeContext()->buildProgram(m_clProgram, ccDevices, buildOptions, 0, &userData);
     else
-        err = clBuildProgram(m_clProgram, ccDevices.size(), ccDevices.data(), optionsStr,
-            &(WebCLProgram::finishCallback), &userData);
-
-    // Free memory allocated by strdup.
-    if (optionsStr)
-        free((char *)optionsStr);
-    optionsStr = 0;
+        err = m_context->computeContext()->buildProgram(m_clProgram, ccDevices, buildOptions, &(WebCLProgram::finishCallback),
+            &userData);
 
     if (err != CL_SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
