@@ -278,6 +278,19 @@ PlatformComputeObject ComputeContext::createBuffer(int memoryFlags, size_t size,
     return clMemoryBuffer;
 }
 
+PlatformComputeObject ComputeContext::createSubBuffer(PlatformComputeObject buffer, int memoryFlags, int bufferCreatetype,
+    CCBufferRegion* bufferCreateInfo, CCerror& error)
+{
+    cl_int clMemoryFlags = memoryFlags;
+    cl_buffer_create_type clBufferCreateType = bufferCreatetype;
+    cl_int clError = 0;
+
+    cl_mem clMemoryBuffer = clCreateSubBuffer(buffer, clMemoryFlags, clBufferCreateType, bufferCreateInfo, &clError);
+    error = clToComputeContextError(clError);
+
+    return clMemoryBuffer;
+}
+
 // FIXME: ComputeContext::createImage
 PlatformComputeObject ComputeContext::createImage2D(int memoryFlags, int width, int height, const CCImageFormat& imageFormat, void* data, CCerror& error)
 {

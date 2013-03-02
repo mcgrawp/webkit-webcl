@@ -349,6 +349,7 @@ public:
     CCProgram createProgram(const String& kernelSource, CCerror& error);
 
     PlatformComputeObject createBuffer(int type, size_t size, void* data, CCerror& error);
+    PlatformComputeObject createSubBuffer(PlatformComputeObject, int type, int bufferCreatetype, CCBufferRegion *bufferCreateInfo, CCerror&);
     PlatformComputeObject createImage2D(int type, int width, int height, const CCImageFormat& imageFormat, void* data, CCerror& error);
     PlatformComputeObject createFromGLBuffer(int type, int bufferId, CCerror& error);
     PlatformComputeObject createFromGLRenderbuffer(int type, GC3Dint renderbufferId, CCerror& error);

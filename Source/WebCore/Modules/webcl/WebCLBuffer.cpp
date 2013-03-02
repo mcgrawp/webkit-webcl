@@ -32,6 +32,7 @@
 #include "WebCLBuffer.h"
 
 #include "WebCL.h"
+#include "WebCLInputChecker.h"
 
 namespace WebCore {
 
@@ -71,21 +72,21 @@ PlatformComputeObject WebCLBuffer::getCLBuffer()
     return WebCLMemoryObject::getCLMemoryObject();
 }
 
-PassRefPtr<WebCLBuffer>  WebCLBuffer::createSubBuffer(int flags, int origin, int size, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(int memoryFlags, int origin, int size, ExceptionCode& ec)
 {
     PlatformComputeObject buffer = getCLBuffer();
     if (!buffer) {
         ec = WebCLException::INVALID_MEM_OBJECT;
-        printf("Error:: getCLBuffer() returned NULL.\n");
+        return 0;
+    }
+    if (!WebCLInputChecker::isValidMemoryObjectFlag(memoryFlags)) {
+        ec = WebCLException::INVALID_VALUE;
         return 0;
     }
 
-    // FIXME: This leaks!
     CCBufferRegion* bufferCreateInfo = new CCBufferRegion();
     if (!bufferCreateInfo) {
-        // FIXME: FAILURE is not the best error here.
-        ec = WebCLException::FAILURE;
-        printf(" Error:: CCBufferRegion creation failed.\n");
+        ec = WebCLException::OUT_OF_HOST_MEMORY;
         return 0;
     }
 
@@ -93,58 +94,18 @@ PassRefPtr<WebCLBuffer>  WebCLBuffer::createSubBuffer(int flags, int origin, int
     bufferCreateInfo->size = size;
 
     CCerror error = 0;
-    PlatformComputeObject resultSubBuffer = 0;
+    PlatformComputeObject ccSubBuffer = m_context->computeContext()->createSubBuffer(buffer, memoryFlags,
+        ComputeContext::BUFFER_CREATE_TYPE_REGION, bufferCreateInfo, error);
 
-    switch (flags) {
-    case ComputeContext::MEM_READ_ONLY:
-    case ComputeContext::MEM_WRITE_ONLY:
-    case ComputeContext::MEM_READ_WRITE:
-    case 0: // FIXME: Use a named constant here, instead of 0.
-        resultSubBuffer = clCreateSubBuffer(buffer, flags, ComputeContext::BUFFER_CREATE_TYPE_REGION, bufferCreateInfo, &error);
-        break;
-    default:
-        ec = WebCLException::INVALID_VALUE;
-        free(bufferCreateInfo);
-        break;
-    }
+    delete(bufferCreateInfo);
+    bufferCreateInfo = 0;
 
-    if (error != CL_SUCCESS) {
-        printf("Error: clCreateBuffer\n");
-        switch (error) {
-        case CL_INVALID_MEM_OBJECT:
-            printf("Error: CL_INVALID_MEM_OBJECT \n");
-            ec = WebCLException::INVALID_MEM_OBJECT;
-            break;
-        case CL_INVALID_VALUE:
-            printf("Error: CL_INVALID_VALUE\n");
-            ec = WebCLException::INVALID_VALUE;
-            break;
-        case CL_INVALID_BUFFER_SIZE:
-            printf("Error: CL_INVALID_BUFFER_SIZE\n");
-            ec = WebCLException::INVALID_BUFFER_SIZE;
-            break;
-        case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-            printf("Error: CL_MEM_OBJECT_ALLOCATION_FAILURE\n");
-            ec = WebCLException::MEM_OBJECT_ALLOCATION_FAILURE;
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            break;
-        case CL_OUT_OF_RESOURCES:
-            printf("Error: CL_OUT_OF_RESOURCES\n");
-            ec = WebCLException::OUT_OF_RESOURCES;
-            break;
-        default:
-            printf("Error: Invaild Error Type\n");
-            ec = WebCLException::FAILURE;
-            break;
-        }
-    } else {
-        RefPtr<WebCLBuffer> resultMemPtr = adoptRef(new WebCLBuffer(m_context, resultSubBuffer, false));
-        return resultMemPtr;
+    if (error != ComputeContext::SUCCESS) {
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return 0;
     }
-    return 0;
+    RefPtr<WebCLBuffer> subBuffer = adoptRef(new WebCLBuffer(m_context, ccSubBuffer, false));
+    return subBuffer.release();
 }
 
 } // namespace WebCore
