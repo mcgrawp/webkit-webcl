@@ -72,15 +72,13 @@ public:
 
     void releaseProgram(ExceptionCode&);
 
-    // FIXME: Does it need to be public?
-    RefPtr<WebCLFinishCallback> m_finishCallback;
-
 private:
     WebCLProgram(WebCLContext*, cl_program);
     static void finishCallback(cl_program, void*);
     static WebCLProgram* thisPointer;
     WebCLContext* m_context;
     cl_program m_clProgram;
+    RefPtr<WebCLFinishCallback> m_finishCallback;
 };
 
 } // namespace WebCore
