@@ -61,7 +61,7 @@ void WebCLContextProperties::setPlatform(PassRefPtr<WebCLPlatform> platform)
     m_ccProperties.clear();
 }
 
-Vector<RefPtr<WebCLDevice> > WebCLContextProperties::devices() const
+Vector<RefPtr<WebCLDevice> >& WebCLContextProperties::devices()
 {
     return objdevices;
 }

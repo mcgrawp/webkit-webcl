@@ -53,7 +53,7 @@ public:
     ~WebCLContextProperties() { }
 
 
-    Vector<RefPtr<WebCLDevice> > devices() const;
+    Vector<RefPtr<WebCLDevice> >& devices();
 
     RefPtr<WebCLPlatform>& platform();
     void setPlatform(PassRefPtr<WebCLPlatform> platform);
