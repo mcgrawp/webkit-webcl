@@ -510,39 +510,20 @@ PassRefPtr<WebCLMemoryObject> WebCLContext::createFromGLTexture2D(int flags, GC3
 
 PassRefPtr<WebCLEvent> WebCLContext::createUserEvent(ExceptionCode& ec)
 {
-    cl_int err = -1;
-    cl_event event = 0;
     if (!m_clContext) {
-        printf("Error: Invalid CL Context\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
 
-    event =  clCreateUserEvent(m_clContext, &err);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_CONTEXT :
-            printf("Error: CL_INVALID_CONTEXT \n");
-            ec = WebCLException::INVALID_CONTEXT;
-            break;
-        case CL_OUT_OF_RESOURCES :
-            printf("Error: CCL_OUT_OF_RESOURCES \n");
-            ec = WebCLException::OUT_OF_RESOURCES;
-            break;
-        case CL_OUT_OF_HOST_MEMORY :
-            printf("Error: CCL_OUT_OF_HOST_MEMORY \n");
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            break;
-        default:
-            printf("Error: Invaild Error Type\n");
-            ec = WebCLException::FAILURE;
-            break;
-        }
-    } else {
-        RefPtr<WebCLEvent> resultEvent = WebCLEvent::create(this, event);
-        return resultEvent;
+    CCerror error;
+    CCEvent ccEvent = m_computeContext->createUserEvent(error);
+    if (!ccEvent) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return 0;
     }
-    return 0;
+    RefPtr<WebCLEvent> resultEvent = WebCLEvent::create(this, ccEvent);
+    return resultEvent.release();
 }
 
 PassRefPtr<Image> WebCLContext::videoFrameToImage(HTMLVideoElement* video)

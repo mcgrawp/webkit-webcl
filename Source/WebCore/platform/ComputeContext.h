@@ -346,6 +346,8 @@ public:
     static CCerror waitForEvents(const Vector<CCEvent>&);
 
     CCCommandQueue createCommandQueue(CCDeviceID deviceId, int properties, CCerror& error);
+    CCEvent createUserEvent(CCerror&);
+
     CCProgram createProgram(const String& kernelSource, CCerror& error);
     CCerror buildProgram(CCProgram, const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, void* userData);
 
