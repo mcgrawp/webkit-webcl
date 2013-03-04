@@ -254,6 +254,14 @@ CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, int prope
     return clCommandQueue;
 }
 
+CCEvent ComputeContext::createUserEvent(CCerror& error)
+{
+    cl_int clError;
+    cl_event event = clCreateUserEvent(m_clContext, &clError);
+    error = clToComputeContextError(clError);
+    return event;
+}
+
 CCProgram ComputeContext::createProgram(const String& kernelSource, CCerror& error)
 {
     cl_program clProgram;
