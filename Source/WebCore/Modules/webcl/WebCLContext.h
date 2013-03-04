@@ -129,7 +129,7 @@ public:
     ComputeContext* computeContext() const { return m_computeContext.get(); }
 
 private:
-    WebCLContext(WebCL*, RefPtr<ComputeContext>&, PassRefPtr<WebCLContextProperties>, const Vector<CCDeviceID>&);
+    WebCLContext(WebCL*, RefPtr<ComputeContext>&, PassRefPtr<WebCLContextProperties>);
     // WebCLContext(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType, int* error);
     PassRefPtr<WebCLImage> createImage2DBase(int , int , int , const CCImageFormat& , void*, ExceptionCode&);
 
@@ -137,7 +137,6 @@ private:
     RefPtr<WebCLCommandQueue> m_commandQueue;
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
     RefPtr<ComputeContext> m_computeContext;
-    Vector<CCDeviceID> m_devices;
     RefPtr<WebCLContextProperties> m_contextProperties;
 };
 

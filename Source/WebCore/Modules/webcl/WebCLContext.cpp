@@ -68,12 +68,11 @@ PassRefPtr<WebCLContext> WebCLContext::create(WebCL* context, PassRefPtr<WebCLCo
         return 0;
     }
 
-    return adoptRef(new WebCLContext(context, computeContext, properties, ccDevices));
+    return adoptRef(new WebCLContext(context, computeContext, properties));
 }
 
-WebCLContext::WebCLContext(WebCL*, RefPtr<ComputeContext>& computeContext, PassRefPtr<WebCLContextProperties> properties, const Vector<CCDeviceID>& devices)
+WebCLContext::WebCLContext(WebCL*, RefPtr<ComputeContext>& computeContext, PassRefPtr<WebCLContextProperties> properties)
     : m_videoCache(4) // FIXME: Why '4'?
-    , m_devices(devices)
     , m_contextProperties(properties)
 {
     m_computeContext = computeContext;
@@ -119,13 +118,13 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
 
     CCDeviceID ccDevice = nullptr;
     if (!device) {
-        CCCommandQueueProperties queueProperties = 0;
+        Vector<RefPtr<WebCLDevice> > webCLDevices = m_contextProperties->devices();
         // NOTE: This can be slow, depending the number of 'devices' available.
-        for (size_t i = 0; i < m_devices.size(); ++i) {
-            CCerror error = ComputeContext::getDeviceInfo(m_devices[i], ComputeContext::DEVICE_QUEUE_PROPERTIES, sizeof(CCCommandQueueProperties), &queueProperties);
-            if (error == ComputeContext::SUCCESS
-                && queueProperties == static_cast<CCCommandQueueProperties>(commandQueueProp)) {
-                ccDevice = m_devices[i];
+        for (size_t i = 0; i < webCLDevices.size(); ++i) {
+            WebCLGetInfo info = webCLDevices[i]->getInfo(ComputeContext::DEVICE_QUEUE_PROPERTIES, ec);
+            if (ec == WebCLException::SUCCESS
+                && info.getUnsignedInt() == static_cast<unsigned int>(commandQueueProp)) {
+                ccDevice = webCLDevices[i]->getCLDevice();
                 break;
             }
         }
