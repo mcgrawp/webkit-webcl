@@ -191,6 +191,7 @@ public:
         MEM_READ_WRITE = (1 << 0),
         MEM_WRITE_ONLY = (1 << 1),
         MEM_READ_ONLY = (1 << 2),
+        // FIXME: Do three values below match the corresponding CL ones?
         MEM_USE_HOST_PTR = 0x08,
         MEM_ALLOC_HOST_PTR = 0x10,
         MEM_COPY_HOST_PTR = 0x20,
@@ -362,7 +363,7 @@ public:
     CCKernel createKernel(CCProgram program, const String& kernelName, CCerror& error);
     CCKernel* createKernelsInProgram(CCProgram, CCuint& numberOfKernels, CCerror& error);
 
-    CCImageFormat* supportedImageFormats(int /*type*/, int /*imageType*/, CCuint& /*numberOfSupportedImages*/, CCerror&);
+    CCerror supportedImageFormats(int /*type*/, int /*imageType*/, Vector<CCImageFormat>&);
 
     static CCerror getDeviceInfo(CCDeviceID, int infoType, size_t sizeOfData, void* data);
     static CCerror getPlatformInfo(CCPlatformID, int infoType, size_t sizeOfData, void* data);

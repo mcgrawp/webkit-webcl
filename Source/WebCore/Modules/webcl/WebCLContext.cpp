@@ -539,17 +539,17 @@ Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(int
         return imageDescriptors;
     }
 
-    CCuint numberOfSupportedImages;
-    CCerror error;
-    CCImageFormat* imageFormats = m_computeContext->supportedImageFormats(memoryFlags, ComputeContext::MEM_OBJECT_IMAGE2D, numberOfSupportedImages, error);
+    Vector<CCImageFormat> supportedImageFormats;
+    CCerror error = m_computeContext->supportedImageFormats(memoryFlags, ComputeContext::MEM_OBJECT_IMAGE2D, supportedImageFormats);
 
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return imageDescriptors;
     }
 
+    CCuint numberOfSupportedImages = supportedImageFormats.size();
     for (size_t i = 0; i < numberOfSupportedImages; ++i)
-        imageDescriptors.append(WebCLImageDescriptor::create(imageFormats[i]));
+        imageDescriptors.append(WebCLImageDescriptor::create(supportedImageFormats[i]));
     return imageDescriptors;
 }
 

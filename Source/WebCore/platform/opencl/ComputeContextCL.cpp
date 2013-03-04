@@ -387,21 +387,22 @@ PlatformComputeObject ComputeContext::createFromGLTexture2D(int type, GC3Denum t
     return memory;
 }
 
-CCImageFormat* ComputeContext::supportedImageFormats(int memoryFlags, int imageType, CCuint& numberOfSupportedImages, CCerror& error)
+CCerror ComputeContext::supportedImageFormats(int memoryFlags, int imageType, Vector<CCImageFormat>& imageFormatsOut)
 {
-    cl_int clError;
-    clError = clGetSupportedImageFormats(m_clContext, memoryFlags, imageType, 0, 0, &numberOfSupportedImages);
-    if (clError != CL_SUCCESS) {
-        error = clToComputeContextError(clError);
-        return 0;
-    }
+    cl_uint numberOfSupportedImages = 0;
+    cl_int clError = clGetSupportedImageFormats(m_clContext, memoryFlags, imageType, 0, 0, &numberOfSupportedImages);
+    if (clError != CL_SUCCESS)
+        return clToComputeContextError(clError);
 
     // FIXME: We should not use malloc
     CCImageFormat* imageFormats = (CCImageFormat*) malloc(sizeof(CCImageFormat) * numberOfSupportedImages);
 
     clError = clGetSupportedImageFormats(m_clContext, memoryFlags, imageType, numberOfSupportedImages, imageFormats, 0);
-    error = clToComputeContextError(clError);
-    return clError == CL_SUCCESS ? imageFormats : 0;
+
+    for (size_t i = 0; i < numberOfSupportedImages; ++i)
+        imageFormatsOut.append(imageFormats[i]);
+
+    return clToComputeContextError(clError);
 }
 
 CCerror ComputeContext::getDeviceInfo(CCDeviceID deviceID, int infoType, size_t sizeOfData, void* data)
@@ -686,6 +687,7 @@ CCKernel ComputeContext::createKernel(CCProgram program, const String& kernelNam
     return kernel;
 }
 
+// FIXME: return a Vector<CCKernel> here.
 CCKernel* ComputeContext::createKernelsInProgram(CCProgram program, CCuint& numberOfKernels, CCerror& error)
 {
     cl_kernel* kernels = 0;
