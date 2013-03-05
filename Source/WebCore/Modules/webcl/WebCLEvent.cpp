@@ -84,7 +84,8 @@ WebCLGetInfo WebCLEvent::getInfo(int paramName, ExceptionCode& ec)
         break;
     }
     case ComputeContext::EVENT_COMMAND_QUEUE: {
-        CCCommandQueue ccCommandQueue = 0;
+        /* FIXME: Cannot create a CommandQueue here */
+        /*CCCommandQueue ccCommandQueue = 0;
         err = ComputeContext::getEventInfo(m_clEvent, paramName, sizeof(CCCommandQueue), &ccCommandQueue);
         RefPtr<WebCLCommandQueue> commandQueue = WebCLCommandQueue::create(m_context, ccCommandQueue);
         if (!commandQueue)
@@ -92,6 +93,7 @@ WebCLGetInfo WebCLEvent::getInfo(int paramName, ExceptionCode& ec)
 
         if (err == CL_SUCCESS)
             return WebCLGetInfo(commandQueue.release());
+        */
 
         break;
     }

@@ -55,7 +55,7 @@ class WebCLContext;
 class WebCLCommandQueue : public RefCounted<WebCLCommandQueue> {
 public:
     ~WebCLCommandQueue();
-    static PassRefPtr<WebCLCommandQueue> create(WebCLContext*, cl_command_queue);
+    static PassRefPtr<WebCLCommandQueue> create(WebCLContext*, int, const RefPtr<WebCLDevice>&, ExceptionCode&);
     WebCLGetInfo getInfo(int, ExceptionCode&);
 
     void enqueueWriteBuffer(WebCLBuffer*, bool, int, int, ArrayBufferView*, const Vector<WebCLEvent*>&, WebCLEvent*, ExceptionCode&);
@@ -286,11 +286,12 @@ public:
     }
 
 private:
-    WebCLCommandQueue(WebCLContext*, cl_command_queue);
+    WebCLCommandQueue(WebCLContext*, const RefPtr<WebCLDevice>&, CCCommandQueue);
 
     void enqueueWriteBufferBase(WebCLBuffer*, bool, int, int, void*, const Vector<WebCLEvent*>&, WebCLEvent*, ExceptionCode&);
 
     WebCLContext* m_context;
+    const RefPtr<WebCLDevice> m_device;
     cl_command_queue m_ccCommandQueue;
 };
 
