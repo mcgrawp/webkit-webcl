@@ -48,14 +48,22 @@ WebCLCommandQueue::~WebCLCommandQueue()
     m_ccCommandQueue = 0;
 }
 
-// wrap
-PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, CCCommandQueue commandQueue)
+PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, int commandQueueProperty, const RefPtr<WebCLDevice>& webCLDevice, ExceptionCode& ec)
 {
-    return adoptRef(new WebCLCommandQueue(context, commandQueue));
+    CCerror error = ComputeContext::SUCCESS;
+    CCCommandQueue clCommandQueue = context->computeContext()->createCommandQueue(webCLDevice->getCLDevice(), commandQueueProperty, error);
+    if (!clCommandQueue) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return 0;
+    }
+
+    return adoptRef(new WebCLCommandQueue(context, webCLDevice, clCommandQueue));
 }
 
-WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, CCCommandQueue commandQueue)
+WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, const RefPtr<WebCLDevice>& webCLDevice, CCCommandQueue commandQueue)
     : m_context(context)
+    , m_device(webCLDevice)
     , m_ccCommandQueue(commandQueue)
 {
 }
@@ -68,28 +76,13 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
     }
 
     CCerror err = 0;
-    CCDeviceID ccDeviceID = 0;
     CCCommandQueueProperties ccCommandQueueProperties = 0;
 
     switch (paramName) {
     case ComputeContext::QUEUE_CONTEXT:
-        // FIXME: We should not create a WebCLContext here.
-        /*
-        err = clGetCommandQueueInfo(m_ccCommandQueue, paramName, sizeof(cl_context), &cl_context_id, 0);
-        if (err == CL_SUCCESS) {
-            RefPtr<WebCLContext> contextObj = WebCLContext::create(m_context, cl_context_id);
-            // FIXME: The the wrapping PassRefPtr below REALLY needed?
-            return WebCLGetInfo(PassRefPtr<WebCLContext>(contextObj));
-        */
-        break;
+        return WebCLGetInfo(PassRefPtr<WebCLContext>(m_context));
     case ComputeContext::QUEUE_DEVICE:
-        err = ComputeContext::getCommandQueueInfo(m_ccCommandQueue, paramName, sizeof(CCDeviceID), &ccDeviceID);
-        if (err == CL_SUCCESS) {
-            RefPtr<WebCLDevice> deviceObj = WebCLDevice::create(ccDeviceID);
-            // FIXME: The the wrapping PassRefPtr below REALLY needed?
-            return WebCLGetInfo(PassRefPtr<WebCLDevice>(deviceObj));
-        }
-        break;
+        return WebCLGetInfo(PassRefPtr<WebCLDevice>(const_cast<WebCLDevice*>(m_device.get())));
     case ComputeContext::QUEUE_PROPERTIES:
         err = ComputeContext::getCommandQueueInfo(m_ccCommandQueue, paramName, sizeof(CCCommandQueueProperties), &ccCommandQueueProperties);
         if (err == CL_SUCCESS)

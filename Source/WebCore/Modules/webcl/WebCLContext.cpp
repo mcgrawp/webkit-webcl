@@ -109,39 +109,33 @@ WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* device, int commandQueueProp, ExceptionCode& ec)
+PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* device, int commandQueueProperty, ExceptionCode& ec)
 {
     if (!m_clContext) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
 
-    CCDeviceID ccDevice = nullptr;
+    RefPtr<WebCLDevice> webCLDevice;
     if (!device) {
         Vector<RefPtr<WebCLDevice> > webCLDevices = m_contextProperties->devices();
         // NOTE: This can be slow, depending the number of 'devices' available.
         for (size_t i = 0; i < webCLDevices.size(); ++i) {
             WebCLGetInfo info = webCLDevices[i]->getInfo(ComputeContext::DEVICE_QUEUE_PROPERTIES, ec);
             if (ec == WebCLException::SUCCESS
-                && info.getUnsignedInt() == static_cast<unsigned int>(commandQueueProp)) {
-                ccDevice = webCLDevices[i]->getCLDevice();
+                && info.getUnsignedInt() == static_cast<unsigned int>(commandQueueProperty)) {
+                webCLDevice = webCLDevices[i];
                 break;
             }
         }
+        //FIXME: Spec needs to say what we need to do here
+        ASSERT_NOT_REACHED();
     } else
-        ccDevice = device->getCLDevice();
+        webCLDevice = device;
 
-    CCerror error = ComputeContext::SUCCESS;
-    CCCommandQueue clCommandqueueID = m_computeContext->createCommandQueue(ccDevice, commandQueueProp, error);
-    if (!clCommandqueueID) {
-        ASSERT(error != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
-    }
-
-    RefPtr<WebCLCommandQueue> commandqueueObj = WebCLCommandQueue::create(this, clCommandqueueID);
+    RefPtr<WebCLCommandQueue> commandqueueObj = WebCLCommandQueue::create(this, commandQueueProperty, webCLDevice, ec);
     m_commandQueue = commandqueueObj;
-    return commandqueueObj;
+    return commandqueueObj.release();
 }
 
 PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource, ExceptionCode& ec)
