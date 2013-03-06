@@ -63,7 +63,6 @@ WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, CCCommandQueue comma
 WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
 {
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return WebCLGetInfo();
     }
@@ -114,11 +113,13 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, bool blockin
         return;
     }
 
-    if (!buffer) {
+    PlatformComputeObject ccBuffer = nullptr;
+    if (buffer)
+        ccBuffer = buffer->getCLBuffer();
+    if (!ccBuffer) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
-    PlatformComputeObject ccBuffer = buffer->getCLBuffer();
 
     if (!data) {
         ec = WebCLException::INVALID_HOST_PTR;
@@ -140,13 +141,13 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, bool blockin
 
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blockingWrite, int offset, int bufferSize, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    enqueueWriteBufferBase(buffer, blockingWrite, offset, bufferSize, ptr->baseAddress(), events, event, ec);
+    enqueueWriteBufferBase(buffer, blockingWrite, offset, bufferSize, ptr ? ptr->baseAddress() : 0, events, event, ec);
 }
 
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blockingWrite, int offset, int bufferSize, ImageData* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (!ptr && !ptr->data() && !ptr->data()->data()) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
@@ -158,31 +159,31 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, bool blockin
     Int32Array* hostOrigin, Int32Array* region, int bufferRowPitch, int bufferSlicePitch, int hostRowPitch,
     int hostSlicePitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    PlatformComputeObject ccBuffer = 0;
-
     if (!m_ccCommandQueue) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
+    PlatformComputeObject ccBuffer = 0;
     if (buffer)
         ccBuffer = buffer->getCLBuffer();
-
     if (!ccBuffer) {
-        printf("Error: ccBuffer null\n");
+        ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
     if (!ptr) {
-        printf("Error: ArrayBufferView object invalid\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+    if (!bufferOrigin || !hostOrigin || !region) {
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
     if (bufferOrigin->length() < 3
         || hostOrigin->length() < 3
         || region->length() < 3) {
-        printf("ERROR:: Buffer Length is less than 3.\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
@@ -214,18 +215,16 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, bool blockin
 void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead, int offset, int bufferSize,
     ImageData* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    PlatformComputeObject ccBuffer = 0;
-
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
+    PlatformComputeObject ccBuffer = 0;
     if (buffer)
         ccBuffer = buffer->getCLBuffer();
     if (!ccBuffer) {
-        printf("Error: ccBuffer null\n");
+        ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
 
@@ -234,7 +233,6 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead
         bufferArray = ptr->data()->data();
         bufferSize =  ptr->data()->length();
     } else {
-        printf("Error: Invalid ImageData\n");
         ec = ComputeContext::INVALID_VALUE;
         return;
     }
@@ -256,24 +254,26 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead
 void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, Int32Array* origin, Int32Array* region,
     int rowPitch, int slicePitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    PlatformComputeObject ccBuffer = 0;
-
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
+    PlatformComputeObject ccImage = 0;
     if (image)
-        ccBuffer = image->getCLImage();
-    if (!ccBuffer) {
-        printf("Error: ccBuffer null\n");
+        ccImage = image->getCLImage();
+    if (!ccImage) {
+        ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
 
+    if (!origin || !region || !ptr) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
     if (origin->length() < 3
         || region->length() < 3) {
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
@@ -293,7 +293,7 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, I
     if (event)
         *ccEvent = event->getCLEvent();
 
-    CCerror err = m_context->computeContext()->enqueueReadImage(m_ccCommandQueue, ccBuffer, blockingRead, originData.data(),
+    CCerror err = m_context->computeContext()->enqueueReadImage(m_ccCommandQueue, ccImage, blockingRead, originData.data(),
         regionData.data(), rowPitch, slicePitch, ptr->baseAddress(), ccEvents.size(), ccEvents.data(), ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -301,16 +301,22 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, I
 void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* sourceBuffer, bool blockingRead, int offset, int bufferSize,
     ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    PlatformComputeObject ccBuffer = 0;
-
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        return;
+    }
+    if (!ptr) {
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
+    PlatformComputeObject ccBuffer = 0;
     if (sourceBuffer)
         ccBuffer = sourceBuffer->getCLBuffer();
+    if (!ccBuffer) {
+        ec = WebCLException::INVALID_MEM_OBJECT;
+        return;
+    }
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
@@ -331,27 +337,27 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blocking
     int bufferRowPitch, int bufferSlicePitch, int hostRowPitch, int hostSlicePitch,
     ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    PlatformComputeObject ccBuffer = 0;
-
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
-    if (buffer) {
+    PlatformComputeObject ccBuffer = 0;
+    if (buffer)
         ccBuffer = buffer->getCLBuffer();
-        if (!ccBuffer) {
-            printf("Error: ccBuffer null\n");
-            return;
-        }
+    if (!ccBuffer) {
+        ec = WebCLException::INVALID_MEM_OBJECT;
+        return;
+    }
+    if (!bufferOrigin || !hostOrigin ||!region || !ptr) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
     }
 
     if (bufferOrigin->length() < 3
         || hostOrigin->length() < 3
         || region->length() < 3) {
-        printf("ERROR:: Buffer length must be more than 3\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
@@ -362,11 +368,6 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blocking
         bufferOriginData[i] = bufferOrigin->item(i);
         hostOriginData[i] = hostOrigin->item(i);
         regionData[i] = region->item(i);
-    }
-    if (!ptr) {
-        ec = WebCLException::FAILURE;
-        printf("Error:: ArrayBuffer object is not sent\n");
-        return;
     }
 
     Vector<CCEvent> ccEvents;
@@ -389,18 +390,16 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
     WebCLEvent* event, ExceptionCode& ec)
 {
     printf(" DEBUG:: in enqueueNDRangeKernel\n");
-
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
     if (!kernel || !kernel->getCLKernel()) {
         ec = WebCLException::INVALID_KERNEL;
-        printf("Error: Invalid kernel passed.\n");
         return;
     }
+
 
     CCKernel ccKernel = kernel->getCLKernel();
 
@@ -411,6 +410,11 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
         for (size_t i = 0; i < globalWorkSize->length(); ++i)
             globalWorkSizeCopy.append(globalWorkSize->item(i));
         workItemDimensions = globalWorkSize->length();
+    }
+
+    if (workItemDimensions < 0 || workItemDimensions > 3) {
+        ec = WebCLException::INVALID_WORK_DIMENSION;
+        return;
     }
 
     Vector<size_t> localWorkSizeCopy;
@@ -444,7 +448,6 @@ void WebCLCommandQueue::finish(ExceptionCode& ec)
 {
     if (!m_ccCommandQueue) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
-        printf("Error: Invalid Command Queue\n");
         return;
     }
 
@@ -456,7 +459,6 @@ void WebCLCommandQueue::finish(ExceptionCode& ec)
 void WebCLCommandQueue::flush(ExceptionCode& ec)
 {
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -469,26 +471,26 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
     int inputRowPitch, int inputSlicePitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event,
     ExceptionCode& ec)
 {
-    PlatformComputeObject ccImage = 0;
-
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
+    PlatformComputeObject ccImage = 0;
     if (image)
         ccImage = image->getCLImage();
     if (!ccImage) {
-        printf("Error: ccImage null\n");
         ec = WebCLException::INVALID_MEM_OBJECT;
+        return;
+    }
+    if (!origin || !region || !ptr) {
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
     if (origin->length() < 3
         || region->length() < 3) {
-        printf("ERROR:: Buffer lengths must be greater than 3.\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
@@ -517,18 +519,16 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
 void WebCLCommandQueue::enqueueAcquireGLObjects(WebCLMemoryObject* memoryObjects, const Vector<RefPtr<WebCLEvent> >& events,
     WebCLEvent* event, ExceptionCode& ec)
 {
-    PlatformComputeObject ccMemoryObjectsIDs[1] = {0};
 
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
+    PlatformComputeObject ccMemoryObjectsIDs[1] = {0};
     if (memoryObjects && memoryObjects->isShared())
         ccMemoryObjectsIDs[0] = memoryObjects->getCLMemoryObject();
     if (!ccMemoryObjectsIDs[0]) {
-        printf("Error:: Memory Object passed is not shared with GL or NULL\n");
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
@@ -550,18 +550,15 @@ void WebCLCommandQueue::enqueueAcquireGLObjects(WebCLMemoryObject* memoryObjects
 void WebCLCommandQueue::enqueueReleaseGLObjects(WebCLMemoryObject* memoryObjects, const Vector<RefPtr<WebCLEvent> >& events,
     WebCLEvent* event, ExceptionCode& ec)
 {
-    PlatformComputeObject ccMemoryObjectsIDs = 0;
-
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
+    PlatformComputeObject ccMemoryObjectsIDs = 0;
     if (memoryObjects && memoryObjects->isShared())
         ccMemoryObjectsIDs = memoryObjects->getCLMemoryObject();
     if (!ccMemoryObjectsIDs) {
-        printf("Error:: Memory Object passed is not shared with GL or NULL\n");
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
@@ -582,36 +579,35 @@ void WebCLCommandQueue::enqueueReleaseGLObjects(WebCLMemoryObject* memoryObjects
 void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* targetImage, Int32Array* sourceOrigin,
     Int32Array* targetOrigin, Int32Array* region, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    PlatformComputeObject ccSourceImage = 0;
-    PlatformComputeObject ccTargetImage = 0;
-
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
+    PlatformComputeObject ccSourceImage = 0;
     if (sourceImage)
         ccSourceImage = sourceImage->getCLImage();
     if (!ccSourceImage) {
-        printf("Error: ccSourceImage null\n");
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
 
+    PlatformComputeObject ccTargetImage = 0;
     if (targetImage)
         ccTargetImage = targetImage->getCLImage();
     if (!ccTargetImage) {
-        printf("Error: ccTargetImage null\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
 
+    if (!sourceOrigin || !targetOrigin || !region) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
     if (sourceOrigin->length() < 3
         || targetOrigin->length() < 3
         || region->length() < 3) {
-        printf("ERROR:: Image length must be greater than 3.\n");
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
@@ -643,35 +639,33 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
 void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *sourceImage, WebCLBuffer *targetBuffer, Int32Array*
     sourceOrigin, Int32Array* region, int targetOffset, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    PlatformComputeObject ccSourceImage = 0;
-    PlatformComputeObject ccTargetBuffer = 0;
-
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
+    PlatformComputeObject ccSourceImage = 0;
     if (sourceImage)
         ccSourceImage = sourceImage->getCLImage();
     if (!ccSourceImage) {
-        printf("Error: ccSourceImage null\n");
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
 
+    PlatformComputeObject ccTargetBuffer = 0;
     if (targetBuffer)
         ccTargetBuffer = targetBuffer->getCLBuffer();
     if (!ccTargetBuffer) {
-        printf("Error: ccTargetBuffer null\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
-
+    if (!sourceOrigin || !region) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
     if (sourceOrigin->length() < 3
         || region->length() < 3) {
-        printf("ERROR:: Image length must be greater than 3.\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
@@ -699,41 +693,40 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *sourceImage, WebCLB
 void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *sourceBuffer, WebCLImage *targetImage, int sourceOffset,
     Int32Array* targetOrigin, Int32Array* region, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    PlatformComputeObject ccSourceBuffer = 0;
-    PlatformComputeObject ccTargetImage = 0;
-
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
+    PlatformComputeObject ccSourceBuffer = 0;
     if (sourceBuffer)
         ccSourceBuffer = sourceBuffer->getCLBuffer();
     if (!ccSourceBuffer) {
-        printf("Error:  ccSourceBuffer null\n");
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
 
+    PlatformComputeObject ccTargetImage = 0;
     if (targetImage)
         ccTargetImage = targetImage->getCLImage();
     if (!ccTargetImage) {
-        printf("Error:  ccTargetImage null\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_MEM_OBJECT;
+        return;
+    }
+
+    if (!targetOrigin || !region) {
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
     if (targetOrigin->length() < 3
         || region->length() < 3) {
-        printf("ERROR:: Image length must be greater than 3.\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
     Vector<size_t, 3> targetOriginData;
     Vector<size_t, 3> regionData;
-
     for (size_t i = 0; i < 3; ++i) {
         targetOriginData[i] = targetOrigin->item(i);
         regionData[i] = region->item(i);
@@ -756,28 +749,24 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *sourceBuffer, WebC
 void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer* targetBuffer, int sourceOffset,
     int targetOffset, int sizeInBytes, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    PlatformComputeObject ccSourceBuffer = 0;
-    PlatformComputeObject ccTargetBuffer = 0;
-
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
+    PlatformComputeObject ccSourceBuffer = 0;
     if (sourceBuffer)
         ccSourceBuffer = sourceBuffer->getCLBuffer();
     if (!ccSourceBuffer) {
-        printf("Error: ccSourceBuffer null\n");
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
 
+    PlatformComputeObject ccTargetBuffer = 0;
     if (targetBuffer)
         ccTargetBuffer = targetBuffer->getCLBuffer();
     if (!ccTargetBuffer) {
-        printf("Error: ccTargetBuffer null\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
 
@@ -799,43 +788,40 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
     sourceOrigin, Int32Array* targetOrigin, Int32Array* region, int sourceRowPitch, int sourceSlicePitch, int
     targetRowPitch, int targetSlicePitch, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    PlatformComputeObject ccSourceBuffer = 0;
-    PlatformComputeObject ccTargetBuffer = 0;
-
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
+    PlatformComputeObject ccSourceBuffer = 0;
     if (sourceBuffer)
         ccSourceBuffer = sourceBuffer->getCLBuffer();
     if (!ccSourceBuffer) {
-        printf("Error: ccSourceBuffer null\n");
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
 
+    PlatformComputeObject ccTargetBuffer = 0;
     if (targetBuffer)
         ccTargetBuffer = targetBuffer->getCLBuffer();
     if (!ccTargetBuffer) {
-        printf("Error: ccTargetBuffer null\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
-
+    if (!sourceOrigin || !targetOrigin || !region) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
     if (sourceOrigin->length() < 3
         || targetOrigin->length() < 3
         || region->length() < 3) {
-        printf("ERROR:: Image length must be greater than 3.\n");
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
     Vector<size_t, 3> sourceOriginData;
     Vector<size_t, 3> targetOriginData;
     Vector<size_t, 3> regionData;
-
     for (size_t i = 0; i < 3; ++i) {
         sourceOriginData[i] = sourceOrigin->item(i);
         targetOriginData[i] = targetOrigin->item(i);
@@ -860,7 +846,6 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
 void WebCLCommandQueue::enqueueBarrier(ExceptionCode& ec)
 {
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -893,7 +878,6 @@ void WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, const Vector<RefPtr<Web
     ExceptionCode& ec)
 {
     if (!m_ccCommandQueue) {
-        printf("Error: Invalid Command Queue\n");
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -902,7 +886,6 @@ void WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, const Vector<RefPtr<Web
     if (kernel)
         ccKernel = kernel->getCLKernel();
     if (!ccKernel) {
-        printf("Error: ccKernel null\n");
         ec = WebCLException::INVALID_KERNEL;
         return;
     }
