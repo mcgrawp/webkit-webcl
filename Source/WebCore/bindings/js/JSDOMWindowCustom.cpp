@@ -75,6 +75,10 @@
 #include "JSWebSocket.h"
 #endif
 
+// Siba
+#if ENABLE(WEBCL)
+#include "JSWebCL.h"
+#endif
 using namespace JSC;
 
 namespace WebCore {
