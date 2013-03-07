@@ -31,7 +31,7 @@
 
 #include "WebCLImage.h"
 #include "WebCLException.h"
-#include "webclcontext.h"
+#include "WebCLContext.h"
 #include "WebCL.h"
 #include "WebCLImageDescriptor.h"
 
