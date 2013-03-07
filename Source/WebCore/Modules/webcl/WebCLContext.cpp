@@ -140,27 +140,13 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
 
 PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource, ExceptionCode& ec)
 {
-    cl_program clProgramID = 0;
     if (!m_clContext) {
         printf("Error: Invalid CL Context\n");
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
-    const char* source = strdup(kernelSource.utf8().data());
-    if (!source) {
-        printf("Error: strdup returned error [%d]", errno);
-        return 0;
-    }
 
-    CCerror error = 0;
-    clProgramID = m_computeContext->createProgram(kernelSource, error);
-    if (!clProgramID) {
-        ASSERT(error != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
-    }
-    RefPtr<WebCLProgram> clProgramObj = WebCLProgram::create(this, clProgramID);
-    return clProgramObj;
+    return WebCLProgram::create(this, kernelSource, ec);
 }
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, int size, ArrayBuffer* data, ExceptionCode& ec)

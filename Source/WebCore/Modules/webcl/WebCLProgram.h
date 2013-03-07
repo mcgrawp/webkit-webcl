@@ -28,10 +28,10 @@
 #ifndef WebCLProgram_h
 #define WebCLProgram_h
 
+#include "ComputeContext.h"
 #include "ExceptionCode.h"
 #include "WebCLFinishCallback.h"
 
-#include <OpenCL/opencl.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,7 +46,7 @@ class WebCLDevice;
 class WebCLProgram : public RefCounted<WebCLProgram> {
 public:
     virtual ~WebCLProgram();
-    static PassRefPtr<WebCLProgram> create(WebCLContext*, cl_program);
+    static PassRefPtr<WebCLProgram> create(WebCLContext*, const String&, ExceptionCode&);
 
     WebCLGetInfo getInfo(int, ExceptionCode&);
     WebCLGetInfo getBuildInfo(WebCLDevice*, int, ExceptionCode&);
@@ -72,11 +72,12 @@ public:
     void releaseProgram(ExceptionCode&);
 
 private:
-    WebCLProgram(WebCLContext*, cl_program);
+    WebCLProgram(WebCLContext*, cl_program, const String&);
     static void finishCallback(cl_program, void*);
     static WebCLProgram* thisPointer;
     WebCLContext* m_context;
-    cl_program m_clProgram;
+    CCProgram m_clProgram;
+    String m_kernelSource;
     RefPtr<WebCLFinishCallback> m_finishCallback;
 };
 
