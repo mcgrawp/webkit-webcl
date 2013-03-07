@@ -44,14 +44,23 @@ WebCLProgram::~WebCLProgram()
     m_clProgram = 0;
 }
 
-PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, cl_program program)
+    PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const String& kernelSource, ExceptionCode& ec)
 {
-    return adoptRef(new WebCLProgram(context, program));
+    CCerror error = 0;
+    CCProgram clProgram = context->computeContext()->createProgram(kernelSource, error);
+    if (!clProgram) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return 0;
+    }
+
+    return adoptRef(new WebCLProgram(context, clProgram, kernelSource));
 }
 
-WebCLProgram::WebCLProgram(WebCLContext* context, cl_program program)
+WebCLProgram::WebCLProgram(WebCLContext* context, cl_program program, const String& kernelSource)
     : m_context(context)
     , m_clProgram(program)
+    , m_kernelSource(kernelSource)
 {
 }
 
@@ -62,52 +71,21 @@ WebCLGetInfo WebCLProgram::getInfo(int infoType, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    CCerror error = 0;
     switch (infoType) {
-    case ComputeContext::PROGRAM_NUM_DEVICES: {
-        CCuint uintUnits = 0;
-        error = ComputeContext::getProgramInfo(m_clProgram, infoType, sizeof(CCuint), &uintUnits, 0);
-        if (error == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(uintUnits));
-        break;
-    }
-    case ComputeContext::PROGRAM_SOURCE: {
-        char programString[4096] = {""};
-        error = ComputeContext::getProgramInfo(m_clProgram, infoType, sizeof(programString), &programString, 0);
-        if (error == ComputeContext::SUCCESS)
-            return WebCLGetInfo(String(programString));
-        break;
-    }
-    case ComputeContext::PROGRAM_CONTEXT: {
-        CCContext ccContextID = 0;
-        error = ComputeContext::getProgramInfo(m_clProgram, infoType, sizeof(CCContext), &ccContextID, 0);
-        if (error == ComputeContext::SUCCESS) {
-            RefPtr<WebCLContext> contextObj = 0;
-            // FIXME Need a create API taking cl_context in WebCLContext interface.
-            // contextObj = WebCLContext::create(m_context->webclObject(), ccContextID, 1, 0, error);
-            return WebCLGetInfo(contextObj.release());
-        }
-        break;
-    }
-    case ComputeContext::PROGRAM_DEVICES: {
-        size_t devicesSize = 0;
-        error = ComputeContext::getProgramInfo(m_clProgram, ComputeContext::PROGRAM_DEVICES, 0, 0, &devicesSize);
-        if (error == ComputeContext::SUCCESS) {
-            Vector<CCDeviceID> ccDevices(devicesSize);
-            ComputeContext::getProgramInfo(m_clProgram, infoType, devicesSize, ccDevices.data(), 0);
-            Vector<RefPtr<WebCLDevice> > devices;
-            toWebCLDeviceArray(ccDevices, devices);
-            return WebCLGetInfo(devices);
-        }
-        break;
-    }
+    case ComputeContext::PROGRAM_NUM_DEVICES:
+        return m_context->getInfo(ComputeContext::CONTEXT_NUM_DEVICES, ec);
+    case ComputeContext::PROGRAM_SOURCE:
+        return WebCLGetInfo(m_kernelSource);
+    case ComputeContext::PROGRAM_CONTEXT:
+        return WebCLGetInfo(m_context);
+    case ComputeContext::PROGRAM_DEVICES:
+        return m_context->getInfo(ComputeContext::CONTEXT_DEVICES, ec);
     default:
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
 
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-    return WebCLGetInfo();
+    ASSERT_NOT_REACHED();
 }
 
 

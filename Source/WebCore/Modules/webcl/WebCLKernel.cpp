@@ -79,12 +79,13 @@ WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
         break;
     }
     case ComputeContext::KERNEL_PROGRAM: {
+        /*FIXME: WebCLProgram should not be instanced here.
         CCProgram ccProgramID = 0;
         err = ComputeContext::getKernelInfo(m_clKernel, kernelInfo, sizeof(CCProgram), &ccProgramID);
         if (err == CL_SUCCESS) {
             RefPtr<WebCLProgram> programObj = WebCLProgram::create(m_context, ccProgramID);
             return WebCLGetInfo(programObj.release());
-        }
+            }*/
         break;
     }
     /* FIXME: we should not create a context here
