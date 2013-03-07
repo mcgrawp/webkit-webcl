@@ -40,22 +40,26 @@ WebCLBuffer::~WebCLBuffer()
 {
 }
 
-PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, int size, void* data, CCerror& error)
+PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, int size, void* data, ExceptionCode& ec)
 {
+    CCerror error = ComputeContext::SUCCESS;
     PlatformComputeObject buffer = context->computeContext()->createBuffer(memoryFlags, size, data, error);
     if (!buffer) {
         ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
 
     return adoptRef(new WebCLBuffer(context, buffer, false));
 }
 
-PassRefPtr<WebCLBuffer> WebCLBuffer::createFromGLBuffer(WebCLContext* context, CCenum memoryFlags, const Platform3DObject& platform3DObject, CCerror& error)
+PassRefPtr<WebCLBuffer> WebCLBuffer::createFromGLBuffer(WebCLContext* context, CCenum memoryFlags, const Platform3DObject& platform3DObject, ExceptionCode& ec)
 {
+    CCerror error = ComputeContext::SUCCESS;
     PlatformComputeObject buffer = context->computeContext()->createFromGLBuffer(memoryFlags, platform3DObject, error);
     if (!buffer) {
         ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
 

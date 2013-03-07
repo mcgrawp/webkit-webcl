@@ -166,13 +166,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, int size, Ar
         arrayBufferData = data->data();
     }
 
-    CCerror error;
-    RefPtr<WebCLBuffer> webCLBuffer = WebCLBuffer::create(this, memoryFlags, size, arrayBufferData, error);
-    if (error != ComputeContext::SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
-    }
-    return webCLBuffer.release();
+    return WebCLBuffer::create(this, memoryFlags, size, arrayBufferData, ec);
 }
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, ImageData *ptr, ExceptionCode& ec)
@@ -186,13 +180,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, ImageData *p
     int bufferSize = ptr->data()->length();
     memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
 
-    CCerror error;
-    RefPtr<WebCLBuffer> webCLBuffer = WebCLBuffer::create(this, memoryFlags, bufferSize, buffer, error);
-    if (error != ComputeContext::SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
-    }
-    return webCLBuffer.release();
+   return WebCLBuffer::create(this, memoryFlags, bufferSize, buffer, ec);
 }
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
@@ -221,14 +209,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, HTMLCanvasEl
     }
     memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
 
-    CCerror error;
-    RefPtr<WebCLBuffer> webCLBuffer = WebCLBuffer::create(this, memoryFlags, bufferSize, imageData, error);
-    if (error != ComputeContext::SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
-    }
-
-    return webCLBuffer.release();
+    return WebCLBuffer::create(this, memoryFlags, bufferSize, imageData, ec);
 }
 
 
@@ -406,13 +387,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(int flags, WebGLBuffer*
     }
     Platform3DObject bufferID = webGLBuffer->object();
 
-    CCerror error;
-    RefPtr<WebCLBuffer> webCLBuffer = WebCLBuffer::createFromGLBuffer(this, flags, bufferID, error);
-    if (error != ComputeContext::SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
-    }
-    return webCLBuffer.release();
+    return WebCLBuffer::createFromGLBuffer(this, flags, bufferID, ec);
 }
 
 
