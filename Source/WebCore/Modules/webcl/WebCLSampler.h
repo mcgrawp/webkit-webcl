@@ -41,13 +41,17 @@ class WebCLContext;
 class WebCLSampler : public RefCounted<WebCLSampler> {
 public:
     virtual ~WebCLSampler();
-    static PassRefPtr<WebCLSampler> create(WebCLContext*, CCSampler);
+    static PassRefPtr<WebCLSampler> create(WebCLContext*, bool, int, int, ExceptionCode&);
     WebCLGetInfo getInfo(int, ExceptionCode&);
 private:
-    WebCLSampler(WebCLContext*, CCSampler);
+    WebCLSampler(WebCLContext*, CCSampler, bool, int, int);
     CCSampler getCLSampler();
-    WebCLContext* m_context;
+
+    bool m_normCoords;
+    int m_addressingMode;
+    int m_filterMode;
     CCSampler m_ccSampler;
+    WebCLContext* m_context;
 };
 
 } // namespace WebCore

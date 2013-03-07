@@ -45,18 +45,26 @@ WebCLSampler::~WebCLSampler()
     m_ccSampler = 0;
 }
 
-PassRefPtr<WebCLSampler> WebCLSampler::create(WebCLContext* context, CCSampler sampler)
+PassRefPtr<WebCLSampler> WebCLSampler::create(WebCLContext* context, bool normCoords, int addressingMode, int filterMode, ExceptionCode& ec)
 {
-    return adoptRef(new WebCLSampler(context, sampler));
+    CCerror error;
+    CCSampler ccSampler = context->computeContext()->createSampler(normCoords, addressingMode, filterMode, error);
+    if (!ccSampler) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return 0;
+    }
+
+    return adoptRef(new WebCLSampler(context, ccSampler, normCoords, addressingMode, filterMode));
 }
 
-WebCLSampler::WebCLSampler(WebCLContext* context, CCSampler sampler)
-    : m_context(context)
+WebCLSampler::WebCLSampler(WebCLContext* context, CCSampler sampler, bool normCoords, int addressingMode, int filterMode)
+    : m_normCoords(normCoords)
+    , m_addressingMode(addressingMode)
+    , m_filterMode(filterMode)
     , m_ccSampler(sampler)
+    , m_context(context)
 {
-    // FIXME: For now, use it in order to silent a clang compiler warning.
-    // Remove this when SAMPLE_CONTEXT is supported.
-    UNUSED_PARAM(m_context);
 }
 
 WebCLGetInfo WebCLSampler::getInfo(int infoType, ExceptionCode& ec)
@@ -66,41 +74,21 @@ WebCLGetInfo WebCLSampler::getInfo(int infoType, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    CCerror error = 0;
     switch (infoType) {
-    case ComputeContext::SAMPLER_NORMALIZED_COORDS: {
-        CCbool booleanValue = false;
-        error = ComputeContext::getSamplerInfo(m_ccSampler, infoType, sizeof(CCbool), &booleanValue);
-        if (error == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<bool>(booleanValue));
-        break;
-    }
-    /* FIXME: Implementation needed.
-    case ComputeContext::SAMPLER_CONTEXT: {
-        CCContext ccContext;
-        error = ComputeContext::getSamplerInfo(m_ccSampler, infoType, sizeof(CCContext), &ccContext);
-        if (error == CL_SUCCESS) {
-            RefPtr<WebCLContext> contextObj = WebCLContext::create(m_context, ccContext);
-            return WebCLGetInfo(contextObj.release());
-        }
-        break;
-    }
-    */
+    case ComputeContext::SAMPLER_NORMALIZED_COORDS:
+        return WebCLGetInfo(m_normCoords);
+    case ComputeContext::SAMPLER_CONTEXT:
+        return WebCLGetInfo(m_context);
     case ComputeContext::SAMPLER_ADDRESSING_MODE:
-    case ComputeContext::SAMPLER_FILTER_MODE: {
-        CCuint samplerInfo = 0;
-        error = ComputeContext::getSamplerInfo(m_ccSampler, infoType, sizeof(CCuint), &samplerInfo);
-        if (error == CL_SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(samplerInfo));
-        break;
-    }
+        return WebCLGetInfo(m_addressingMode);
+    case ComputeContext::SAMPLER_FILTER_MODE:
+        return WebCLGetInfo(m_filterMode);
     default:
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
-    ASSERT(error != CL_SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-    return WebCLGetInfo();
+
+    ASSERT_NOT_REACHED();
 }
 
 CCSampler WebCLSampler::getCLSampler()

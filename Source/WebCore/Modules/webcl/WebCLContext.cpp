@@ -416,7 +416,7 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderBuffer(int flags, WebGLRe
     return imageObject.release();
 }
 
-PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCords, int addressingMode, int filterMode, ExceptionCode& ec)
+PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCoords, int addressingMode, int filterMode, ExceptionCode& ec)
 {
     if (!m_clContext) {
         ec = WebCLException::INVALID_CONTEXT;
@@ -433,16 +433,7 @@ PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCords, int address
         return 0;
     }
 
-    CCerror error;
-    CCSampler clSamplerID = m_computeContext->createSampler(normCords, addressingMode, filterMode, error);
-    if (!clSamplerID) {
-        ASSERT(error != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
-    }
-
-    RefPtr<WebCLSampler> sampler = WebCLSampler::create(this, clSamplerID);
-    return sampler;
+    return WebCLSampler::create(this, normCoords, addressingMode, filterMode, ec);
 }
 
 PassRefPtr<WebCLMemoryObject> WebCLContext::createFromGLTexture2D(int flags, GC3Denum textureTarget, GC3Dint miplevel, GC3Duint texture, ExceptionCode& ec)
