@@ -25,11 +25,9 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-module webcl {
-    interface [
-        Conditional=WEBCL,
-        Callback
-    ] WebCLFinishCallback {
-        [Custom] boolean handleEvent(in long value);
-    };
-}
+interface [
+    Conditional=WEBCL,
+    Callback
+] WebCLFinishCallback {
+    [Custom] boolean handleEvent(in long value);
+};

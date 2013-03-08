@@ -25,12 +25,9 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-module window {
-    interface [
-        Conditional=WEBCL,
-        Supplemental=DOMWindow
-    ] DOMWindowWebCLEnvironment {
-        readonly attribute WebCL webcl;
-    };
-
-}
+[
+    Conditional=WEBCL,
+    Supplemental=DOMWindow
+] interface DOMWindowWebCLEnvironment {
+    readonly attribute WebCL webcl;
+};

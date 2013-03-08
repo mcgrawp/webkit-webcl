@@ -25,12 +25,9 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-module thread{
-    interface [
-        Conditional=WEBCL,
-        Supplemental=WorkerContext
-    ] WorkerContextWebCLEnvironment {
-        readonly attribute WebCL webcl;
-    };
-
-}
+interface [
+    Conditional=WEBCL,
+    Supplemental=WorkerContext
+] WorkerContextWebCLEnvironment {
+    readonly attribute WebCL webcl;
+};

@@ -25,11 +25,9 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-module webcl {
-    interface [
-        Conditional=WEBCL,
-    ] WebCLDevice {
+interface [
+    Conditional=WEBCL,
+] WebCLDevice {
     [StrictTypeChecking, Custom] void getInfo(in long deviceType) raises(DOMException);
     [StrictTypeChecking, Custom] void getSupportedExtensions() raises(DOMException);
-    };
-}
+};

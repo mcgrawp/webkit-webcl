@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+* Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
@@ -25,23 +25,20 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-module webcl {
 interface [
     Conditional=WEBCL,
 ] WebCLProgram {
-    [StrictTypeChecking, Custom]  void getInfo (in long programInfo) raises(DOMException);
-    [StrictTypeChecking, Custom]  void  getBuildInfo(in WebCLDevice device,in long paramName)
-        raises(DOMException);
+    [StrictTypeChecking, Custom] void getInfo (in long programInfo) raises(DOMException);
+    [StrictTypeChecking, Custom] void getBuildInfo(in WebCLDevice device, in long paramName) raises(DOMException);
+
     WebCLKernel createKernel(in DOMString kernelName) raises(DOMException);
 
     sequence<WebCLKernel> createKernelsInProgram() raises(DOMException);
 
-    [StrictTypeChecking, Custom] void build(
-            in sequence<WebCLDevice> devices,
-            in [Optional,TreatNullAs = NullString, TreatUndefinedAs = NullString] DOMString options,
-            in [Optional] WebCLFinishCallback whenFinished,
-            in [Optional] long userdata) raises(DOMException);
+    [StrictTypeChecking, Custom] void build (in sequence<WebCLDevice> devices,
+        in [Optional, TreatNullAs = NullString, TreatUndefinedAs = NullString] DOMString options,
+        in [Optional] WebCLFinishCallback whenFinished,
+        in [Optional] long userdata) raises(DOMException);
 
     void releaseProgram() raises(DOMException);
 };
-}

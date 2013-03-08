@@ -25,13 +25,11 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-module webcl {
-    interface [
-        Conditional=WEBCL,
-        JSGenerateToJSObject,
-        JSGenerateToNativeObject
-    ] WebCLBuffer : WebCLMemoryObject {
-        [StrictTypeChecking] WebCLBuffer createSubBuffer(in long memFlags, in long origin, in long size )
-            raises(DOMException);
-    };
-}
+interface [
+    Conditional=WEBCL,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject
+] WebCLBuffer : WebCLMemoryObject {
+    [StrictTypeChecking] WebCLBuffer createSubBuffer(in long memFlags, in long origin, in long size )
+        raises(DOMException);
+};
