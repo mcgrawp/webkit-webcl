@@ -126,7 +126,7 @@ JSValue JSWebCL::getSupportedExtensions(ExecState* exec)
     for (size_t i = 0; i < value.size(); ++i)
         list.append(jsString(exec, value[i]));
 
-    return constructArray(exec, globalObject(), list);
+    return constructArray(exec, 0, globalObject(), list);
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInfo& info)
@@ -139,7 +139,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInf
         const Vector<bool>& value = info.getBoolArray();
         for (size_t ii = 0; ii < value.size(); ++ii)
             list.append(jsBoolean(value[ii]));
-        return constructArray(exec, list);
+        return constructArray(exec, static_cast<ArrayAllocationProfile*>(0), list);
     }
     case WebCLGetInfo::kTypeFloat:
         return jsNumber(info.getFloat());

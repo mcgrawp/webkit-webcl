@@ -82,7 +82,7 @@ JSValue JSWebCLPlatform::getSupportedExtensions(ExecState* exec)
                 setDOMException(exec, ec);
                 return jsUndefined();
         }
-    return constructArray(exec, globalObject(), list);
+    return constructArray(exec, 0, globalObject(), list);
 }
 
 
