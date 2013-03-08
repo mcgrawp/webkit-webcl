@@ -102,10 +102,11 @@ JSValue JSWebCLProgram::build(JSC::ExecState* exec)
     if (exec->argumentCount() < 1)
         return throwSyntaxError(exec);
 
-    Vector<WebCLDevice*> devices = toWebCLDeviceArray(exec, exec->argument(0));
+    Vector<RefPtr<WebCLDevice> > devices = toRefPtrNativeArray<WebCLDevice, JSWebCLDevice>(exec, exec->argument(0), &toWebCLDevice);
     if (exec->hadException())
         return jsUndefined();
 
+    // FIXME: This is ugly!
     String options = "";
     if (exec->argumentCount() > 1 && !exec->argument(1).isNull())
         options = exec->argument(1).toString(exec)->value(exec);

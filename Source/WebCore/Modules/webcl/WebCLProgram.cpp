@@ -215,7 +215,7 @@ void WebCLProgram::finishCallback(cl_program program, void* userData)
 
 WebCLProgram* WebCLProgram::thisPointer = 0;
 
-void WebCLProgram::build(const Vector<WebCLDevice*>& devices, const String& options,
+void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const String& options,
     PassRefPtr<WebCLFinishCallback> finishCallback, int userData, ExceptionCode& ec)
 {
     WebCLProgram::thisPointer = static_cast<WebCLProgram*>(this);

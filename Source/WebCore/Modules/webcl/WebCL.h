@@ -65,7 +65,7 @@ public:
     };
     // virtual WebCL* toWebCL() { return this; }
     Vector<RefPtr<WebCLPlatform> > getPlatforms(ExceptionCode&) const;
-    void waitForEvents(const Vector<WebCLEvent*>&, ExceptionCode&);
+    void waitForEvents(const Vector<RefPtr<WebCLEvent> >&, ExceptionCode&);
     PassRefPtr<WebCLContext> createContext(WebCLContextProperties*, ExceptionCode&);
     PassRefPtr<WebCLContext> createContext(ExceptionCode& ec)
     {

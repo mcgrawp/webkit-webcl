@@ -70,7 +70,7 @@ Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec) const
     return webCLPlatforms;
 }
 
-void WebCL::waitForEvents(const Vector<WebCLEvent*>& events, ExceptionCode& ec)
+void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)
 {
 
     Vector<CCEvent> ccEvents;

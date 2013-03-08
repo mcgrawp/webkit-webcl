@@ -51,17 +51,18 @@ public:
     WebCLGetInfo getInfo(int, ExceptionCode&);
     WebCLGetInfo getBuildInfo(WebCLDevice*, int, ExceptionCode&);
 
-    void build(const Vector<WebCLDevice*>&, const String&, PassRefPtr<WebCLFinishCallback>, int, ExceptionCode&);
-    void build(const Vector<WebCLDevice*>& devices, const String& options, PassRefPtr<WebCLFinishCallback> finishCallback, ExceptionCode& ec)
+    void build(const Vector<RefPtr<WebCLDevice> >&, const String&, PassRefPtr<WebCLFinishCallback>, int, ExceptionCode&);
+    void build(const Vector<RefPtr<WebCLDevice> >& devices, const String& options, PassRefPtr<WebCLFinishCallback> finishCallback, ExceptionCode& ec)
     {
         return build(devices, options, finishCallback, 0, ec);
     }
-    void build(const Vector<WebCLDevice*>& devices, const String& options, ExceptionCode& ec)
+    void build(const Vector<RefPtr<WebCLDevice> > devices, const String& options, ExceptionCode& ec)
     {
         return build(devices, options, 0, 0, ec);
     }
-    void build(const Vector<WebCLDevice*>& devices, ExceptionCode& ec)
+    void build(const Vector<RefPtr<WebCLDevice> >& devices, ExceptionCode& ec)
     {
+        // FIXME: Use emptyString() here.
         return build(devices, "", 0, 0, ec);
     }
 

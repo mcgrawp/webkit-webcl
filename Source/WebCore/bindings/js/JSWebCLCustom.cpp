@@ -73,20 +73,15 @@ JSValue JSWebCL::createContext(ExecState* exec)
     ASSERT(exec->argumentCount() == 1);
     if (exec->argument(0).isObject()) {
         JSObject* jsAttrs = exec->argument(0).getObject();
-        WebCLPlatform* platform;
+        WebCLPlatform* platform = nullptr;
         Identifier platformIdentifier(exec, "platform");
         if (jsAttrs->hasProperty(exec, platformIdentifier))
             platform = toWebCLPlatform(jsAttrs->get(exec, platformIdentifier));
 
-        // FIXME: toTypeArray needs to return a Vector<RefPtr<Type> >
-        Vector<WebCLDevice*> rawPtrDevices;
+        Vector<RefPtr<WebCLDevice> > devices;
         Identifier devicesIdentifier(exec, "devices");
         if (jsAttrs->hasProperty(exec, devicesIdentifier))
-            rawPtrDevices = toWebCLDeviceArray(exec, jsAttrs->get(exec, devicesIdentifier));
-
-        Vector<RefPtr<WebCLDevice> > devices;
-        for (size_t i = 0; i < devices.size(); ++i)
-            devices.append(rawPtrDevices[i]);
+            devices = toRefPtrNativeArray<WebCLDevice, JSWebCLDevice>(exec, jsAttrs->get(exec, devicesIdentifier), &toWebCLDevice);
 
         int deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
         Identifier deviceTypeIdentifier(exec, "deviceType");
