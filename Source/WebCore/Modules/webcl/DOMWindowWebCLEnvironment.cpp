@@ -45,13 +45,13 @@ DOMWindowWebCLEnvironment::DOMWindowWebCLEnvironment(DOMWindow* window)
     : DOMWindowProperty(window->frame())
 {
 }
+
 DOMWindowWebCLEnvironment* DOMWindowWebCLEnvironment::from(DOMWindow* window)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowWebCLEnvironment"));
-    DOMWindowWebCLEnvironment* supplement = static_cast<DOMWindowWebCLEnvironment*>(Supplement<DOMWindow>::from(window, name));
+    DOMWindowWebCLEnvironment* supplement = static_cast<DOMWindowWebCLEnvironment*>(Supplement<DOMWindow>::from(window, supplementName()));
     if (!supplement) {
         supplement = new DOMWindowWebCLEnvironment(window);
-        provideTo(window, name, adoptPtr(supplement));
+        provideTo(window, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }
@@ -67,6 +67,12 @@ WebCL* DOMWindowWebCLEnvironment::webcl() const
         m_webcl = WebCL::create();
     return m_webcl.get();
 }
+
+const char* DOMWindowWebCLEnvironment::supplementName()
+{
+    return "DOMWindowWebCLEnvironment";
+}
+
 }
 #endif // ENABLE(WEBCL)
 

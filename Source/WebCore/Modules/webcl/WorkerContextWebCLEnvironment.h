@@ -33,16 +33,21 @@
 
 #include "Supplementable.h"
 
+#include <wtf/RefCounted.h>
+
 namespace WebCore {
 
 class ScriptExecutionContext;
 class WebCL;
-class WorkerContextWebCLEnvironment: public Supplement<ScriptExecutionContext> {
+class WorkerContextWebCLEnvironment: public RefCounted<WorkerContextWebCLEnvironment>, public Supplement<ScriptExecutionContext> {
 public:
     virtual ~WorkerContextWebCLEnvironment();
     static WorkerContextWebCLEnvironment* from(ScriptExecutionContext*);
     static WebCL* webcl(ScriptExecutionContext*);
     WebCL* webcl() const;
+
+    static const char* supplementName();
+
 private:
     explicit WorkerContextWebCLEnvironment(ScriptExecutionContext*);
     mutable RefPtr<WebCL> m_webcl;

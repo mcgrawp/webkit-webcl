@@ -43,6 +43,9 @@ public:
     static DOMWindowWebCLEnvironment* from(DOMWindow*);
     static WebCL* webcl(DOMWindow*);
     WebCL* webcl() const;
+
+    static const char* supplementName();
+
 private:
     explicit DOMWindowWebCLEnvironment(DOMWindow*);
     mutable RefPtr<WebCL> m_webcl;

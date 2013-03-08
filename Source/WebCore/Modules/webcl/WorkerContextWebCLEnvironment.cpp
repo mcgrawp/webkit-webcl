@@ -33,7 +33,6 @@
 
 #include "ScriptExecutionContext.h"
 #include "WebCL.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -50,27 +49,33 @@ WorkerContextWebCLEnvironment::WorkerContextWebCLEnvironment(ScriptExecutionCont
 
 WorkerContextWebCLEnvironment* WorkerContextWebCLEnvironment::from(ScriptExecutionContext* context)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("WorkerContextWebCLEnvironment"));
     WorkerContextWebCLEnvironment* supplement =
-        static_cast<WorkerContextWebCLEnvironment*>(Supplement<ScriptExecutionContext>::from(context, name));
+        static_cast<WorkerContextWebCLEnvironment*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
     if (!supplement) {
         supplement = new WorkerContextWebCLEnvironment(context);
-        provideTo(context, name, adoptPtr(supplement));
+        provideTo(context, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }
 
 WebCL* WorkerContextWebCLEnvironment::webcl(ScriptExecutionContext* context)
 {
-    return WorkerContextWebCLEnvironment::from(context)->webcl();
+    return from(context)->webcl();
 }
 
 WebCL* WorkerContextWebCLEnvironment::webcl() const
 {
     if (!m_webcl)
         m_webcl = WebCL::create();
+
     return m_webcl.get();
 }
+
+const char* WorkerContextWebCLEnvironment::supplementName()
+{
+    return "WorkerContextWebCLEnvironment";
+}
+
 }
 #endif // ENABLE(WEBCL)
 
