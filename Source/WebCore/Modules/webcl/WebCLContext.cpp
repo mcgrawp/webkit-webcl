@@ -123,13 +123,13 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
         for (size_t i = 0; i < webCLDevices.size(); ++i) {
             WebCLGetInfo info = webCLDevices[i]->getInfo(ComputeContext::DEVICE_QUEUE_PROPERTIES, ec);
             if (ec == WebCLException::SUCCESS
-                && info.getUnsignedInt() == static_cast<unsigned int>(commandQueueProperty)) {
+                && (info.getUnsignedInt() == static_cast<unsigned int>(commandQueueProperty) || !commandQueueProperty)) {
                 webCLDevice = webCLDevices[i];
                 break;
             }
         }
         //FIXME: Spec needs to say what we need to do here
-        ASSERT_NOT_REACHED();
+        ASSERT(webCLDevice);
     } else
         webCLDevice = device;
 
