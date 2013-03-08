@@ -1974,7 +1974,108 @@
 		75793ED30D0CE85B007FC0AC /* DOMMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */; };
 		75793ED40D0CE85B007FC0AC /* DOMMessageEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */; };
 		75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */; };
+		757BCC0C16E887D900649DDB /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 757BCC0B16E887D900649DDB /* OpenCL.framework */; };
 		758978EC127090D60076D5A9 /* SpeechInputResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 758978EA127090D60076D5A9 /* SpeechInputResult.cpp */; };
+		75B45B2516E85DCC0035C2A6 /* JSDOMWindowWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AF516E85B370035C2A6 /* JSDOMWindowWebCLEnvironment.cpp */; };
+		75B45B2616E85DCC0035C2A6 /* JSDOMWindowWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AF616E85B370035C2A6 /* JSDOMWindowWebCLEnvironment.h */; };
+		75B45B2716E85DCC0035C2A6 /* JSWorkerContextWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AF716E85C440035C2A6 /* JSWorkerContextWebCLEnvironment.cpp */; };
+		75B45B2816E85DCC0035C2A6 /* JSWorkerContextWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AF816E85C440035C2A6 /* JSWorkerContextWebCLEnvironment.h */; };
+		75B45B2916E85DCC0035C2A6 /* JSWebCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AAC16E85AB00035C2A6 /* JSWebCL.cpp */; };
+		75B45B2A16E85DCC0035C2A6 /* JSWebCL.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AAD16E85AB00035C2A6 /* JSWebCL.h */; };
+		75B45B2B16E85DCC0035C2A6 /* JSWebCLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AAE16E85AB00035C2A6 /* JSWebCLBuffer.cpp */; };
+		75B45B2C16E85DCC0035C2A6 /* JSWebCLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AAF16E85AB00035C2A6 /* JSWebCLBuffer.h */; };
+		75B45B2D16E85DCC0035C2A6 /* JSWebCLCommandQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AB016E85AB00035C2A6 /* JSWebCLCommandQueue.cpp */; };
+		75B45B2E16E85DCC0035C2A6 /* JSWebCLCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AB116E85AB00035C2A6 /* JSWebCLCommandQueue.h */; };
+		75B45B2F16E85DCC0035C2A6 /* JSWebCLContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AB216E85AB00035C2A6 /* JSWebCLContext.cpp */; };
+		75B45B3016E85DCC0035C2A6 /* JSWebCLContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AB316E85AB00035C2A6 /* JSWebCLContext.h */; };
+		75B45B3116E85DCC0035C2A6 /* JSWebCLContextProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AB416E85AB00035C2A6 /* JSWebCLContextProperties.cpp */; };
+		75B45B3216E85DCC0035C2A6 /* JSWebCLContextProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AB516E85AB00035C2A6 /* JSWebCLContextProperties.h */; };
+		75B45B3316E85DCC0035C2A6 /* JSWebCLDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AB616E85AB00035C2A6 /* JSWebCLDevice.cpp */; };
+		75B45B3416E85DCC0035C2A6 /* JSWebCLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AB716E85AB00035C2A6 /* JSWebCLDevice.h */; };
+		75B45B3516E85DCC0035C2A6 /* JSWebCLEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AB816E85AB00035C2A6 /* JSWebCLEvent.cpp */; };
+		75B45B3616E85DCC0035C2A6 /* JSWebCLEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AB916E85AB00035C2A6 /* JSWebCLEvent.h */; };
+		75B45B3716E85DCC0035C2A6 /* JSWebCLException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45ABA16E85AB00035C2A6 /* JSWebCLException.cpp */; };
+		75B45B3816E85DCC0035C2A6 /* JSWebCLException.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45ABB16E85AB00035C2A6 /* JSWebCLException.h */; };
+		75B45B3916E85DCC0035C2A6 /* JSWebCLFinishCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45ABC16E85AB00035C2A6 /* JSWebCLFinishCallback.cpp */; };
+		75B45B3A16E85DCC0035C2A6 /* JSWebCLFinishCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45ABD16E85AB00035C2A6 /* JSWebCLFinishCallback.h */; };
+		75B45B3B16E85DCC0035C2A6 /* JSWebCLGLObjectInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45ABE16E85AB00035C2A6 /* JSWebCLGLObjectInfo.cpp */; };
+		75B45B3C16E85DCC0035C2A6 /* JSWebCLGLObjectInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45ABF16E85AB00035C2A6 /* JSWebCLGLObjectInfo.h */; };
+		75B45B3D16E85DCC0035C2A6 /* JSWebCLImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AC016E85AB00035C2A6 /* JSWebCLImage.cpp */; };
+		75B45B3E16E85DCC0035C2A6 /* JSWebCLImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AC116E85AB00035C2A6 /* JSWebCLImage.h */; };
+		75B45B3F16E85DCC0035C2A6 /* JSWebCLImageDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AC216E85AB00035C2A6 /* JSWebCLImageDescriptor.cpp */; };
+		75B45B4016E85DCC0035C2A6 /* JSWebCLImageDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AC316E85AB00035C2A6 /* JSWebCLImageDescriptor.h */; };
+		75B45B4116E85DCC0035C2A6 /* JSWebCLKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AC416E85AB00035C2A6 /* JSWebCLKernel.cpp */; };
+		75B45B4216E85DCC0035C2A6 /* JSWebCLKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AC516E85AB00035C2A6 /* JSWebCLKernel.h */; };
+		75B45B4316E85DCC0035C2A6 /* JSWebCLKernelArgumentTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AC616E85AB00035C2A6 /* JSWebCLKernelArgumentTypes.cpp */; };
+		75B45B4416E85DCC0035C2A6 /* JSWebCLKernelArgumentTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AC716E85AB00035C2A6 /* JSWebCLKernelArgumentTypes.h */; };
+		75B45B4516E85DCC0035C2A6 /* JSWebCLMemoryObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AC816E85AB00035C2A6 /* JSWebCLMemoryObject.cpp */; };
+		75B45B4616E85DCC0035C2A6 /* JSWebCLMemoryObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AC916E85AB00035C2A6 /* JSWebCLMemoryObject.h */; };
+		75B45B4716E85DCC0035C2A6 /* JSWebCLPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45ACA16E85AB00035C2A6 /* JSWebCLPlatform.cpp */; };
+		75B45B4816E85DCC0035C2A6 /* JSWebCLPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45ACB16E85AB00035C2A6 /* JSWebCLPlatform.h */; };
+		75B45B4916E85DCC0035C2A6 /* JSWebCLProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45ACC16E85AB00035C2A6 /* JSWebCLProgram.cpp */; };
+		75B45B4A16E85DCC0035C2A6 /* JSWebCLProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45ACD16E85AB00035C2A6 /* JSWebCLProgram.h */; };
+		75B45B4B16E85DCC0035C2A6 /* JSWebCLSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45ACE16E85AB00035C2A6 /* JSWebCLSampler.cpp */; };
+		75B45B4C16E85DCC0035C2A6 /* JSWebCLSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45ACF16E85AB00035C2A6 /* JSWebCLSampler.h */; };
+		75D8AAD816E7457700FE8264 /* DOMWindowWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AA9716E744EF00FE8264 /* DOMWindowWebCLEnvironment.cpp */; };
+		75D8AAD916E7457700FE8264 /* DOMWindowWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AA9816E744EF00FE8264 /* DOMWindowWebCLEnvironment.h */; };
+		75D8AADB16E7457700FE8264 /* WebCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AA9A16E744EF00FE8264 /* WebCL.cpp */; };
+		75D8AADC16E7457700FE8264 /* WebCL.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AA9B16E744EF00FE8264 /* WebCL.h */; };
+		75D8AADE16E7457700FE8264 /* WebCLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AA9D16E744EF00FE8264 /* WebCLBuffer.cpp */; };
+		75D8AADF16E7457700FE8264 /* WebCLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AA9E16E744EF00FE8264 /* WebCLBuffer.h */; };
+		75D8AAE116E7457800FE8264 /* WebCLCommandQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAA016E744EF00FE8264 /* WebCLCommandQueue.cpp */; };
+		75D8AAE216E7457800FE8264 /* WebCLCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAA116E744EF00FE8264 /* WebCLCommandQueue.h */; };
+		75D8AAE416E7457800FE8264 /* WebCLContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAA316E744EF00FE8264 /* WebCLContext.cpp */; };
+		75D8AAE516E7457800FE8264 /* WebCLContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAA416E744EF00FE8264 /* WebCLContext.h */; };
+		75D8AAE716E7457800FE8264 /* WebCLContextProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAA616E744EF00FE8264 /* WebCLContextProperties.cpp */; };
+		75D8AAE816E7457800FE8264 /* WebCLContextProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAA716E744EF00FE8264 /* WebCLContextProperties.h */; };
+		75D8AAEA16E7457800FE8264 /* WebCLDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAA916E744EF00FE8264 /* WebCLDevice.cpp */; };
+		75D8AAEB16E7457800FE8264 /* WebCLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAAA16E744EF00FE8264 /* WebCLDevice.h */; };
+		75D8AAED16E7457800FE8264 /* WebCLEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAAC16E744EF00FE8264 /* WebCLEvent.cpp */; };
+		75D8AAEE16E7457800FE8264 /* WebCLEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAAD16E744EF00FE8264 /* WebCLEvent.h */; };
+		75D8AAF016E7457800FE8264 /* WebCLException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAAF16E744EF00FE8264 /* WebCLException.cpp */; };
+		75D8AAF116E7457800FE8264 /* WebCLException.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAB016E744EF00FE8264 /* WebCLException.h */; };
+		75D8AAF316E7457800FE8264 /* WebCLFinishCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAB216E744EF00FE8264 /* WebCLFinishCallback.h */; };
+		75D8AAF516E7457800FE8264 /* WebCLGetInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAB416E744EF00FE8264 /* WebCLGetInfo.cpp */; };
+		75D8AAF616E7457800FE8264 /* WebCLGetInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAB516E744EF00FE8264 /* WebCLGetInfo.h */; };
+		75D8AAF716E7457800FE8264 /* WebCLGLObjectInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAB616E744EF00FE8264 /* WebCLGLObjectInfo.cpp */; };
+		75D8AAF816E7457800FE8264 /* WebCLGLObjectInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAB716E744EF00FE8264 /* WebCLGLObjectInfo.h */; };
+		75D8AAFA16E7457800FE8264 /* WebCLImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAB916E744EF00FE8264 /* WebCLImage.cpp */; };
+		75D8AAFB16E7457800FE8264 /* WebCLImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AABA16E744EF00FE8264 /* WebCLImage.h */; };
+		75D8AAFD16E7457800FE8264 /* WebCLImageDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AABC16E744EF00FE8264 /* WebCLImageDescriptor.cpp */; };
+		75D8AAFE16E7457900FE8264 /* WebCLImageDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AABD16E744EF00FE8264 /* WebCLImageDescriptor.h */; };
+		75D8AB0016E7457900FE8264 /* WebCLInputChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AABF16E744EF00FE8264 /* WebCLInputChecker.cpp */; };
+		75D8AB0116E7457900FE8264 /* WebCLInputChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAC016E744EF00FE8264 /* WebCLInputChecker.h */; };
+		75D8AB0216E7457900FE8264 /* WebCLKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAC116E744EF00FE8264 /* WebCLKernel.cpp */; };
+		75D8AB0316E7457900FE8264 /* WebCLKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAC216E744EF00FE8264 /* WebCLKernel.h */; };
+		75D8AB0516E7457900FE8264 /* WebCLKernelArgumentTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAC416E744EF00FE8264 /* WebCLKernelArgumentTypes.cpp */; };
+		75D8AB0616E7457900FE8264 /* WebCLKernelArgumentTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAC516E744EF00FE8264 /* WebCLKernelArgumentTypes.h */; };
+		75D8AB0816E7457900FE8264 /* WebCLKernelTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAC716E744EF00FE8264 /* WebCLKernelTypes.cpp */; };
+		75D8AB0916E7457900FE8264 /* WebCLKernelTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAC816E744EF00FE8264 /* WebCLKernelTypes.h */; };
+		75D8AB0A16E7457900FE8264 /* WebCLMemoryObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAC916E744EF00FE8264 /* WebCLMemoryObject.cpp */; };
+		75D8AB0B16E7457900FE8264 /* WebCLMemoryObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AACA16E744EF00FE8264 /* WebCLMemoryObject.h */; };
+		75D8AB0D16E7457900FE8264 /* WebCLPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AACC16E744EF00FE8264 /* WebCLPlatform.cpp */; };
+		75D8AB0E16E7457900FE8264 /* WebCLPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AACD16E744EF00FE8264 /* WebCLPlatform.h */; };
+		75D8AB1016E7457900FE8264 /* WebCLProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AACF16E744EF00FE8264 /* WebCLProgram.cpp */; };
+		75D8AB1116E7457900FE8264 /* WebCLProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAD016E744EF00FE8264 /* WebCLProgram.h */; };
+		75D8AB1316E7457900FE8264 /* WebCLSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAD216E744EF00FE8264 /* WebCLSampler.cpp */; };
+		75D8AB1416E7457900FE8264 /* WebCLSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAD316E744EF00FE8264 /* WebCLSampler.h */; };
+		75D8AB1616E7457900FE8264 /* WorkerContextWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AAD516E744EF00FE8264 /* WorkerContextWebCLEnvironment.cpp */; };
+		75D8AB1716E7457900FE8264 /* WorkerContextWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AAD616E744EF00FE8264 /* WorkerContextWebCLEnvironment.h */; };
+		75D8AB1D16E745D100FE8264 /* ComputeContextCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AB1C16E745C900FE8264 /* ComputeContextCL.cpp */; };
+		75D8AB1E16E745D100FE8264 /* ComputeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AB1916E745A400FE8264 /* ComputeContext.h */; };
+		75D8AB1F16E745D100FE8264 /* ComputeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AB1A16E745A400FE8264 /* ComputeTypes.h */; };
+		75D8AB3816E7464D00FE8264 /* JSWebCLCommandQueueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AB2216E7463900FE8264 /* JSWebCLCommandQueueCustom.cpp */; };
+		75D8AB3916E7464D00FE8264 /* JSWebCLContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AB2316E7463900FE8264 /* JSWebCLContextCustom.cpp */; };
+		75D8AB3A16E7464D00FE8264 /* JSWebCLCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AB2416E7463A00FE8264 /* JSWebCLCustom.cpp */; };
+		75D8AB3B16E7464D00FE8264 /* JSWebCLCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D8AB2516E7463A00FE8264 /* JSWebCLCustom.h */; };
+		75D8AB3C16E7464D00FE8264 /* JSWebCLDeviceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AB2616E7463A00FE8264 /* JSWebCLDeviceCustom.cpp */; };
+		75D8AB3D16E7464D00FE8264 /* JSWebCLEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AB2716E7463A00FE8264 /* JSWebCLEventCustom.cpp */; };
+		75D8AB3E16E7464D00FE8264 /* JSWebCLKernelCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AB2816E7463A00FE8264 /* JSWebCLKernelCustom.cpp */; };
+		75D8AB3F16E7464D00FE8264 /* JSWebCLMemoryObjectCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AB2916E7463A00FE8264 /* JSWebCLMemoryObjectCustom.cpp */; };
+		75D8AB4016E7464D00FE8264 /* JSWebCLPlatformCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AB2A16E7463A00FE8264 /* JSWebCLPlatformCustom.cpp */; };
+		75D8AB4116E7464D00FE8264 /* JSWebCLProgramCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AB2B16E7463A00FE8264 /* JSWebCLProgramCustom.cpp */; };
+		75D8AB4216E7464D00FE8264 /* JSWebCLSamplerCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AB2C16E7463A00FE8264 /* JSWebCLSamplerCustom.cpp */; };
+		75D8AB4316E7464D00FE8264 /* JSCustomWebCLFinishCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D8AB2016E7460400FE8264 /* JSCustomWebCLFinishCallback.cpp */; };
 		762F1ED7159D960A007408F2 /* HTMLDialogElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 762F1ED6159D960A007408F2 /* HTMLDialogElement.h */; };
 		762F1EDB159D968A007408F2 /* HTMLDialogElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 762F1EDA159D968A007408F2 /* HTMLDialogElement.cpp */; };
 		7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */; };
@@ -9454,8 +9555,129 @@
 		75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEvent.h; sourceTree = "<group>"; };
 		75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMessageEvent.mm; sourceTree = "<group>"; };
 		75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEventInternal.h; sourceTree = "<group>"; };
+		757BCC0B16E887D900649DDB /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = /System/Library/Frameworks/OpenCL.framework; sourceTree = "<absolute>"; };
 		758978EA127090D60076D5A9 /* SpeechInputResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechInputResult.cpp; sourceTree = "<group>"; };
 		758978EB127090D60076D5A9 /* SpeechInputResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputResult.h; sourceTree = "<group>"; };
+		75B45AAC16E85AB00035C2A6 /* JSWebCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCL.cpp; sourceTree = "<group>"; };
+		75B45AAD16E85AB00035C2A6 /* JSWebCL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCL.h; sourceTree = "<group>"; };
+		75B45AAE16E85AB00035C2A6 /* JSWebCLBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLBuffer.cpp; sourceTree = "<group>"; };
+		75B45AAF16E85AB00035C2A6 /* JSWebCLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLBuffer.h; sourceTree = "<group>"; };
+		75B45AB016E85AB00035C2A6 /* JSWebCLCommandQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLCommandQueue.cpp; sourceTree = "<group>"; };
+		75B45AB116E85AB00035C2A6 /* JSWebCLCommandQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLCommandQueue.h; sourceTree = "<group>"; };
+		75B45AB216E85AB00035C2A6 /* JSWebCLContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLContext.cpp; sourceTree = "<group>"; };
+		75B45AB316E85AB00035C2A6 /* JSWebCLContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLContext.h; sourceTree = "<group>"; };
+		75B45AB416E85AB00035C2A6 /* JSWebCLContextProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLContextProperties.cpp; sourceTree = "<group>"; };
+		75B45AB516E85AB00035C2A6 /* JSWebCLContextProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLContextProperties.h; sourceTree = "<group>"; };
+		75B45AB616E85AB00035C2A6 /* JSWebCLDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLDevice.cpp; sourceTree = "<group>"; };
+		75B45AB716E85AB00035C2A6 /* JSWebCLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLDevice.h; sourceTree = "<group>"; };
+		75B45AB816E85AB00035C2A6 /* JSWebCLEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLEvent.cpp; sourceTree = "<group>"; };
+		75B45AB916E85AB00035C2A6 /* JSWebCLEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLEvent.h; sourceTree = "<group>"; };
+		75B45ABA16E85AB00035C2A6 /* JSWebCLException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLException.cpp; sourceTree = "<group>"; };
+		75B45ABB16E85AB00035C2A6 /* JSWebCLException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLException.h; sourceTree = "<group>"; };
+		75B45ABC16E85AB00035C2A6 /* JSWebCLFinishCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLFinishCallback.cpp; sourceTree = "<group>"; };
+		75B45ABD16E85AB00035C2A6 /* JSWebCLFinishCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLFinishCallback.h; sourceTree = "<group>"; };
+		75B45ABE16E85AB00035C2A6 /* JSWebCLGLObjectInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLGLObjectInfo.cpp; sourceTree = "<group>"; };
+		75B45ABF16E85AB00035C2A6 /* JSWebCLGLObjectInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLGLObjectInfo.h; sourceTree = "<group>"; };
+		75B45AC016E85AB00035C2A6 /* JSWebCLImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLImage.cpp; sourceTree = "<group>"; };
+		75B45AC116E85AB00035C2A6 /* JSWebCLImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLImage.h; sourceTree = "<group>"; };
+		75B45AC216E85AB00035C2A6 /* JSWebCLImageDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLImageDescriptor.cpp; sourceTree = "<group>"; };
+		75B45AC316E85AB00035C2A6 /* JSWebCLImageDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLImageDescriptor.h; sourceTree = "<group>"; };
+		75B45AC416E85AB00035C2A6 /* JSWebCLKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLKernel.cpp; sourceTree = "<group>"; };
+		75B45AC516E85AB00035C2A6 /* JSWebCLKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLKernel.h; sourceTree = "<group>"; };
+		75B45AC616E85AB00035C2A6 /* JSWebCLKernelArgumentTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLKernelArgumentTypes.cpp; sourceTree = "<group>"; };
+		75B45AC716E85AB00035C2A6 /* JSWebCLKernelArgumentTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLKernelArgumentTypes.h; sourceTree = "<group>"; };
+		75B45AC816E85AB00035C2A6 /* JSWebCLMemoryObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLMemoryObject.cpp; sourceTree = "<group>"; };
+		75B45AC916E85AB00035C2A6 /* JSWebCLMemoryObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLMemoryObject.h; sourceTree = "<group>"; };
+		75B45ACA16E85AB00035C2A6 /* JSWebCLPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLPlatform.cpp; sourceTree = "<group>"; };
+		75B45ACB16E85AB00035C2A6 /* JSWebCLPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLPlatform.h; sourceTree = "<group>"; };
+		75B45ACC16E85AB00035C2A6 /* JSWebCLProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLProgram.cpp; sourceTree = "<group>"; };
+		75B45ACD16E85AB00035C2A6 /* JSWebCLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLProgram.h; sourceTree = "<group>"; };
+		75B45ACE16E85AB00035C2A6 /* JSWebCLSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLSampler.cpp; sourceTree = "<group>"; };
+		75B45ACF16E85AB00035C2A6 /* JSWebCLSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLSampler.h; sourceTree = "<group>"; };
+		75B45AF516E85B370035C2A6 /* JSDOMWindowWebCLEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowWebCLEnvironment.cpp; sourceTree = "<group>"; };
+		75B45AF616E85B370035C2A6 /* JSDOMWindowWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowWebCLEnvironment.h; sourceTree = "<group>"; };
+		75B45AF716E85C440035C2A6 /* JSWorkerContextWebCLEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContextWebCLEnvironment.cpp; sourceTree = "<group>"; };
+		75B45AF816E85C440035C2A6 /* JSWorkerContextWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContextWebCLEnvironment.h; sourceTree = "<group>"; };
+		75D8AA9716E744EF00FE8264 /* DOMWindowWebCLEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowWebCLEnvironment.cpp; sourceTree = "<group>"; };
+		75D8AA9816E744EF00FE8264 /* DOMWindowWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowWebCLEnvironment.h; sourceTree = "<group>"; };
+		75D8AA9916E744EF00FE8264 /* DOMWindowWebCLEnvironment.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindowWebCLEnvironment.idl; sourceTree = "<group>"; };
+		75D8AA9A16E744EF00FE8264 /* WebCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCL.cpp; sourceTree = "<group>"; };
+		75D8AA9B16E744EF00FE8264 /* WebCL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCL.h; sourceTree = "<group>"; };
+		75D8AA9C16E744EF00FE8264 /* WebCL.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCL.idl; sourceTree = "<group>"; };
+		75D8AA9D16E744EF00FE8264 /* WebCLBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLBuffer.cpp; sourceTree = "<group>"; };
+		75D8AA9E16E744EF00FE8264 /* WebCLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLBuffer.h; sourceTree = "<group>"; };
+		75D8AA9F16E744EF00FE8264 /* WebCLBuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLBuffer.idl; sourceTree = "<group>"; };
+		75D8AAA016E744EF00FE8264 /* WebCLCommandQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLCommandQueue.cpp; sourceTree = "<group>"; };
+		75D8AAA116E744EF00FE8264 /* WebCLCommandQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLCommandQueue.h; sourceTree = "<group>"; };
+		75D8AAA216E744EF00FE8264 /* WebCLCommandQueue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLCommandQueue.idl; sourceTree = "<group>"; };
+		75D8AAA316E744EF00FE8264 /* WebCLContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLContext.cpp; sourceTree = "<group>"; };
+		75D8AAA416E744EF00FE8264 /* WebCLContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLContext.h; sourceTree = "<group>"; };
+		75D8AAA516E744EF00FE8264 /* WebCLContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLContext.idl; sourceTree = "<group>"; };
+		75D8AAA616E744EF00FE8264 /* WebCLContextProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLContextProperties.cpp; sourceTree = "<group>"; };
+		75D8AAA716E744EF00FE8264 /* WebCLContextProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLContextProperties.h; sourceTree = "<group>"; };
+		75D8AAA816E744EF00FE8264 /* WebCLContextProperties.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLContextProperties.idl; sourceTree = "<group>"; };
+		75D8AAA916E744EF00FE8264 /* WebCLDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLDevice.cpp; sourceTree = "<group>"; };
+		75D8AAAA16E744EF00FE8264 /* WebCLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLDevice.h; sourceTree = "<group>"; };
+		75D8AAAB16E744EF00FE8264 /* WebCLDevice.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLDevice.idl; sourceTree = "<group>"; };
+		75D8AAAC16E744EF00FE8264 /* WebCLEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLEvent.cpp; sourceTree = "<group>"; };
+		75D8AAAD16E744EF00FE8264 /* WebCLEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLEvent.h; sourceTree = "<group>"; };
+		75D8AAAE16E744EF00FE8264 /* WebCLEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLEvent.idl; sourceTree = "<group>"; };
+		75D8AAAF16E744EF00FE8264 /* WebCLException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLException.cpp; sourceTree = "<group>"; };
+		75D8AAB016E744EF00FE8264 /* WebCLException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLException.h; sourceTree = "<group>"; };
+		75D8AAB116E744EF00FE8264 /* WebCLException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLException.idl; sourceTree = "<group>"; };
+		75D8AAB216E744EF00FE8264 /* WebCLFinishCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLFinishCallback.h; sourceTree = "<group>"; };
+		75D8AAB316E744EF00FE8264 /* WebCLFinishCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLFinishCallback.idl; sourceTree = "<group>"; };
+		75D8AAB416E744EF00FE8264 /* WebCLGetInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLGetInfo.cpp; sourceTree = "<group>"; };
+		75D8AAB516E744EF00FE8264 /* WebCLGetInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLGetInfo.h; sourceTree = "<group>"; };
+		75D8AAB616E744EF00FE8264 /* WebCLGLObjectInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLGLObjectInfo.cpp; sourceTree = "<group>"; };
+		75D8AAB716E744EF00FE8264 /* WebCLGLObjectInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLGLObjectInfo.h; sourceTree = "<group>"; };
+		75D8AAB816E744EF00FE8264 /* WebCLGLObjectInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLGLObjectInfo.idl; sourceTree = "<group>"; };
+		75D8AAB916E744EF00FE8264 /* WebCLImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLImage.cpp; sourceTree = "<group>"; };
+		75D8AABA16E744EF00FE8264 /* WebCLImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLImage.h; sourceTree = "<group>"; };
+		75D8AABB16E744EF00FE8264 /* WebCLImage.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLImage.idl; sourceTree = "<group>"; };
+		75D8AABC16E744EF00FE8264 /* WebCLImageDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLImageDescriptor.cpp; sourceTree = "<group>"; };
+		75D8AABD16E744EF00FE8264 /* WebCLImageDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLImageDescriptor.h; sourceTree = "<group>"; };
+		75D8AABE16E744EF00FE8264 /* WebCLImageDescriptor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLImageDescriptor.idl; sourceTree = "<group>"; };
+		75D8AABF16E744EF00FE8264 /* WebCLInputChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLInputChecker.cpp; sourceTree = "<group>"; };
+		75D8AAC016E744EF00FE8264 /* WebCLInputChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLInputChecker.h; sourceTree = "<group>"; };
+		75D8AAC116E744EF00FE8264 /* WebCLKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLKernel.cpp; sourceTree = "<group>"; };
+		75D8AAC216E744EF00FE8264 /* WebCLKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLKernel.h; sourceTree = "<group>"; };
+		75D8AAC316E744EF00FE8264 /* WebCLKernel.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLKernel.idl; sourceTree = "<group>"; };
+		75D8AAC416E744EF00FE8264 /* WebCLKernelArgumentTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLKernelArgumentTypes.cpp; sourceTree = "<group>"; };
+		75D8AAC516E744EF00FE8264 /* WebCLKernelArgumentTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLKernelArgumentTypes.h; sourceTree = "<group>"; };
+		75D8AAC616E744EF00FE8264 /* WebCLKernelArgumentTypes.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLKernelArgumentTypes.idl; sourceTree = "<group>"; };
+		75D8AAC716E744EF00FE8264 /* WebCLKernelTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLKernelTypes.cpp; sourceTree = "<group>"; };
+		75D8AAC816E744EF00FE8264 /* WebCLKernelTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLKernelTypes.h; sourceTree = "<group>"; };
+		75D8AAC916E744EF00FE8264 /* WebCLMemoryObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLMemoryObject.cpp; sourceTree = "<group>"; };
+		75D8AACA16E744EF00FE8264 /* WebCLMemoryObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLMemoryObject.h; sourceTree = "<group>"; };
+		75D8AACB16E744EF00FE8264 /* WebCLMemoryObject.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLMemoryObject.idl; sourceTree = "<group>"; };
+		75D8AACC16E744EF00FE8264 /* WebCLPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLPlatform.cpp; sourceTree = "<group>"; };
+		75D8AACD16E744EF00FE8264 /* WebCLPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLPlatform.h; sourceTree = "<group>"; };
+		75D8AACE16E744EF00FE8264 /* WebCLPlatform.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLPlatform.idl; sourceTree = "<group>"; };
+		75D8AACF16E744EF00FE8264 /* WebCLProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLProgram.cpp; sourceTree = "<group>"; };
+		75D8AAD016E744EF00FE8264 /* WebCLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLProgram.h; sourceTree = "<group>"; };
+		75D8AAD116E744EF00FE8264 /* WebCLProgram.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLProgram.idl; sourceTree = "<group>"; };
+		75D8AAD216E744EF00FE8264 /* WebCLSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLSampler.cpp; sourceTree = "<group>"; };
+		75D8AAD316E744EF00FE8264 /* WebCLSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLSampler.h; sourceTree = "<group>"; };
+		75D8AAD416E744EF00FE8264 /* WebCLSampler.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLSampler.idl; sourceTree = "<group>"; };
+		75D8AAD516E744EF00FE8264 /* WorkerContextWebCLEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerContextWebCLEnvironment.cpp; sourceTree = "<group>"; };
+		75D8AAD616E744EF00FE8264 /* WorkerContextWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerContextWebCLEnvironment.h; sourceTree = "<group>"; };
+		75D8AAD716E744EF00FE8264 /* WorkerContextWebCLEnvironment.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerContextWebCLEnvironment.idl; sourceTree = "<group>"; };
+		75D8AB1916E745A400FE8264 /* ComputeContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeContext.h; sourceTree = "<group>"; };
+		75D8AB1A16E745A400FE8264 /* ComputeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeTypes.h; sourceTree = "<group>"; };
+		75D8AB1C16E745C900FE8264 /* ComputeContextCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeContextCL.cpp; sourceTree = "<group>"; };
+		75D8AB2016E7460400FE8264 /* JSCustomWebCLFinishCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomWebCLFinishCallback.cpp; sourceTree = "<group>"; };
+		75D8AB2216E7463900FE8264 /* JSWebCLCommandQueueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLCommandQueueCustom.cpp; sourceTree = "<group>"; };
+		75D8AB2316E7463900FE8264 /* JSWebCLContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLContextCustom.cpp; sourceTree = "<group>"; };
+		75D8AB2416E7463A00FE8264 /* JSWebCLCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLCustom.cpp; sourceTree = "<group>"; };
+		75D8AB2516E7463A00FE8264 /* JSWebCLCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLCustom.h; sourceTree = "<group>"; };
+		75D8AB2616E7463A00FE8264 /* JSWebCLDeviceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLDeviceCustom.cpp; sourceTree = "<group>"; };
+		75D8AB2716E7463A00FE8264 /* JSWebCLEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLEventCustom.cpp; sourceTree = "<group>"; };
+		75D8AB2816E7463A00FE8264 /* JSWebCLKernelCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLKernelCustom.cpp; sourceTree = "<group>"; };
+		75D8AB2916E7463A00FE8264 /* JSWebCLMemoryObjectCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLMemoryObjectCustom.cpp; sourceTree = "<group>"; };
+		75D8AB2A16E7463A00FE8264 /* JSWebCLPlatformCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLPlatformCustom.cpp; sourceTree = "<group>"; };
+		75D8AB2B16E7463A00FE8264 /* JSWebCLProgramCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLProgramCustom.cpp; sourceTree = "<group>"; };
+		75D8AB2C16E7463A00FE8264 /* JSWebCLSamplerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLSamplerCustom.cpp; sourceTree = "<group>"; };
 		762F1ED6159D960A007408F2 /* HTMLDialogElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDialogElement.h; sourceTree = "<group>"; };
 		762F1ED8159D961A007408F2 /* HTMLDialogElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDialogElement.idl; sourceTree = "<group>"; };
 		762F1EDA159D968A007408F2 /* HTMLDialogElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDialogElement.cpp; sourceTree = "<group>"; };
@@ -11398,8 +11620,8 @@
 		A31C4E4C16E02AA6002F7957 /* OESTextureHalfFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OESTextureHalfFloat.cpp; path = canvas/OESTextureHalfFloat.cpp; sourceTree = "<group>"; };
 		A31C4E4E16E02AB4002F7957 /* OESTextureHalfFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OESTextureHalfFloat.h; path = canvas/OESTextureHalfFloat.h; sourceTree = "<group>"; };
 		A31C4E5016E02AC5002F7957 /* OESTextureHalfFloat.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = OESTextureHalfFloat.idl; path = canvas/OESTextureHalfFloat.idl; sourceTree = "<group>"; };
-		A31C4E5116E02B08002F7957 /* JSOESTextureHalfFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSOESTextureHalfFloat.cpp; path = JSOESTextureHalfFloat.cpp; sourceTree = "<group>"; };
-		A31C4E5316E02B40002F7957 /* JSOESTextureHalfFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSOESTextureHalfFloat.h; path = JSOESTextureHalfFloat.h; sourceTree = "<group>"; };
+		A31C4E5116E02B08002F7957 /* JSOESTextureHalfFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESTextureHalfFloat.cpp; sourceTree = "<group>"; };
+		A31C4E5316E02B40002F7957 /* JSOESTextureHalfFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESTextureHalfFloat.h; sourceTree = "<group>"; };
 		A3BB59F11457A40D00AC56FE /* DocumentEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentEventQueue.cpp; sourceTree = "<group>"; };
 		A3BB59F21457A40D00AC56FE /* DocumentEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentEventQueue.h; sourceTree = "<group>"; };
 		A3E2642E14748991005A8588 /* WorkerEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerEventQueue.cpp; path = workers/WorkerEventQueue.cpp; sourceTree = "<group>"; };
@@ -14641,6 +14863,7 @@
 				49C7BA791042EFAE0009D447 /* OpenGL.framework in Frameworks */,
 				A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */,
 				1A7FA7CC0DDA4B770028F8A5 /* SystemConfiguration.framework in Frameworks */,
+				757BCC0C16E887D900649DDB /* OpenCL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14757,6 +14980,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				757BCC0B16E887D900649DDB /* OpenCL.framework */,
 				AA5F3B9016CC5BEB00455EB0 /* CoreFoundation.framework */,
 				FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */,
 				F5C2869302846DCD018635CA /* ApplicationServices.framework */,
@@ -14944,6 +15168,46 @@
 		14DFB33F0A7DF7630018F769 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				75B45AF516E85B370035C2A6 /* JSDOMWindowWebCLEnvironment.cpp */,
+				75B45AF616E85B370035C2A6 /* JSDOMWindowWebCLEnvironment.h */,
+				75B45AF716E85C440035C2A6 /* JSWorkerContextWebCLEnvironment.cpp */,
+				75B45AF816E85C440035C2A6 /* JSWorkerContextWebCLEnvironment.h */,
+				75B45AAC16E85AB00035C2A6 /* JSWebCL.cpp */,
+				75B45AAD16E85AB00035C2A6 /* JSWebCL.h */,
+				75B45AAE16E85AB00035C2A6 /* JSWebCLBuffer.cpp */,
+				75B45AAF16E85AB00035C2A6 /* JSWebCLBuffer.h */,
+				75B45AB016E85AB00035C2A6 /* JSWebCLCommandQueue.cpp */,
+				75B45AB116E85AB00035C2A6 /* JSWebCLCommandQueue.h */,
+				75B45AB216E85AB00035C2A6 /* JSWebCLContext.cpp */,
+				75B45AB316E85AB00035C2A6 /* JSWebCLContext.h */,
+				75B45AB416E85AB00035C2A6 /* JSWebCLContextProperties.cpp */,
+				75B45AB516E85AB00035C2A6 /* JSWebCLContextProperties.h */,
+				75B45AB616E85AB00035C2A6 /* JSWebCLDevice.cpp */,
+				75B45AB716E85AB00035C2A6 /* JSWebCLDevice.h */,
+				75B45AB816E85AB00035C2A6 /* JSWebCLEvent.cpp */,
+				75B45AB916E85AB00035C2A6 /* JSWebCLEvent.h */,
+				75B45ABA16E85AB00035C2A6 /* JSWebCLException.cpp */,
+				75B45ABB16E85AB00035C2A6 /* JSWebCLException.h */,
+				75B45ABC16E85AB00035C2A6 /* JSWebCLFinishCallback.cpp */,
+				75B45ABD16E85AB00035C2A6 /* JSWebCLFinishCallback.h */,
+				75B45ABE16E85AB00035C2A6 /* JSWebCLGLObjectInfo.cpp */,
+				75B45ABF16E85AB00035C2A6 /* JSWebCLGLObjectInfo.h */,
+				75B45AC016E85AB00035C2A6 /* JSWebCLImage.cpp */,
+				75B45AC116E85AB00035C2A6 /* JSWebCLImage.h */,
+				75B45AC216E85AB00035C2A6 /* JSWebCLImageDescriptor.cpp */,
+				75B45AC316E85AB00035C2A6 /* JSWebCLImageDescriptor.h */,
+				75B45AC416E85AB00035C2A6 /* JSWebCLKernel.cpp */,
+				75B45AC516E85AB00035C2A6 /* JSWebCLKernel.h */,
+				75B45AC616E85AB00035C2A6 /* JSWebCLKernelArgumentTypes.cpp */,
+				75B45AC716E85AB00035C2A6 /* JSWebCLKernelArgumentTypes.h */,
+				75B45AC816E85AB00035C2A6 /* JSWebCLMemoryObject.cpp */,
+				75B45AC916E85AB00035C2A6 /* JSWebCLMemoryObject.h */,
+				75B45ACA16E85AB00035C2A6 /* JSWebCLPlatform.cpp */,
+				75B45ACB16E85AB00035C2A6 /* JSWebCLPlatform.h */,
+				75B45ACC16E85AB00035C2A6 /* JSWebCLProgram.cpp */,
+				75B45ACD16E85AB00035C2A6 /* JSWebCLProgram.h */,
+				75B45ACE16E85AB00035C2A6 /* JSWebCLSampler.cpp */,
+				75B45ACF16E85AB00035C2A6 /* JSWebCLSampler.h */,
 				A83B79100CCB001B000B0825 /* Core */,
 				A83B790E0CCAFF97000B0825 /* CSS */,
 				CDA98DCD1601515C00FEA3B1 /* EncryptedMedia */,
@@ -16566,6 +16830,87 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		75D8AA8716E744EF00FE8264 /* webcl */ = {
+			isa = PBXGroup;
+			children = (
+				75D8AA9716E744EF00FE8264 /* DOMWindowWebCLEnvironment.cpp */,
+				75D8AA9A16E744EF00FE8264 /* WebCL.cpp */,
+				75D8AA9D16E744EF00FE8264 /* WebCLBuffer.cpp */,
+				75D8AAA016E744EF00FE8264 /* WebCLCommandQueue.cpp */,
+				75D8AAA316E744EF00FE8264 /* WebCLContext.cpp */,
+				75D8AAA616E744EF00FE8264 /* WebCLContextProperties.cpp */,
+				75D8AAA916E744EF00FE8264 /* WebCLDevice.cpp */,
+				75D8AAAC16E744EF00FE8264 /* WebCLEvent.cpp */,
+				75D8AAAF16E744EF00FE8264 /* WebCLException.cpp */,
+				75D8AAB416E744EF00FE8264 /* WebCLGetInfo.cpp */,
+				75D8AAB616E744EF00FE8264 /* WebCLGLObjectInfo.cpp */,
+				75D8AAB916E744EF00FE8264 /* WebCLImage.cpp */,
+				75D8AABC16E744EF00FE8264 /* WebCLImageDescriptor.cpp */,
+				75D8AABF16E744EF00FE8264 /* WebCLInputChecker.cpp */,
+				75D8AAC116E744EF00FE8264 /* WebCLKernel.cpp */,
+				75D8AAC416E744EF00FE8264 /* WebCLKernelArgumentTypes.cpp */,
+				75D8AAC716E744EF00FE8264 /* WebCLKernelTypes.cpp */,
+				75D8AAC916E744EF00FE8264 /* WebCLMemoryObject.cpp */,
+				75D8AACC16E744EF00FE8264 /* WebCLPlatform.cpp */,
+				75D8AACF16E744EF00FE8264 /* WebCLProgram.cpp */,
+				75D8AAD216E744EF00FE8264 /* WebCLSampler.cpp */,
+				75D8AAD516E744EF00FE8264 /* WorkerContextWebCLEnvironment.cpp */,
+				75D8AA9816E744EF00FE8264 /* DOMWindowWebCLEnvironment.h */,
+				75D8AA9B16E744EF00FE8264 /* WebCL.h */,
+				75D8AA9E16E744EF00FE8264 /* WebCLBuffer.h */,
+				75D8AAA116E744EF00FE8264 /* WebCLCommandQueue.h */,
+				75D8AAA416E744EF00FE8264 /* WebCLContext.h */,
+				75D8AAA716E744EF00FE8264 /* WebCLContextProperties.h */,
+				75D8AAAA16E744EF00FE8264 /* WebCLDevice.h */,
+				75D8AAAD16E744EF00FE8264 /* WebCLEvent.h */,
+				75D8AAB016E744EF00FE8264 /* WebCLException.h */,
+				75D8AAB216E744EF00FE8264 /* WebCLFinishCallback.h */,
+				75D8AAB516E744EF00FE8264 /* WebCLGetInfo.h */,
+				75D8AAB716E744EF00FE8264 /* WebCLGLObjectInfo.h */,
+				75D8AABA16E744EF00FE8264 /* WebCLImage.h */,
+				75D8AABD16E744EF00FE8264 /* WebCLImageDescriptor.h */,
+				75D8AAC016E744EF00FE8264 /* WebCLInputChecker.h */,
+				75D8AAC216E744EF00FE8264 /* WebCLKernel.h */,
+				75D8AAC516E744EF00FE8264 /* WebCLKernelArgumentTypes.h */,
+				75D8AAC816E744EF00FE8264 /* WebCLKernelTypes.h */,
+				75D8AACA16E744EF00FE8264 /* WebCLMemoryObject.h */,
+				75D8AACD16E744EF00FE8264 /* WebCLPlatform.h */,
+				75D8AAD016E744EF00FE8264 /* WebCLProgram.h */,
+				75D8AAD316E744EF00FE8264 /* WebCLSampler.h */,
+				75D8AAD616E744EF00FE8264 /* WorkerContextWebCLEnvironment.h */,
+				75D8AA9916E744EF00FE8264 /* DOMWindowWebCLEnvironment.idl */,
+				75D8AA9C16E744EF00FE8264 /* WebCL.idl */,
+				75D8AA9F16E744EF00FE8264 /* WebCLBuffer.idl */,
+				75D8AAA216E744EF00FE8264 /* WebCLCommandQueue.idl */,
+				75D8AAA516E744EF00FE8264 /* WebCLContext.idl */,
+				75D8AAA816E744EF00FE8264 /* WebCLContextProperties.idl */,
+				75D8AAAB16E744EF00FE8264 /* WebCLDevice.idl */,
+				75D8AAAE16E744EF00FE8264 /* WebCLEvent.idl */,
+				75D8AAB116E744EF00FE8264 /* WebCLException.idl */,
+				75D8AAB316E744EF00FE8264 /* WebCLFinishCallback.idl */,
+				75D8AAB816E744EF00FE8264 /* WebCLGLObjectInfo.idl */,
+				75D8AABB16E744EF00FE8264 /* WebCLImage.idl */,
+				75D8AABE16E744EF00FE8264 /* WebCLImageDescriptor.idl */,
+				75D8AAC316E744EF00FE8264 /* WebCLKernel.idl */,
+				75D8AAC616E744EF00FE8264 /* WebCLKernelArgumentTypes.idl */,
+				75D8AACB16E744EF00FE8264 /* WebCLMemoryObject.idl */,
+				75D8AACE16E744EF00FE8264 /* WebCLPlatform.idl */,
+				75D8AAD116E744EF00FE8264 /* WebCLProgram.idl */,
+				75D8AAD416E744EF00FE8264 /* WebCLSampler.idl */,
+				75D8AAD716E744EF00FE8264 /* WorkerContextWebCLEnvironment.idl */,
+			);
+			name = webcl;
+			path = Modules/webcl;
+			sourceTree = "<group>";
+		};
+		75D8AB1B16E745C900FE8264 /* opencl */ = {
+			isa = PBXGroup;
+			children = (
+				75D8AB1C16E745C900FE8264 /* ComputeContextCL.cpp */,
+			);
+			path = opencl;
+			sourceTree = "<group>";
 		};
 		7EE6847312D26E5500E79415 /* cf */ = {
 			isa = PBXGroup;
@@ -18407,6 +18752,7 @@
 		971145FE14EF006E00674FD9 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				75D8AA8716E744EF00FE8264 /* webcl */,
 				CDA98DBD16014E0800FEA3B1 /* encryptedmedia */,
 				971145FF14EF007900674FD9 /* geolocation */,
 				9712A55315004E3C0048AF10 /* indexeddb */,
@@ -20977,6 +21323,18 @@
 		BC1A3793097C6FB10019F3D8 /* js */ = {
 			isa = PBXGroup;
 			children = (
+				75D8AB2216E7463900FE8264 /* JSWebCLCommandQueueCustom.cpp */,
+				75D8AB2316E7463900FE8264 /* JSWebCLContextCustom.cpp */,
+				75D8AB2416E7463A00FE8264 /* JSWebCLCustom.cpp */,
+				75D8AB2516E7463A00FE8264 /* JSWebCLCustom.h */,
+				75D8AB2616E7463A00FE8264 /* JSWebCLDeviceCustom.cpp */,
+				75D8AB2716E7463A00FE8264 /* JSWebCLEventCustom.cpp */,
+				75D8AB2816E7463A00FE8264 /* JSWebCLKernelCustom.cpp */,
+				75D8AB2916E7463A00FE8264 /* JSWebCLMemoryObjectCustom.cpp */,
+				75D8AB2A16E7463A00FE8264 /* JSWebCLPlatformCustom.cpp */,
+				75D8AB2B16E7463A00FE8264 /* JSWebCLProgramCustom.cpp */,
+				75D8AB2C16E7463A00FE8264 /* JSWebCLSamplerCustom.cpp */,
+				75D8AB2016E7460400FE8264 /* JSCustomWebCLFinishCallback.cpp */,
 				BCCE58A71061E82F008FB35A /* Callback Objects */,
 				BCCE58B41061E925008FB35A /* Constructors */,
 				BC4EDEF70C08F414007EDD49 /* Custom */,
@@ -21546,6 +21904,9 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				75D8AB1B16E745C900FE8264 /* opencl */,
+				75D8AB1916E745A400FE8264 /* ComputeContext.h */,
+				75D8AB1A16E745A400FE8264 /* ComputeTypes.h */,
 				49E912A40EFAC8E6009D0CAF /* animation */,
 				FD31604012B026A300C1A359 /* audio */,
 				1AE42F670AA4B8CB00C8612D /* cf */,
@@ -26651,6 +27012,52 @@
 				A024575216CEAA27000E5671 /* EXTDrawBuffers.h in Headers */,
 				A31C4E4F16E02AB4002F7957 /* OESTextureHalfFloat.h in Headers */,
 				A31C4E5416E02B40002F7957 /* JSOESTextureHalfFloat.h in Headers */,
+				75D8AAD916E7457700FE8264 /* DOMWindowWebCLEnvironment.h in Headers */,
+				75D8AADC16E7457700FE8264 /* WebCL.h in Headers */,
+				75D8AADF16E7457700FE8264 /* WebCLBuffer.h in Headers */,
+				75D8AAE216E7457800FE8264 /* WebCLCommandQueue.h in Headers */,
+				75D8AAE516E7457800FE8264 /* WebCLContext.h in Headers */,
+				75D8AAE816E7457800FE8264 /* WebCLContextProperties.h in Headers */,
+				75D8AAEB16E7457800FE8264 /* WebCLDevice.h in Headers */,
+				75D8AAEE16E7457800FE8264 /* WebCLEvent.h in Headers */,
+				75D8AAF116E7457800FE8264 /* WebCLException.h in Headers */,
+				75D8AAF316E7457800FE8264 /* WebCLFinishCallback.h in Headers */,
+				75D8AAF616E7457800FE8264 /* WebCLGetInfo.h in Headers */,
+				75D8AAF816E7457800FE8264 /* WebCLGLObjectInfo.h in Headers */,
+				75D8AAFB16E7457800FE8264 /* WebCLImage.h in Headers */,
+				75D8AAFE16E7457900FE8264 /* WebCLImageDescriptor.h in Headers */,
+				75D8AB0116E7457900FE8264 /* WebCLInputChecker.h in Headers */,
+				75D8AB0316E7457900FE8264 /* WebCLKernel.h in Headers */,
+				75D8AB0616E7457900FE8264 /* WebCLKernelArgumentTypes.h in Headers */,
+				75D8AB0916E7457900FE8264 /* WebCLKernelTypes.h in Headers */,
+				75D8AB0B16E7457900FE8264 /* WebCLMemoryObject.h in Headers */,
+				75D8AB0E16E7457900FE8264 /* WebCLPlatform.h in Headers */,
+				75D8AB1116E7457900FE8264 /* WebCLProgram.h in Headers */,
+				75D8AB1416E7457900FE8264 /* WebCLSampler.h in Headers */,
+				75D8AB1716E7457900FE8264 /* WorkerContextWebCLEnvironment.h in Headers */,
+				75D8AB1E16E745D100FE8264 /* ComputeContext.h in Headers */,
+				75D8AB1F16E745D100FE8264 /* ComputeTypes.h in Headers */,
+				75D8AB3B16E7464D00FE8264 /* JSWebCLCustom.h in Headers */,
+				75B45B2616E85DCC0035C2A6 /* JSDOMWindowWebCLEnvironment.h in Headers */,
+				75B45B2816E85DCC0035C2A6 /* JSWorkerContextWebCLEnvironment.h in Headers */,
+				75B45B2A16E85DCC0035C2A6 /* JSWebCL.h in Headers */,
+				75B45B2C16E85DCC0035C2A6 /* JSWebCLBuffer.h in Headers */,
+				75B45B2E16E85DCC0035C2A6 /* JSWebCLCommandQueue.h in Headers */,
+				75B45B3016E85DCC0035C2A6 /* JSWebCLContext.h in Headers */,
+				75B45B3216E85DCC0035C2A6 /* JSWebCLContextProperties.h in Headers */,
+				75B45B3416E85DCC0035C2A6 /* JSWebCLDevice.h in Headers */,
+				75B45B3616E85DCC0035C2A6 /* JSWebCLEvent.h in Headers */,
+				75B45B3816E85DCC0035C2A6 /* JSWebCLException.h in Headers */,
+				75B45B3A16E85DCC0035C2A6 /* JSWebCLFinishCallback.h in Headers */,
+				75B45B3C16E85DCC0035C2A6 /* JSWebCLGLObjectInfo.h in Headers */,
+				75B45B3E16E85DCC0035C2A6 /* JSWebCLImage.h in Headers */,
+				75B45B4016E85DCC0035C2A6 /* JSWebCLImageDescriptor.h in Headers */,
+				75B45B4216E85DCC0035C2A6 /* JSWebCLKernel.h in Headers */,
+				75B45B4416E85DCC0035C2A6 /* JSWebCLKernelArgumentTypes.h in Headers */,
+				75B45B4616E85DCC0035C2A6 /* JSWebCLMemoryObject.h in Headers */,
+				75B45B4816E85DCC0035C2A6 /* JSWebCLPlatform.h in Headers */,
+				75B45B4A16E85DCC0035C2A6 /* JSWebCLProgram.h in Headers */,
+				75B45B4C16E85DCC0035C2A6 /* JSWebCLSampler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29849,6 +30256,60 @@
 				A024575116CEAA27000E5671 /* EXTDrawBuffers.cpp in Sources */,
 				A31C4E4D16E02AA6002F7957 /* OESTextureHalfFloat.cpp in Sources */,
 				A31C4E5216E02B08002F7957 /* JSOESTextureHalfFloat.cpp in Sources */,
+				75D8AAD816E7457700FE8264 /* DOMWindowWebCLEnvironment.cpp in Sources */,
+				75D8AADB16E7457700FE8264 /* WebCL.cpp in Sources */,
+				75D8AADE16E7457700FE8264 /* WebCLBuffer.cpp in Sources */,
+				75D8AAE116E7457800FE8264 /* WebCLCommandQueue.cpp in Sources */,
+				75D8AAE416E7457800FE8264 /* WebCLContext.cpp in Sources */,
+				75D8AAE716E7457800FE8264 /* WebCLContextProperties.cpp in Sources */,
+				75D8AAEA16E7457800FE8264 /* WebCLDevice.cpp in Sources */,
+				75D8AAED16E7457800FE8264 /* WebCLEvent.cpp in Sources */,
+				75D8AAF016E7457800FE8264 /* WebCLException.cpp in Sources */,
+				75D8AAF516E7457800FE8264 /* WebCLGetInfo.cpp in Sources */,
+				75D8AAF716E7457800FE8264 /* WebCLGLObjectInfo.cpp in Sources */,
+				75D8AAFA16E7457800FE8264 /* WebCLImage.cpp in Sources */,
+				75D8AAFD16E7457800FE8264 /* WebCLImageDescriptor.cpp in Sources */,
+				75D8AB0016E7457900FE8264 /* WebCLInputChecker.cpp in Sources */,
+				75D8AB0216E7457900FE8264 /* WebCLKernel.cpp in Sources */,
+				75D8AB0516E7457900FE8264 /* WebCLKernelArgumentTypes.cpp in Sources */,
+				75D8AB0816E7457900FE8264 /* WebCLKernelTypes.cpp in Sources */,
+				75D8AB0A16E7457900FE8264 /* WebCLMemoryObject.cpp in Sources */,
+				75D8AB0D16E7457900FE8264 /* WebCLPlatform.cpp in Sources */,
+				75D8AB1016E7457900FE8264 /* WebCLProgram.cpp in Sources */,
+				75D8AB1316E7457900FE8264 /* WebCLSampler.cpp in Sources */,
+				75D8AB1616E7457900FE8264 /* WorkerContextWebCLEnvironment.cpp in Sources */,
+				75D8AB1D16E745D100FE8264 /* ComputeContextCL.cpp in Sources */,
+				75D8AB3816E7464D00FE8264 /* JSWebCLCommandQueueCustom.cpp in Sources */,
+				75D8AB3916E7464D00FE8264 /* JSWebCLContextCustom.cpp in Sources */,
+				75D8AB3A16E7464D00FE8264 /* JSWebCLCustom.cpp in Sources */,
+				75D8AB3C16E7464D00FE8264 /* JSWebCLDeviceCustom.cpp in Sources */,
+				75D8AB3D16E7464D00FE8264 /* JSWebCLEventCustom.cpp in Sources */,
+				75D8AB3E16E7464D00FE8264 /* JSWebCLKernelCustom.cpp in Sources */,
+				75D8AB3F16E7464D00FE8264 /* JSWebCLMemoryObjectCustom.cpp in Sources */,
+				75D8AB4016E7464D00FE8264 /* JSWebCLPlatformCustom.cpp in Sources */,
+				75D8AB4116E7464D00FE8264 /* JSWebCLProgramCustom.cpp in Sources */,
+				75D8AB4216E7464D00FE8264 /* JSWebCLSamplerCustom.cpp in Sources */,
+				75D8AB4316E7464D00FE8264 /* JSCustomWebCLFinishCallback.cpp in Sources */,
+				75B45B2516E85DCC0035C2A6 /* JSDOMWindowWebCLEnvironment.cpp in Sources */,
+				75B45B2716E85DCC0035C2A6 /* JSWorkerContextWebCLEnvironment.cpp in Sources */,
+				75B45B2916E85DCC0035C2A6 /* JSWebCL.cpp in Sources */,
+				75B45B2B16E85DCC0035C2A6 /* JSWebCLBuffer.cpp in Sources */,
+				75B45B2D16E85DCC0035C2A6 /* JSWebCLCommandQueue.cpp in Sources */,
+				75B45B2F16E85DCC0035C2A6 /* JSWebCLContext.cpp in Sources */,
+				75B45B3116E85DCC0035C2A6 /* JSWebCLContextProperties.cpp in Sources */,
+				75B45B3316E85DCC0035C2A6 /* JSWebCLDevice.cpp in Sources */,
+				75B45B3516E85DCC0035C2A6 /* JSWebCLEvent.cpp in Sources */,
+				75B45B3716E85DCC0035C2A6 /* JSWebCLException.cpp in Sources */,
+				75B45B3916E85DCC0035C2A6 /* JSWebCLFinishCallback.cpp in Sources */,
+				75B45B3B16E85DCC0035C2A6 /* JSWebCLGLObjectInfo.cpp in Sources */,
+				75B45B3D16E85DCC0035C2A6 /* JSWebCLImage.cpp in Sources */,
+				75B45B3F16E85DCC0035C2A6 /* JSWebCLImageDescriptor.cpp in Sources */,
+				75B45B4116E85DCC0035C2A6 /* JSWebCLKernel.cpp in Sources */,
+				75B45B4316E85DCC0035C2A6 /* JSWebCLKernelArgumentTypes.cpp in Sources */,
+				75B45B4516E85DCC0035C2A6 /* JSWebCLMemoryObject.cpp in Sources */,
+				75B45B4716E85DCC0035C2A6 /* JSWebCLPlatform.cpp in Sources */,
+				75B45B4916E85DCC0035C2A6 /* JSWebCLProgram.cpp in Sources */,
+				75B45B4B16E85DCC0035C2A6 /* JSWebCLSampler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
