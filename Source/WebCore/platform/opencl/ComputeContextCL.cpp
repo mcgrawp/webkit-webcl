@@ -175,20 +175,18 @@ ComputeContext::~ComputeContext()
 PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, const Vector<CCDeviceID>& devices, CCerror& error)
 {
     RefPtr<ComputeContext> computeContext =  adoptRef(new ComputeContext(contextProperties, devices, error));
-    if (!computeContext) {
-        ASSERT(error != ComputeContext::SUCCESS);
+    if (!computeContext || error != ComputeContext::SUCCESS)
         return 0;
-    }
+
     return computeContext.release();
 }
 
 PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, unsigned deviceType, CCerror& error)
 {
     RefPtr<ComputeContext> computeContext = adoptRef(new ComputeContext(contextProperties, deviceType, error));
-    if (!computeContext) {
-        ASSERT(error != ComputeContext::SUCCESS);
+    if (!computeContext || error != ComputeContext::SUCCESS)
         return 0;
-    }
+
     return computeContext.release();
 }
 
