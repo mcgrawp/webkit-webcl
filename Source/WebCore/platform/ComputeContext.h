@@ -361,7 +361,7 @@ public:
     PlatformComputeObject createFromGLTexture2D(int type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror& error);
 
     CCKernel createKernel(CCProgram program, const String& kernelName, CCerror& error);
-    CCKernel* createKernelsInProgram(CCProgram, CCuint& numberOfKernels, CCerror& error);
+    Vector<CCKernel> createKernelsInProgram(CCProgram, CCerror& error);
 
     CCerror supportedImageFormats(int /*type*/, int /*imageType*/, Vector<CCImageFormat>&);
 

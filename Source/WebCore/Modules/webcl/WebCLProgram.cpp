@@ -44,7 +44,7 @@ WebCLProgram::~WebCLProgram()
     m_clProgram = 0;
 }
 
-    PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const String& kernelSource, ExceptionCode& ec)
+PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const String& kernelSource, ExceptionCode& ec)
 {
     CCerror error = 0;
     CCProgram clProgram = context->computeContext()->createProgram(kernelSource, error);
@@ -159,15 +159,14 @@ Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode&
     }
 
     CCerror error;
-    CCuint numberOfKernels = 0;
-    CCKernel* computeContextKernels = m_context->computeContext()->createKernelsInProgram(m_clProgram, numberOfKernels, error);
+    Vector<CCKernel> computeContextKernels = m_context->computeContext()->createKernelsInProgram(m_clProgram, error);
     // computeContextKernels can be 0 even if there was not ComputeContext error, e.g. program has 0 kernels.
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return kernels;
     }
 
-    for (size_t i = 0 ; i < numberOfKernels; i++)
+    for (size_t i = 0 ; i < computeContextKernels.size(); ++i)
         kernels.append(WebCLKernel::create(m_context, computeContextKernels[i]));
 
     return kernels;

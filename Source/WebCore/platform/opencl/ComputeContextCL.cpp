@@ -387,18 +387,14 @@ PlatformComputeObject ComputeContext::createFromGLTexture2D(int type, GC3Denum t
 
 CCerror ComputeContext::supportedImageFormats(int memoryFlags, int imageType, Vector<CCImageFormat>& imageFormatsOut)
 {
-    cl_uint numberOfSupportedImages = 0;
-    cl_int clError = clGetSupportedImageFormats(m_clContext, memoryFlags, imageType, 0, 0, &numberOfSupportedImages);
+    cl_uint numberOfSupportedImageFormats = 0;
+    cl_int clError = clGetSupportedImageFormats(m_clContext, memoryFlags, imageType, 0, 0, &numberOfSupportedImageFormats);
     if (clError != CL_SUCCESS)
         return clToComputeContextError(clError);
 
-    // FIXME: We should not use malloc
-    CCImageFormat* imageFormats = (CCImageFormat*) malloc(sizeof(CCImageFormat) * numberOfSupportedImages);
+    imageFormatsOut.reserveInitialCapacity(numberOfSupportedImageFormats);
 
-    clError = clGetSupportedImageFormats(m_clContext, memoryFlags, imageType, numberOfSupportedImages, imageFormats, 0);
-
-    for (size_t i = 0; i < numberOfSupportedImages; ++i)
-        imageFormatsOut.append(imageFormats[i]);
+    clError = clGetSupportedImageFormats(m_clContext, memoryFlags, imageType, numberOfSupportedImageFormats, imageFormatsOut.data(), 0);
 
     return clToComputeContextError(clError);
 }
@@ -685,31 +681,25 @@ CCKernel ComputeContext::createKernel(CCProgram program, const String& kernelNam
     return kernel;
 }
 
-// FIXME: return a Vector<CCKernel> here.
-CCKernel* ComputeContext::createKernelsInProgram(CCProgram program, CCuint& numberOfKernels, CCerror& error)
+Vector<CCKernel> ComputeContext::createKernelsInProgram(CCProgram program, CCerror& error)
 {
-    cl_kernel* kernels = 0;
-    numberOfKernels = 0;
-
+    cl_uint numberOfKernels = 0;
+    Vector<cl_kernel> kernels;
     cl_int clError = clCreateKernelsInProgram(program, 0, 0, &numberOfKernels);
     if (clError != CL_SUCCESS) {
         error = clToComputeContextError(clError);
-        return 0;
+        return kernels;
     }
 
     if (!numberOfKernels) {
         // FIXME: Having '0' kernels is an error?
         error = clToComputeContextError(clError);
-        return 0;
+        return kernels;
     }
 
-    kernels = (cl_kernel*) malloc(sizeof(cl_kernel) * numberOfKernels);
-    if (!kernels) {
-        error = ComputeContext::MEM_OBJECT_ALLOCATION_FAILURE;
-        return 0;
-    }
+    kernels.reserveInitialCapacity(numberOfKernels);
 
-    clError = clCreateKernelsInProgram(program, numberOfKernels, kernels, 0);
+    clError = clCreateKernelsInProgram(program, numberOfKernels, kernels.data(), 0);
     error = clToComputeContextError(clError);
     return kernels;
 }
