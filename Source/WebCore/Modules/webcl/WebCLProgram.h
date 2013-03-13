@@ -64,8 +64,7 @@ public:
     }
     void build(const Vector<RefPtr<WebCLDevice> >& devices, ExceptionCode& ec)
     {
-        // FIXME: Use emptyString() here.
-        return build(devices, "", 0, 0, ec);
+        return build(devices, emptyString(), 0, 0, ec);
     }
 
     PassRefPtr<WebCLKernel> createKernel(const String&, ExceptionCode&);

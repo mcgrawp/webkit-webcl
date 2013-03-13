@@ -65,7 +65,7 @@ WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
     CCerror err = 0;
     switch (kernelInfo) {
     case ComputeContext::KERNEL_FUNCTION_NAME: {
-        char functionName[WebCL::CHAR_BUFFER_SIZE] = {""};
+        char functionName[WebCL::CHAR_BUFFER_SIZE];
         err = ComputeContext::getKernelInfo(m_clKernel, kernelInfo, sizeof(functionName), &functionName);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(String(functionName));

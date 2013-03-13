@@ -108,10 +108,10 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int infoType, Excep
     switch (infoType) {
     case ComputeContext::PROGRAM_BUILD_OPTIONS:
     case ComputeContext::PROGRAM_BUILD_LOG: {
-        char buffer[WebCL::CHAR_BUFFER_SIZE];
-        error = ComputeContext::getBuildInfo(m_clProgram, ccDeviceID, infoType, sizeof(char) * WebCL::CHAR_BUFFER_SIZE, buffer);
+        Vector<char, WebCL::CHAR_BUFFER_SIZE> buffer;
+        error = ComputeContext::getBuildInfo(m_clProgram, ccDeviceID, infoType, sizeof(buffer), buffer.data());
         if (error == CL_SUCCESS)
-            return WebCLGetInfo(String(buffer));
+            return WebCLGetInfo(String(buffer.data()));
         break;
     }
     case ComputeContext::PROGRAM_BUILD_STATUS: {
@@ -203,6 +203,7 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
 
     m_finishCallback = finishCallback;
 
+    // FIXME: This should not be here.
     if (buildOptions.length() > 0) {
         if (!((buildOptions == "-cl-single-precision-constant")
         || (buildOptions == "-cl-denorms-are-zero")
@@ -224,15 +225,9 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
     for (size_t i = 0; i < devices.size(); i++)
         ccDevices.append(devices[i]->getCLDevice());
 
-    CCerror err;
-    if (!m_finishCallback)
-        err =  m_context->computeContext()->buildProgram(m_clProgram, ccDevices, buildOptions, 0, &userData);
-    else
-        err = m_context->computeContext()->buildProgram(m_clProgram, ccDevices, buildOptions, &(WebCLProgram::finishCallback),
-            &userData);
-
-    if (err != CL_SUCCESS)
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    pfnNotify callback = m_finishCallback ? &WebCLProgram::finishCallback : 0;
+    CCerror err =  m_context->computeContext()->buildProgram(m_clProgram, ccDevices, buildOptions, callback, &userData);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLProgram::releaseProgram(ExceptionCode& ec)
