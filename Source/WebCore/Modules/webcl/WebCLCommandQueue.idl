@@ -169,7 +169,7 @@ interface [
 
     void enqueueBarrier() raises(DOMException);
 
-    void enqueueMarker(in [Optional] WebCLEvent event) raises(DOMException);
+    void enqueueMarker(in WebCLEvent event) raises(DOMException);
 
     void enqueueTask(in WebCLKernel kernel,
             in [Optional] sequence<WebCLEvent> eventWaitList,

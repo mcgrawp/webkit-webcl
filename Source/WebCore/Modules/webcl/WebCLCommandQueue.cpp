@@ -854,16 +854,13 @@ void WebCLCommandQueue::enqueueMarker(WebCLEvent* event, ExceptionCode& ec)
         return;
     }
 
-    // FIXME: Crash!?
-    CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
-    if (!ccEvent) {
+    if (!event || !event->getCLEvent()) {
         ec = WebCLException::INVALID_EVENT;
         return;
     }
 
-    CCerror computeContextError = m_context->computeContext()->enqueueMarker(m_ccCommandQueue, ccEvent);
+    CCEvent ccEvent = event->getCLEvent();
+    CCerror computeContextError = m_context->computeContext()->enqueueMarker(m_ccCommandQueue, &ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 

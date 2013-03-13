@@ -272,10 +272,6 @@ public:
     void enqueueBarrier(ExceptionCode&);
 
     void enqueueMarker(WebCLEvent*, ExceptionCode&);
-    void enqueueMarker(ExceptionCode& ec)
-    {
-        enqueueMarker(0, ec);
-    }
 
     void enqueueTask(WebCLKernel*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
     void enqueueTask(WebCLKernel* kernel, const Vector<RefPtr<WebCLEvent> >& eventsWaitList, ExceptionCode& ec)
