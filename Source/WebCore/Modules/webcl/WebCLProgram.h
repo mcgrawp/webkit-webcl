@@ -28,6 +28,8 @@
 #ifndef WebCLProgram_h
 #define WebCLProgram_h
 
+#if ENABLE(WEBCL)
+
 #include "ComputeContext.h"
 #include "ExceptionCode.h"
 #include "WebCLFinishCallback.h"
@@ -84,4 +86,5 @@ private:
 
 } // namespace WebCore
 
+#endif
 #endif // WebCLProgram_h

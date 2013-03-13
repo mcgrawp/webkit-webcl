@@ -31,6 +31,8 @@
 #include "WebCLGetInfo.h"
 #include "WebCLDevice.h"
 
+#if ENABLE(WEBCL)
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -66,5 +68,7 @@ private:
 CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);
 
 } // namespace WebCore
+
+#endif
 
 #endif // WebCLPlatform_h

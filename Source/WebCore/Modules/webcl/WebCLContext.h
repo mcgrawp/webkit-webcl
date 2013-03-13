@@ -28,6 +28,8 @@
 #ifndef WebCLContext_h
 #define WebCLContext_h
 
+#if ENABLE(WEBCL)
+
 #include "ComputeContext.h"
 #include "GraphicsContext3D.h"
 #include "ImageBuffer.h"
@@ -142,4 +144,5 @@ private:
 
 } // namespace WebCore
 
+#endif // ENABLE(WEBCL)
 #endif // WebCLContext_h

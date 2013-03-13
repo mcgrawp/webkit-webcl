@@ -28,6 +28,8 @@
 #ifndef WebCLEvent_h
 #define WebCLEvent_h
 
+#if ENABLE(WEBCL)
+
 #include "ExceptionCode.h"
 #include "WebCLFinishCallback.h"
 #include "WebCLGetInfo.h"
@@ -57,5 +59,6 @@ private:
 
 } // namespace WebCore
 
+#endif // ENABLE(WEBCL)
 #endif // WebCLEvent_h
 

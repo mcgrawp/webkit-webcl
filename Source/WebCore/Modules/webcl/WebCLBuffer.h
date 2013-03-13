@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+* Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
@@ -28,6 +28,8 @@
 #ifndef WebCLBuffer_h
 #define WebCLBuffer_h
 
+#if ENABLE(WEBCL)
+
 #include "WebCLMemoryObject.h"
 
 namespace WebCore {
@@ -48,4 +50,5 @@ private:
 
 } // namespace WebCore
 
+#endif // ENABLE(WEBCL)
 #endif // WebCLBuffer_h

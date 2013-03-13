@@ -28,6 +28,8 @@
 #ifndef WebCLDevice_h
 #define WebCLDevice_h
 
+#if ENABLE(WEBCL)
+
 #include "ComputeTypes.h"
 #include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
@@ -57,4 +59,5 @@ void toWebCLDeviceArray(const Vector<CCDeviceID>&, Vector<RefPtr<WebCLDevice> >&
 
 } // namespace WebCore
 
+#endif // ENABLE(WEBCL)
 #endif // WebCLDevice_h

@@ -45,5 +45,5 @@ public:
 
 } // namespace WebCore
 
+#endif // ENABLE(WEBCL)
 #endif // WebCLFinishCallback_H
-#endif

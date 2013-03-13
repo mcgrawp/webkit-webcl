@@ -87,5 +87,4 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)
-
 #endif // WebCL_h

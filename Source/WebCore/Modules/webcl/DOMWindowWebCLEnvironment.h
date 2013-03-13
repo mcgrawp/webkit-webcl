@@ -53,6 +53,4 @@ private:
 }
 
 #endif // ENABLE(WEBCL)
-
 #endif // WebCL_h
-

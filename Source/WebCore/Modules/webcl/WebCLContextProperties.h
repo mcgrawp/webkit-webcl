@@ -28,6 +28,8 @@
 #ifndef WebCLContextProperties_h
 #define WebCLContextProperties_h
 
+#if ENABLE(WEBCL)
+
 #include "WebCLException.h"
 #include "WebCLPlatform.h"
 
@@ -83,4 +85,5 @@ private:
 
 }// namespace WebCore
 
+#endif // ENABLE(WEBCL)
 #endif // WebCLContextProperties_h

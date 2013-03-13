@@ -29,10 +29,9 @@
 #ifndef WebCLException_h
 #define WebCLException_h
 
-#include "ExceptionBase.h"
-
 #if ENABLE(WEBCL)
 
+#include "ExceptionBase.h"
 
 namespace WebCore {
 
@@ -117,5 +116,4 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)
-
 #endif // WebCLException_h

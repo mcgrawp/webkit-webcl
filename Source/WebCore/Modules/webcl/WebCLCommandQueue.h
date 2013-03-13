@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+* Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
@@ -27,6 +27,8 @@
 
 #ifndef WebCLCommandQueue_h
 #define WebCLCommandQueue_h
+
+#if ENABLE(WEBCL)
 
 #include "HTMLCanvasElement.h"
 #include "ImageData.h"
@@ -296,4 +298,6 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(WEBCL)
 #endif // WebCLCommandQueue_h
