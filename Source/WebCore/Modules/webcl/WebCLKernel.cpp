@@ -44,14 +44,50 @@ WebCLKernel::~WebCLKernel()
     m_clKernel = 0;
 }
 
-PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, CCKernel ccKernel)
+PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, WebCLProgram* program, const String& kernelName, ExceptionCode& ec)
 {
-    return adoptRef(new WebCLKernel(context, ccKernel));
+    CCerror error = ComputeContext::SUCCESS;
+    CCKernel computeContextKernel = context->computeContext()->createKernel(program->getCLProgram(), kernelName, error);
+    if (!computeContextKernel) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return 0;
+    }
+
+    return adoptRef(new WebCLKernel(context, program, computeContextKernel, kernelName));
 }
 
-WebCLKernel::WebCLKernel(WebCLContext* context, CCKernel ccKernel)
+Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* context, WebCLProgram* program, ExceptionCode& ec)
+{
+    CCerror error = ComputeContext::SUCCESS;
+    CCuint numberOfKernels = 0;
+    Vector<CCKernel> computeContextKernels = context->computeContext()->createKernelsInProgram(program->getCLProgram(), error);
+    Vector<RefPtr<WebCLKernel> > kernels;
+    if (error != ComputeContext::SUCCESS) {
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return kernels;
+    }
+
+    Vector<char> functionName(WebCL::CHAR_BUFFER_SIZE);
+    for (size_t i = 0 ; i < numberOfKernels; i++) {
+        error = ComputeContext::getKernelInfo(computeContextKernels[i], ComputeContext::KERNEL_FUNCTION_NAME, WebCL::CHAR_BUFFER_SIZE, functionName.data());
+        if (error != ComputeContext::SUCCESS) {
+            ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+            kernels.clear();
+            return kernels;
+        }
+
+        kernels.append(adoptRef(new WebCLKernel(context, program, computeContextKernels[i], String(functionName.data()))));
+    }
+
+    return kernels;
+}
+
+WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, CCKernel kernel, const String& kernelName)
     : m_context(context)
-    , m_clKernel(ccKernel)
+    , m_program(program)
+    , m_clKernel(kernel)
+    , m_kernelName(kernelName)
 {
 }
 
@@ -62,51 +98,27 @@ WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    CCerror err = 0;
     switch (kernelInfo) {
-    case ComputeContext::KERNEL_FUNCTION_NAME: {
-        char functionName[WebCL::CHAR_BUFFER_SIZE];
-        err = ComputeContext::getKernelInfo(m_clKernel, kernelInfo, sizeof(functionName), &functionName);
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(String(functionName));
-        break;
-    }
+    case ComputeContext::KERNEL_FUNCTION_NAME:
+        return WebCLGetInfo(m_kernelName);
     case ComputeContext::KERNEL_NUM_ARGS: {
+        CCerror err = ComputeContext::SUCCESS;
         CCuint numberOfArgs = 0;
         err = ComputeContext::getKernelInfo(m_clKernel, kernelInfo, sizeof(CCuint), &numberOfArgs);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(numberOfArgs));
         break;
     }
-    case ComputeContext::KERNEL_PROGRAM: {
-        /*FIXME: WebCLProgram should not be instanced here.
-        CCProgram ccProgramID = 0;
-        err = ComputeContext::getKernelInfo(m_clKernel, kernelInfo, sizeof(CCProgram), &ccProgramID);
-        if (err == CL_SUCCESS) {
-            RefPtr<WebCLProgram> programObj = WebCLProgram::create(m_context, ccProgramID);
-            return WebCLGetInfo(programObj.release());
-            }*/
-        break;
-    }
-    /* FIXME: we should not create a context here
-    case ComputeContext::KERNEL_CONTEXT: {
-        CCContext ccContextID = 0;
-        err = ComputeContext::getKernelInfo(m_clKernel, kernelInfo, sizeof(CCContext), &ccContextID);
-        if (err == CL_SUCCESS) {
-            RefPtr<WebCLContext> contextObj = WebCLContext::create(m_context, ccContextID);
-            return WebCLGetInfo(contextObj.release());
-        }
-        break;
-    }
-    */
+    case ComputeContext::KERNEL_PROGRAM:
+        return WebCLGetInfo(m_program);
+    case ComputeContext::KERNEL_CONTEXT:
+        return WebCLGetInfo(m_context);
     default:
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
 
-    ASSERT(err != ComputeContext::SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-    return WebCLGetInfo();
+    ASSERT_NOT_REACHED();
 }
 
 WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, int paramName, ExceptionCode& ec)

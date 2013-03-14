@@ -71,6 +71,8 @@ public:
 
     Vector<RefPtr<WebCLKernel> > createKernelsInProgram(ExceptionCode&);
 
+    CCProgram getCLProgram();
+
     void releaseProgram(ExceptionCode&);
 
 private:

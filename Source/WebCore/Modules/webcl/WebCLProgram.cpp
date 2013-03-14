@@ -138,38 +138,18 @@ PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, Exc
         return 0;
     }
 
-    CCerror error;
-    CCKernel computeContextKernel = m_context->computeContext()->createKernel(m_clProgram, kernelName, error);
-    if (!computeContextKernel) {
-        ASSERT(error != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
-    }
-
-    RefPtr<WebCLKernel> webclKernel = WebCLKernel::create(m_context, computeContextKernel);
-    return webclKernel;
+    return WebCLKernel::create(m_context, this, kernelName, ec);
 }
 
 Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode& ec)
 {
-    Vector<RefPtr<WebCLKernel> > kernels;
+
     if (!m_clProgram) {
         ec = WebCLException::INVALID_PROGRAM;
-        return kernels;
+        return Vector<RefPtr<WebCLKernel> >();
     }
 
-    CCerror error;
-    Vector<CCKernel> computeContextKernels = m_context->computeContext()->createKernelsInProgram(m_clProgram, error);
-    // computeContextKernels can be 0 even if there was not ComputeContext error, e.g. program has 0 kernels.
-    if (error != ComputeContext::SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return kernels;
-    }
-
-    for (size_t i = 0 ; i < computeContextKernels.size(); ++i)
-        kernels.append(WebCLKernel::create(m_context, computeContextKernels[i]));
-
-    return kernels;
+    return WebCLKernel::createKernelsInProgram(m_context, this, ec);
 }
 
 void WebCLProgram::finishCallback(cl_program program, void* userData)
@@ -228,6 +208,11 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
     pfnNotify callback = m_finishCallback ? &WebCLProgram::finishCallback : 0;
     CCerror err =  m_context->computeContext()->buildProgram(m_clProgram, ccDevices, buildOptions, callback, &userData);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+}
+
+CCProgram WebCLProgram::getCLProgram()
+{
+    return m_clProgram;
 }
 
 void WebCLProgram::releaseProgram(ExceptionCode& ec)

@@ -33,7 +33,7 @@ interface [
 
     WebCLKernel createKernel(in DOMString kernelName) raises(DOMException);
 
-    sequence<WebCLKernel> createKernelsInProgram() raises(DOMException);
+    [StrictTypeChecking] sequence<WebCLKernel> createKernelsInProgram() raises(DOMException);
 
     [StrictTypeChecking, Custom] void build (in sequence<WebCLDevice> devices,
         in [Optional, TreatNullAs = NullString, TreatUndefinedAs = NullString] DOMString options,

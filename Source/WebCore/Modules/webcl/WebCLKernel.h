@@ -47,7 +47,8 @@ class WebCLMemoryObject;
 class WebCLKernel : public RefCounted<WebCLKernel> {
 public:
     virtual ~WebCLKernel();
-    static PassRefPtr<WebCLKernel> create(WebCLContext*, cl_kernel);
+    static PassRefPtr<WebCLKernel> create(WebCLContext*, WebCLProgram*, const String&, ExceptionCode&);
+    static Vector<RefPtr<WebCLKernel> > createKernelsInProgram(WebCLContext*, WebCLProgram*, ExceptionCode&);
     WebCLGetInfo getInfo(int, ExceptionCode&);
     WebCLGetInfo getWorkGroupInfo(WebCLDevice*, int, ExceptionCode&);
 
@@ -57,19 +58,20 @@ public:
     void setArg(unsigned, unsigned, ExceptionCode&);
 
     void setDevice(PassRefPtr<WebCLDevice>);
-    cl_kernel getCLKernel();
+    CCKernel getCLKernel();
 
 private:
-    WebCLKernel(WebCLContext*, cl_kernel);
+    WebCLKernel(WebCLContext*, WebCLProgram*, CCKernel, const String&);
+    // private fucntions simulating opencl API for WebCLKernelTypeValue object.
     template<class T>
-    CCerror setKernelArgPrimitiveType(cl_kernel, PassRefPtr<WebCLKernelTypeValue>, T, unsigned, int);
-    CCerror setKernelArgVectorType(cl_kernel, PassRefPtr<WebCLKernelTypeValue>, PassRefPtr<WebCLKernelTypeVector>, unsigned,
-        int, unsigned);
+    CCerror setKernelArgPrimitiveType(CCKernel, PassRefPtr<WebCLKernelTypeValue>, T, unsigned, int);
+    CCerror setKernelArgVectorType(CCKernel, PassRefPtr<WebCLKernelTypeValue>, PassRefPtr<WebCLKernelTypeVector>, unsigned, int, unsigned);
 
     WebCLContext* m_context;
-    cl_kernel m_clKernel;
+    WebCLProgram* m_program;
+    CCKernel m_clKernel;
+    String m_kernelName;
     RefPtr<WebCLDevice> m_deviceID;
-    Vector<RefPtr<WebCLKernel> > m_kernelList;
 };
 
 } // namespace WebCore
