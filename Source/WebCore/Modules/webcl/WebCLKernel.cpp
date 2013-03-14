@@ -239,6 +239,12 @@ void WebCLKernel::setArg(unsigned argIndex, PassRefPtr<WebCLKernelTypeValue> ker
     case ComputeContext::DOUBLE:
         err = setKernelArgPrimitiveType(m_clKernel, kernelObject, FloatValueArgument, argIndex, sizeof(CCdouble));
         break;
+    case ComputeContext::LOCAL_MEMORY_SIZE: {
+        float localArgSize = 0;
+        kernelObject->asNumber(&localArgSize);
+        err = ComputeContext::setKernelArg(m_clKernel, argIndex, localArgSize, 0);
+        break;
+    }
     case ComputeContext::CHAR | ComputeContext::VEC2:
         err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCchar2), 2);
         break;

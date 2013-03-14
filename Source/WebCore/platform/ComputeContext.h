@@ -336,6 +336,9 @@ public:
         VEC4  = 0x0400,
         VEC8  = 0x0800,
         VEC16 = 0x1000,
+
+        // Special types must not be bitwise-OR'ed with any other type.
+        LOCAL_MEMORY_SIZE = 255,
     };
 
     static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, const Vector<CCDeviceID>& devices, CCerror& error);
