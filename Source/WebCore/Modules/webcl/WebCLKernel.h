@@ -61,9 +61,9 @@ public:
 
 private:
     WebCLKernel(WebCLContext*, cl_kernel);
-    // private fucntions simulating opencl API for WebCLKernelTypeValue object.
-    template<class T> unsigned clSetKernelArgPrimitiveType(cl_kernel, RefPtr<WebCLKernelTypeValue>, T, unsigned, int);
-    unsigned clSetKernelArgVectorType(cl_kernel, RefPtr<WebCLKernelTypeValue>, RefPtr<WebCLKernelTypeVector>, unsigned,
+    template<class T>
+    CCerror setKernelArgPrimitiveType(cl_kernel, PassRefPtr<WebCLKernelTypeValue>, T, unsigned, int);
+    CCerror setKernelArgVectorType(cl_kernel, PassRefPtr<WebCLKernelTypeValue>, PassRefPtr<WebCLKernelTypeVector>, unsigned,
         int, unsigned);
 
     WebCLContext* m_context;

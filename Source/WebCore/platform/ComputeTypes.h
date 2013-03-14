@@ -34,9 +34,17 @@ typedef unsigned int CCenum;
 typedef int CCerror;
 
 typedef cl_int CCint;
+typedef cl_short CCshort;
+typedef cl_ushort CCushort;
+typedef cl_char CCchar;
+typedef cl_uchar CCuchar;
 typedef cl_bool CCbool;
 typedef cl_uint CCuint;
+typedef cl_long CClong;
 typedef cl_ulong CCulong;
+typedef cl_float CCfloat;
+typedef cl_half CChalf;
+typedef cl_double CCdouble;
 typedef cl_mem PlatformComputeObject;
 typedef cl_platform_id CCPlatformID;
 typedef cl_device_type CCDeviceType;
@@ -61,5 +69,49 @@ typedef cl_device_fp_config CCDeviceFPConfig;
 typedef cl_build_status CCBuildStatus;
 typedef cl_context CCContext;
 typedef void (*pfnNotify)(CCProgram, void*);
+// Vector types.
+typedef cl_char2 CCchar2;
+typedef cl_uchar2 CCuchar2;
+typedef cl_short2 CCshort2;
+typedef cl_ushort2 CCushort2;
+typedef cl_int2 CCint2;
+typedef cl_uint2 CCuint2;
+typedef cl_long2 CClong2;
+typedef cl_ulong2 CCulong2;
+typedef cl_float2 CCfloat2;
+typedef cl_double2 CCdouble2;
+
+typedef cl_char4 CCchar4;
+typedef cl_uchar4 CCuchar4;
+typedef cl_short4 CCshort4;
+typedef cl_ushort4 CCushort4;
+typedef cl_int4 CCint4;
+typedef cl_uint4 CCuint4;
+typedef cl_long4 CClong4;
+typedef cl_ulong4 CCulong4;
+typedef cl_float4 CCfloat4;
+typedef cl_double4 CCdouble4;
+
+typedef cl_char8 CCchar8;
+typedef cl_uchar8 CCuchar8;
+typedef cl_short8 CCshort8;
+typedef cl_ushort8 CCushort8;
+typedef cl_int8 CCint8;
+typedef cl_uint8 CCuint8;
+typedef cl_long8 CClong8;
+typedef cl_ulong8 CCulong8;
+typedef cl_float8 CCfloat8;
+typedef cl_double8 CCdouble8;
+
+typedef cl_char16 CCchar16;
+typedef cl_uchar16 CCuchar16;
+typedef cl_short16 CCshort16;
+typedef cl_ushort16 CCushort16;
+typedef cl_int16 CCint16;
+typedef cl_uint16 CCuint16;
+typedef cl_long16 CClong16;
+typedef cl_ulong16 CCulong16;
+typedef cl_float16 CCfloat16;
+typedef cl_double16 CCdouble16;
 
 #endif

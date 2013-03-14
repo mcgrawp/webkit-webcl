@@ -44,14 +44,14 @@ WebCLKernel::~WebCLKernel()
     m_clKernel = 0;
 }
 
-PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, cl_kernel kernel)
+PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, CCKernel ccKernel)
 {
-    return adoptRef(new WebCLKernel(context, kernel));
+    return adoptRef(new WebCLKernel(context, ccKernel));
 }
 
-WebCLKernel::WebCLKernel(WebCLContext* context, cl_kernel kernel)
+WebCLKernel::WebCLKernel(WebCLContext* context, CCKernel ccKernel)
     : m_context(context)
-    , m_clKernel(kernel)
+    , m_clKernel(ccKernel)
 {
 }
 
@@ -169,7 +169,7 @@ void WebCLKernel::setArg(unsigned argIndex, unsigned argSize, ExceptionCode& ec)
         ec = WebCLException::INVALID_KERNEL;
         return;
     }
-    CCerror err = clSetKernelArg(m_clKernel, argIndex, argSize, 0);
+    CCerror err = ComputeContext::setKernelArg(m_clKernel, argIndex, argSize, 0);
     if (err != CL_SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -187,171 +187,177 @@ void WebCLKernel::setArg(unsigned argIndex, PassRefPtr<WebCLKernelTypeValue> ker
     }
 
     CCerror err = 0;
-    RefPtr<WebCLKernelTypeVector> array = 0;
-    char nodeIdCh = 0;
-    unsigned char nodeIduCh = 0;
-    short nodeIdSh = 0;
-    unsigned short nodeIduSh = 0;
-    int nodeIdInt = 0;
-    unsigned nodeIduInt = 0;
-    long nodeIdLong = 0;
-    long nodeIduLong = 0;
-    float nodeIdFloat = 0;
-
+    RefPtr<WebCLKernelTypeVector> vectorValueArgument = 0;
+    float FloatValueArgument = 0;
     switch (argType) {
-    case ComputeContext::CHAR:
-        err = clSetKernelArgPrimitiveType(m_clKernel, kernelObject, nodeIdCh, argIndex, sizeof(cl_char));
+    case ComputeContext::CHAR: {
+        char charValueArgument = 0;
+        err = setKernelArgPrimitiveType(m_clKernel, kernelObject, charValueArgument, argIndex, sizeof(CCchar));
         break;
-    case ComputeContext::UCHAR:
-        err = clSetKernelArgPrimitiveType(m_clKernel, kernelObject, nodeIduCh, argIndex, sizeof(cl_uchar));
+    }
+    case ComputeContext::UCHAR: {
+        unsigned char ucharValueArgument = 0;
+        err = setKernelArgPrimitiveType(m_clKernel, kernelObject, ucharValueArgument, argIndex, sizeof(CCuchar));
         break;
-    case ComputeContext::SHORT:
-        err = clSetKernelArgPrimitiveType(m_clKernel, kernelObject, nodeIdSh, argIndex, sizeof(cl_short));
+    }
+    case ComputeContext::SHORT: {
+        short shortValueArgument = 0;
+        err = setKernelArgPrimitiveType(m_clKernel, kernelObject, shortValueArgument, argIndex, sizeof(CCshort));
         break;
-    case ComputeContext::USHORT:
-        err = clSetKernelArgPrimitiveType(m_clKernel, kernelObject, nodeIduSh, argIndex, sizeof(cl_ushort));
+    }
+    case ComputeContext::USHORT: {
+        unsigned short ushortValueArgument = 0;
+        err = setKernelArgPrimitiveType(m_clKernel, kernelObject, ushortValueArgument, argIndex, sizeof(CCushort));
         break;
-    case ComputeContext::INT:
-        err = clSetKernelArgPrimitiveType(m_clKernel, kernelObject, nodeIdInt, argIndex, sizeof(cl_int));
+    }
+    case ComputeContext::INT: {
+        int intValueArgument = 0;
+        err = setKernelArgPrimitiveType(m_clKernel, kernelObject, intValueArgument, argIndex, sizeof(CCint));
         break;
-    case ComputeContext::UINT:
-        err = clSetKernelArgPrimitiveType(m_clKernel, kernelObject, nodeIduInt, argIndex, sizeof(cl_uint));
+    }
+    case ComputeContext::UINT: {
+        unsigned uintValueArgument = 0;
+        err = setKernelArgPrimitiveType(m_clKernel, kernelObject, uintValueArgument, argIndex, sizeof(CCuint));
         break;
-    case ComputeContext::LONG:
-        err = clSetKernelArgPrimitiveType(m_clKernel, kernelObject, nodeIdLong, argIndex, sizeof(cl_long));
+    }
+    case ComputeContext::LONG: {
+        long longValueArgument = 0;
+        err = setKernelArgPrimitiveType(m_clKernel, kernelObject, longValueArgument, argIndex, sizeof(CClong));
         break;
-    case ComputeContext::ULONG:
-        err = clSetKernelArgPrimitiveType(m_clKernel, kernelObject, nodeIduLong, argIndex, sizeof(cl_ulong));
+    }
+    case ComputeContext::ULONG: {
+        long ulongValueArgument = 0;
+        err = setKernelArgPrimitiveType(m_clKernel, kernelObject, ulongValueArgument, argIndex, sizeof(CCulong));
         break;
+    }
     case ComputeContext::FLOAT_KERNEL_ARG:
-        err = clSetKernelArgPrimitiveType(m_clKernel, kernelObject, nodeIdFloat, argIndex, sizeof(cl_float));
+        err = setKernelArgPrimitiveType(m_clKernel, kernelObject, FloatValueArgument, argIndex, sizeof(CCfloat));
         break;
     case ComputeContext::HALF:
-        err = clSetKernelArgPrimitiveType(m_clKernel, kernelObject, nodeIdFloat, argIndex, sizeof(cl_half));
+        err = setKernelArgPrimitiveType(m_clKernel, kernelObject, FloatValueArgument, argIndex, sizeof(CChalf));
         break;
     case ComputeContext::DOUBLE:
-        err = clSetKernelArgPrimitiveType(m_clKernel, kernelObject, nodeIdFloat, argIndex, sizeof(cl_double));
+        err = setKernelArgPrimitiveType(m_clKernel, kernelObject, FloatValueArgument, argIndex, sizeof(CCdouble));
         break;
     case ComputeContext::CHAR | ComputeContext::VEC2:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_char2), 2);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCchar2), 2);
         break;
     case ComputeContext::UCHAR | ComputeContext::VEC2:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_uchar2), 2);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCuchar2), 2);
         break;
     case ComputeContext::SHORT | ComputeContext::VEC2:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_short2), 2);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCshort2), 2);
         break;
     case ComputeContext::USHORT | ComputeContext::VEC2:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_ushort2), 2);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCushort2), 2);
         break;
     case ComputeContext::INT | ComputeContext::VEC2:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_int2), 2);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCint2), 2);
         break;
     case ComputeContext::UINT | ComputeContext::VEC2:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_uint2), 2);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCuint2), 2);
         break;
     case ComputeContext::LONG | ComputeContext::VEC2:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_long2), 2);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CClong2), 2);
         break;
     case ComputeContext::ULONG | ComputeContext::VEC2:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_ulong2), 2);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCulong2), 2);
         break;
     case ComputeContext::FLOAT_KERNEL_ARG | ComputeContext::VEC2:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_float2), 2);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCfloat2), 2);
         break;
     case ComputeContext::CHAR | ComputeContext::VEC4:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_char4), 4);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCchar4), 4);
         break;
     case ComputeContext::UCHAR | ComputeContext::VEC4:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_uchar4), 4);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCuchar4), 4);
         break;
     case ComputeContext::SHORT | ComputeContext::VEC4:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_short4), 4);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCshort4), 4);
         break;
     case ComputeContext::USHORT | ComputeContext::VEC4:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_ushort4), 4);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCushort4), 4);
         break;
     case ComputeContext::INT | ComputeContext::VEC4:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_int4), 4);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCint4), 4);
         break;
     case ComputeContext::UINT | ComputeContext::VEC4:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_uint4), 4);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCuint4), 4);
         break;
     case ComputeContext::LONG | ComputeContext::VEC4:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_long4), 4);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CClong4), 4);
         break;
     case ComputeContext::ULONG | ComputeContext::VEC4:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_ulong4), 4);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCulong4), 4);
         break;
     case ComputeContext::FLOAT_KERNEL_ARG | ComputeContext::VEC4:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_float4), 4);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCfloat4), 4);
         break;
     case ComputeContext::DOUBLE | ComputeContext::VEC4:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_double4), 4);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCdouble4), 4);
         break;
     case ComputeContext::CHAR | ComputeContext::VEC8:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_char8), 8);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCchar8), 8);
         break;
     case ComputeContext::UCHAR | ComputeContext::VEC8:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_uchar4), 4);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCuchar4), 4);
         break;
     case ComputeContext::SHORT | ComputeContext::VEC8:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_short8), 8);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCshort8), 8);
         break;
     case ComputeContext::USHORT | ComputeContext::VEC8:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_ushort8), 8);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCushort8), 8);
         break;
     case ComputeContext::INT | ComputeContext::VEC8:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_int8), 8);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCint8), 8);
         break;
     case ComputeContext::UINT | ComputeContext::VEC8:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_uint8), 8);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCuint8), 8);
         break;
     case ComputeContext::LONG | ComputeContext::VEC8:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_long8), 8);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CClong8), 8);
         break;
     case ComputeContext::ULONG | ComputeContext::VEC8:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_ulong8), 8);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCulong8), 8);
         break;
     case ComputeContext::FLOAT_KERNEL_ARG | ComputeContext::VEC8:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_float8), 8);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCfloat8), 8);
         break;
     case ComputeContext::DOUBLE | ComputeContext::VEC8:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_double8), 8);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCdouble8), 8);
         break;
     case ComputeContext::CHAR | ComputeContext::VEC16:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_char8), 8);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCchar8), 8);
         break;
     case ComputeContext::UCHAR | ComputeContext::VEC16:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_uchar16), 16);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCuchar16), 16);
         break;
     case ComputeContext::SHORT | ComputeContext::VEC16:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_short16), 16);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCshort16), 16);
         break;
     case ComputeContext::USHORT | ComputeContext::VEC16:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_ushort16), 16);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCushort16), 16);
         break;
     case ComputeContext::INT | ComputeContext::VEC16:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_int16), 16);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCint16), 16);
         break;
     case ComputeContext::UINT | ComputeContext::VEC16:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_uint16), 16);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCuint16), 16);
         break;
     case ComputeContext::LONG | ComputeContext::VEC16:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_long16), 16);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CClong16), 16);
         break;
     case ComputeContext::ULONG | ComputeContext::VEC16:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_ulong16), 16);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCulong16), 16);
         break;
     case ComputeContext::FLOAT_KERNEL_ARG | ComputeContext::VEC16:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_float16), 16);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCfloat16), 16);
         break;
     case ComputeContext::DOUBLE | ComputeContext::VEC16:
-        err = clSetKernelArgVectorType(m_clKernel, kernelObject, array, argIndex, sizeof(cl_double16), 16);
+        err = setKernelArgVectorType(m_clKernel, kernelObject, vectorValueArgument, argIndex, sizeof(CCdouble16), 16);
         break;
     default:
         ec = WebCLException::INVALID_ARG_VALUE;
-        printf("Error: Invaild Kernel Argument Type\n");
         return;
     }
     if (err != CL_SUCCESS)
@@ -360,75 +366,66 @@ void WebCLKernel::setArg(unsigned argIndex, PassRefPtr<WebCLKernelTypeValue> ker
 
 void WebCLKernel::setArg(unsigned argIndex, WebCLMemoryObject* argValue, ExceptionCode& ec)
 {
-    CCerror err = 0;
-    cl_mem memID = 0;
-    cl_device_id clDevice = 0;
-
     if (!m_clKernel) {
         ec = WebCLException::INVALID_KERNEL;
-        printf("Error: Invalid kernel\n");
         return;
     }
+    PlatformComputeObject ccMemoryObject = nullptr;
     if (argValue)
-        memID = argValue->getCLMemoryObject();
-    if (!memID) {
+        ccMemoryObject = argValue->getCLMemoryObject();
+    if (!ccMemoryObject) {
         ec = WebCLException::INVALID_MEM_OBJECT;
-        printf("Error: cl_mem_id null\n");
         return;
     }
+
+    CCerror err = 0;
+    CCDeviceID ccDevice = nullptr;
     if (m_deviceID) {
-        clDevice = m_deviceID->getCLDevice();
-        cl_ulong maxBufferSize = 0;
-        clGetDeviceInfo(clDevice, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE, sizeof(cl_ulong), &maxBufferSize, 0);
-        cl_uint maxArgs = 0;
-        clGetDeviceInfo(clDevice, CL_DEVICE_MAX_CONSTANT_ARGS, sizeof(cl_uint), &maxArgs, 0);
+        ccDevice = m_deviceID->getCLDevice();
+        CCulong maxBufferSize = 0;
+        err = ComputeContext::getDeviceInfo(ccDevice, ComputeContext::DEVICE_MAX_CONSTANT_BUFFER_SIZE, sizeof(CCulong), &maxBufferSize);
+        CCuint maxArgs = 0;
+        err = ComputeContext::getDeviceInfo(ccDevice, ComputeContext::DEVICE_MAX_CONSTANT_ARGS, sizeof(CCuint), &maxArgs);
         // Check for __constant qualifier restrictions. Memory object size must be less than CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE
         // and index must be lesser than CL_DEVICE_MAX_CONSTANT_ARGS supported by device.
-        if (sizeof(cl_mem) > maxBufferSize && argIndex > maxArgs) {
+        if (sizeof(PlatformComputeObject) > maxBufferSize && argIndex > maxArgs) {
             ec = WebCLException::INVALID_MEM_OBJECT;
-            printf("Error::setArg::WebCLMemoryObject is not valid to call with __constant restriction\n");
             return;
         }
     }
     // FIXME :: Need to check if we must do above check with default device.
-    // Memory Object sent is valid.
-    err = clSetKernelArg(m_clKernel, argIndex, sizeof(cl_mem), &memID);
-
+    err = ComputeContext::setKernelArg(m_clKernel, argIndex, sizeof(PlatformComputeObject), &ccMemoryObject);
     if (err != CL_SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLKernel::setArg(unsigned argIndex, unsigned argValue, unsigned argSize, ExceptionCode& ec)
 {
-    CCerror err = 0;
     if (!m_clKernel) {
         ec = WebCLException::INVALID_KERNEL;
         return;
     }
-    err = clSetKernelArg(m_clKernel, argIndex, argSize, &argValue);
+    CCerror err = ComputeContext::setKernelArg(m_clKernel, argIndex, argSize, &argValue);
     if (err != CL_SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-template<class T> inline unsigned WebCLKernel::clSetKernelArgPrimitiveType(cl_kernel kernelID,
-    RefPtr<WebCLKernelTypeValue> kernelObject, T nodeId, unsigned argIndex, int size)
+template<class T>
+inline CCerror WebCLKernel::setKernelArgPrimitiveType(CCKernel ccKernel,
+    PassRefPtr<WebCLKernelTypeValue> kernelObject, T nodeId, unsigned argIndex, int size)
 {
-    if (!kernelObject->asNumber(&nodeId)) {
-        printf("Error: WebCL Kernel Type Value Not Proper\n");
-        return -1;
-    }
-    CCerror err =  clSetKernelArg(kernelID, argIndex, size, &nodeId);
+    if (!kernelObject->asNumber(&nodeId))
+        return ComputeContext::INVALID_ARG_VALUE;
+    CCerror err =  ComputeContext::setKernelArg(ccKernel, argIndex, size, &nodeId);
     return err;
 }
 
-inline unsigned WebCLKernel::clSetKernelArgVectorType(cl_kernel kernelID, RefPtr<WebCLKernelTypeValue>
-    kernelObject, RefPtr<WebCLKernelTypeVector> array, unsigned argIndex, int size, unsigned length)
+inline CCerror WebCLKernel::setKernelArgVectorType(CCKernel ccKernel, PassRefPtr<WebCLKernelTypeValue>
+    kernelObject, PassRefPtr<WebCLKernelTypeVector> array, unsigned argIndex, int size, unsigned length)
 {
-    if ((!kernelObject->asVector(&array)) || (length != array->length())) {
-        printf("Error: Invalid WebCL Kernel Type %d\n", array->length());
-        return -1;
-    }
-    CCerror err = clSetKernelArg(kernelID, argIndex, size, &array);
+    if ((!kernelObject->asVector(array)) || (length != array->length()))
+        return ComputeContext::INVALID_ARG_VALUE;
+    CCerror err = ComputeContext::setKernelArg(ccKernel, argIndex, size, &array);
     return err;
 }
 
@@ -437,7 +434,7 @@ void WebCLKernel::setDevice(PassRefPtr<WebCLDevice> deviceID)
     m_deviceID = deviceID;
 }
 
-cl_kernel WebCLKernel::getCLKernel()
+CCKernel WebCLKernel::getCLKernel()
 {
     return m_clKernel;
 }

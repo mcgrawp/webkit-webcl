@@ -283,6 +283,12 @@ CCerror ComputeContext::buildProgram(CCProgram program, const Vector<CCDeviceID>
     return clToComputeContextError(clError);
 }
 
+CCerror ComputeContext::setKernelArg(CCKernel kernel, CCuint argIndex, size_t argSize, const void* argValue)
+{
+    cl_int clError = clSetKernelArg(kernel, argIndex, argSize, argValue);
+    return clToComputeContextError(clError);
+}
+
 PlatformComputeObject ComputeContext::createBuffer(int memoryFlags, size_t size, void* data, CCerror& error)
 {
     cl_mem clMemoryBuffer;

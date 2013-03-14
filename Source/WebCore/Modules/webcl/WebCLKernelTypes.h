@@ -76,7 +76,7 @@ public:
 	
     virtual bool asValue(RefPtr<WebCLKernelTypeValue>* output);
     virtual bool asObject(RefPtr<WebCLKernelTypeObject>* output);
-    virtual bool asVector(RefPtr<WebCLKernelTypeVector>* output);
+    virtual bool asVector(PassRefPtr<WebCLKernelTypeVector> output);
     virtual PassRefPtr<WebCLKernelTypeObject> asObject();
     virtual PassRefPtr<WebCLKernelTypeVector> asVector();
 
@@ -177,7 +177,7 @@ public:
     }
     ~WebCLKernelTypeVector();
 
-    virtual bool asVector(RefPtr<WebCLKernelTypeVector>* output);
+    virtual bool asVector(PassRefPtr<WebCLKernelTypeVector> output);
     virtual PassRefPtr<WebCLKernelTypeVector> asVector();
 
     void pushNumber(double);

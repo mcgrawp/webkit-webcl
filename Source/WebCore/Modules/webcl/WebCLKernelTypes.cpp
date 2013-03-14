@@ -90,7 +90,7 @@ bool WebCLKernelTypeValue::asObject(RefPtr<WebCLKernelTypeObject>*)
     return false;
 }
 
-bool WebCLKernelTypeValue::asVector(RefPtr<WebCLKernelTypeVector>*)
+bool WebCLKernelTypeValue::asVector(PassRefPtr<WebCLKernelTypeVector>)
 {
     return false;
 }
@@ -240,9 +240,9 @@ WebCLKernelTypeVector::~WebCLKernelTypeVector()
 {
 }
 
-bool WebCLKernelTypeVector::asVector(RefPtr<WebCLKernelTypeVector>* output)
+bool WebCLKernelTypeVector::asVector(PassRefPtr<WebCLKernelTypeVector> output)
 {
-    *output = this;
+    output->pushVector(this->asVector());
     return true;
 }
 
