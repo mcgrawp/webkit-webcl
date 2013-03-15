@@ -69,10 +69,6 @@ public:
     Vector<RefPtr<WebCLPlatform> > getPlatforms(ExceptionCode&) const;
     void waitForEvents(const Vector<RefPtr<WebCLEvent> >&, ExceptionCode&);
     PassRefPtr<WebCLContext> createContext(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
-    PassRefPtr<WebCLContext> createContext(ExceptionCode& ec)
-    {
-        return createContext(0, ec);
-    }
     Vector<String> getSupportedExtensions(ExceptionCode&);
 
     static PassRefPtr<WebCL> create();
