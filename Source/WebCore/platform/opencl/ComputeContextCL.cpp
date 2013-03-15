@@ -34,72 +34,58 @@
 
 namespace WebCore {
 
-static CCerror clToComputeContextError(cl_int clError)
-{
-    int computeContextError = CL_INVALID_VALUE;
-    switch (clError) {
-    case CL_SUCCESS:
-        computeContextError = ComputeContext::SUCCESS;
-        break;
-    case CL_INVALID_PLATFORM:
-        computeContextError = ComputeContext::INVALID_PLATFORM;
-        break;
-    case CL_INVALID_DEVICE:
-        computeContextError = ComputeContext::INVALID_DEVICE;
-        break;
-    case CL_INVALID_OPERATION:
-        computeContextError = ComputeContext::INVALID_OPERATION;
-        break;
-    case CL_DEVICE_NOT_AVAILABLE:
-        computeContextError = ComputeContext::DEVICE_NOT_AVAILABLE;
-        break;
-    case CL_OUT_OF_RESOURCES:
-        computeContextError = ComputeContext::OUT_OF_RESOURCES;
-        break;
-    case CL_OUT_OF_HOST_MEMORY:
-        computeContextError = ComputeContext::OUT_OF_HOST_MEMORY;
-        break;
-    case CL_INVALID_CONTEXT:
-        computeContextError = ComputeContext::INVALID_CONTEXT;
-        break;
-    case CL_INVALID_VALUE:
-        computeContextError = ComputeContext::INVALID_VALUE;
-        break;
-    case CL_INVALID_IMAGE_FORMAT_DESCRIPTOR:
-        computeContextError = ComputeContext::INVALID_IMAGE_FORMAT_DESCRIPTOR;
-        break;
-    case CL_INVALID_IMAGE_SIZE:
-        computeContextError = ComputeContext::INVALID_IMAGE_SIZE;
-        break;
-    case CL_INVALID_HOST_PTR:
-        computeContextError = ComputeContext::INVALID_HOST_PTR;
-        break;
-    case CL_IMAGE_FORMAT_NOT_SUPPORTED:
-        computeContextError = ComputeContext::IMAGE_FORMAT_NOT_SUPPORTED;
-        break;
-    case CL_MEM_OBJECT_ALLOCATION_FAILURE:
-        computeContextError = ComputeContext::MEM_OBJECT_ALLOCATION_FAILURE;
-        break;
-    case CL_INVALID_PROGRAM:
-        computeContextError = ComputeContext::INVALID_PROGRAM;
-        break;
-    case CL_INVALID_PROGRAM_EXECUTABLE:
-        computeContextError = ComputeContext::INVALID_PROGRAM_EXECUTABLE;
-        break;
-    case CL_INVALID_KERNEL_NAME:
-        computeContextError = ComputeContext::INVALID_KERNEL_NAME;
-        break;
-    case CL_INVALID_KERNEL_DEFINITION:
-        computeContextError = ComputeContext::INVALID_KERNEL_DEFINITION;
-        break;
-    case CL_INVALID_EVENT:
-        computeContextError = ComputeContext::INVALID_EVENT;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-    return computeContextError;
-}
+#define COMPILE_ASSERT_MATCHING_ENUM(computeContextName, openCLName) \
+    COMPILE_ASSERT(static_cast<int>(computeContextName) == static_cast<int>(openCLName), mismatchingEnums)
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::SUCCESS, CL_SUCCESS);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::DEVICE_NOT_FOUND, CL_DEVICE_NOT_FOUND);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::DEVICE_NOT_AVAILABLE, CL_DEVICE_NOT_AVAILABLE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::COMPILER_NOT_AVAILABLE, CL_COMPILER_NOT_AVAILABLE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::MEM_OBJECT_ALLOCATION_FAILURE, CL_MEM_OBJECT_ALLOCATION_FAILURE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::OUT_OF_RESOURCES, CL_OUT_OF_RESOURCES);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::OUT_OF_HOST_MEMORY, CL_OUT_OF_HOST_MEMORY);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::PROFILING_INFO_NOT_AVAILABLE, CL_PROFILING_INFO_NOT_AVAILABLE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::MEM_COPY_OVERLAP, CL_MEM_COPY_OVERLAP);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::IMAGE_FORMAT_MISMATCH, CL_IMAGE_FORMAT_MISMATCH);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::IMAGE_FORMAT_NOT_SUPPORTED, CL_IMAGE_FORMAT_NOT_SUPPORTED);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::BUILD_PROGRAM_FAILURE, CL_BUILD_PROGRAM_FAILURE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::MAP_FAILURE, CL_MAP_FAILURE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::MISALIGNED_SUB_BUFFER_OFFSET, CL_MISALIGNED_SUB_BUFFER_OFFSET);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST, CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_VALUE, CL_INVALID_VALUE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_DEVICE_TYPE, CL_INVALID_DEVICE_TYPE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_PLATFORM, CL_INVALID_PLATFORM);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_DEVICE, CL_INVALID_DEVICE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_CONTEXT, CL_INVALID_CONTEXT);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_QUEUE_PROPERTIES, CL_INVALID_QUEUE_PROPERTIES);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_COMMAND_QUEUE, CL_INVALID_COMMAND_QUEUE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_HOST_PTR, CL_INVALID_HOST_PTR);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_MEM_OBJECT, CL_INVALID_MEM_OBJECT);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_IMAGE_FORMAT_DESCRIPTOR, CL_INVALID_IMAGE_FORMAT_DESCRIPTOR);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_IMAGE_SIZE, CL_INVALID_IMAGE_SIZE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_SAMPLER, CL_INVALID_SAMPLER);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_BINARY, CL_INVALID_BINARY);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_BUILD_OPTIONS, CL_INVALID_BUILD_OPTIONS);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_PROGRAM, CL_INVALID_PROGRAM);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_PROGRAM_EXECUTABLE, CL_INVALID_PROGRAM_EXECUTABLE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_KERNEL_NAME, CL_INVALID_KERNEL_NAME);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_KERNEL_DEFINITION, CL_INVALID_KERNEL_DEFINITION);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_KERNEL, CL_INVALID_KERNEL);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_ARG_INDEX, CL_INVALID_ARG_INDEX);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_ARG_VALUE, CL_INVALID_ARG_VALUE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_ARG_SIZE, CL_INVALID_ARG_SIZE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_KERNEL_ARGS, CL_INVALID_KERNEL_ARGS);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_WORK_DIMENSION, CL_INVALID_WORK_DIMENSION);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_WORK_GROUP_SIZE, CL_INVALID_WORK_GROUP_SIZE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_WORK_ITEM_SIZE, CL_INVALID_WORK_ITEM_SIZE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_GLOBAL_OFFSET, CL_INVALID_GLOBAL_OFFSET);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_EVENT_WAIT_LIST, CL_INVALID_EVENT_WAIT_LIST);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_EVENT, CL_INVALID_EVENT);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_OPERATION, CL_INVALID_OPERATION);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_GL_OBJECT, CL_INVALID_GL_OBJECT);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_BUFFER_SIZE, CL_INVALID_BUFFER_SIZE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_MIP_LEVEL, CL_INVALID_MIP_LEVEL);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_GLOBAL_WORK_SIZE, CL_INVALID_GLOBAL_WORK_SIZE);
+COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::INVALID_PROPERTY, CL_INVALID_PROPERTY);
 
 // FIXME: Remove it when the CL<->GL interoperability turns to be an extension.
 static cl_mem_flags computeMemoryTypeToCL(int memoryType)
@@ -134,37 +120,31 @@ static cl_mem_flags computeMemoryTypeToCL(int memoryType)
 
 ComputeContext::ComputeContext(CCContextProperties* contextProperties, const Vector<CCDeviceID>& devices, CCerror& error)
 {
-    cl_int clError;
-    m_clContext = clCreateContext(contextProperties, devices.size(), devices.data(), 0, 0, &clError);
-    error = clToComputeContextError(clError);
+    m_clContext = clCreateContext(contextProperties, devices.size(), devices.data(), 0, 0, &error);
 }
 
 ComputeContext::ComputeContext(CCContextProperties* contextProperties, unsigned deviceType, CCerror& error)
 {
-    cl_int clError;
-
     switch (deviceType) {
     case DEVICE_TYPE_GPU:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_GPU, 0, 0, &clError);
+        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_GPU, 0, 0, &error);
         break;
     case DEVICE_TYPE_CPU:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_CPU, 0, 0, &clError);
+        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_CPU, 0, 0, &error);
         break;
     case DEVICE_TYPE_ACCELERATOR:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_ACCELERATOR, 0, 0, &clError);
+        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_ACCELERATOR, 0, 0, &error);
         break;
     case DEVICE_TYPE_DEFAULT:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_DEFAULT, 0, 0, &clError);
+        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_DEFAULT, 0, 0, &error);
         break;
     case DEVICE_TYPE_ALL:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_ALL, 0, 0, &clError);
+        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_ALL, 0, 0, &error);
         break;
     default:
-        clError = CL_INVALID_DEVICE_TYPE;
+        error = CL_INVALID_DEVICE_TYPE;
         break;
     }
-
-    error = clToComputeContextError(clError);
 }
 
 ComputeContext::~ComputeContext()
@@ -195,14 +175,14 @@ CCerror ComputeContext::getPlatformIDs(Vector<CCPlatformID>& ccPlatforms)
     cl_uint numberOfPlatforms;
     cl_int clError = clGetPlatformIDs(0, 0, &numberOfPlatforms);
     if (clError != CL_SUCCESS)
-        return clToComputeContextError(clError);
+        return clError;
 
     if (!ccPlatforms.tryReserveCapacity(numberOfPlatforms))
         return OUT_OF_HOST_MEMORY;
     ccPlatforms.resize(numberOfPlatforms);
 
     clError = clGetPlatformIDs(numberOfPlatforms, ccPlatforms.data(), 0);
-    return clToComputeContextError(clError);
+    return clError;
 }
 
 CCerror ComputeContext::getDeviceIDs(CCPlatformID platform, CCDeviceType deviceType, Vector<CCDeviceID>& ccDevices)
@@ -210,26 +190,25 @@ CCerror ComputeContext::getDeviceIDs(CCPlatformID platform, CCDeviceType deviceT
     cl_uint numberOfDevices;
     cl_int clError = clGetDeviceIDs(platform, deviceType, 0, 0, &numberOfDevices);
     if (clError != CL_SUCCESS)
-        return clToComputeContextError(clError);
+        return clError;
 
     if (!ccDevices.tryReserveCapacity(numberOfDevices))
         return OUT_OF_HOST_MEMORY;
     ccDevices.resize(numberOfDevices);
 
     clError = clGetDeviceIDs(platform, deviceType, numberOfDevices, ccDevices.data(), 0);
-    return clToComputeContextError(clError);
+    return clError;
 }
 
 CCerror ComputeContext::waitForEvents(const Vector<CCEvent>& events)
 {
     cl_int clError = clWaitForEvents(events.size(), events.data());
-    return clToComputeContextError(clError);
+    return clError;
 }
 
 CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, int properties, CCerror& error)
 {
     cl_command_queue_properties clProperties;
-    cl_int clError;
     switch (properties) {
     case QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE:
         clProperties = CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE;
@@ -241,34 +220,25 @@ CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, int prope
         clProperties = 0;
         break;
     default:
-        clError = CL_INVALID_QUEUE_PROPERTIES;
-        error = clToComputeContextError(clError);
+        error = CL_INVALID_QUEUE_PROPERTIES;
         return 0;
     }
 
-    cl_command_queue clCommandQueue = clCreateCommandQueue(m_clContext, deviceId, clProperties, &clError);
-
-    error = clToComputeContextError(clError);
+    cl_command_queue clCommandQueue = clCreateCommandQueue(m_clContext, deviceId, clProperties, &error);
     return clCommandQueue;
 }
 
 CCEvent ComputeContext::createUserEvent(CCerror& error)
 {
-    cl_int clError;
-    cl_event event = clCreateUserEvent(m_clContext, &clError);
-    error = clToComputeContextError(clError);
+    cl_event event = clCreateUserEvent(m_clContext, &error);
     return event;
 }
 
 CCProgram ComputeContext::createProgram(const String& kernelSource, CCerror& error)
 {
-    cl_program clProgram;
-    cl_int clError;
     const char* kernelSourcePtr = kernelSource.utf8().data();
 
-    clProgram = clCreateProgramWithSource(m_clContext, 1, &kernelSourcePtr, 0, &clError);
-    error = clToComputeContextError(clError);
-
+    cl_program clProgram = clCreateProgramWithSource(m_clContext, 1, &kernelSourcePtr, 0, &error);
     return clProgram;
 }
 
@@ -280,24 +250,21 @@ CCerror ComputeContext::buildProgram(CCProgram program, const Vector<CCDeviceID>
     cl_int clError = clBuildProgram(program, devices.size(), devices.data(), optionsStr, notifyFunction, userData);
     free(optionsStr);
     optionsStr = 0;
-    return clToComputeContextError(clError);
+    return clError;
 }
 
 CCerror ComputeContext::setKernelArg(CCKernel kernel, CCuint argIndex, size_t argSize, const void* argValue)
 {
     cl_int clError = clSetKernelArg(kernel, argIndex, argSize, argValue);
-    return clToComputeContextError(clError);
+    return clError;
 }
 
 PlatformComputeObject ComputeContext::createBuffer(int memoryFlags, size_t size, void* data, CCerror& error)
 {
     cl_mem clMemoryBuffer;
-    cl_int clError;
     cl_int clMemoryFlags = memoryFlags;
 
-    clMemoryBuffer = clCreateBuffer(m_clContext, clMemoryFlags, size, data, &clError);
-    error = clToComputeContextError(clError);
-
+    clMemoryBuffer = clCreateBuffer(m_clContext, clMemoryFlags, size, data, &error);
     return clMemoryBuffer;
 }
 
@@ -306,11 +273,8 @@ PlatformComputeObject ComputeContext::createSubBuffer(PlatformComputeObject buff
 {
     cl_int clMemoryFlags = memoryFlags;
     cl_buffer_create_type clBufferCreateType = bufferCreatetype;
-    cl_int clError = 0;
 
-    cl_mem clMemoryBuffer = clCreateSubBuffer(buffer, clMemoryFlags, clBufferCreateType, bufferCreateInfo, &clError);
-    error = clToComputeContextError(clError);
-
+    cl_mem clMemoryBuffer = clCreateSubBuffer(buffer, clMemoryFlags, clBufferCreateType, bufferCreateInfo, &error);
     return clMemoryBuffer;
 }
 
@@ -318,7 +282,6 @@ PlatformComputeObject ComputeContext::createSubBuffer(PlatformComputeObject buff
 PlatformComputeObject ComputeContext::createImage2D(int memoryFlags, int width, int height, const CCImageFormat& imageFormat, void* data, CCerror& error)
 {
     cl_mem clMemoryImage = 0;
-    cl_int memoryImageError = CL_SUCCESS;
     cl_int clMemoryFlags = memoryFlags;
 
 #if defined(CL_VERSION_1_2)
@@ -331,63 +294,49 @@ PlatformComputeObject ComputeContext::createImage2D(int memoryFlags, int width, 
     // This is either a bug on the spec, or a bug in our implementation.
     clImageDescriptor.image_row_pitch = 0;
     clMemoryImage = clCreateImage(m_clContext, clMemoryFlags, &imageFormat, &clImageDescriptor,
-        data, &memoryImageError);
+        data, &error);
 #else
     clMemoryImage = clCreateImage2D(m_clContext, clMemoryFlags, &imageFormat, width, height, 0,
-        data, &memoryImageError);
+        data, &error);
 #endif
 
-    error = clToComputeContextError(memoryImageError);
     return clMemoryImage;
 }
 
 PlatformComputeObject ComputeContext::createFromGLBuffer(int type, int bufferId, CCerror& error)
 {
     cl_mem clMemoryImage = 0;
-    cl_int clError;
     cl_int memoryType = computeMemoryTypeToCL(type);
 
-    clMemoryImage = clCreateFromGLBuffer(m_clContext, memoryType, bufferId, &clError);
-    error = clToComputeContextError(clError);
-
+    clMemoryImage = clCreateFromGLBuffer(m_clContext, memoryType, bufferId, &error);
     return clMemoryImage;
 }
 
 PlatformComputeObject ComputeContext::createFromGLRenderbuffer(int type, GC3Dint renderbufferId, CCerror& error)
 {
     cl_mem clMemory;
-    cl_int clError;
     cl_int memoryType = computeMemoryTypeToCL(type);
 
-    clMemory = clCreateFromGLRenderbuffer(m_clContext, memoryType, renderbufferId, &clError);
-    error = clToComputeContextError(clError);
-
+    clMemory = clCreateFromGLRenderbuffer(m_clContext, memoryType, renderbufferId, &error);
     return clMemory;
 }
 
 CCSampler ComputeContext::createSampler(bool normalizedCoords, int addressingMode, int filterMode, CCerror& error)
 {
-    cl_int clError;
-    cl_sampler sampler = clCreateSampler(m_clContext, normalizedCoords, addressingMode, filterMode, &clError);
-    error = clToComputeContextError(clError);
-
+    cl_sampler sampler = clCreateSampler(m_clContext, normalizedCoords, addressingMode, filterMode, &error);
     return sampler;
 }
 
 PlatformComputeObject ComputeContext::createFromGLTexture2D(int type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror& error)
 {
     cl_int memoryType = computeMemoryTypeToCL(type);
-    cl_int clError;
     PlatformComputeObject memory;
 
 #if defined(CL_VERSION_1_2)
-    memory = clCreateFromGLTexture(m_clContext, memoryType, textureTarget, mipLevel, texture, &clError);
+    memory = clCreateFromGLTexture(m_clContext, memoryType, textureTarget, mipLevel, texture, &error);
 #else
-    memory = clCreateFromGLTexture2D(m_clContext, memoryType, textureTarget, mipLevel, texture, &clError);
+    memory = clCreateFromGLTexture2D(m_clContext, memoryType, textureTarget, mipLevel, texture, &error);
 #endif
-
-    error = clToComputeContextError(clError);
-
     return memory;
 }
 
@@ -396,127 +345,126 @@ CCerror ComputeContext::supportedImageFormats(int memoryFlags, int imageType, Ve
     cl_uint numberOfSupportedImageFormats = 0;
     cl_int clError = clGetSupportedImageFormats(m_clContext, memoryFlags, imageType, 0, 0, &numberOfSupportedImageFormats);
     if (clError != CL_SUCCESS)
-        return clToComputeContextError(clError);
+        return clError;
 
     imageFormatsOut.reserveInitialCapacity(numberOfSupportedImageFormats);
 
     clError = clGetSupportedImageFormats(m_clContext, memoryFlags, imageType, numberOfSupportedImageFormats, imageFormatsOut.data(), 0);
-
-    return clToComputeContextError(clError);
+    return clError;
 }
 
 CCerror ComputeContext::getDeviceInfo(CCDeviceID deviceID, int infoType, size_t sizeOfData, void* data)
 {
    cl_int error = clGetDeviceInfo(deviceID, infoType, sizeOfData, data, 0 /*param_value_size_ret)*/);
-   return clToComputeContextError(error);
+   return error;
 }
 
 CCerror ComputeContext::getPlatformInfo(CCPlatformID platformID, int infoType, size_t sizeOfData, void* data)
 {
    cl_int error = clGetPlatformInfo(platformID, infoType, sizeOfData, data, 0 /*param_value_size_ret)*/);
-   return clToComputeContextError(error);
+   return error;
 }
 
 CCerror ComputeContext::getProgramInfo(CCProgram program, int infoType, size_t sizeOfData, void* data, size_t* actualSizeOfData)
 {
    cl_int error = clGetProgramInfo(program, infoType, sizeOfData, data, actualSizeOfData);
-   return clToComputeContextError(error);
+   return error;
 }
 
 CCerror ComputeContext::getBuildInfo(CCProgram program, CCDeviceID device, int infoType, size_t sizeOfData, void* data)
 {
     cl_program_build_info clProgramBuildInfoType = infoType;
     cl_int error = clGetProgramBuildInfo(program, device, clProgramBuildInfoType, sizeOfData, data, 0);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::getCommandQueueInfo(CCCommandQueue queue, int infoType, size_t sizeOfData, void* data)
 {
    cl_int error = clGetCommandQueueInfo(queue, infoType, sizeOfData, data, 0);
-   return clToComputeContextError(error);
+   return error;
 }
 
 CCerror ComputeContext::getEventInfo(CCEvent event, int infoType, size_t sizeOfData, void* data)
 {
     cl_int error = clGetEventInfo(event, infoType, sizeOfData, data, 0);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::getEventProfilingInfo(CCEvent event, int infoType, size_t sizeOfData, void* data)
 {
     cl_int error = clGetEventProfilingInfo(event, infoType, sizeOfData, data, 0);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::getImageInfo(PlatformComputeObject image, int infoType, size_t sizeOfData, void* data)
 {
     cl_image_info clImageInfoType = infoType;
     cl_int error = clGetImageInfo(image, clImageInfoType, sizeOfData, data, 0);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::getGLtextureInfo(PlatformComputeObject image, int textureInfoType, size_t sizeOfData, void* data)
 {
     cl_gl_texture_info clglTextureInfoType = textureInfoType;
     cl_int error = clGetGLTextureInfo(image, clglTextureInfoType, sizeOfData, data, 0);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::getKernelInfo(CCKernel kernel, int infoType, size_t sizeOfData, void* data)
 {
     cl_kernel_info clKernelInfoType = infoType;
     cl_int error = clGetKernelInfo(kernel, clKernelInfoType, sizeOfData, data, 0);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::getWorkGroupInfo(CCKernel kernel, CCDeviceID device, int infoType, size_t sizeOfData, void* data)
 {
     cl_kernel_work_group_info clKernelWorkGroupInfoType = infoType;
     cl_int error = clGetKernelWorkGroupInfo(kernel, device, clKernelWorkGroupInfoType, sizeOfData, data, 0);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::getSamplerInfo(CCSampler sampler, int infoType, size_t sizeOfData, void* data)
 {
     cl_sampler_info clSamplerInfoType = infoType;
     cl_int error = clGetSamplerInfo(sampler, clSamplerInfoType, sizeOfData, data, 0);
-    return clToComputeContextError(error);
+    return error;
 }
 CCerror ComputeContext::getMemoryObjectInfo(PlatformComputeObject memObject, int infoType, size_t sizeOfData, void* data)
 {
     cl_mem_info clMemInfoType = infoType;
     cl_int error = clGetMemObjectInfo(memObject, clMemInfoType, sizeOfData, data, 0);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::releaseKernel(CCKernel kernel)
 {
     cl_int error = clReleaseKernel(kernel);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::releaseEvent(CCEvent ccevent)
 {
     cl_int error = clReleaseEvent(ccevent);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::releaseSampler(CCSampler sampler)
 {
     cl_int error = clReleaseSampler(sampler);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::releaseMemoryObject(PlatformComputeObject memmory)
 {
     cl_int error = clReleaseMemObject(memmory);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::releaseProgram(CCProgram program)
 {
     cl_int error = clReleaseProgram(program);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueNDRangeKernel(CCCommandQueue commandQueue, CCKernel kernelID, int workItemDimensions,
@@ -524,40 +472,35 @@ CCerror ComputeContext::enqueueNDRangeKernel(CCCommandQueue commandQueue, CCKern
 {
     cl_int error = clEnqueueNDRangeKernel(commandQueue, kernelID, workItemDimensions,
         globalWorkOffset, globalWorkSize, localWorkSize, eventWaitListLength, eventWaitList, event);
-
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueBarrier(CCCommandQueue commandQueue)
 {
     cl_int error;
-
 #if defined(CL_VERSION_1_2)
     error = clEnqueueBarrierWithWaitList(commandQueue, 0 /*eventWaitListLength*/, 0 /*eventsWaitList*/, 0 /*event*/);
 #else
     error = clEnqueueBarrier(commandQueue);
 #endif
-
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueMarker(CCCommandQueue commandQueue, CCEvent* event)
 {
     cl_int error;
-
 #if defined(CL_VERSION_1_2)
     error = clEnqueueMarkerWithWaitList(commandQueue, 0 /*eventsWaitListLength*/, 0 /*eventsWaitList*/, event);
 #else
     error = clEnqueueMarker(commandQueue, event);
 #endif
-
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueTask(CCCommandQueue commandQueue, CCKernel kernelID, int eventsWaitListLength, CCEvent* eventsWaitList, CCEvent* event)
 {
     cl_int error = clEnqueueTask(commandQueue, kernelID, eventsWaitListLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueWriteBuffer(CCCommandQueue commandQueue, PlatformComputeObject buffer, bool blockingWrite,
@@ -565,7 +508,7 @@ CCerror ComputeContext::enqueueWriteBuffer(CCCommandQueue commandQueue, Platform
 {
     cl_int error = clEnqueueWriteBuffer(commandQueue, buffer, blockingWrite, offset,
         bufferSize, baseAddress, eventsWaitListLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueWriteBufferRect(CCCommandQueue commandQueue, PlatformComputeObject buffer, bool blockingWrite,
@@ -574,14 +517,14 @@ CCerror ComputeContext::enqueueWriteBufferRect(CCCommandQueue commandQueue, Plat
 {
     cl_int error = clEnqueueWriteBufferRect(commandQueue, buffer, blockingWrite, bufferOriginArray, hostOriginArray, regionArray,
         bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, baseAddress, eventsLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueReadBuffer(CCCommandQueue commandQueue, PlatformComputeObject buffer, bool blockingRead, int offset, int bufferSize, void* baseAddress, unsigned eventsWaitListLength, CCEvent* eventsWaitList, CCEvent* event)
 {
     cl_int error = clEnqueueReadBuffer(commandQueue, buffer, blockingRead, offset,
         bufferSize, baseAddress, eventsWaitListLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueReadBufferRect(CCCommandQueue commandQueue, PlatformComputeObject buffer, bool blockingRead,
@@ -590,33 +533,33 @@ CCerror ComputeContext::enqueueReadBufferRect(CCCommandQueue commandQueue, Platf
 {
     cl_int error = clEnqueueReadBufferRect(commandQueue, buffer, blockingRead, bufferOriginArray, hostOriginArray, regionArray,
         bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, baseAddress, eventsLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueReadImage(CCCommandQueue commandQueue, PlatformComputeObject image, bool blockingRead, size_t* originArray,
     size_t* regionArray, int rowPitch, int slicePitch, void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
 {
     cl_int error = clEnqueueReadImage(commandQueue, image, blockingRead, originArray, regionArray, rowPitch, slicePitch, baseAddress, eventsLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueWriteImage(CCCommandQueue commandQueue, PlatformComputeObject image, bool blockingWrite, size_t* originArray,
     size_t* regionArray, int rowPitch, int slicePitch, void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
 {
     cl_int error = clEnqueueWriteImage(commandQueue, image, blockingWrite, originArray, regionArray, rowPitch, slicePitch, baseAddress, eventsLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueAcquireGLObjects(CCCommandQueue commandQueue, unsigned numberOfObjects, PlatformComputeObject* objects, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
 {
     cl_int error = clEnqueueAcquireGLObjects(commandQueue, numberOfObjects, objects, eventsLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueReleaseGLObjects(CCCommandQueue commandQueue, unsigned numberOfObjects, PlatformComputeObject* objects, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
 {
     cl_int error = clEnqueueReleaseGLObjects(commandQueue, numberOfObjects, objects, eventsLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueCopyImage(CCCommandQueue commandQueue, PlatformComputeObject originImage, PlatformComputeObject targetImage,
@@ -624,7 +567,7 @@ CCerror ComputeContext::enqueueCopyImage(CCCommandQueue commandQueue, PlatformCo
 {
     cl_int error = clEnqueueCopyImage(commandQueue, originImage, targetImage, sourceOriginArray, targetOriginArray, regionArray,
         eventsLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueCopyImageToBuffer(CCCommandQueue commandQueue, PlatformComputeObject sourceImage, PlatformComputeObject targetBuffer,
@@ -632,7 +575,7 @@ CCerror ComputeContext::enqueueCopyImageToBuffer(CCCommandQueue commandQueue, Pl
 {
     cl_int error = clEnqueueCopyImageToBuffer(commandQueue, sourceImage, targetBuffer, sourceOriginArray, regionArray, targetOffset,
         eventsLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueCopyBufferToImage(CCCommandQueue commandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetImage,
@@ -640,7 +583,7 @@ CCerror ComputeContext::enqueueCopyBufferToImage(CCCommandQueue commandQueue, Pl
 {
     cl_int error = clEnqueueCopyBufferToImage(commandQueue, sourceBuffer, targetImage, srcOffset, targetOriginArray, regionArray,
         eventsLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueCopyBuffer(CCCommandQueue commandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
@@ -648,7 +591,7 @@ CCerror ComputeContext::enqueueCopyBuffer(CCCommandQueue commandQueue, PlatformC
 {
     cl_int error = clEnqueueCopyBuffer(commandQueue, sourceBuffer, targetBuffer, sourceOffset, targetOffset, sizeInBytes,
         eventsLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::enqueueCopyBufferRect(CCCommandQueue commandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
@@ -657,33 +600,30 @@ CCerror ComputeContext::enqueueCopyBufferRect(CCCommandQueue commandQueue, Platf
 {
     cl_int error = clEnqueueCopyBufferRect(commandQueue, sourceBuffer, targetBuffer, sourceOriginArray, targetOriginArray, regionArray,
         sourceRowPitch, sourceSlicePitch, targetRowPitch, targetSlicePitch, eventsLength, eventsWaitList, event);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::releaseCommandQueue(CCCommandQueue commandQueue)
 {
     cl_int error = clReleaseCommandQueue(commandQueue);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::finishCommandQueue(CCCommandQueue commandQueue)
 {
     cl_int error = clFinish(commandQueue);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCerror ComputeContext::flushCommandQueue(CCCommandQueue commandQueue)
 {
     cl_int error = clFlush(commandQueue);
-    return clToComputeContextError(error);
+    return error;
 }
 
 CCKernel ComputeContext::createKernel(CCProgram program, const String& kernelName, CCerror& error)
 {
-    cl_int clError;
-    cl_kernel kernel = clCreateKernel(program, kernelName.utf8().data(), &clError);
-
-    error = clToComputeContextError(clError);
+    cl_kernel kernel = clCreateKernel(program, kernelName.utf8().data(), &error);
     return kernel;
 }
 
@@ -691,22 +631,18 @@ Vector<CCKernel> ComputeContext::createKernelsInProgram(CCProgram program, CCerr
 {
     cl_uint numberOfKernels = 0;
     Vector<cl_kernel> kernels;
-    cl_int clError = clCreateKernelsInProgram(program, 0, 0, &numberOfKernels);
-    if (clError != CL_SUCCESS) {
-        error = clToComputeContextError(clError);
+    error = clCreateKernelsInProgram(program, 0, 0, &numberOfKernels);
+    if (error != CL_SUCCESS)
         return kernels;
-    }
 
     if (!numberOfKernels) {
         // FIXME: Having '0' kernels is an error?
-        error = clToComputeContextError(clError);
         return kernels;
     }
 
     kernels.reserveInitialCapacity(numberOfKernels);
 
-    clError = clCreateKernelsInProgram(program, numberOfKernels, kernels.data(), 0);
-    error = clToComputeContextError(clError);
+    error = clCreateKernelsInProgram(program, numberOfKernels, kernels.data(), 0);
     return kernels;
 }
 
