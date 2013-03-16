@@ -311,12 +311,14 @@ public:
         PROFILING_COMMAND_SUBMIT = 0x1281,
         PROFILING_COMMAND_START = 0x1282,
         PROFILING_COMMAND_END = 0x1283,
+
         GL_OBJECT_BUFFER = 0x2000,
         GL_OBJECT_TEXTURE2D = 0x2001,
         GL_OBJECT_RENDERBUFFER = 0x2003,
         GL_TEXTURE_TARGET = 0x2004,
         GL_MIPMAP_LEVEL = 0x2005,
 
+        // FIXME: All enum items below are not COMPILE_ASSERT checked.
         // Scalar types; may be bitwise-OR'ed with a vector type
         CHAR   = 0,
         UCHAR  = 1,
