@@ -212,7 +212,7 @@ interface [
     const unsigned long   PROGRAM_BUILD_OPTIONS                    = 0x1182;
     const unsigned long   PROGRAM_BUILD_LOG                        = 0x1183;
     const unsigned long   BUILD_SUCCESS                            = 0;
-    const unsigned long   BUILD_NONE                               = 1;
+    const unsigned long   BUILD_NONE                               = -1;
     const unsigned long   BUILD_ERROR                              = -2;
     const unsigned long   BUILD_IN_PROGRESS                        = -3;
     const unsigned long   KERNEL_FUNCTION_NAME                     = 0x1190;

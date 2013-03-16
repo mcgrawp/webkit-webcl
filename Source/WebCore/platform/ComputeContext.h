@@ -263,7 +263,7 @@ public:
         PROGRAM_BUILD_OPTIONS = 0x1182,
         PROGRAM_BUILD_LOG = 0x1183,
         BUILD_SUCCESS = 0,
-        BUILD_NONE = 1,
+        BUILD_NONE = -1,
         BUILD_ERROR = -2,
         BUILD_IN_PROGRESS = -3,
         KERNEL_FUNCTION_NAME = 0x1190,
