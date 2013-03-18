@@ -40,13 +40,23 @@ WebCLImage::~WebCLImage()
 {
 }
 
-PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, PlatformComputeObject image, bool isShared = false)
+PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, int flags, int width, int height, const CCImageFormat& format, void* data, ExceptionCode& ec)
 {
-    return adoptRef(new WebCLImage(context, image, isShared));
+    CCerror createImage2DError;
+    PlatformComputeObject ccMemoryImage = context->computeContext()->createImage2D(flags, width, height, format, data, createImage2DError);
+    if (createImage2DError != ComputeContext::SUCCESS) {
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(createImage2DError);
+        return 0;
+    }
+
+    return adoptRef(new WebCLImage(context, ccMemoryImage, width, height, format));
 }
 
-WebCLImage::WebCLImage(WebCLContext* context, PlatformComputeObject image, bool isShared)
-    : WebCLMemoryObject(context, image, isShared)
+WebCLImage::WebCLImage(WebCLContext* context, PlatformComputeObject image, int width, int height, const CCImageFormat& format)
+    : WebCLMemoryObject(context, image, false)
+    , m_width(width)
+    , m_height(height)
+    , m_format(format)
 {
 }
 
@@ -88,42 +98,11 @@ PassRefPtr<WebCLImageDescriptor> WebCLImage::getInfo(ExceptionCode& ec)
         return 0;
     }
 
-    int iflag = 0;
-    RefPtr<WebCLImageDescriptor> objectWebCLImageDescriptor = WebCLImageDescriptor::create();
-    CCerror err = 0;
-    CCImageFormat imageFormat;
-    err = ComputeContext::getImageInfo(m_CCMemoryObject, ComputeContext::IMAGE_FORMAT, sizeof(CCImageFormat), &imageFormat);
-    if (err == CL_SUCCESS) {
-        iflag = 1;
-        objectWebCLImageDescriptor->setChannelOrder(imageFormat.image_channel_order);
-        objectWebCLImageDescriptor->setChannelType(imageFormat.image_channel_data_type);
-    }
+    RefPtr<WebCLImageDescriptor> imageDescriptor = WebCLImageDescriptor::create(m_format);
+    imageDescriptor->setWidth(m_width);
+    imageDescriptor->setHeight(m_height);
 
-    size_t imageInfoValue = 0;
-    err = ComputeContext::getImageInfo(m_CCMemoryObject, ComputeContext::IMAGE_WIDTH, sizeof(size_t), &imageInfoValue);
-    if (err == CL_SUCCESS && iflag == 1)
-        objectWebCLImageDescriptor->setWidth((long)imageInfoValue);
-    else
-        iflag = 0;
-
-    err = ComputeContext::getImageInfo(m_CCMemoryObject, ComputeContext::IMAGE_HEIGHT, sizeof(size_t), &imageInfoValue);
-    if (err == CL_SUCCESS && iflag == 1)
-        objectWebCLImageDescriptor->setHeight((long)imageInfoValue);
-    else
-        iflag = 0;
-
-    err = ComputeContext::getImageInfo(m_CCMemoryObject, ComputeContext::IMAGE_ROW_PITCH, sizeof(size_t), &imageInfoValue);
-    if (err == CL_SUCCESS && iflag == 1)
-        objectWebCLImageDescriptor->setRowPitch((long)imageInfoValue);
-    else
-        iflag = 0;
-
-    if (err == CL_SUCCESS && iflag == 1)
-        return objectWebCLImageDescriptor;
-
-    ASSERT(err != CL_SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-    return 0;
+    return imageDescriptor.release();
 }
 
 } // namespace WebCore

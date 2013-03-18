@@ -213,8 +213,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, HTMLCanvasEl
 }
 
 
-PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(int flags, int width, int height, const CCImageFormat&
-    imageFormat, void *data, ExceptionCode& ec)
+PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(int flags, int width, int height, const CCImageFormat& imageFormat, void *data, ExceptionCode& ec)
 {
     if (!m_clContext) {
         ec = WebCLException::INVALID_CONTEXT;
@@ -233,15 +232,8 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(int flags, int width, int
     if (data)
         flags |= ComputeContext::MEM_COPY_HOST_PTR;
 
-    CCerror createImage2DError;
-    PlatformComputeObject ccMemoryImage = m_computeContext->createImage2D(flags, width, height, imageFormat, data, createImage2DError);
-    if (!ccMemoryImage) {
-        ASSERT(createImage2DError != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(createImage2DError);
-        return 0;
-    }
 
-    RefPtr<WebCLImage> imageObject = WebCLImage::create(this, ccMemoryImage, false);
+    RefPtr<WebCLImage> imageObject = WebCLImage::create(this, flags, width, height, imageFormat, data, ec);
     return imageObject.release();
 }
 
@@ -397,6 +389,12 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderBuffer(int flags, WebGLRe
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
+
+    UNUSED_PARAM(flags);
+    UNUSED_PARAM(renderBuffer);
+    UNUSED_PARAM(ec);
+
+    /*FIXME: This method is not following the spec
     GLuint renderBufferID = 0;
     if (renderBuffer)
         renderBufferID =  renderBuffer->getInternalFormat();
@@ -413,8 +411,10 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderBuffer(int flags, WebGLRe
         return 0;
     }
     RefPtr<WebCLImage> imageObject = WebCLImage::create(this, ccMemoryID, true);
-    return imageObject.release();
+    return imageObject.release();*/
+    return WebCLImage::create();
 }
+
 
 PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCoords, int addressingMode, int filterMode, ExceptionCode& ec)
 {

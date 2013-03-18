@@ -43,13 +43,23 @@ class WebCL;
 class WebCLImage : public WebCLMemoryObject {
 public:
     ~WebCLImage();
-    static PassRefPtr<WebCLImage> create(WebCLContext*, PlatformComputeObject, bool);
+    static PassRefPtr<WebCLImage> create(WebCLContext*, int, int, int, const CCImageFormat&, void*, ExceptionCode&);
+    //FIXME: Remove this method when WebCL WebGL interop become an extension
+    static PassRefPtr<WebCLImage> create() { return adoptRef(new WebCLImage()); }
+
     PlatformComputeObject getCLImage();
     PassRefPtr<WebCLImageDescriptor> getInfo(ExceptionCode&);
     int getGLtextureInfo(int, ExceptionCode&);
 
 private:
-    WebCLImage(WebCLContext*, PlatformComputeObject, bool);
+    WebCLImage(WebCLContext*, PlatformComputeObject image, int width, int height, const CCImageFormat& format);
+    WebCLImage()
+        : WebCLMemoryObject(0, 0, false)
+        { }
+
+    int m_width;
+    int m_height;
+    CCImageFormat m_format;
 };
 
 } // namespace WebCore
