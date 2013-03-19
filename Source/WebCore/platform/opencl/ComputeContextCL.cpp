@@ -460,20 +460,17 @@ CCEvent ComputeContext::createUserEvent(CCerror& error)
 
 CCProgram ComputeContext::createProgram(const String& kernelSource, CCerror& error)
 {
-    const char* kernelSourcePtr = kernelSource.utf8().data();
-
+    const CString& kernelSourceCString = kernelSource.utf8();
+    const char* kernelSourcePtr = kernelSourceCString.data();
     cl_program clProgram = clCreateProgramWithSource(m_clContext, 1, &kernelSourcePtr, 0, &error);
     return clProgram;
 }
 
 CCerror ComputeContext::buildProgram(CCProgram program, const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, void* userData)
 {
-    // FIXME :: Usage of strdup ensures it works on platforms. Need to investigate on first 8 char string getting corrupted
-    // without strdup in certain platforms.
-    char* optionsStr = strdup(options.utf8().data());
-    cl_int clError = clBuildProgram(program, devices.size(), devices.data(), optionsStr, notifyFunction, userData);
-    free(optionsStr);
-    optionsStr = 0;
+    const CString& optionsCString = options.utf8();
+    const char* optionsPtr = optionsCString.data();
+    cl_int clError = clBuildProgram(program, devices.size(), devices.data(), optionsPtr, notifyFunction, userData);
     return clError;
 }
 
