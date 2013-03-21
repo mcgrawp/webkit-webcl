@@ -98,11 +98,11 @@ WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
+    CCerror err = ComputeContext::SUCCESS;
     switch (kernelInfo) {
     case ComputeContext::KERNEL_FUNCTION_NAME:
         return WebCLGetInfo(m_kernelName);
     case ComputeContext::KERNEL_NUM_ARGS: {
-        CCerror err = ComputeContext::SUCCESS;
         CCuint numberOfArgs = 0;
         err = ComputeContext::getKernelInfo(m_clKernel, kernelInfo, sizeof(CCuint), &numberOfArgs);
         if (err == CL_SUCCESS)
@@ -118,7 +118,9 @@ WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    ASSERT_NOT_REACHED();
+    ASSERT(err != ComputeContext::SUCCESS);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    return WebCLGetInfo();
 }
 
 WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, int paramName, ExceptionCode& ec)
