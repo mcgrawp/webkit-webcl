@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -258,24 +258,6 @@ interface [
     const unsigned long   PROFILING_COMMAND_START                  = 0x1282;
     const unsigned long   PROFILING_COMMAND_END                    = 0x1283;
 
-    const unsigned long CHAR                                       = 0;
-    const unsigned long UCHAR                                      = 1;
-    const unsigned long SHORT                                      = 2;
-    const unsigned long USHORT                                     = 3;
-    const unsigned long INT                                        = 4;
-    const unsigned long UINT                                       = 5;
-    const unsigned long LONG                                       = 6;
-    const unsigned long ULONG                                      = 7;
-    const unsigned long FLOAT_KERNEL_ARG                           = 8;
-    const unsigned long HALF                                       = 9;
-    const unsigned long DOUBLE                                     = 10;
-
-    const unsigned long VEC2                                       = 0x0100;
-    const unsigned long VEC3                                       = 0x0200;
-    const unsigned long VEC4                                       = 0x0400;
-    const unsigned long VEC8                                       = 0x0800;
-    const unsigned long VEC16                                      = 0x1000;
-
     const unsigned long  GL_OBJECT_BUFFER                          = 0x2000;
     const unsigned long  GL_OBJECT_TEXTURE2D                       = 0x2001;
     const unsigned long  GL_OBJECT_RENDERBUFFER                    = 0x2003;
@@ -286,7 +268,7 @@ interface [
 
     void waitForEvents(in sequence<WebCLEvent> events) raises(DOMException);
 
-    [StrictTypeChecking, Custom] WebCLContext createContext(in [Optional] WebCLContextProperties webclContextProperties )raises(DOMException);
+    [StrictTypeChecking, Custom] WebCLContext createContext(in [Optional] WebCLContextProperties webclContextProperties) raises(DOMException);
 
     [StrictTypeChecking, Custom] void getSupportedExtensions() raises(DOMException);
 };
