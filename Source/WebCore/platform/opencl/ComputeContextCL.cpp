@@ -568,8 +568,10 @@ CCerror ComputeContext::supportedImageFormats(int memoryFlags, int imageType, Ve
     if (clError != CL_SUCCESS)
         return clError;
 
-    imageFormatsOut.reserveInitialCapacity(numberOfSupportedImageFormats);
-
+    if (!imageFormatsOut.tryReserveCapacity(numberOfSupportedImageFormats))
+        return OUT_OF_HOST_MEMORY;
+    imageFormatsOut.resize(numberOfSupportedImageFormats);
+    
     clError = clGetSupportedImageFormats(m_clContext, memoryFlags, imageType, numberOfSupportedImageFormats, imageFormatsOut.data(), 0);
     return clError;
 }
@@ -860,8 +862,11 @@ Vector<CCKernel> ComputeContext::createKernelsInProgram(CCProgram program, CCerr
         // FIXME: Having '0' kernels is an error?
         return kernels;
     }
-
-    kernels.reserveInitialCapacity(numberOfKernels);
+    if (!kernels.tryReserveCapacity(numberOfKernels)) {
+        error = OUT_OF_HOST_MEMORY;
+        return kernels;
+    }
+    kernels.resize(numberOfKernels);
 
     error = clCreateKernelsInProgram(program, numberOfKernels, kernels.data(), 0);
     return kernels;
