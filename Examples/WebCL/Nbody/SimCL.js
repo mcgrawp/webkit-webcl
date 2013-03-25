@@ -129,14 +129,13 @@ function SimulateCL(cl) {
     var localMemSize = localWorkSize[0] * POS_ATTRIB_SIZE * Float32Array.BYTES_PER_ELEMENT;
     kernel.setArg(0, curPosBuffer);
     kernel.setArg(1, curVelBuffer);
-    kernel.setArg( 2, NBODY, cl.LONG);
-    kernel.setArg(3, DT, cl.FLOAT_KERNEL_ARG);
-    kernel.setArg(4, EPSSQR, cl.LONG);
+    kernel.setArg(2, NBODY, WebCLKernelArgumentTypes.LONG);
+    kernel.setArg(3, DT, WebCLKernelArgumentTypes.FLOAT);
+    kernel.setArg(4, EPSSQR, WebCLKernelArgumentTypes.LONG);
     kernel.setArg(5, localMemSize);  // __local: val (ignored) and size
     kernel.setArg(6, nxtPosBuffer);
     kernel.setArg(7, nxtVelBuffer);
     queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize );
-
     queue.finish();
     queue.enqueueCopyBuffer(nxtPosBuffer, curPosBuffer, 0, 0, bufferSize);
     queue.enqueueCopyBuffer(nxtVelBuffer, curVelBuffer, 0, 0, bufferSize);

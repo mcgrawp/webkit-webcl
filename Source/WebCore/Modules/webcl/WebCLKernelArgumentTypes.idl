@@ -25,9 +25,9 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEBCL,
-] WebCLKernelArgumentTypes {
+] interface WebCLKernelArgumentTypes {
     // Scalar types; may be bitwise-OR'ed with a vector type
     const unsigned long CHAR   = 0;
     const unsigned long UCHAR  = 1;

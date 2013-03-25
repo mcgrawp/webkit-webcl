@@ -214,20 +214,20 @@ function SimulateCL(cl)
     var dimx = 16;
     var dimy = 0;
 
-
+    var kernelArgType = WebCLKernelArgumentTypes;
     kernel.setArg(0, initPosBuffer);
     kernel.setArg(1, curNorBuffer);
     kernel.setArg(2, curPosBuffer);
-    kernel.setArg(3, dimx, cl.LONG);
-    kernel.setArg(4, dimy, cl.LONG);
-    kernel.setArg(5, userData.frequency, cl.FLOAT_KERNEL_ARG);
-    kernel.setArg(6, userData.amplitude, cl.FLOAT_KERNEL_ARG);
-    kernel.setArg(7, userData.phase, cl.FLOAT_KERNEL_ARG);
-    kernel.setArg(8, userData.lacunarity, cl.FLOAT_KERNEL_ARG);
-    kernel.setArg(9, userData.increment, cl.FLOAT_KERNEL_ARG);
-    kernel.setArg(10, userData.octaves, cl.FLOAT_KERNEL_ARG);
-    kernel.setArg(11, userData.roughness, cl.FLOAT_KERNEL_ARG);
-    kernel.setArg(12, userData.nVertices, cl.LONG);
+    kernel.setArg(3, dimx, kernelArgType.LONG);
+    kernel.setArg(4, dimy, kernelArgType.LONG);
+    kernel.setArg(5, userData.frequency, kernelArgType.FLOAT);
+    kernel.setArg(6, userData.amplitude, kernelArgType.FLOAT);
+    kernel.setArg(7, userData.phase, kernelArgType.FLOAT);
+    kernel.setArg(8, userData.lacunarity, kernelArgType.FLOAT);
+    kernel.setArg(9, userData.increment, kernelArgType.FLOAT);
+    kernel.setArg(10, userData.octaves, kernelArgType.FLOAT);
+    kernel.setArg(11, userData.roughness, kernelArgType.FLOAT);
+    kernel.setArg(12, userData.nVertices, kernelArgType.LONG);
 
     //queue.enqueueNDRangeKernel(kernel, new Int32Array(0, 0), globalWorkSize, localWorkSize);
     queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, null, null);
