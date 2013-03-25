@@ -27,6 +27,7 @@
 
 [
     Conditional=WEBCL,
+    DoNotCheckConstants
 ] interface WebCLKernelArgumentTypes {
     // Scalar types; may be bitwise-OR'ed with a vector type
     const unsigned long CHAR   = 0;
