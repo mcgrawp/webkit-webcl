@@ -17,6 +17,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/webaudio"
     "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/Modules/websockets"
+    "${WEBCORE_DIR}/Modules/webcl"
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/bindings"
     "${WEBCORE_DIR}/bindings/generic"
@@ -87,6 +88,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/svg/graphics/filters"
     "${WEBCORE_DIR}/svg/properties"
     "${WEBCORE_DIR}/websockets"
+    "${WEBCORE_DIR}/webcl"
     "${WEBCORE_DIR}/workers"
     "${WEBCORE_DIR}/xml"
     "${WEBCORE_DIR}/xml/parser"
@@ -128,6 +130,7 @@ set(WebCore_IDL_INCLUDES
     Modules/speech
     Modules/vibration
     Modules/webaudio
+    Modules/webcl
     Modules/webdatabase
     Modules/websockets
     bindings/generic
@@ -2929,6 +2932,56 @@ if (WTF_USE_3D_GRAPHICS)
         platform/graphics/gpu/DrawingBuffer.cpp
     )
 endif ()
+
+if (ENABLE_WEBCL)
+    list(APPEND WebCore_SOURCES
+        Modules/webcl/DOMWindowWebCLEnvironment.cpp
+        Modules/webcl/WebCLMemoryObject.cpp
+        Modules/webcl/WebCLBuffer.cpp
+        Modules/webcl/WebCLCommandQueue.cpp
+        Modules/webcl/WebCLContext.cpp
+        Modules/webcl/WebCLContextProperties.cpp
+        Modules/webcl/WebCL.cpp
+        Modules/webcl/WebCLDevice.cpp
+        Modules/webcl/WebCLEvent.cpp
+        Modules/webcl/WebCLException.cpp
+        Modules/webcl/WebCLGetInfo.cpp
+        Modules/webcl/WebCLGLObjectInfo.cpp
+        Modules/webcl/WebCLImage.cpp
+        Modules/webcl/WebCLImageDescriptor.cpp
+        Modules/webcl/WebCLKernelArgumentTypes.cpp
+        Modules/webcl/WebCLKernel.cpp
+        Modules/webcl/WebCLKernelTypes.cpp
+        Modules/webcl/WebCLPlatform.cpp
+        Modules/webcl/WebCLProgram.cpp
+        Modules/webcl/WebCLSampler.cpp
+        Modules/webcl/WorkerContextWebCLEnvironment.cpp
+        Modules/webcl/WebCLInputChecker.cpp
+    )
+    list(APPEND WebCore_IDL_FILES
+        Modules/webcl/DOMWindowWebCLEnvironment.idl
+        Modules/webcl/WebCLMemoryObject.idl
+        Modules/webcl/WebCLCommandQueue.idl
+        Modules/webcl/WebCLContext.idl
+        Modules/webcl/WebCLContextProperties.idl
+        Modules/webcl/WebCLDevice.idl
+        Modules/webcl/WebCLEvent.idl
+        Modules/webcl/WebCLException.idl
+        Modules/webcl/WebCLFinishCallback.idl
+        Modules/webcl/WebCLGLObjectInfo.idl
+        Modules/webcl/WebCL.idl
+        Modules/webcl/WebCLImageDescriptor.idl
+        Modules/webcl/WebCLKernelArgumentTypes.idl
+        Modules/webcl/WebCLKernel.idl
+        Modules/webcl/WebCLPlatform.idl
+        Modules/webcl/WebCLProgram.idl
+        Modules/webcl/WebCLSampler.idl
+        Modules/webcl/WorkerContextWebCLEnvironment.idl
+        Modules/webcl/WebCLBuffer.idl
+        Modules/webcl/WebCLImage.idl
+    )
+endif ()
+
 
 set(WebCoreTestSupport_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/testing"

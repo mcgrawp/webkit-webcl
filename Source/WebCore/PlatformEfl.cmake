@@ -268,6 +268,17 @@ if (ENABLE_VIDEO)
     )
 endif ()
 
+if (ENABLE_WEBCL)
+    list(APPEND WebCore_SOURCES
+        platform/ComputeTypes.h
+        platform/ComputeContext.h
+        platform/opencl/ComputeContextCL.cpp
+  )
+  list(APPEND WebCore_LIBRARIES
+    ${OPENCL_LIBRARIES}
+  )
+endif ()
+
 if (WTF_USE_3D_GRAPHICS)
     set(WTF_USE_OPENGL 1)
     add_definitions(-DWTF_USE_OPENGL=1)
