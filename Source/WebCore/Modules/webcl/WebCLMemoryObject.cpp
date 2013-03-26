@@ -38,10 +38,7 @@ namespace WebCore {
 
 WebCLMemoryObject::~WebCLMemoryObject()
 {
-    ASSERT(m_CCMemoryObject);
-    CCerror computeContextErrorCode = m_context->computeContext()->releaseMemoryObject(m_CCMemoryObject);
-    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
-    m_CCMemoryObject = 0;
+    releasePlatformObject();
 }
 
 PassRefPtr<WebCLMemoryObject> WebCLMemoryObject::create(WebCLContext* context, PlatformComputeObject CCmem, bool isShared = false)
@@ -50,8 +47,8 @@ PassRefPtr<WebCLMemoryObject> WebCLMemoryObject::create(WebCLContext* context, P
 }
 
 WebCLMemoryObject::WebCLMemoryObject(WebCLContext* context, PlatformComputeObject CCmem, bool isShared)
-    : m_context(context)
-    , m_CCMemoryObject(CCmem)
+    : WebCLObject(CCmem)
+    , m_context(context)
     , m_shared(isShared)
 {
 }
@@ -66,12 +63,12 @@ PassRefPtr<WebCLGLObjectInfo> WebCLMemoryObject::getGLObjectInfo(ExceptionCode& 
     CCerror err = -1;
     unsigned* glObjectType = 0;
     unsigned* glObjectName = 0;
-    if (!m_CCMemoryObject) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         printf("Error: Invalid MEM_OBJECT\n");
         return 0;
     }
-    err = clGetGLObjectInfo(m_CCMemoryObject, glObjectType, glObjectName);
+    err = clGetGLObjectInfo(platformObject(), glObjectType, glObjectName);
     if (err != CL_SUCCESS) {
         switch (err) {
         case CL_INVALID_MEM_OBJECT:
@@ -106,7 +103,7 @@ PassRefPtr<WebCLGLObjectInfo> WebCLMemoryObject::getGLObjectInfo(ExceptionCode& 
 
 WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
 {
-    if (!m_CCMemoryObject) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return WebCLGetInfo();
     }
@@ -115,21 +112,21 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
     switch (paramName) {
     case ComputeContext::MEM_TYPE: {
         CCMemoryObjectype memoryType = 0;
-        err = ComputeContext::getMemoryObjectInfo(m_CCMemoryObject, paramName, sizeof(CCMemoryObjectype), &memoryType);
+        err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, sizeof(CCMemoryObjectype), &memoryType);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(memoryType));
         break;
         }
     case ComputeContext::MEM_FLAGS: {
         CCMemoryFlags memoryFlags = 0;
-        err = ComputeContext::getMemoryObjectInfo(m_CCMemoryObject, paramName, sizeof(CCMemoryFlags), &memoryFlags);
+        err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, sizeof(CCMemoryFlags), &memoryFlags);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(memoryFlags));
         break;
         }
     case ComputeContext::MEM_SIZE: {
         size_t memorySizeValue = 0;
-        err = ComputeContext::getMemoryObjectInfo(m_CCMemoryObject, paramName, sizeof(size_t), &memorySizeValue);
+        err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, sizeof(size_t), &memorySizeValue);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<size_t>(memorySizeValue));
         break;
@@ -150,7 +147,7 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
     */
     case ComputeContext::MEM_ASSOCIATED_MEMOBJECT: {
         PlatformComputeObject associatedMemoryObject = 0;
-        err = ComputeContext::getMemoryObjectInfo(m_CCMemoryObject, paramName, sizeof(PlatformComputeObject), &associatedMemoryObject);
+        err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, sizeof(PlatformComputeObject), &associatedMemoryObject);
         if (err == CL_SUCCESS && associatedMemoryObject) {
             RefPtr<WebCLMemoryObject> memoryObj = WebCLMemoryObject::create(m_context, associatedMemoryObject);
             if (memoryObj)
@@ -162,7 +159,7 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
         }
     case ComputeContext::MEM_OFFSET: {
         size_t memoryOffsetValue = 0;
-        err = ComputeContext::getMemoryObjectInfo(m_CCMemoryObject, paramName, sizeof(size_t), &memoryOffsetValue);
+        err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, sizeof(size_t), &memoryOffsetValue);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<size_t>(memoryOffsetValue));
         break;
@@ -176,9 +173,10 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-PlatformComputeObject WebCLMemoryObject::getCLMemoryObject()
+void WebCLMemoryObject::releasePlatformObjectImpl()
 {
-    return m_CCMemoryObject;
+    CCerror computeContextErrorCode = m_context->computeContext()->releaseMemoryObject(platformObject());
+    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
 }
 
 } // namespace WebCore

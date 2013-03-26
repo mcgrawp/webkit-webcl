@@ -30,6 +30,7 @@
 
 #include "WebCLException.h"
 #include "WebCLGetInfo.h"
+#include "WebCLObject.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -38,19 +39,18 @@ namespace WebCore {
 
 class WebCLContext;
 
-class WebCLSampler : public RefCounted<WebCLSampler> {
+class WebCLSampler : public WebCLObject<CCSampler> {
 public:
     virtual ~WebCLSampler();
     static PassRefPtr<WebCLSampler> create(WebCLContext*, bool, int, int, ExceptionCode&);
     WebCLGetInfo getInfo(int, ExceptionCode&);
 private:
     WebCLSampler(WebCLContext*, CCSampler, bool, int, int);
-    CCSampler getCLSampler();
+    void releasePlatformObjectImpl();
 
     bool m_normCoords;
     int m_addressingMode;
     int m_filterMode;
-    CCSampler m_ccSampler;
     WebCLContext* m_context;
 };
 

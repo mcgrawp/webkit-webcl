@@ -40,5 +40,5 @@ interface [
         in [Optional] WebCLFinishCallback whenFinished,
         in [Optional] long userdata) raises(DOMException);
 
-    void releaseProgram() raises(DOMException);
+    void releaseProgram();
 };

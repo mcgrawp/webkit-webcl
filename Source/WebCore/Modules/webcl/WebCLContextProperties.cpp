@@ -105,7 +105,7 @@ Vector<CCContextProperties>& WebCLContextProperties::computeContextProperties()
 
     if (objplatform) {
         m_ccProperties.append(ComputeContext::CONTEXT_PLATFORM);
-        m_ccProperties.append(reinterpret_cast<CCContextProperties>(platform()->getCLPlatform()));
+        m_ccProperties.append(reinterpret_cast<CCContextProperties>(platform()->platformObject()));
     }
 
     if (objshareGroup) {

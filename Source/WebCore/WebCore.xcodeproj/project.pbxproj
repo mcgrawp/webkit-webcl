@@ -9391,6 +9391,7 @@
 		656D37290ADBA5DE00A4554D /* MainResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MainResourceLoader.h; sourceTree = "<group>"; };
 		656D372B0ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NetscapePlugInStreamLoader.h; sourceTree = "<group>"; };
 		656D37300ADBA5DE00A4554D /* SubresourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SubresourceLoader.h; sourceTree = "<group>"; };
+		657362F616F6DF5C00FA9FD3 /* WebCLObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLObject.h; sourceTree = "<group>"; };
 		657EDA061385CB97004E0645 /* MemoryPressureHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryPressureHandler.cpp; sourceTree = "<group>"; };
 		657EDA071385CB97004E0645 /* MemoryPressureHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryPressureHandler.h; sourceTree = "<group>"; };
 		657EDA0A1385CBD8004E0645 /* MemoryPressureHandlerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryPressureHandlerMac.mm; sourceTree = "<group>"; };
@@ -16874,6 +16875,7 @@
 				75D8AAC216E744EF00FE8264 /* WebCLKernel.h */,
 				75D8AAC516E744EF00FE8264 /* WebCLKernelArgumentTypes.h */,
 				75D8AAC816E744EF00FE8264 /* WebCLKernelTypes.h */,
+				657362F616F6DF5C00FA9FD3 /* WebCLObject.h */,
 				75D8AACA16E744EF00FE8264 /* WebCLMemoryObject.h */,
 				75D8AACD16E744EF00FE8264 /* WebCLPlatform.h */,
 				75D8AAD016E744EF00FE8264 /* WebCLProgram.h */,

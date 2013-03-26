@@ -32,12 +32,12 @@
 #include "GraphicsTypes3D.h"
 
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class ComputeContext : public RefCounted<ComputeContext> {
+class ComputeContext {
+    WTF_MAKE_NONCOPYABLE(ComputeContext);
 public:
     enum {
         SUCCESS = 0,
@@ -343,8 +343,8 @@ public:
         LOCAL_MEMORY_SIZE = 255,
     };
 
-    static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, const Vector<CCDeviceID>& devices, CCerror& error);
-    static PassRefPtr<ComputeContext> create(CCContextProperties* contextProperties, unsigned int deviceType, CCerror& error);
+    ComputeContext(CCContextProperties*, const Vector<CCDeviceID>&, CCerror&);
+    ComputeContext(CCContextProperties*, unsigned int, CCerror&);
     ~ComputeContext();
 
     static CCerror getPlatformIDs(Vector<CCPlatformID>&);
@@ -432,16 +432,13 @@ public:
 
     // temporary method, just useful because we are refactoring the code
     // just ComputeContext should know about the opencl internals.
-    cl_context context() const 
-    { 
-        return m_clContext; 
+    cl_context context() const
+    {
+        return m_clContext;
     }
 
     // XXX: Create a Pimpl implementation
 private:
-    ComputeContext(CCContextProperties* contextProperties, const Vector<CCDeviceID>& devices, CCerror& error);
-    ComputeContext(CCContextProperties* contextProperties, unsigned int deviceType, CCerror& error);
-
     cl_context m_clContext;
 };
 

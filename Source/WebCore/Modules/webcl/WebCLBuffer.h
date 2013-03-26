@@ -41,7 +41,6 @@ public:
     ~WebCLBuffer();
     static PassRefPtr<WebCLBuffer> create(WebCLContext*, CCenum, int, void*, ExceptionCode&);
     static PassRefPtr<WebCLBuffer> createFromGLBuffer(WebCLContext*, CCenum, const Platform3DObject&, ExceptionCode&);
-    PlatformComputeObject getCLBuffer();
     PassRefPtr<WebCLBuffer> createSubBuffer(int, int, int, ExceptionCode&);
 
 private:

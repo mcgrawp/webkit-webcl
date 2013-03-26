@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+* Copyright (C) 2013 Samsung Electronics Corporation. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
@@ -25,35 +25,46 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef WebCLMemoryObject_h
-#define WebCLMemoryObject_h
+#ifndef WebCLObject_h
+#define WebCLObject_h
 
-#include "ComputeContext.h"
-#include "WebCLException.h"
-#include "WebCLObject.h"
+#include <wtf/RefCounted.h>
+
+#if ENABLE(WEBCL)
 
 namespace WebCore {
 
-class WebCLContext;
-class WebCLException;
-class WebCLGLObjectInfo;
-class WebCLGetInfo;
-
-class WebCLMemoryObject : public WebCLObject<PlatformComputeObject> {
+template <class T>
+class WebCLObject : public RefCounted<WebCLObject<T> > {
 public:
-    virtual ~WebCLMemoryObject();
-    static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PlatformComputeObject, bool);
-    bool isShared();
-    WebCLGetInfo getInfo(int, ExceptionCode&);
-    PassRefPtr<WebCLGLObjectInfo> getGLObjectInfo(ExceptionCode&);
-protected:
-    WebCLMemoryObject(WebCLContext*, PlatformComputeObject, bool);
-    virtual void releasePlatformObjectImpl();
+    virtual ~WebCLObject()
+    {
+    }
 
-    WebCLContext* m_context;
-    bool m_shared;
+    T platformObject() const { return m_platformObject; }
+
+    void releasePlatformObject()
+    {
+        if (!m_platformObject)
+            return;
+
+        releasePlatformObjectImpl();
+        m_platformObject = 0;
+    }
+
+protected:
+    WebCLObject(T object)
+        : m_platformObject(object)
+    {
+    }
+    virtual void releasePlatformObjectImpl() { }
+
+private:
+    T m_platformObject;
 };
 
-} // namespace WebCore
+} // WebCore
 
-#endif // WebCLMemoryObject_h
+#endif // ENABLE(WEBCL)
+
+#endif // WebCLProgram_h

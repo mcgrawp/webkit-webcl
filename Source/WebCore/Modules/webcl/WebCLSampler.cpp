@@ -39,10 +39,7 @@ namespace WebCore {
 
 WebCLSampler::~WebCLSampler()
 {
-    ASSERT(m_ccSampler);
-    CCerror computeContextErrorCode = m_context->computeContext()->releaseSampler(m_ccSampler);
-    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
-    m_ccSampler = 0;
+    releasePlatformObject();
 }
 
 PassRefPtr<WebCLSampler> WebCLSampler::create(WebCLContext* context, bool normCoords, int addressingMode, int filterMode, ExceptionCode& ec)
@@ -59,17 +56,17 @@ PassRefPtr<WebCLSampler> WebCLSampler::create(WebCLContext* context, bool normCo
 }
 
 WebCLSampler::WebCLSampler(WebCLContext* context, CCSampler sampler, bool normCoords, int addressingMode, int filterMode)
-    : m_normCoords(normCoords)
+    : WebCLObject(sampler)
+    , m_normCoords(normCoords)
     , m_addressingMode(addressingMode)
     , m_filterMode(filterMode)
-    , m_ccSampler(sampler)
     , m_context(context)
 {
 }
 
 WebCLGetInfo WebCLSampler::getInfo(int infoType, ExceptionCode& ec)
 {
-    if (!m_ccSampler) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_SAMPLER;
         return WebCLGetInfo();
     }
@@ -91,9 +88,10 @@ WebCLGetInfo WebCLSampler::getInfo(int infoType, ExceptionCode& ec)
     ASSERT_NOT_REACHED();
 }
 
-CCSampler WebCLSampler::getCLSampler()
+void WebCLSampler::releasePlatformObjectImpl()
 {
-    return m_ccSampler;
+    CCerror computeContextErrorCode = m_context->computeContext()->releaseSampler(platformObject());
+    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
 }
 
 } // namespace WebCore

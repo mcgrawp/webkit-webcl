@@ -376,24 +376,6 @@ ComputeContext::~ComputeContext()
     clReleaseContext(m_clContext);
 }
 
-PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, const Vector<CCDeviceID>& devices, CCerror& error)
-{
-    RefPtr<ComputeContext> computeContext =  adoptRef(new ComputeContext(contextProperties, devices, error));
-    if (!computeContext || error != ComputeContext::SUCCESS)
-        return 0;
-
-    return computeContext.release();
-}
-
-PassRefPtr<ComputeContext> ComputeContext::create(CCContextProperties* contextProperties, unsigned deviceType, CCerror& error)
-{
-    RefPtr<ComputeContext> computeContext = adoptRef(new ComputeContext(contextProperties, deviceType, error));
-    if (!computeContext || error != ComputeContext::SUCCESS)
-        return 0;
-
-    return computeContext.release();
-}
-
 CCerror ComputeContext::getPlatformIDs(Vector<CCPlatformID>& ccPlatforms)
 {
     cl_uint numberOfPlatforms;

@@ -71,15 +71,9 @@ WebCLBuffer::WebCLBuffer(WebCLContext* context, PlatformComputeObject buffer, bo
 {
 }
 
-PlatformComputeObject WebCLBuffer::getCLBuffer()
-{
-    return WebCLMemoryObject::getCLMemoryObject();
-}
-
 PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(int memoryFlags, int origin, int size, ExceptionCode& ec)
 {
-    PlatformComputeObject buffer = getCLBuffer();
-    if (!buffer) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return 0;
     }
@@ -98,7 +92,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(int memoryFlags, int origin
     bufferCreateInfo->size = size;
 
     CCerror error = 0;
-    PlatformComputeObject ccSubBuffer = m_context->computeContext()->createSubBuffer(buffer, memoryFlags,
+    PlatformComputeObject ccSubBuffer = m_context->computeContext()->createSubBuffer(platformObject(), memoryFlags,
         ComputeContext::BUFFER_CREATE_TYPE_REGION, bufferCreateInfo, error);
 
     delete(bufferCreateInfo);

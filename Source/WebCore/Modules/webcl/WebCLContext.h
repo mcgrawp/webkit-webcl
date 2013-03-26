@@ -63,7 +63,12 @@ class WebGLBuffer;
 class WebCLDevice;
 class WebCLGetInfo;
 
-class WebCLContext : public RefCounted<WebCLContext> {
+//NOTE: WebCLObject used by WebCLContext is a bit different, because the
+//other WebCL classes have as platformObject() a native opencl type. However
+//WebCLContext has as platformObject() an abstraction called ComputeContext
+
+typedef ComputeContext* ComputeContextPtr;
+class WebCLContext : public WebCLObject<ComputeContextPtr> {
 public:
     virtual ~WebCLContext();
     static PassRefPtr<WebCLContext> create(WebCL*, PassRefPtr<WebCLContextProperties>, CCerror&);
@@ -128,17 +133,17 @@ public:
     };
     LRUImageBufferCache m_videoCache;
 
-    ComputeContext* computeContext() const { return m_computeContext.get(); }
+    ComputeContext* computeContext() const { return platformObject(); }
 
 private:
-    WebCLContext(WebCL*, RefPtr<ComputeContext>&, PassRefPtr<WebCLContextProperties>);
+    WebCLContext(WebCL*, ComputeContext*, PassRefPtr<WebCLContextProperties>);
     // WebCLContext(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType, int* error);
     PassRefPtr<WebCLImage> createImage2DBase(int , int , int , const CCImageFormat& , void*, ExceptionCode&);
 
-    cl_context m_clContext;
+    void releasePlatformObjectImpl();
+
     RefPtr<WebCLCommandQueue> m_commandQueue;
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
-    RefPtr<ComputeContext> m_computeContext;
     RefPtr<WebCLContextProperties> m_contextProperties;
 };
 

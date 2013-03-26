@@ -46,13 +46,13 @@ PassRefPtr<WebCLPlatform> WebCLPlatform::create(cl_platform_id platform_id)
 }
 
 WebCLPlatform::WebCLPlatform(cl_platform_id platform_id)
- : m_cl_platform_id(platform_id)
+    : WebCLObject(platform_id)
 {
 }
 
 WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
 {
-    if (!m_cl_platform_id) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_PLATFORM;
         return WebCLGetInfo();
     }
@@ -74,14 +74,14 @@ WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
 Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(int deviceType, ExceptionCode& ec) const
 {
     Vector<RefPtr<WebCLDevice> > devices;
-    if (!m_cl_platform_id) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_PLATFORM;
         return devices;
     }
 
     deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
     Vector<CCDeviceID> ccDevices;
-    CCerror error = ComputeContext::getDeviceIDs(m_cl_platform_id, deviceType, ccDevices);
+    CCerror error = ComputeContext::getDeviceIDs(platformObject(), deviceType, ccDevices);
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return devices;
@@ -95,11 +95,6 @@ Vector<String> WebCLPlatform::getSupportedExtensions(ExceptionCode&)
 {
     // FIXME: Needs a proper implementation.
     return Vector<String>();
-}
-
-cl_platform_id WebCLPlatform::getCLPlatform()
-{
-    return m_cl_platform_id;
 }
 
 CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >& platforms)

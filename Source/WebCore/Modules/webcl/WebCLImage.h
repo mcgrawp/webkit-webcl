@@ -47,7 +47,6 @@ public:
     //FIXME: Remove this method when WebCL WebGL interop become an extension
     static PassRefPtr<WebCLImage> create() { return adoptRef(new WebCLImage()); }
 
-    PlatformComputeObject getCLImage();
     PassRefPtr<WebCLImageDescriptor> getInfo(ExceptionCode&);
     int getGLtextureInfo(int, ExceptionCode&);
 

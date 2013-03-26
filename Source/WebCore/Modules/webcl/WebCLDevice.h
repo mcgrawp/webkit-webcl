@@ -32,6 +32,7 @@
 
 #include "ComputeTypes.h"
 #include "ExceptionCode.h"
+#include "WebCLObject.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -42,17 +43,15 @@ namespace WebCore {
 class WebCLContext;
 class WebCLGetInfo;
 
-class WebCLDevice : public RefCounted<WebCLDevice> {
+class WebCLDevice : public WebCLObject<CCDeviceID> {
 public:
     virtual ~WebCLDevice();
     static PassRefPtr<WebCLDevice> create(CCDeviceID);
     WebCLGetInfo getInfo(int, ExceptionCode&);
     Vector<String> getSupportedExtensions(ExceptionCode&);
-    CCDeviceID getCLDevice();
 
 private:
     WebCLDevice(CCDeviceID);
-    CCDeviceID m_ccDeviceID;
 };
 
 void toWebCLDeviceArray(const Vector<CCDeviceID>&, Vector<RefPtr<WebCLDevice> >&);

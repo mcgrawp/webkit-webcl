@@ -54,7 +54,7 @@ namespace WebCore {
 
 class WebCL;
 class WebCLContext;
-class WebCLCommandQueue : public RefCounted<WebCLCommandQueue> {
+class WebCLCommandQueue : public WebCLObject<CCCommandQueue> {
 public:
     ~WebCLCommandQueue();
     static PassRefPtr<WebCLCommandQueue> create(WebCLContext*, int, const RefPtr<WebCLDevice>&, ExceptionCode&);
@@ -288,9 +288,10 @@ private:
 
     void enqueueWriteBufferBase(WebCLBuffer*, bool, int, int, void*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
+    void releasePlatformObjectImpl();
+
     WebCLContext* m_context;
     const RefPtr<WebCLDevice> m_device;
-    cl_command_queue m_ccCommandQueue;
 };
 
 } // namespace WebCore

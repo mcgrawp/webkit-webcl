@@ -29,6 +29,7 @@
 #define WebCLInputChecker_h
 
 #include "ComputeTypes.h"
+#include "WebCLObject.h"
 
 namespace WebCore {
 namespace WebCLInputChecker {
@@ -39,6 +40,13 @@ bool isValidAddressingMode(int);
 bool isValidFilterMode(int);
 bool isValidChannelType(int);
 bool isValidChannelOrder(int);
+
+template<class T>
+bool validateWebCLObject(WebCLObject<T>* object)
+{
+    return object && object->platformObject();
+}
+
 }
 
 }

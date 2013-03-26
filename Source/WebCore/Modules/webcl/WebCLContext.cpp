@@ -51,6 +51,7 @@ namespace WebCore {
 
 WebCLContext::~WebCLContext()
 {
+    releasePlatformObject();
 }
 
 PassRefPtr<WebCLContext> WebCLContext::create(WebCL* context, PassRefPtr<WebCLContextProperties> properties, CCerror& error)
@@ -60,35 +61,27 @@ PassRefPtr<WebCLContext> WebCLContext::create(WebCL* context, PassRefPtr<WebCLCo
 
     Vector<CCDeviceID> ccDevices;
     for (size_t i = 0; i < properties->devices().size(); ++i)
-        ccDevices.append(properties->devices()[i]->getCLDevice());
+        ccDevices.append(properties->devices()[i]->platformObject());
 
-    RefPtr<ComputeContext> computeContext = ComputeContext::create(properties->computeContextProperties().data(), ccDevices, error);
-    if (!computeContext) {
-        ASSERT(error != ComputeContext::SUCCESS);
+    ComputeContext* computeContext = new ComputeContext(properties->computeContextProperties().data(), ccDevices, error);
+    if (error != ComputeContext::SUCCESS) {
+        delete computeContext;
         return 0;
     }
 
     return adoptRef(new WebCLContext(context, computeContext, properties));
 }
 
-WebCLContext::WebCLContext(WebCL*, RefPtr<ComputeContext>& computeContext, PassRefPtr<WebCLContextProperties> properties)
-    : m_videoCache(4) // FIXME: Why '4'?
+WebCLContext::WebCLContext(WebCL*, ComputeContext* computeContext, PassRefPtr<WebCLContextProperties> properties)
+    : WebCLObject(computeContext)
+    , m_videoCache(4) // FIXME: Why '4'?
     , m_contextProperties(properties)
 {
-    m_computeContext = computeContext;
-    m_clContext = m_computeContext->context();
 }
-
-/*WebCLContext::WebCLContext(WebCL*, CCContextProperties* contextProperties, unsigned deviceType, int* error)
-    : m_videoCache(4)
-{
-    m_computeContext = ComputeContext::create(contextProperties, deviceType, error);
-    m_clContext = m_computeContext->context();
-}*/
 
 WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
 {
-    if (!m_clContext) {
+    if (!platformObject()) {
         printf("Error: Invalid CL Context\n");
         ec = WebCLException::INVALID_CONTEXT;
         return WebCLGetInfo();
@@ -111,7 +104,7 @@ WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
 
 PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* device, int commandQueueProperty, ExceptionCode& ec)
 {
-    if (!m_clContext) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -140,7 +133,7 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
 
 PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource, ExceptionCode& ec)
 {
-    if (!m_clContext) {
+    if (!platformObject()) {
         printf("Error: Invalid CL Context\n");
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
@@ -151,7 +144,7 @@ PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource,
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, int size, ArrayBuffer* data, ExceptionCode& ec)
 {
-    if (!m_clContext) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -171,6 +164,11 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, int size, Ar
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, ImageData *ptr, ExceptionCode& ec)
 {
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return 0;
+    }
+
     if (!ptr || !ptr->data() || !ptr->data()->data()) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
@@ -185,6 +183,11 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, ImageData *p
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
 {
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return 0;
+    }
+
     if (!srcCanvas || !srcCanvas->buffer()) {
         ec = ComputeContext::INVALID_HOST_PTR;
         return 0;
@@ -215,11 +218,6 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, HTMLCanvasEl
 
 PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(int flags, int width, int height, const CCImageFormat& imageFormat, void *data, ExceptionCode& ec)
 {
-    if (!m_clContext) {
-        ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-
     if (!width || !height) {
         ec = WebCLException::INVALID_IMAGE_SIZE;
         return 0;
@@ -239,6 +237,11 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(int flags, int width, int
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLCanvasElement* canvasElement, ExceptionCode& ec)
 {
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return 0;
+    }
+
     if (!canvasElement || !canvasElement->buffer()) {
         ec = ComputeContext::INVALID_HOST_PTR;
         return 0;
@@ -268,6 +271,11 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLCanvasElement* c
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLImageElement* image, ExceptionCode& ec)
 {
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return 0;
+    }
+
     if (!image || !image->cachedImage()) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
@@ -333,6 +341,10 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLVideoElement* vi
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, ImageData* data, ExceptionCode& ec)
 {
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return 0;
+    }
     if (!data || !data->data() || !data->data()->data()) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
@@ -347,17 +359,23 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, ImageData* data, Exc
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, WebCLImageDescriptor* descriptor, ArrayBuffer* data, ExceptionCode& ec)
 {
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return 0;
+    }
+
     if (!descriptor) {
         ec = WebCLException::INVALID_IMAGE_FORMAT_DESCRIPTOR;
         return 0;
     }
+
     CCuint width =  descriptor->width();
     CCuint height = descriptor->height();
 
     CCenum channelOrder = static_cast<CCenum>(descriptor->channelOrder());
     CCenum channelType = static_cast<CCenum>(descriptor->channelType());
     if (!WebCLInputChecker::isValidChannelOrder(channelOrder) || !WebCLInputChecker::isValidChannelType(channelType)) {
-        ec = WebCLException::INVALID_CONTEXT;
+        ec = WebCLException::INVALID_IMAGE_FORMAT_DESCRIPTOR;
         return 0;
     }
 
@@ -368,7 +386,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, WebCLImageDescriptor
 
 PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(int flags, WebGLBuffer* webGLBuffer, ExceptionCode& ec)
 {
-    if (!m_clContext) {
+    if (!platformObject()) {
         ec = WebCLException::FAILURE;
         return 0;
     }
@@ -385,7 +403,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(int flags, WebGLBuffer*
 
 PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderBuffer(int flags, WebGLRenderbuffer* renderBuffer, ExceptionCode& ec)
 {
-    if (!m_clContext) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -404,7 +422,7 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderBuffer(int flags, WebGLRe
     }
 
     CCerror error;
-    PlatformComputeObject ccMemoryID = m_computeContext->createFromGLRenderbuffer(flags, renderBufferID, error);
+    PlatformComputeObject ccMemoryID = platformObject()->createFromGLRenderbuffer(flags, renderBufferID, error);
     if (!ccMemoryID) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
@@ -418,7 +436,7 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderBuffer(int flags, WebGLRe
 
 PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCoords, int addressingMode, int filterMode, ExceptionCode& ec)
 {
-    if (!m_clContext) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -438,13 +456,13 @@ PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCoords, int addres
 
 PassRefPtr<WebCLMemoryObject> WebCLContext::createFromGLTexture2D(int flags, GC3Denum textureTarget, GC3Dint miplevel, GC3Duint texture, ExceptionCode& ec)
 {
-    if (!m_clContext) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
 
     CCerror error;
-    PlatformComputeObject ccMemoryImage = m_computeContext->createFromGLTexture2D(flags, textureTarget, miplevel, texture, error);
+    PlatformComputeObject ccMemoryImage = platformObject()->createFromGLTexture2D(flags, textureTarget, miplevel, texture, error);
     if (!ccMemoryImage) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
@@ -456,13 +474,13 @@ PassRefPtr<WebCLMemoryObject> WebCLContext::createFromGLTexture2D(int flags, GC3
 
 PassRefPtr<WebCLEvent> WebCLContext::createUserEvent(ExceptionCode& ec)
 {
-    if (!m_clContext) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
 
     CCerror error;
-    CCEvent ccEvent = m_computeContext->createUserEvent(error);
+    CCEvent ccEvent = platformObject()->createUserEvent(error);
     if (!ccEvent) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
@@ -520,7 +538,7 @@ void WebCLContext::LRUImageBufferCache::bubbleToFront(int idx)
 Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(int memoryFlags, ExceptionCode &ec)
 {
     Vector<RefPtr<WebCLImageDescriptor>> imageDescriptors;
-    if (!m_clContext) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
         return imageDescriptors;
     }
@@ -531,7 +549,7 @@ Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(int
     }
 
     Vector<CCImageFormat> supportedImageFormats;
-    CCerror error = m_computeContext->supportedImageFormats(memoryFlags, ComputeContext::MEM_OBJECT_IMAGE2D, supportedImageFormats);
+    CCerror error = platformObject()->supportedImageFormats(memoryFlags, ComputeContext::MEM_OBJECT_IMAGE2D, supportedImageFormats);
 
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
@@ -542,6 +560,11 @@ Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(int
     for (size_t i = 0; i < numberOfSupportedImages; ++i)
         imageDescriptors.append(WebCLImageDescriptor::create(supportedImageFormats[i]));
     return imageDescriptors;
+}
+
+void WebCLContext::releasePlatformObjectImpl()
+{
+    delete platformObject();
 }
 
 } // namespace WebCore

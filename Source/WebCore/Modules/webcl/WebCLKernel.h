@@ -31,6 +31,7 @@
 #include "ExceptionCode.h"
 #include "WebCLGetInfo.h"
 #include "WebCLKernelTypes.h"
+#include "WebCLObject.h"
 
 #include <OpenCL/opencl.h>
 #include <wtf/PassRefPtr.h>
@@ -44,7 +45,7 @@ class WebCLGetInfo;
 class WebCLDevice;
 class WebCLMemoryObject;
 
-class WebCLKernel : public RefCounted<WebCLKernel> {
+class WebCLKernel : public WebCLObject<CCKernel> {
 public:
     virtual ~WebCLKernel();
     static PassRefPtr<WebCLKernel> create(WebCLContext*, WebCLProgram*, const String&, ExceptionCode&);
@@ -58,8 +59,6 @@ public:
     void setArg(unsigned, unsigned, ExceptionCode&);
 
     void setDevice(PassRefPtr<WebCLDevice>);
-    CCKernel getCLKernel();
-
 private:
     WebCLKernel(WebCLContext*, WebCLProgram*, CCKernel, const String&);
     // private fucntions simulating opencl API for WebCLKernelTypeValue object.
@@ -67,9 +66,10 @@ private:
     CCerror setKernelArgPrimitiveType(CCKernel, PassRefPtr<WebCLKernelTypeValue>, T, unsigned, int);
     CCerror setKernelArgVectorType(CCKernel, PassRefPtr<WebCLKernelTypeValue>, PassRefPtr<WebCLKernelTypeVector>, unsigned, int, unsigned);
 
+    void releasePlatformObjectImpl();
+
     WebCLContext* m_context;
     WebCLProgram* m_program;
-    CCKernel m_clKernel;
     String m_kernelName;
     RefPtr<WebCLDevice> m_deviceID;
 };
