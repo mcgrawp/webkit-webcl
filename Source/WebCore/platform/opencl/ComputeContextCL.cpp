@@ -488,8 +488,7 @@ PlatformComputeObject ComputeContext::createImage2D(int memoryFlags, int width, 
     cl_int clMemoryFlags = memoryFlags;
 
 #if defined(CL_VERSION_1_2)
-    cl_image_desc clImageDescriptor;
-    clImageDescriptor.image_type = CL_MEM_OBJECT_IMAGE2D;
+    cl_image_desc clImageDescriptor = {CL_MEM_OBJECT_IMAGE2D, static_cast<size_t>(width), static_cast<size_t>(height), 0 /*imageDepth*/, 0 /*arraySize*/, 0 /*rowPitch*/, 0 /*slicePitch*/, 0 /*numMipLevels*/, 0 /*numSamples*/, 0 /*buffer*/};
     clImageDescriptor.image_width = width;
     clImageDescriptor.image_height = height;
 
