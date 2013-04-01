@@ -1,17 +1,17 @@
 /*
  * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
  * are met:
- * 
+ *
  * 1.  Redistributions of source code must retain the above copyright
  *     notice, this list of conditions and the following disclaimer.
- * 
+ *
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
  * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
  * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -26,206 +26,227 @@
  */
 
 // local OpenCL info
-//
-var platforms;                           // array of OpenCL platform ids
-var platform;                            // OpenCL platform id
-var devices;                             // array of OpenCL device ids
-var device;                              // OpenCL device id
 var context;                                // OpenCL context
 var queue;                                  // OpenCL command queue
 var program;                                // OpenCL program
 var kernel;                                 // OpenCL kernel
 
-var curPosBuffer;                           // OpenCL buffer created from GL VBO
-var curVelBuffer;                           // OpenCL buffer created from GL VBO
+var curPosBuffer;                           // OpenCL buffer created from GL VBO (if sharing)
+var curVelBuffer;                           // OpenCL buffer created from GL VBO (if sharing)
 var nxtPosBuffer;                           // OpenCL buffer
 var nxtVelBuffer;                           // OpenCL buffer
 
 var bufferSize = null;
-var cl = null;
 
 var globalWorkSize = new Int32Array(1);
 var localWorkSize = new Int32Array(1);
-var workGroupSize = 0;
+var workGroupSize = null;
+var gpu = true;
 
 function getKernel(id) {
   var kernelScript = document.getElementById(id);
   if (kernelScript === null || kernelScript.type !== "x-kernel")
     return null;
+
   return kernelScript.firstChild.textContent;
 }
 
-
 function InitCL() {
+    var cl = null;
+    try {
+        if (typeof(webcl) === "undefined") {
+            console.error("WebCL is yet to be defined");
+            return null;
+        }
+        cl = webcl;
+        if (cl === null) {
+            console.error("No webcl object available");
+            return null;
+        }
 
-  try {
-    // Create CL buffers from GL VBOs
-    // (Initial load of positions is via gl.bufferData)
-    //
-    curPosBuffer = context.createFromGLBuffer(cl.MEM_READ_WRITE, userData.curPosVBO);
-    if (curPosBuffer === null) {
-      console.error("Failed to allocate device memory");
-      return null;
+        var platforms = cl.getPlatforms();
+        if (platforms.length === 0) {
+            console.error("No platforms available");
+            return null;
+        }
+        var platform = platforms[0];
+
+        var devices = platform.getDevices(gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU);
+        if (devices.length === 0) {
+            console.error("No devices available");
+            return null;
+        }
+        var device = devices[0];
+
+        if(userData.isGLCLshared)
+            context = cl.createContext({platform:platform, devices:devices, deviceType: gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU, shareGroup:1, hint:null});
+        else
+            context = cl.createContext({platform:platform, devices:devices, deviceType: gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU, shareGroup:0, hint:null});
+        if(context === null) {
+            console.error("createContext fails");
+            return null;
+        }
+
+        var kernelSource = getKernel("nbody_kernel");
+        if (kernelSource === null) {
+            console.error("No kernel named: " + "nbody_kernel");
+            return null;
+        }
+
+        queue = context.createCommandQueue(devices, null);
+        program = context.createProgram(kernelSource);
+        program.build(devices);
+        kernel = program.createKernel("nbody_kernel");
+
+        bufferSize = NBODY * POS_ATTRIB_SIZE * Float32Array.BYTES_PER_ELEMENT;
+
+        if(userData.isGLCLshared) {
+            // Create CL buffers from GL VBOs
+            // (Initial load of positions is via gl.bufferData)
+            curPosBuffer = context.createFromGLBuffer(cl.MEM_READ_WRITE, userData.curPosVBO);
+            if (curPosBuffer === null) {
+                console.error("Failed to allocate device memory");
+                return null;
+            }
+
+            curVelBuffer = context.createFromGLBuffer(cl.MEM_READ_WRITE, userData.curVelVBO);
+            if (curVelBuffer === null) {
+                console.error("Failed to allocate device memory");
+                return null;
+            }
+        } else {
+            curPosBuffer = context.createBuffer(cl.MEM_READ_WRITE, bufferSize);
+            if(curPosBuffer === null) {
+                console.error("Failed to allocate device memory");
+                return null;
+            }
+
+            curVelBuffer = context.createBuffer(cl.MEM_READ_WRITE, bufferSize);
+            if(curVelBuffer === null) {
+                console.error("Failed to allocate device memory");
+                return null;
+            }
+        }
+
+        // Create CL working buffers (will be copied to current buffers after computation)
+        nxtPosBuffer = context.createBuffer(cl.MEM_READ_WRITE, bufferSize);
+        if (nxtPosBuffer === null) {
+            console.error("Failed to allocate device memory");
+            return null;
+        }
+
+        nxtVelBuffer = context.createBuffer(cl.MEM_READ_WRITE, bufferSize);
+        if (nxtVelBuffer === null) {
+            console.error("Failed to allocate device memory");
+            return null;
+        }
+
+        // Initial load of position and velocity data
+        if(userData.isGLCLshared) {
+            queue.enqueueAcquireGLObjects(curPosBuffer);
+            queue.enqueueAcquireGLObjects(curVelBuffer);
+        }
+
+        queue.enqueueWriteBuffer(curPosBuffer, true, 0, bufferSize, userData.curPos);
+        queue.enqueueWriteBuffer(curVelBuffer, true, 0, bufferSize, userData.curVel);
+
+        if(userData.isGLCLshared) {
+            queue.enqueueReleaseGLObjects(curPosBuffer);
+            queue.enqueueReleaseGLObjects(curVelBuffer);
+        }
+
+        queue.finish();
+
+        globalWorkSize[0] = NBODY;
+        localWorkSize[0] = Math.min(workGroupSize, NBODY);
+
+        var nWorkGroups = Math.floor(NBODY/workGroupSize);
+        if(NBODY % workGroupSize != 0)
+            nWorkGroups += 1;
+
+        console.log("NBODY:             " + NBODY);
+        console.log("workGroupSize:     " + workGroupSize);
+        console.log("nWorkGroups:       " + nWorkGroups);
+        console.log("localWorkSize[0]:  " + localWorkSize[0]);
+        console.log("globalWorkSize[0]: " + globalWorkSize[0]);
+    } catch (e) {
+        console.error("Nbody Demo Failed, Message: "+ e.message);
     }
-
-    curVelBuffer = context.createFromGLBuffer(cl.MEM_READ_WRITE, userData.curVelVBO);
-    if (curVelBuffer === null) {
-      console.error("Failed to allocate device memory");
-      return null;
-    }
-
-    bufferSize = NBODY * POS_ATTRIB_SIZE * Float32Array.BYTES_PER_ELEMENT;
-
-    // Create CL working buffers (will be copied to current buffers after computation)
-    //
-    nxtPosBuffer = context.createBuffer(cl.MEM_READ_WRITE, bufferSize);
-    if (nxtPosBuffer === null) {
-      console.error("Failed to allocate device memory");
-      return null;
-    }
-
-    nxtVelBuffer = context.createBuffer(cl.MEM_READ_WRITE, bufferSize);
-    if (nxtVelBuffer === null) {
-      console.error("Failed to allocate device memory");
-      return null;
-    }
-
-    globalWorkSize[0] = NBODY;
-    localWorkSize[0] = Math.min(workGroupSize, NBODY);
-
-    // Initial load of velocity data
-    //
-    //queue.enqueueAcquireGLObjects(curVelBuffer, null);
-    queue.enqueueAcquireGLObjects(curVelBuffer);
-
-    queue.enqueueWriteBuffer(curVelBuffer, true, 0, bufferSize, userData.curVel);
-
-    //queue.enqueueReleaseGLObjects(curVelBuffer, null);
-    queue.enqueueReleaseGLObjects(curVelBuffer);
-
-    queue.finish(GetNullResults, 0);
-  }
-  catch (e)
-  {
-    console.error("Nbody Demo Failed ; Message: "+ e.message);
-  }
-  return cl;
-}
-
-function GetNullResults(userData)
-{
+    return cl;
 }
 
 function SimulateCL(cl) {
-  try {
-    if (cl === null)
-      return;
-    if (userData.isGLCLshared) {
-      queue.enqueueAcquireGLObjects(curPosBuffer);
-      queue.enqueueAcquireGLObjects(curVelBuffer);
-      //queue.enqueueAcquireGLObjects(curPosBuffer, null);
-      //queue.enqueueAcquireGLObjects(curVelBuffer, null);
-    }
-    var localMemSize = localWorkSize[0] * POS_ATTRIB_SIZE * Float32Array.BYTES_PER_ELEMENT;
-    kernel.setArg(0, curPosBuffer);
-    kernel.setArg(1, curVelBuffer);
-    kernel.setArg(2, NBODY, WebCLKernelArgumentTypes.LONG);
-    kernel.setArg(3, DT, WebCLKernelArgumentTypes.FLOAT);
-    kernel.setArg(4, EPSSQR, WebCLKernelArgumentTypes.LONG);
-    kernel.setArg(5, localMemSize);  // __local: val (ignored) and size
-    kernel.setArg(6, nxtPosBuffer);
-    kernel.setArg(7, nxtVelBuffer);
-    queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize );
-    queue.finish();
-    queue.enqueueCopyBuffer(nxtPosBuffer, curPosBuffer, 0, 0, bufferSize);
-    queue.enqueueCopyBuffer(nxtVelBuffer, curVelBuffer, 0, 0, bufferSize);
+    if(cl === null) return;
+    try {
+        if (userData.isGLCLshared) {
+            queue.enqueueAcquireGLObjects(curPosBuffer);
+            queue.enqueueAcquireGLObjects(curVelBuffer);
+        }
+        var karg = WebCLKernelArgumentTypes;
+        var localMemSize = localWorkSize[0] * POS_ATTRIB_SIZE * Float32Array.BYTES_PER_ELEMENT;
+        kernel.setArg(0, curPosBuffer);
+        kernel.setArg(1, curVelBuffer);
+        kernel.setArg(2, NBODY, karg.INT);
+        kernel.setArg(3, DT, karg.FLOAT);
+        kernel.setArg(4, EPSSQR, karg.INT);
+        kernel.setArg(5, localMemSize, karg.LOCAL_MEMORY_SIZE);
+        kernel.setArg(6, nxtPosBuffer);
+        kernel.setArg(7, nxtVelBuffer);
+        //queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
+        queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, null);
 
-    if (userData.isGLCLshared) {
-      //queue.enqueueReleaseGLObjects(curPosBuffer, null);
-      //queue.enqueueReleaseGLObjects(curVelBuffer, null);
-      queue.enqueueReleaseGLObjects(curPosBuffer);
-      queue.enqueueReleaseGLObjects(curVelBuffer);
-    }
+        queue.finish();
 
-    if (!userData.isGLCLshared || userData.drawMode === JS_DRAW_MODE) {
-      queue.enqueueReadBuffer(curPosBuffer, true, 0, bufferSize, userData.curPos);
-      queue.enqueueReadBuffer(curVelBuffer, true, 0, bufferSize, userData.curVel);
+        queue.enqueueCopyBuffer(nxtPosBuffer, curPosBuffer, 0, 0, bufferSize);
+        queue.enqueueCopyBuffer(nxtVelBuffer, curVelBuffer, 0, 0, bufferSize);
+
+        if (userData.isGLCLshared) {
+            queue.enqueueReleaseGLObjects(curPosBuffer);
+            queue.enqueueReleaseGLObjects(curVelBuffer);
+        }
+
+        // read back if buffers not shared or using non-GL draw mode
+        if (!userData.isGLCLshared || userData.drawMode === JS_DRAW_MODE) {
+            queue.enqueueReadBuffer(curPosBuffer, true, 0, bufferSize, userData.curPos);
+            queue.enqueueReadBuffer(curVelBuffer, true, 0, bufferSize, userData.curVel);
+        }
+    } catch (e) {
+        console.error("Nbody Demo Failed, Message: "+ e.message);
     }
-  }
-  catch (e)
-  {
-    console.error("Nbody Demo Failed ; Message: "+ e.message);
-  }
 }
 
 function GetWorkGroupSize() {
-  try {
-    if (typeof(webcl) === "undefined") {
-      console.error("webcl is yet to be defined");
-      return null;
+    if(workGroupSize !== null)
+        return workGroupSize;
+    try {
+        if (typeof(webcl) === "undefined") {
+            console.error("WebCL is yet to be defined");
+            return null;
+        }
+        cl = webcl;
+        if (cl === null) {
+            console.error("No webcl object available");
+            return null;
+        }
+
+        var platforms = cl.getPlatforms();
+        if (platforms.length === 0) {
+            console.error("No platforms available");
+            return null;
+        }
+        var platform = platforms[0];
+
+        var devices = platform.getDevices(gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU);
+        if (devices.length === 0) {
+            console.error("No devices available");
+            return null;
+        }
+        var device = devices[0];
+
+        workGroupSize = device.getInfo(cl.DEVICE_MAX_WORK_GROUP_SIZE);
+    } catch (e) {
+        console.error("Nbody Demo Failed, Message: "+ e.message);
+        workGroupSize = null;
     }
-
-    cl = webcl;
-
-    if (cl === null) {
-      console.error("Failed to create webcl object");
-      return;
-    }
-
-    // Select a compute device
-    //
-    platforms = cl.getPlatforms();
-
-    if (platforms.length === 0) {
-      console.error("No platforms available");
-      return;
-    }
-    platform = platforms[0];
-
-    // Select a compute device
-    //
-    devices = platform.getDevices(cl.DEVICE_TYPE_GPU);
-    if (devices.length === 0) {
-      console.error("No devices available");
-      //return;
-    }
-    device = devices[0];
-
-    // Create a compute context
-    //
-    context = cl.createContext({platform:platform,devices:devices,deviceType:cl.DEVICE_TYPE_GPU, shareGroup:1, hint:null});
-    //context = cl.createSharedContext(cl.DEVICE_TYPE_GPU, null, null);
-
-    // Create a command queue
-    //
-    queue = context.createCommandQueue(devices[0], null);
-
-    // Create the compute program from the source buffer
-    //
-    var kernelSource = getKernel("nbody_kernel");
-    if (kernelSource === null) {
-      console.error("No kernel named: " + "nbody_kernel");
-      return;
-    }
-
-    program = context.createProgram(kernelSource);
-
-    // Build the program executable
-    //
-    program.build(devices);
-
-    // Create the compute kernel in the program we wish to run
-    //
-    kernel = program.createKernel("nbody_kernel");
-
-    // Get the maximum work group size for executing the kernel on the device
-    //
-    workGroupSize = kernel.getWorkGroupInfo(device, cl.KERNEL_WORK_GROUP_SIZE);
-  }
-  catch (e)
-  {
-    console.error("Nbody Demo Failed ; Message: "+ e.message);
-  }
-
-  return workGroupSize;
+    return workGroupSize;
 }
