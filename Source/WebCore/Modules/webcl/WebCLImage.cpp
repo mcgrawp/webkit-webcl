@@ -72,7 +72,7 @@ int WebCLImage::getGLtextureInfo(int textureInfoType, ExceptionCode& ec)
     case ComputeContext::GL_TEXTURE_TARGET:
     case ComputeContext::GL_MIPMAP_LEVEL: {
         CCint glTextureInfo = 0;
-        err = ComputeContext::getGLtextureInfo(platformObject(), textureInfoType, sizeof(CCint), &glTextureInfo);
+        err = ComputeContext::getGLTextureInfo(platformObject(), textureInfoType, &glTextureInfo);
         if (err == CL_SUCCESS)
             return ((int)glTextureInfo);
         break;

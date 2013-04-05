@@ -58,7 +58,6 @@ PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, WebCLProgram*
 Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* context, WebCLProgram* program, ExceptionCode& ec)
 {
     CCerror error = ComputeContext::SUCCESS;
-    CCuint numberOfKernels = 0;
     Vector<CCKernel> computeContextKernels = context->computeContext()->createKernelsInProgram(program->platformObject(), error);
     Vector<RefPtr<WebCLKernel> > kernels;
     if (error != ComputeContext::SUCCESS) {
@@ -66,9 +65,9 @@ Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* c
         return kernels;
     }
 
-    Vector<char> functionName(WebCL::CHAR_BUFFER_SIZE);
-    for (size_t i = 0 ; i < numberOfKernels; i++) {
-        error = ComputeContext::getKernelInfo(computeContextKernels[i], ComputeContext::KERNEL_FUNCTION_NAME, WebCL::CHAR_BUFFER_SIZE, functionName.data());
+    Vector<char> functionName;
+    for (size_t i = 0 ; i < computeContextKernels.size(); i++) {
+        error = ComputeContext::getKernelInfo(computeContextKernels[i], ComputeContext::KERNEL_FUNCTION_NAME, functionName.data());
         if (error != ComputeContext::SUCCESS) {
             ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
             kernels.clear();
@@ -102,7 +101,7 @@ WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
         return WebCLGetInfo(m_kernelName);
     case ComputeContext::KERNEL_NUM_ARGS: {
         CCuint numberOfArgs = 0;
-        err = ComputeContext::getKernelInfo(platformObject(), kernelInfo, sizeof(CCuint), &numberOfArgs);
+        err = ComputeContext::getKernelInfo(platformObject(), kernelInfo, &numberOfArgs);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(numberOfArgs));
         break;
@@ -400,9 +399,9 @@ void WebCLKernel::setArg(unsigned argIndex, WebCLMemoryObject* argValue, Excepti
     if (m_deviceID) {
         ccDevice = m_deviceID->platformObject();
         CCulong maxBufferSize = 0;
-        err = ComputeContext::getDeviceInfo(ccDevice, ComputeContext::DEVICE_MAX_CONSTANT_BUFFER_SIZE, sizeof(CCulong), &maxBufferSize);
+        err = ComputeContext::getDeviceInfo(ccDevice, ComputeContext::DEVICE_MAX_CONSTANT_BUFFER_SIZE, &maxBufferSize);
         CCuint maxArgs = 0;
-        err = ComputeContext::getDeviceInfo(ccDevice, ComputeContext::DEVICE_MAX_CONSTANT_ARGS, sizeof(CCuint), &maxArgs);
+        err = ComputeContext::getDeviceInfo(ccDevice, ComputeContext::DEVICE_MAX_CONSTANT_ARGS, &maxArgs);
         // Check for __constant qualifier restrictions. Memory object size must be less than CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE
         // and index must be lesser than CL_DEVICE_MAX_CONSTANT_ARGS supported by device.
         if (sizeof(PlatformComputeObject) > maxBufferSize && argIndex > maxArgs) {

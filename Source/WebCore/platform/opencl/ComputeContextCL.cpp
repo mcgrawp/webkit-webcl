@@ -558,19 +558,17 @@ CCerror ComputeContext::supportedImageFormats(int memoryFlags, int imageType, Ve
     return clError;
 }
 
-CCerror ComputeContext::getDeviceInfo(CCDeviceID deviceID, int infoType, size_t sizeOfData, void* data)
+CCerror ComputeContext::getDeviceInfoBase(CCDeviceID deviceID, int infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
-   cl_int error = clGetDeviceInfo(deviceID, infoType, sizeOfData, data, 0 /*param_value_size_ret)*/);
-   return error;
+   return clGetDeviceInfo(deviceID, infoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getPlatformInfo(CCPlatformID platformID, int infoType, size_t sizeOfData, void* data)
+CCerror ComputeContext::getPlatformInfoBase(CCPlatformID platformID, int infoType, size_t sizeOfData, void* data, size_t *retSize)
 {
-   cl_int error = clGetPlatformInfo(platformID, infoType, sizeOfData, data, 0 /*param_value_size_ret)*/);
-   return error;
+   return clGetPlatformInfo(platformID, infoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getProgramInfo(CCProgram program, int infoType, size_t sizeOfData, void* data, size_t* actualSizeOfData)
+CCerror ComputeContext::getProgramInfoBase(CCProgram program, int infoType, size_t sizeOfData, void* data, size_t* actualSizeOfData)
 {
    cl_int error = clGetProgramInfo(program, infoType, sizeOfData, data, actualSizeOfData);
    return error;
@@ -583,63 +581,55 @@ CCerror ComputeContext::getBuildInfo(CCProgram program, CCDeviceID device, int i
     return error;
 }
 
-CCerror ComputeContext::getCommandQueueInfo(CCCommandQueue queue, int infoType, size_t sizeOfData, void* data)
+CCerror ComputeContext::getCommandQueueInfoBase(CCCommandQueue queue, int infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
-   cl_int error = clGetCommandQueueInfo(queue, infoType, sizeOfData, data, 0);
-   return error;
+   return clGetCommandQueueInfo(queue, infoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getEventInfo(CCEvent event, int infoType, size_t sizeOfData, void* data)
+CCerror ComputeContext::getEventInfoBase(CCEvent event, int infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
-    cl_int error = clGetEventInfo(event, infoType, sizeOfData, data, 0);
-    return error;
+    return clGetEventInfo(event, infoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getEventProfilingInfo(CCEvent event, int infoType, size_t sizeOfData, void* data)
+CCerror ComputeContext::getEventProfilingInfoBase(CCEvent event, int infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
-    cl_int error = clGetEventProfilingInfo(event, infoType, sizeOfData, data, 0);
-    return error;
+    return clGetEventProfilingInfo(event, infoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getImageInfo(PlatformComputeObject image, int infoType, size_t sizeOfData, void* data)
+CCerror ComputeContext::getImageInfoBase(PlatformComputeObject image, int infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
     cl_image_info clImageInfoType = infoType;
-    cl_int error = clGetImageInfo(image, clImageInfoType, sizeOfData, data, 0);
-    return error;
+    return clGetImageInfo(image, clImageInfoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getGLtextureInfo(PlatformComputeObject image, int textureInfoType, size_t sizeOfData, void* data)
+CCerror ComputeContext::getGLTextureInfoBase(PlatformComputeObject image, int textureInfoType, size_t sizeOfData, void* data, size_t* retSize)
 {
     cl_gl_texture_info clglTextureInfoType = textureInfoType;
-    cl_int error = clGetGLTextureInfo(image, clglTextureInfoType, sizeOfData, data, 0);
-    return error;
+    return clGetGLTextureInfo(image, clglTextureInfoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getKernelInfo(CCKernel kernel, int infoType, size_t sizeOfData, void* data)
+CCerror ComputeContext::getKernelInfoBase(CCKernel kernel, int infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
     cl_kernel_info clKernelInfoType = infoType;
-    cl_int error = clGetKernelInfo(kernel, clKernelInfoType, sizeOfData, data, 0);
-    return error;
+    return clGetKernelInfo(kernel, clKernelInfoType, sizeOfData, data, retSize);
 }
 
 CCerror ComputeContext::getWorkGroupInfo(CCKernel kernel, CCDeviceID device, int infoType, size_t sizeOfData, void* data)
 {
     cl_kernel_work_group_info clKernelWorkGroupInfoType = infoType;
-    cl_int error = clGetKernelWorkGroupInfo(kernel, device, clKernelWorkGroupInfoType, sizeOfData, data, 0);
-    return error;
+    return clGetKernelWorkGroupInfo(kernel, device, clKernelWorkGroupInfoType, sizeOfData, data, 0);
 }
 
-CCerror ComputeContext::getSamplerInfo(CCSampler sampler, int infoType, size_t sizeOfData, void* data)
+CCerror ComputeContext::getSamplerInfoBase(CCSampler sampler, int infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
     cl_sampler_info clSamplerInfoType = infoType;
-    cl_int error = clGetSamplerInfo(sampler, clSamplerInfoType, sizeOfData, data, 0);
-    return error;
+    return clGetSamplerInfo(sampler, clSamplerInfoType, sizeOfData, data, retSize);
 }
-CCerror ComputeContext::getMemoryObjectInfo(PlatformComputeObject memObject, int infoType, size_t sizeOfData, void* data)
+
+CCerror ComputeContext::getMemoryObjectInfoBase(PlatformComputeObject memObject, int infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
     cl_mem_info clMemInfoType = infoType;
-    cl_int error = clGetMemObjectInfo(memObject, clMemInfoType, sizeOfData, data, 0);
-    return error;
+    return clGetMemObjectInfo(memObject, clMemInfoType, sizeOfData, data, retSize);
 }
 
 CCerror ComputeContext::releaseKernel(CCKernel kernel)

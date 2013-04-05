@@ -71,14 +71,14 @@ WebCLGetInfo WebCLEvent::getInfo(int paramName, ExceptionCode& ec)
     switch (paramName) {
     case ComputeContext::EVENT_COMMAND_EXECUTION_STATUS: {
         CCuint ccExecStatus = 0;
-        err = ComputeContext::getEventInfo(m_clEvent, paramName, sizeof(CCuint), &ccExecStatus);
+        err = ComputeContext::getEventInfo(m_clEvent, paramName, &ccExecStatus);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccExecStatus));
         break;
     }
     case ComputeContext::EVENT_COMMAND_TYPE: {
         CCCommandType ccCommandType = 0;
-        err= ComputeContext::getEventInfo(m_clEvent, paramName, sizeof(CCCommandType), &ccCommandType);
+        err= ComputeContext::getEventInfo(m_clEvent, paramName, &ccCommandType);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccCommandType));
         break;
@@ -129,7 +129,7 @@ WebCLGetInfo WebCLEvent::getProfilingInfo(int paramName, ExceptionCode& ec)
     case ComputeContext::PROFILING_COMMAND_START:
     case ComputeContext::PROFILING_COMMAND_END: {
         CCulong eventProfilingInfo = 0;
-        err = ComputeContext::getEventProfilingInfo(m_clEvent, paramName, sizeof(CCulong), &eventProfilingInfo);
+        err = ComputeContext::getEventProfilingInfo(m_clEvent, paramName, &eventProfilingInfo);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(eventProfilingInfo));
         }

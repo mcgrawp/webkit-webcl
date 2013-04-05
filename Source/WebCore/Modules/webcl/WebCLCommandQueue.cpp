@@ -81,7 +81,7 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
     case ComputeContext::QUEUE_DEVICE:
         return WebCLGetInfo(PassRefPtr<WebCLDevice>(const_cast<WebCLDevice*>(m_device.get())));
     case ComputeContext::QUEUE_PROPERTIES:
-        err = ComputeContext::getCommandQueueInfo(platformObject(), paramName, sizeof(CCCommandQueueProperties), &ccCommandQueueProperties);
+        err = ComputeContext::getCommandQueueInfo(platformObject(), paramName, &ccCommandQueueProperties);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccCommandQueueProperties));
         break;

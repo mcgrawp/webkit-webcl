@@ -29,6 +29,7 @@
 #define ComputeContext_h
 
 #include "ComputeTypes.h"
+#include "ComputeTypesTraits.h"
 #include "GraphicsTypes3D.h"
 
 #include <wtf/PassRefPtr.h>
@@ -371,19 +372,52 @@ public:
 
     CCerror supportedImageFormats(int /*type*/, int /*imageType*/, Vector<CCImageFormat>&);
 
-    static CCerror getDeviceInfo(CCDeviceID, int infoType, size_t sizeOfData, void* data);
-    static CCerror getPlatformInfo(CCPlatformID, int infoType, size_t sizeOfData, void* data);
-    static CCerror getProgramInfo(CCProgram, int infoType, size_t sizeOfData, void* data, size_t* actualSizeOfData);
-    static CCerror getBuildInfo(CCProgram, CCDeviceID, int infoType, size_t sizeOfData, void* data);
-    static CCerror getCommandQueueInfo(CCCommandQueue, int infoType, size_t sizeOfData, void* data);
-    static CCerror getEventInfo(CCEvent event, int infoType, size_t sizeOfData, void* data);
-    static CCerror getEventProfilingInfo(CCEvent event, int infoType, size_t sizeOfData, void* data);
-    static CCerror getImageInfo(PlatformComputeObject image, int infoType, size_t sizeOfData, void* data);
-    static CCerror getGLtextureInfo(PlatformComputeObject image, int textureInfoType, size_t sizeOfData, void* data);
-    static CCerror getKernelInfo(CCKernel, int infoType, size_t sizeOfData, void* data);
-    static CCerror getWorkGroupInfo(CCKernel, CCDeviceID, int infoType, size_t sizeOfData, void* data);
-    static CCerror getSamplerInfo(CCSampler, int infoType, size_t sizeOfData, void* data);
-    static CCerror getMemoryObjectInfo(PlatformComputeObject, int infoType, size_t sizeOfData, void* data);
+    template <typename T>
+    static CCerror getDeviceInfo(CCDeviceID device, int infoType, T* data) {
+        return getInfoHelper(ComputeContext::getDeviceInfoBase, device, infoType, data);
+    }
+    template <typename T>
+    static CCerror getPlatformInfo(CCPlatformID platform, int infoType, T* data) {
+        return getInfoHelper(ComputeContext::getPlatformInfoBase, platform, infoType, data);
+    }
+    template <typename T>
+    static CCerror getProgramInfo(CCProgram program, int infoType, T* data) {
+        return getInfoHelper(ComputeContext::getProgramInfoBase, program, infoType, data);
+    }
+    template <typename T>
+    static CCerror getCommandQueueInfo(CCCommandQueue commandQueue, int infoType, T* data) {
+        return getInfoHelper(ComputeContext::getCommandQueueInfoBase, commandQueue, infoType, data);
+    }
+    template <typename T>
+    static CCerror getEventInfo(CCEvent event, int infoType, T* data) {
+        return getInfoHelper(ComputeContext::getEventInfoBase, event, infoType, data);
+    }
+    template <typename T>
+    static CCerror getEventProfilingInfo(CCEvent event, int infoType, T* data) {
+        return getInfoHelper(ComputeContext::getEventProfilingInfoBase, event, infoType, data);
+    }
+    template <typename T>
+    static CCerror getImageInfo(PlatformComputeObject image, int infoType, T* data) {
+        return getInfoHelper(ComputeContext::getImageInfoBase, image, infoType, data);
+    }
+    template <typename T>
+    static CCerror getGLTextureInfo(PlatformComputeObject image, int textureInfoType, T* data) {
+        return getInfoHelper(ComputeContext::getGLTextureInfoBase, image, textureInfoType, data);
+    }
+    template <typename T>
+    static CCerror getKernelInfo(CCKernel kernel, int infoType, T* data) {
+        return getInfoHelper(ComputeContext::getKernelInfoBase, kernel, infoType, data);
+    }
+    template <typename T>
+        static CCerror getSamplerInfo(CCSampler sampler, int infoType, T* data) {
+        return getInfoHelper(ComputeContext::getSamplerInfoBase, sampler, infoType, data);
+    }
+    template <typename T>
+    static CCerror getMemoryObjectInfo(PlatformComputeObject computeObject, int infoType, T* data) {
+        return getInfoHelper(ComputeContext::getMemoryObjectInfoBase, computeObject, infoType, data);
+    }
+    static CCerror getWorkGroupInfo(CCKernel, CCDeviceID, int infoType, size_t, void* data);
+    static CCerror getBuildInfo(CCProgram program, CCDeviceID device, int infoType, size_t sizeOfData, void* data);
 
     CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
 	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
@@ -439,6 +473,18 @@ public:
 
     // XXX: Create a Pimpl implementation
 private:
+    static CCerror getDeviceInfoBase(CCDeviceID device, int infoType, size_t size, void *data, size_t* retSize);
+    static CCerror getPlatformInfoBase(CCPlatformID platform, int infoType, size_t size, void *data, size_t* retSize);
+    static CCerror getProgramInfoBase(CCProgram program, int infoType, size_t size, void *data, size_t* retSize);
+    static CCerror getCommandQueueInfoBase(CCCommandQueue commandQueue, int infoType, size_t size, void *data, size_t* retSize);
+    static CCerror getEventInfoBase(CCEvent event, int infoType, size_t size, void *data, size_t* retSize);
+    static CCerror getEventProfilingInfoBase(CCEvent device, int infoType, size_t size, void *data, size_t* retSize);
+    static CCerror getImageInfoBase(PlatformComputeObject computeObject, int infoType, size_t size, void *data, size_t* retSize);
+    static CCerror getGLTextureInfoBase(PlatformComputeObject computeObject, int infoType, size_t size, void *data, size_t* retSize);
+    static CCerror getKernelInfoBase(CCKernel kernel, int infoType, size_t size, void *data, size_t* retSize);
+    static CCerror getSamplerInfoBase(CCSampler sampler, int infoType, size_t size, void *data, size_t* retSize);
+    static CCerror getMemoryObjectInfoBase(PlatformComputeObject computeObject, int infoType, size_t size, void *data, size_t* retSize);
+
     cl_context m_clContext;
 };
 
