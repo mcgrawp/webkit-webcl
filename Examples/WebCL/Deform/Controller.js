@@ -1,17 +1,17 @@
 /*
 * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
 * are met:
-* 
+*
 * 1.  Redistributions of source code must retain the above copyright
 *     notice, this list of conditions and the following disclaimer.
-* 
+*
 * 2.  Redistributions in binary form must reproduce the above copyright
 *     notice, this list of conditions and the following disclaimer in the
 *     documentation and/or other materials provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
 * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -24,7 +24,7 @@
 * NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
- 
+
 var WINW                = 800;          // drawing canvas width
 var WINH                = 480;          // drawing canvas height
 
@@ -44,15 +44,15 @@ var MAX_SIM             = CL_SIM;
 function UserData() {
 	this.nVertices		= null;			// number of vertices
 	this.nFlops			= 0;			// flop estimate per sim cycle
-	
+
 	this.initPos		= null;			// initial vertex positions
     this.initNor        = null;         // initial vertex normals (just needed for resetting)
     this.curPos         = null;         // current vertex positions
     this.curNor			= null;			// current vertex normals
-    
+
    	this.curPosVBO      = null;         // shared buffer between GL and CL
     this.curNorVBO      = null;         // shared buffer between GL and CL
-    
+
     this.gl             = null;         // handle for GL context
     this.cl             = null;         // handle for CL context
     this.glLoaded		= false;		// indicates completion of geometry initialization
@@ -61,7 +61,7 @@ function UserData() {
     this.fpsSampler     = null;         // FPS sampler
     this.simSampler     = null;         // Sim time sampler
     this.drawSampler    = null;         // Draw time sampler
-    
+
     // simulation parameters
 	this.frequency 		= 1.0;
 	this.amplitude		= 0.35;
@@ -69,7 +69,7 @@ function UserData() {
 	this.lacunarity		= 2.0;
 	this.increment		= 1.5;
 	this.octaves		= 5.5;
-	this.roughness		= 0.025;  
+	this.roughness		= 0.025;
 }
 
 var userData = null;
@@ -82,13 +82,13 @@ function onLoad() {
     userData.fpsSampler = new FpsSampler(SAMPLEPERIOD, "fps");
     userData.simSampler = new MSecSampler(SAMPLEPERIOD, "sms");
     userData.drawSampler = new MSecSampler(SAMPLEPERIOD, "dms");
-    
+
     userData.gl  = InitGL();
     userData.cl  = InitCL();
-    
+
     SetSimButton();
-    
-    setInterval( MainLoop, 0 );    
+
+    setInterval( MainLoop, 0 );
     setInterval( function() { userData.fpsSampler.display(); }, DISPLAYPERIOD);
     setInterval( function() { userData.simSampler.display(); }, DISPLAYPERIOD);
     setInterval( function() { userData.drawSampler.display(); }, DISPLAYPERIOD);
@@ -97,13 +97,13 @@ function onLoad() {
 
 function ShowFLOPS() {
     var flops = 0;
-    
+
     if(userData.simSampler.ms > 0)
     	flops = (userData.nFlops * 1000) / (userData.simSampler.ms);
-        
+
     if(userData.clSimMode === NO_SIM)
         flops = 0;
-    	
+
     if(flops > 1000 * 1000 * 1000) {
         flops = Math.round(flops / (1000 * 1000 * 1000));
         document.getElementById("f1").firstChild.nodeValue = "GFLOPS:";
@@ -124,19 +124,19 @@ function MainLoop() {
 
     userData.drawSampler.endFrame();    // started at beginning of previous Draw()
     userData.fpsSampler.markFrame();    // count a new frame
-    
+
     userData.simSampler.startFrame();
     if(userData.clSimMode === JS_SIM) {
             SimulateJS();
     }
     else if(userData.clSimMode === CL_SIM && userData.clLoaded) {
     	SimulateCL(userData.cl);
-    }  
+    }
     userData.simSampler.endFrame();
-    
+
     userData.drawSampler.startFrame();
     DrawGL(userData.gl);
-    // end drawSampler when we re-enter MainLoop() 
+    // end drawSampler when we re-enter MainLoop()
 }
 
 function ToggleSim() {

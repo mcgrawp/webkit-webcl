@@ -26,7 +26,6 @@
  */
 
 // local OpenCL info
-//
 var platforms;                           // array of OpenCL platform ids
 var platform;                            // OpenCL platform id
 var devices;                             // array of OpenCL device ids
@@ -44,160 +43,146 @@ var globalWorkSize = new Int32Array(2);
 var localWorkSize = new Int32Array(2);
 
 function getKernel(id) {
-  var kernelScript = document.getElementById(id);
-  if (kernelScript === null || kernelScript.type !== "x-kernel")
-    return null;
+    var kernelScript = document.getElementById(id);
+    if (kernelScript === null || kernelScript.type !== "x-kernel")
+        return null;
 
-  return kernelScript.firstChild.textContent;
+    return kernelScript.firstChild.textContent;
 }
 
 function InitCL() {
-  try  {
-    if (typeof(webcl) === "undefined") {
-      console.error("webcl is yet to be defined");
-      return null;
+    try  {
+        if (typeof(webcl) === "undefined") {
+            console.error("webcl property is yet to be defined in window.");
+            return null;
+        }
+
+        var cl = webcl;
+        if (cl === null) {
+            console.error("Failed to fetch a webcl instance.");
+            return null;
+        }
+
+        // Select a compute device
+        platforms = cl.getPlatforms();
+        if (platforms.length === 0) {
+            console.error("No platforms available");
+            return null;
+        }
+        platform = platforms[0];
+
+        // Select a compute device
+        devices = platform.getDevices(cl.DEVICE_TYPE_GPU);
+        if (devices.length === 0) {
+            console.error("No devices available");
+            return null;
+        }
+        device = devices[0];
+
+        // Create a compute context
+        if (GLCL_SHARE_MODE) 
+            context = cl.createContext({platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU, shareGroup: 1, hint: null});
+        else
+            context = cl.createContext({platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU, shareGroup: 0, hint: null});
+        if(context === null) {
+            console.error("createContext fails");
+            return null;
+        }
+
+        // Create a command queue
+        queue = context.createCommandQueue(device);
+
+        // Create the compute program from the source buffer
+        var kernelSource = getKernel("deform_kernel");
+        if (kernelSource === null) {
+            console.error("No kernel named: " + "deform_kernel");
+            return null;
+        }
+
+        program = context.createProgram(kernelSource);
+
+        // Build the program executable
+        program.build(device);
+
+        // Create the compute kernel in the program we wish to run
+        kernel = program.createKernel("displace");
+    } catch (e) {
+        console.error("Deform Demo Failed ; Message: " + e.message);
     }
-
-    var cl = webcl;
-
-    if (cl === null) {
-      console.error("Failed to create webcl object");
-      return null;
-    }
-
-    // Select a compute device
-    //
-    platforms = cl.getPlatforms();
-
-    if (platforms.length === 0) {
-      console.error("No platforms available");
-      return null;
-    }
-    platform = platforms[0];
-
-    // Select a compute device
-    //
-    devices = platform.getDevices(cl.DEVICE_TYPE_GPU);
-    if (devices.length === 0) {
-      console.error("No devices available");
-      return null;
-    }
-    device = devices[0];
-
-    // Create a compute context
-    //
-    context = cl.createContext({platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU, shareGroup: 1, hint: null});
-
-    // Create a command queue
-    //
-    queue = context.createCommandQueue(device, null);
-
-    // Create the compute program from the source buffer
-    //
-    var kernelSource = getKernel("deform_kernel");
-    if (kernelSource === null) {
-      console.error("No kernel named: " + "deform_kernel");
-      return null;
-    }
-
-    program = context.createProgram(kernelSource);
-
-    // Build the program executable
-    //
-    program.build(devices);
-
-    // Create the compute kernel in the program we wish to run
-    //
-    kernel = program.createKernel("displace");
-
-  }
-  catch (e)
-  {
-    console.error("Deform Demo Failed ; Message: " + e.message);
-  }
-
-  return cl;
+    return cl;
 }
 
 function divide_up(a, b)
 {
-  return ((a % b) != 0) ? (a / b + 1) : (a / b);
+    return ((a % b) != 0) ? (a / b + 1) : (a / b);
 }
 
 function InitCLBuffers(cl) {
+    try {
+        if (cl === null)
+            return;
 
-  try {
-    if (cl === null)
-      return;
+        var bufferSize = userData.nVertices * NUM_VERTEX_COMPONENTS * Float32Array.BYTES_PER_ELEMENT;
 
-    var bufferSize = userData.nVertices * NUM_VERTEX_COMPONENTS * Float32Array.BYTES_PER_ELEMENT;
+        // Create CL working buffers
+        initPosBuffer = context.createBuffer(cl.MEM_WRITE_ONLY, bufferSize);
+        if (initPosBuffer === null) {
+            console.error("Failed to allocate device memory");
+            return null;
+        }
 
-    // Create CL working buffers
-    //
-    initPosBuffer = context.createBuffer(cl.MEM_WRITE_ONLY, bufferSize);
-    if (initPosBuffer === null) {
-      console.error("Failed to allocate device memory");
-      return null;
+        // Create CL buffers from GL VBOs
+        // (Initial load of positions is via gl.bufferData)
+        if (GLCL_SHARE_MODE) 
+            curPosBuffer = context.createFromGLBuffer(cl.MEM_READ_WRITE, userData.curPosVBO);
+        else 
+            curPosBuffer = context.createBuffer(cl.MEM_READ_WRITE, bufferSize);
+        if (curPosBuffer === null) {
+            console.error("Failed to allocate device memory");
+            return null;
+        }
+
+        if (GLCL_SHARE_MODE) 
+            curNorBuffer = context.createFromGLBuffer(cl.MEM_READ_WRITE, userData.curNorVBO);
+        else 
+            curNorBuffer = context.createBuffer(cl.MEM_READ_WRITE, bufferSize);
+        if (curNorBuffer === null) {
+            console.error("Failed to allocate device memory");
+            return null;
+        }
+
+        // Get the maximum work group size for executing the kernel on the device
+        //
+        var workGroupSize = kernel.getWorkGroupInfo(device, cl.KERNEL_WORK_GROUP_SIZE);
+
+        globalWorkSize[0] = 1;
+        globalWorkSize[1] = 1;
+        while(globalWorkSize[0] * globalWorkSize[1] <userData.nVertices) {
+            globalWorkSize[0] = globalWorkSize[0] * 2;
+            globalWorkSize[1] = globalWorkSize[1] * 2;
+        }
+
+        localWorkSize[0] = globalWorkSize[0];
+        localWorkSize[1] = globalWorkSize[1];
+        while (localWorkSize[0] * localWorkSize[1] > workGroupSize) {
+            localWorkSize[0] = localWorkSize[0] / 2;
+            localWorkSize[1] = localWorkSize[1] / 2;
+        }
+
+        console.log("workGroupSize: " + workGroupSize);
+        console.log("localWorkSize[0]: " + localWorkSize[0]);
+        console.log("localWorkSize[1]: " + localWorkSize[1]);
+        console.log("globalWorkSize[0]: " + globalWorkSize[0]);
+        console.log("globalWorkSize[1]: " + globalWorkSize[1]);
+
+        // Initial load of initial position data
+        queue.enqueueWriteBuffer(initPosBuffer, true, 0, bufferSize, userData.initPos);
+
+        queue.finish();
     }
-
-    // Create CL buffers from GL VBOs
-    // (Initial load of positions is via gl.bufferData)
-    //
-    curPosBuffer = context.createFromGLBuffer(cl.MEM_READ_WRITE, userData.curPosVBO);
-    if (curPosBuffer === null) {
-      console.error("Failed to allocate device memory");
-      return null;
+    catch (e) {
+        console.error("Deform Demo Failed ; Message: " + e.message);
     }
-
-    curNorBuffer = context.createFromGLBuffer(cl.MEM_READ_WRITE, userData.curNorVBO);
-    if (curNorBuffer === null) {
-      console.error("Failed to allocate device memory");
-      return null;
-    }
-
-    // Get the maximum work group size for executing the kernel on the device
-    //
-    var workGroupSize = kernel.getWorkGroupInfo(device, cl.KERNEL_WORK_GROUP_SIZE);
-
-    var groupSize = 4;
-    var uiSplitCount = Math.ceil(Math.sqrt(userData.nVertices));
-    var uiActive = (workGroupSize / groupSize);
-    uiActive = uiActive < 1 ? 1 : uiActive;
-
-    var uiQueued = workGroupSize / uiActive;
-
-    console.log("workGroupSize: " + workGroupSize);
-    console.log("uiSplitCount: " + uiSplitCount);
-    console.log("uiActive: " + uiActive);
-    console.log("uiQueued: " + uiQueued);
-
-    localWorkSize[0] = workGroupSize/8; //uiActive;
-    localWorkSize[1] = workGroupSize/64;//uiQueued;
-
-    globalWorkSize[0] = workGroupSize/2; //uiSplitCount; //divide_up(uiSplitCount, uiActive) * uiActive;
-    globalWorkSize[1] = workGroupSize/2; //uiSplitCount; //divide_up(uiSplitCount, uiQueued) * uiQueued;
-
-    //localWorkSize[0] = 64; //uiActive;
-    //localWorkSize[1] = 4; //uiQueued;
-
-    //globalWorkSize[0] = 256; //uiSplitCount; //divide_up(uiSplitCount, uiActive) * uiActive;
-    //globalWorkSize[1] = 256; //uiSplitCount; //divide_up(uiSplitCount, uiQueued) * uiQueued;
-
-    console.log(localWorkSize[0]);
-    console.log(localWorkSize[1]);
-    console.log(globalWorkSize[0]);
-    console.log(globalWorkSize[1]);
-
-    // Initial load of initial position data
-    //
-    queue.enqueueWriteBuffer(initPosBuffer, true, 0, bufferSize, userData.initPos);
-
-    //queue.finish(null, null);
-    queue.finish();
-  }
-  catch (e) {
-    console.error("Deform Demo Failed ; Message: " + e.message);
-  }
 }
 
 function SimulateCL(cl)
@@ -211,26 +196,20 @@ function SimulateCL(cl)
       queue.enqueueAcquireGLObjects(curNorBuffer);
     }
 
-    var dimx = 16;
-    var dimy = 0;
-
     var kernelArgType = WebCLKernelArgumentTypes;
     kernel.setArg(0, initPosBuffer);
     kernel.setArg(1, curNorBuffer);
     kernel.setArg(2, curPosBuffer);
-    kernel.setArg(3, dimx, kernelArgType.LONG);
-    kernel.setArg(4, dimy, kernelArgType.LONG);
-    kernel.setArg(5, userData.frequency, kernelArgType.FLOAT);
-    kernel.setArg(6, userData.amplitude, kernelArgType.FLOAT);
-    kernel.setArg(7, userData.phase, kernelArgType.FLOAT);
-    kernel.setArg(8, userData.lacunarity, kernelArgType.FLOAT);
-    kernel.setArg(9, userData.increment, kernelArgType.FLOAT);
-    kernel.setArg(10, userData.octaves, kernelArgType.FLOAT);
-    kernel.setArg(11, userData.roughness, kernelArgType.FLOAT);
-    kernel.setArg(12, userData.nVertices, kernelArgType.LONG);
+    kernel.setArg(3, userData.frequency, kernelArgType.FLOAT);
+    kernel.setArg(4, userData.amplitude, kernelArgType.FLOAT);
+    kernel.setArg(5, userData.phase, kernelArgType.FLOAT);
+    kernel.setArg(6, userData.lacunarity, kernelArgType.FLOAT);
+    kernel.setArg(7, userData.increment, kernelArgType.FLOAT);
+    kernel.setArg(8, userData.octaves, kernelArgType.FLOAT);
+    kernel.setArg(9, userData.roughness, kernelArgType.FLOAT);
+    kernel.setArg(10, userData.nVertices, kernelArgType.UINT);
 
-    //queue.enqueueNDRangeKernel(kernel, new Int32Array(0, 0), globalWorkSize, localWorkSize);
-    queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, null, null);
+    queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
     queue.finish();
 
     if (GLCL_SHARE_MODE) {

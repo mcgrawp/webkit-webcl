@@ -254,13 +254,11 @@ body {
 	// normals -> curNor    enqueueRead  (after each run)
 	// output  -> curPos    enqueueRead  (after each run)
 	//
-	// Note - dimx, dimy are unused
 
 	__kernel void displace(
 		const __global float *vertices,
 		__global float *normals,
 		__global float *output,
-		float dimx, float dimy,
 		float frequency,
 		float amplitude,
 		float phase,
@@ -270,7 +268,6 @@ body {
 		float roughness,
 		uint count)
 	{
-		int ix = (int) dimx;
 		int tx = get_global_id(0);
 		int ty = get_global_id(1);
 		int sx = get_global_size(0);
