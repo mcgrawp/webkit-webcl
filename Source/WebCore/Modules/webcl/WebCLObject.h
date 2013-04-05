@@ -28,9 +28,9 @@
 #ifndef WebCLObject_h
 #define WebCLObject_h
 
-#include <wtf/RefCounted.h>
-
 #if ENABLE(WEBCL)
+
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

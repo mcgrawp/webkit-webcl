@@ -37,9 +37,7 @@
 #include "WebCLPlatform.h"
 #include <wtf/text/WTFString.h>
 
-using namespace std ;
-
-namespace WebCore{
+namespace WebCore {
 
 class WebCL;
 

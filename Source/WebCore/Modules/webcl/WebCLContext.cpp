@@ -35,7 +35,6 @@
 #include "CachedImage.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
-#include "WebCL.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLEvent.h"
 #include "WebCLImage.h"

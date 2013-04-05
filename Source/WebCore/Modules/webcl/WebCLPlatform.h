@@ -28,10 +28,10 @@
 #ifndef WebCLPlatform_h
 #define WebCLPlatform_h
 
+#if ENABLE(WEBCL)
+
 #include "WebCLGetInfo.h"
 #include "WebCLDevice.h"
-
-#if ENABLE(WEBCL)
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -41,7 +41,6 @@
 
 namespace WebCore {
 
-class WebCL;
 class WebCLGetInfo;
 
 class WebCLPlatform : public WebCLObject<CCPlatformID> {

@@ -30,6 +30,10 @@
 #if ENABLE(WEBCL)
 #include "JSWebCL.h"
 
+#include "JSFloat32Array.h"
+#include "JSInt32Array.h"
+#include "JSUint8Array.h"
+
 #include "JSWebCLCommandQueue.h"
 #include "JSWebCLContextProperties.h"
 #include "JSWebCLCustom.h"
@@ -37,15 +41,10 @@
 #include "JSWebCLEvent.h"
 #include "JSWebCLImage.h"
 #include "JSWebCLImageDescriptor.h"
-#include "JSWebCLKernel.h"
 #include "JSWebCLMemoryObject.h"
 #include "JSWebCLPlatform.h"
 #include "JSWebCLProgram.h"
-#include "JSWebCLSampler.h"
 
-#include "JSFloat32Array.h"
-#include "JSInt32Array.h"
-#include "JSUint8Array.h"
 
 using namespace JSC;
 using namespace std;

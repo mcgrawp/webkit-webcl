@@ -26,10 +26,11 @@
  */
  
 #include "config.h"
-#include "WebCLKernelTypes.h"
-#include "WebCLException.h"
 
 #if ENABLE(WEBCL)
+
+#include "WebCLKernelTypes.h"
+#include "WebCLException.h"
 
 #include <wtf/DecimalNumber.h>
 

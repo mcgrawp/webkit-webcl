@@ -28,14 +28,13 @@
 #ifndef WebCLImageDescriptor_h
 #define WebCLImageDescriptor_h
 
+#if ENABLE(WEBCL)
+
 #include <OpenCL/opencl.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include "WebCLException.h"
 
 namespace WebCore {
-
-class WebCL;
 
 class WebCLImageDescriptor : public RefCounted<WebCLImageDescriptor>
 {
@@ -45,32 +44,42 @@ public:
     static PassRefPtr<WebCLImageDescriptor> create();
     static PassRefPtr<WebCLImageDescriptor> create(cl_image_format);
 
+    enum {
+        // Image Discriptor defaults
+        DEFAULT_OBJECT_CHANNELORDER = 0x10B5,
+        DEFAULT_OBJECT_CHANNELTYPE  = 0x10D2,
+        DEFAULT_OBJECT_WIDTH        = 0, // CL_DEVICE_IMAGE2D_MAX_WIDTH
+        DEFAULT_OBJECT_HEIGHT       = 0, // CL_DEVICE_IMAGE2D_MAX_HEIGHT
+        DEFAULT_OBJECT_ROWPITCH     = 0,
+    };
 
     WebCLImageDescriptor();
-      WebCLImageDescriptor(cl_image_format);
+    WebCLImageDescriptor(cl_image_format);
 
-    long objchannelOrder;
     void setChannelOrder(long);
     long channelOrder() const;
 
-    long objchannelType;
     void setChannelType(long);
     long channelType() const;
 
-    long objwidth;
     void setWidth(long);
     long width() const;
 
-    long objheight;
     void setHeight(long);
     long height() const;
 
-    long objrowPitch ;
     void setRowPitch(long);
     long rowPitch() const;
 
+private:
+    long m_channelOrder;
+    long m_channelType;
+    long m_width;
+    long m_height;
+    long m_rowPitch;
 };
 
 } // namespace WebCore
 
+#endif
 #endif // WebCLImageDescriptor_h

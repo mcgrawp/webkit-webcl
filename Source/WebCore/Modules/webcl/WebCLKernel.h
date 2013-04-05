@@ -28,6 +28,8 @@
 #ifndef WebCLKernel_h
 #define WebCLKernel_h
 
+#if ENABLE(WEBCL)
+
 #include "ExceptionCode.h"
 #include "WebCLGetInfo.h"
 #include "WebCLKernelTypes.h"
@@ -76,4 +78,5 @@ private:
 
 } // namespace WebCore
 
+#endif
 #endif // WebCLKernel_h

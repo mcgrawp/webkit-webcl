@@ -30,7 +30,7 @@
 
 #if ENABLE(WEBCL)
 
-#include "WebCLException.h"
+#include "ComputeTypes.h"
 #include "WebCLPlatform.h"
 
 #include <wtf/PassRefPtr.h>
@@ -38,13 +38,8 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#include <OpenCL/opencl.h>
-
-using namespace std;
-
 namespace WebCore {
 
-class WebCL;
 class WebCLDevice;
 class WebCLPlatform;
 
@@ -53,7 +48,6 @@ class WebCLContextProperties : public RefCounted<WebCLContextProperties>
 public:
     static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int, int, const String&);
     ~WebCLContextProperties() { }
-
 
     Vector<RefPtr<WebCLDevice> >& devices();
 
@@ -74,13 +68,13 @@ public:
 private:
     WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int, int, const String&);
 
-    RefPtr<WebCLPlatform> objplatform;
-    Vector<RefPtr<WebCLDevice> > objdevices;
-    int objdeviceType;
-    int objshareGroup;
+    RefPtr<WebCLPlatform> m_platform;
+    Vector<RefPtr<WebCLDevice> > m_devices;
+    int m_deviceType;
+    int m_shareGroup;
     Vector<CCContextProperties> m_ccProperties;
     // FIXME: spec says DOMString[].
-    String objhint;
+    String m_hint;
 };
 
 }// namespace WebCore

@@ -30,51 +30,34 @@
 
 #if ENABLE(WEBCL)
 
-#include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
-#include "WebCLDevice.h"
 #include "WebCLEvent.h"
-#include "WebCLMemoryObject.h"
+#include "WebCLExtension.h"
 #include "WebCLPlatform.h"
-#include "WebCLProgram.h"
-#include "WebCLSampler.h"
-#include <OpenCL/opencl.h>
-
-using namespace std;
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class WebCLImage;
-class WebCLException;
 class WebCLContextProperties;
 
 class WebCL : public RefCounted<WebCL> {
 public:
-    virtual ~WebCL();
+    static PassRefPtr<WebCL> create();
+    virtual ~WebCL() { }
 
     // FIXME: Remove the enum below in favor of constants.
     enum {
-        // Buffer size
-        CHAR_BUFFER_SIZE                         = 1024,
-
-        // Image Discriptor defaults
-        DEFAULT_OBJECT_CHANNELORDER              = 0x10B5,
-        DEFAULT_OBJECT_CHANNELTYPE               = 0x10D2,
-        DEFAULT_OBJECT_WIDTH                     = 0, // CL_DEVICE_IMAGE2D_MAX_WIDTH
-        DEFAULT_OBJECT_HEIGHT                    = 0, // CL_DEVICE_IMAGE2D_MAX_HEIGHT
-        DEFAULT_OBJECT_ROWPITCH                  = 0,
+        CHAR_BUFFER_SIZE = 1024,
     };
 
     Vector<RefPtr<WebCLPlatform> > getPlatforms(ExceptionCode&) const;
+
     void waitForEvents(const Vector<RefPtr<WebCLEvent> >&, ExceptionCode&);
+
     PassRefPtr<WebCLContext> createContext(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
+
     Vector<String> getSupportedExtensions(ExceptionCode&);
 
-    static PassRefPtr<WebCL> create();
-
 private:
-    WebCL();
     RefPtr<WebCLContextProperties>& defaultProperties(ExceptionCode&);
     Vector<RefPtr<WebCLContext> > m_context;
     RefPtr<WebCLContextProperties> m_defaultProperties;

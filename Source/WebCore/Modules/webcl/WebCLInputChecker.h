@@ -28,6 +28,8 @@
 #ifndef WebCLInputChecker_h
 #define WebCLInputChecker_h
 
+#if ENABLE(WEBCL)
+
 #include "ComputeTypes.h"
 #include "WebCLObject.h"
 
@@ -49,7 +51,7 @@ bool validateWebCLObject(WebCLObject<T>* object)
 }
 
 }
-
 }
 
+#endif
 #endif // WebCLInputChecker

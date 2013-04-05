@@ -28,6 +28,8 @@
 #ifndef WebCLSampler_h
 #define WebCLSampler_h
 
+#if ENABLE(WEBCL)
+
 #include "WebCLException.h"
 #include "WebCLGetInfo.h"
 #include "WebCLObject.h"
@@ -56,4 +58,5 @@ private:
 
 } // namespace WebCore
 
+#endif
 #endif // WebCLSampler_h

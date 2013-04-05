@@ -29,10 +29,6 @@
 
 #if ENABLE(WEBCL)
 
-#include "WebCLImage.h"
-#include "WebCLException.h"
-#include "WebCLContext.h"
-#include "WebCL.h"
 #include "WebCLImageDescriptor.h"
 
 namespace WebCore {
@@ -43,78 +39,82 @@ WebCLImageDescriptor::~WebCLImageDescriptor()
 
 PassRefPtr<WebCLImageDescriptor> WebCLImageDescriptor::create()
 {
-    return adoptRef(new WebCLImageDescriptor()) ;
-}
-PassRefPtr<WebCLImageDescriptor> WebCLImageDescriptor::create(cl_image_format image_format)
-{
-    return adoptRef(new WebCLImageDescriptor(image_format)) ;
+    return adoptRef(new WebCLImageDescriptor);
 }
 
+PassRefPtr<WebCLImageDescriptor> WebCLImageDescriptor::create(cl_image_format image_format)
+{
+    return adoptRef(new WebCLImageDescriptor(image_format));
+}
 
 WebCLImageDescriptor::WebCLImageDescriptor()
 {
-      this->objchannelOrder=WebCL::DEFAULT_OBJECT_CHANNELORDER;
-      this->objchannelType=WebCL::DEFAULT_OBJECT_CHANNELTYPE;
-      this->objwidth  = WebCL::DEFAULT_OBJECT_WIDTH ;
-      this->objheight = WebCL::DEFAULT_OBJECT_WIDTH;
-      this->objrowPitch = WebCL::DEFAULT_OBJECT_WIDTH;
+    m_channelOrder = DEFAULT_OBJECT_CHANNELORDER;
+    m_channelType = DEFAULT_OBJECT_CHANNELTYPE;
+    m_width = DEFAULT_OBJECT_WIDTH;
+    m_height = DEFAULT_OBJECT_WIDTH;
+    m_rowPitch = DEFAULT_OBJECT_WIDTH;
 }
+
 WebCLImageDescriptor::WebCLImageDescriptor(cl_image_format image_format)
 {
-    this->objchannelOrder = image_format.image_channel_order;
-    this->objchannelType= image_format.image_channel_data_type;
-    this->objwidth  = WebCL::DEFAULT_OBJECT_WIDTH ;
-    this->objheight = WebCL::DEFAULT_OBJECT_WIDTH;
-    this->objrowPitch = WebCL::DEFAULT_OBJECT_WIDTH;
+    m_channelOrder = image_format.image_channel_order;
+    m_channelType= image_format.image_channel_data_type;
+    m_width = DEFAULT_OBJECT_WIDTH;
+    m_height = DEFAULT_OBJECT_WIDTH;
+    // FIXME: PITCH_ROW = OBJECT_WIDTH?
+    m_rowPitch = DEFAULT_OBJECT_WIDTH;
 }
 
-
-void WebCLImageDescriptor::setChannelOrder(long channelOrder){
-  this->objchannelOrder = channelOrder;
+void WebCLImageDescriptor::setChannelOrder(long channelOrder)
+{
+    m_channelOrder = channelOrder;
 }
 
 long WebCLImageDescriptor::channelOrder() const
 {
-	return objchannelOrder;
+    return m_channelOrder;
 }
 
-void WebCLImageDescriptor::setChannelType(long channelType){
-  this->objchannelType = channelType;
+void WebCLImageDescriptor::setChannelType(long channelType)
+{
+    m_channelType = channelType;
 }
 
 long WebCLImageDescriptor::channelType() const
 {
-	return objchannelType;
+    return m_channelType;
 }
 
-void WebCLImageDescriptor::setWidth(long width){
-  this->objwidth = width;
+void WebCLImageDescriptor::setWidth(long width)
+{
+    m_width = width;
 }
 
 long WebCLImageDescriptor::width() const
 {
-	return objwidth;
+    return m_width;
 }
 
-void WebCLImageDescriptor::setHeight(long height){
-  this->objheight  = height;
+void WebCLImageDescriptor::setHeight(long height)
+{
+    m_height = height;
 }
 
 long WebCLImageDescriptor::height() const
 {
-	return objheight;
+    return m_height;
 }
 
-void WebCLImageDescriptor::setRowPitch(long rowPitch){
-  this->objrowPitch = rowPitch;
+void WebCLImageDescriptor::setRowPitch(long rowPitch)
+{
+    m_rowPitch = rowPitch;
 }
 
 long WebCLImageDescriptor::rowPitch() const
 {
-	return objrowPitch;
+    return m_rowPitch;
 }
-
-                
 
 } // namespace WebCore
 

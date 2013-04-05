@@ -168,6 +168,8 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
     }
+
+    // FIXME: Avoid accessing OpenCL constants directly.
     ASSERT(err != CL_SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();

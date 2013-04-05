@@ -28,6 +28,8 @@
 #ifndef WebCLGetInfo_h
 #define WebCLGetInfo_h
 
+#if ENABLE(WEBCL)
+
 #include "ComputeTypes.h"
 #include "ComputeContext.h"
 
@@ -156,4 +158,5 @@ private:
 
 } // namespace WebCore
 
+#endif // ENABLE(WEBCL)
 #endif // WebCLGetInfo_h

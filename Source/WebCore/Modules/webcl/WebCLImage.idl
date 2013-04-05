@@ -25,11 +25,11 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-interface [
+[
     Conditional=WEBCL,
     JSGenerateToJSObject,
     JSGenerateToNativeObject
-] WebCLImage : WebCLMemoryObject {
+] interface WebCLImage : WebCLMemoryObject {
     long getGLtextureInfo (in long paramNameobj) raises(DOMException);
     WebCLImageDescriptor getInfo() raises(DOMException);
 };

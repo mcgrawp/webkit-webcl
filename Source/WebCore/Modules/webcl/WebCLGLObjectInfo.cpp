@@ -26,9 +26,10 @@
  */
 
 #include "config.h"
-#include "WebCLGLObjectInfo.h"
 
 #if ENABLE(WEBCL)
+
+#include "WebCLGLObjectInfo.h"
 
 namespace WebCore {
 

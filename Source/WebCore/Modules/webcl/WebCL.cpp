@@ -39,17 +39,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-WebCL::WebCL()
-{
-}
-
 PassRefPtr<WebCL> WebCL::create()
 {
-    return adoptRef(new WebCL());
-}
-
-WebCL::~WebCL()
-{
+    return adoptRef(new WebCL);
 }
 
 Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec) const
@@ -66,7 +58,6 @@ Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec) const
 
 void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)
 {
-
     Vector<CCEvent> ccEvents;
 
     for (size_t i = 0; i < events.size(); ++i)
@@ -130,10 +121,6 @@ PassRefPtr<WebCLContext> WebCL::createContext(PassRefPtr<WebCLContextProperties>
     return webCLContext;
 }
 
-/*
-* Desc:: Turns an array of extension names that are supported by all WebCLPlatforms and WebCLDevices in this system. 
-*        Any string in this list, when passed to getExtension on any platform or device, must return a valid extension.
-*/
 Vector<String> WebCL::getSupportedExtensions(ExceptionCode&)
 {
     // FIXME: Needs a proper implementation.

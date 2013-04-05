@@ -26,10 +26,12 @@
  */
 
 #include "config.h"
+
+#if ENABLE(WEBCL)
+
 #include "WebCLInputChecker.h"
 
 #include "ComputeContext.h"
-
 
 namespace WebCore {
 namespace WebCLInputChecker {
@@ -181,3 +183,5 @@ bool isValidChannelType(int value)
 
 }
 }
+
+#endif

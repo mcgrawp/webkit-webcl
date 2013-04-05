@@ -1,29 +1,29 @@
 /*
  * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided the following conditions
-* are met:
-*
-* 1.  Redistributions of source code must retain the above copyright
-*     notice, this list of conditions and the following disclaimer.
-*
-* 2.  Redistributions in binary form must reproduce the above copyright
-*     notice, this list of conditions and the following disclaimer in the
-*     documentation and/or other materials provided with the distribution.
-*
-* THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
-* CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
-* BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-* FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL SAMSUNG
-* ELECTRONICS CORPORATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING
-* BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-* DATA, OR PROFITS, OR BUSINESS INTERRUPTION), HOWEVER CAUSED AND ON ANY THEORY
-* OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING
-* NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-* EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
+ * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL SAMSUNG
+ * ELECTRONICS CORPORATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS, OR BUSINESS INTERRUPTION), HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING
+ * NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #ifndef WebCLContext_h
 #define WebCLContext_h
@@ -72,27 +72,24 @@ class WebCLContext : public WebCLObject<ComputeContextPtr> {
 public:
     virtual ~WebCLContext();
     static PassRefPtr<WebCLContext> create(WebCL*, PassRefPtr<WebCLContextProperties>, CCerror&);
-    /* FIXME :: not needed as CCContextProperties contains deviceType field.
-       static PassRefPtr<WebCLContext> create(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType
-       , int* error);*/
 
     PassRefPtr<WebCLBuffer> createBuffer(int, int, ArrayBuffer*, ExceptionCode&);
-    PassRefPtr<WebCLBuffer> createBuffer(int memFlags , int sizeInBytes , ExceptionCode& ec)
+    PassRefPtr<WebCLBuffer> createBuffer(int memFlags, int sizeInBytes, ExceptionCode& ec)
     {
-        return(createBuffer(memFlags , sizeInBytes , 0 , ec));
+        return createBuffer(memFlags, sizeInBytes, 0, ec);
     }
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, int , ExceptionCode&);
+    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, int, ExceptionCode&);
     PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice* devices, ExceptionCode& ec)
     {
-        return(createCommandQueue(devices, 0 , ec));
+        return createCommandQueue(devices, 0, ec);
     }
     PassRefPtr<WebCLCommandQueue> createCommandQueue(ExceptionCode& ec)
     {
-        return(createCommandQueue(0, 0, ec));
+        return createCommandQueue(0, 0, ec);
     }
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(int buildProp, ExceptionCode& ec)
+    PassRefPtr<WebCLCommandQueue> createCommandQueue(int queueProperties, ExceptionCode& ec)
     {
-        return(createCommandQueue(0, buildProp, ec));
+        return createCommandQueue(0, queueProperties, ec);
     }
 
     PassRefPtr<WebCLBuffer> createFromGLBuffer(int , WebGLBuffer* , ExceptionCode&);
@@ -101,7 +98,7 @@ public:
 
     PassRefPtr<WebCLMemoryObject> createFromGLTexture2D(int , GC3Denum , GC3Dint , GC3Duint , ExceptionCode&);
 
-    PassRefPtr<WebCLImage> createImage(int flag, WebCLImageDescriptor* , ArrayBuffer* , ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage(int flag, WebCLImageDescriptor*, ArrayBuffer*, ExceptionCode&);
 
     PassRefPtr<WebCLProgram> createProgram(const String&, ExceptionCode&);
 
@@ -138,7 +135,7 @@ public:
 private:
     WebCLContext(WebCL*, ComputeContext*, PassRefPtr<WebCLContextProperties>);
     // WebCLContext(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType, int* error);
-    PassRefPtr<WebCLImage> createImage2DBase(int , int , int , const CCImageFormat& , void*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage2DBase(int, int, int, const CCImageFormat&, void*, ExceptionCode&);
 
     void releasePlatformObjectImpl();
 

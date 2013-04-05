@@ -415,6 +415,7 @@ CCerror ComputeContext::waitForEvents(const Vector<CCEvent>& events)
 CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, int properties, CCerror& error)
 {
     cl_command_queue_properties clProperties;
+    // FIXME: Should not handled out of ComputeContext.
     switch (properties) {
     case QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE:
         clProperties = CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE;
