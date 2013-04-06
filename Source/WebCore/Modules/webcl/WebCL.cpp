@@ -85,7 +85,7 @@ RefPtr<WebCLContextProperties>& WebCL::defaultProperties(ExceptionCode& ec)
     if (ec != WebCLException::SUCCESS)
         return m_defaultProperties;
 
-    Vector<RefPtr<WebCLDevice> > webCLDevices = webCLPlatforms[0]->getDevices(ec);
+    Vector<RefPtr<WebCLDevice> > webCLDevices = webCLPlatforms[0]->getDevices(ComputeContext::DEVICE_TYPE_DEFAULT, ec);
     if (ec != WebCLException::SUCCESS)
         return m_defaultProperties;
 
@@ -106,7 +106,7 @@ PassRefPtr<WebCLContext> WebCL::createContext(PassRefPtr<WebCLContextProperties>
         }
 
         if (!refProperties->devices().size()) {
-            Vector<RefPtr<WebCLDevice> > webCLDevices = refProperties->platform()->getDevices(ec);
+            Vector<RefPtr<WebCLDevice> > webCLDevices = refProperties->platform()->getDevices(ComputeContext::DEVICE_TYPE_DEFAULT, ec);
             if (ec != WebCLException::SUCCESS)
                 return 0;
 

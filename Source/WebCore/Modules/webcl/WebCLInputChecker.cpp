@@ -34,6 +34,19 @@
 namespace WebCore {
 namespace WebCLInputChecker {
 
+bool isValidDeviceType(long int deviceType)
+{
+    switch (deviceType) {
+    case ComputeContext::DEVICE_TYPE_CPU:
+    case ComputeContext::DEVICE_TYPE_GPU:
+    case ComputeContext::DEVICE_TYPE_ACCELERATOR:
+    case ComputeContext::DEVICE_TYPE_DEFAULT:
+    case ComputeContext::DEVICE_TYPE_ALL:
+        return true;
+    }
+    return false;
+}
+
 bool isValidDeviceInfoType(int infoType)
 {
     switch (infoType) {

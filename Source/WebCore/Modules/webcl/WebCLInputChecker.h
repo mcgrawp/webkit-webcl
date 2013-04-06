@@ -34,6 +34,7 @@
 namespace WebCore {
 namespace WebCLInputChecker {
 
+bool isValidDeviceType(long int);
 bool isValidDeviceInfoType(int);
 bool isValidMemoryObjectFlag(int);
 bool isValidAddressingMode(int);

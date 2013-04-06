@@ -49,10 +49,6 @@ public:
     virtual ~WebCLPlatform();
     WebCLGetInfo getInfo (int, ExceptionCode&);
     Vector<RefPtr<WebCLDevice> > getDevices(int, ExceptionCode&) const;
-    Vector<RefPtr<WebCLDevice> > getDevices(ExceptionCode& ec) const
-    {
-        return getDevices(ComputeContext::DEVICE_TYPE_DEFAULT, ec);
-    }
     Vector<String> getSupportedExtensions(ExceptionCode&);
 
 private:

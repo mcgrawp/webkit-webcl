@@ -33,6 +33,7 @@
 #include "WebCLPlatform.h"
 #include "WebCL.h"
 #include "WebCLException.h"
+#include "WebCLInputChecker.h"
 
 namespace WebCore {
 
@@ -79,7 +80,14 @@ Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(int deviceType, Exception
         return devices;
     }
 
-    deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
+    if (deviceType && !WebCLInputChecker::isValidDeviceType(deviceType)) {
+        ec = WebCLException::INVALID_VALUE;
+        return devices;
+    }
+
+    if (!deviceType)
+        deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
+
     Vector<CCDeviceID> ccDevices;
     CCerror error = ComputeContext::getDeviceIDs(platformObject(), deviceType, ccDevices);
     if (error != ComputeContext::SUCCESS) {
