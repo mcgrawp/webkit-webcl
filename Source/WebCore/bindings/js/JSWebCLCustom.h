@@ -31,12 +31,76 @@
 #if ENABLE(WEBCL)
 
 #include "JSWebCLContext.h"
+#include "JSWebCLDevice.h"
+#include "JSWebCLPlatform.h"
 
 #include <runtime/JSFunction.h>
 
+using namespace JSC;
+
 namespace WebCore {
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const WebCLGetInfo&);
+JSValue toJS(ExecState*, JSDOMGlobalObject*, const WebCLGetInfo&);
+
+template <class T, class U>
+inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObject* globalObject, T* jsCustomObject, bool shareGroup)
+{
+    unsigned argumentCount = exec->argumentCount();
+    if (!(!argumentCount || argumentCount == 1))
+        return throwSyntaxError(exec);
+
+    ExceptionCode ec = 0;
+    RefPtr<U> webCLContext;
+    if (!argumentCount) {
+        webCLContext = jsCustomObject->impl()->createContext(0, ec);
+        if (ec) {
+            setDOMException(exec, ec);
+            return jsUndefined();
+        }
+        return toJS(exec, globalObject, webCLContext.get());
+    }
+
+    ASSERT(exec->argumentCount() == 1);
+    if (!exec->argument(0).isObject())
+        return throwSyntaxError(exec);
+
+    JSObject* jsAttrs = exec->argument(0).getObject();
+
+    WebCLPlatform* platform = nullptr;
+    Identifier platformIdentifier(exec, "platform");
+    if (jsAttrs->hasProperty(exec, platformIdentifier))
+        platform = toWebCLPlatform(jsAttrs->get(exec, platformIdentifier));
+
+    Vector<RefPtr<WebCLDevice> > devices;
+    Identifier devicesIdentifier(exec, "devices");
+    if (jsAttrs->hasProperty(exec, devicesIdentifier))
+        devices = toRefPtrNativeArray<WebCLDevice, JSWebCLDevice>(exec, jsAttrs->get(exec, devicesIdentifier), &toWebCLDevice);
+
+    int deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
+    Identifier deviceTypeIdentifier(exec, "deviceType");
+    if (jsAttrs->hasProperty(exec, deviceTypeIdentifier))
+        deviceType = jsAttrs->get(exec, deviceTypeIdentifier).toInt32(exec);
+
+    int resolvedSharedGroup = 0;
+    Identifier shareGroupIdentifier(exec, "shareGroup");
+    if (shareGroup && jsAttrs->hasProperty(exec, shareGroupIdentifier))
+        resolvedSharedGroup = jsAttrs->get(exec, shareGroupIdentifier).toInt32(exec);
+
+    // FIXME: Vector of strings.
+    String hint;
+    Identifier hintIdentifier(exec, "hint");
+    if (jsAttrs->hasProperty(exec, hintIdentifier))
+        hint = jsAttrs->get(exec, hintIdentifier).toString(exec)->value(exec);
+
+    RefPtr<WebCore::WebCLContextProperties> webCLContextProperties = WebCLContextProperties::create(platform, devices, deviceType, resolvedSharedGroup, hint);
+    webCLContext = jsCustomObject->impl()->createContext(webCLContextProperties.get(), ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+
+    return toJS(exec, globalObject, webCLContext.get());
+}
 
 } // namespace WebCore
 

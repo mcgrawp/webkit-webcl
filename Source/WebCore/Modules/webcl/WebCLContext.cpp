@@ -53,25 +53,14 @@ WebCLContext::~WebCLContext()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLContext> WebCLContext::create(WebCL* context, PassRefPtr<WebCLContextProperties> properties, CCerror& error)
+PassRefPtr<WebCLContext> WebCLContext::create(PassRefPtr<WebCLContextProperties> properties, CCerror& error)
 {
-    ASSERT(context);
-    ASSERT(properties);
-
-    Vector<CCDeviceID> ccDevices;
-    for (size_t i = 0; i < properties->devices().size(); ++i)
-        ccDevices.append(properties->devices()[i]->platformObject());
-
-    ComputeContext* computeContext = new ComputeContext(properties->computeContextProperties().data(), ccDevices, error);
-    if (error != ComputeContext::SUCCESS) {
-        delete computeContext;
-        return 0;
-    }
-
-    return adoptRef(new WebCLContext(context, computeContext, properties));
+    RefPtr<WebCLContext> context;
+    createBase(properties, error, context);
+    return context.release();
 }
 
-WebCLContext::WebCLContext(WebCL*, ComputeContext* computeContext, PassRefPtr<WebCLContextProperties> properties)
+WebCLContext::WebCLContext(ComputeContext* computeContext, PassRefPtr<WebCLContextProperties> properties)
     : WebCLObject(computeContext)
     , m_videoCache(4) // FIXME: Why '4'?
     , m_contextProperties(properties)
@@ -103,31 +92,9 @@ WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
 
 PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* device, int commandQueueProperty, ExceptionCode& ec)
 {
-    if (!platformObject()) {
-        ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-
-    RefPtr<WebCLDevice> webCLDevice;
-    if (!device) {
-        Vector<RefPtr<WebCLDevice> > webCLDevices = m_contextProperties->devices();
-        // NOTE: This can be slow, depending the number of 'devices' available.
-        for (size_t i = 0; i < webCLDevices.size(); ++i) {
-            WebCLGetInfo info = webCLDevices[i]->getInfo(ComputeContext::DEVICE_QUEUE_PROPERTIES, ec);
-            if (ec == WebCLException::SUCCESS
-                && (info.getUnsignedInt() == static_cast<unsigned int>(commandQueueProperty) || !commandQueueProperty)) {
-                webCLDevice = webCLDevices[i];
-                break;
-            }
-        }
-        //FIXME: Spec needs to say what we need to do here
-        ASSERT(webCLDevice);
-    } else
-        webCLDevice = device;
-
-    RefPtr<WebCLCommandQueue> commandqueueObj = WebCLCommandQueue::create(this, commandQueueProperty, webCLDevice, ec);
-    m_commandQueue = commandqueueObj;
-    return commandqueueObj.release();
+    RefPtr<WebCLCommandQueue> queue;
+    createCommandQueueBase(device, commandQueueProperty, ec, queue);
+    return queue.release();
 }
 
 PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource, ExceptionCode& ec)

@@ -45,70 +45,13 @@
 #include "JSWebCLPlatform.h"
 #include "JSWebCLProgram.h"
 
-
 using namespace JSC;
-using namespace std;
 
 namespace WebCore {
 
 JSValue JSWebCL::createContext(ExecState* exec)
 {
-    ExceptionCode ec = 0;
-    RefPtr<WebCLContext> webCLContext;
-
-    unsigned argumentCount = exec->argumentCount();
-    if (!(!argumentCount || argumentCount == 1))
-        return throwSyntaxError(exec);
-
-    if (!argumentCount) {
-        webCLContext  = m_impl->createContext(0, ec);
-        if (ec) {
-            setDOMException(exec, ec);
-            return jsUndefined();
-        }
-        return toJS(exec, globalObject(), webCLContext.get());
-    }
-
-    ASSERT(exec->argumentCount() == 1);
-    if (exec->argument(0).isObject()) {
-        JSObject* jsAttrs = exec->argument(0).getObject();
-        WebCLPlatform* platform = nullptr;
-        Identifier platformIdentifier(exec, "platform");
-        if (jsAttrs->hasProperty(exec, platformIdentifier))
-            platform = toWebCLPlatform(jsAttrs->get(exec, platformIdentifier));
-
-        Vector<RefPtr<WebCLDevice> > devices;
-        Identifier devicesIdentifier(exec, "devices");
-        if (jsAttrs->hasProperty(exec, devicesIdentifier))
-            devices = toRefPtrNativeArray<WebCLDevice, JSWebCLDevice>(exec, jsAttrs->get(exec, devicesIdentifier), &toWebCLDevice);
-
-        int deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
-        Identifier deviceTypeIdentifier(exec, "deviceType");
-        if (jsAttrs->hasProperty(exec, deviceTypeIdentifier))
-            deviceType = jsAttrs->get(exec, deviceTypeIdentifier).toInt32(exec);
-
-        int sharedGroup = 0;
-        Identifier shareGroupIdentifier(exec, "shareGroup");
-        if (jsAttrs->hasProperty(exec, shareGroupIdentifier))
-            sharedGroup = jsAttrs->get(exec, shareGroupIdentifier).toInt32(exec);
-
-        // FIXME: Vector of strings.
-        String hint;
-        Identifier hintIdentifier(exec, "hint");
-        if (jsAttrs->hasProperty(exec, hintIdentifier))
-            hint = jsAttrs->get(exec, hintIdentifier).toString(exec)->value(exec);
-
-        RefPtr<WebCore::WebCLContextProperties> webCLContextProperties = WebCLContextProperties::create(platform, devices, deviceType, sharedGroup, hint);
-        webCLContext = m_impl->createContext(webCLContextProperties.get(), ec);
-        if (ec) {
-            setDOMException(exec, ec);
-            return jsUndefined();
-        }
-
-        return toJS(exec, globalObject(), webCLContext.get());
-    }
-
-    return jsUndefined();
+    return parsePropertiesAndCreateContext<JSWebCL, WebCLContext>(exec, globalObject(), this, true /*shareGroup*/);
 }
 
 JSValue JSWebCL::getSupportedExtensions(ExecState* exec)

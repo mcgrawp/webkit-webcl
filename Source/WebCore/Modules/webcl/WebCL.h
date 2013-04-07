@@ -57,11 +57,51 @@ public:
 
     Vector<String> getSupportedExtensions(ExceptionCode&);
 
+protected:
+    template <class T>
+    void inline createContextBase(PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec, RefPtr<T>& out);
+
 private:
     RefPtr<WebCLContextProperties>& defaultProperties(ExceptionCode&);
     Vector<RefPtr<WebCLContext> > m_context;
     RefPtr<WebCLContextProperties> m_defaultProperties;
 };
+
+template <class T>
+inline void WebCL::createContextBase(PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec, RefPtr<T>& outValue)
+{
+    outValue = 0;
+
+    RefPtr<WebCLContextProperties> refProperties = properties;
+    if (refProperties) {
+        if (!refProperties->platform()) {
+            Vector<RefPtr<WebCLPlatform> > webCLPlatforms = getPlatforms(ec);
+            if (ec != WebCLException::SUCCESS)
+                return;
+
+            refProperties->setPlatform(webCLPlatforms[0]);
+        }
+
+        if (!refProperties->devices().size()) {
+            Vector<RefPtr<WebCLDevice> > webCLDevices = refProperties->platform()->getDevices(ComputeContext::DEVICE_TYPE_DEFAULT, ec);
+            if (ec != WebCLException::SUCCESS)
+                return;
+
+            refProperties->devices().append(webCLDevices[0]);
+        }
+    } else {
+        refProperties = defaultProperties(ec);
+        if (ec != WebCLException::SUCCESS)
+            return;
+    }
+
+    CCerror error = ComputeContext::SUCCESS;
+    outValue = T::create(refProperties.release(), error);
+    if (!outValue) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+    }
+}
 
 } // namespace WebCore
 

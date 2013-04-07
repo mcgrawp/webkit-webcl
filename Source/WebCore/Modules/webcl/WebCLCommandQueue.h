@@ -33,6 +33,7 @@
 #include "HTMLCanvasElement.h"
 #include "ImageData.h"
 #include "WebCLBuffer.h"
+#include "WebCLContext.h"
 #include "WebCLEvent.h"
 #include "WebCLFinishCallback.h"
 #include "WebCLGetInfo.h"
@@ -279,16 +280,39 @@ public:
         enqueueTask(kernel, Vector<RefPtr<WebCLEvent> >(), 0, ec);
     }
 
-private:
+protected:
     WebCLCommandQueue(WebCLContext*, const RefPtr<WebCLDevice>&, CCCommandQueue);
+
+    template <class T>
+    static void createBase(WebCLContext*, int commandQueueProperty, const RefPtr<WebCLDevice>&, ExceptionCode&, RefPtr<T>& out);
+
+    WebCLContext* m_context;
+
+private:
+    static CCCommandQueue createBaseInternal(WebCLContext*, int commandQueueProperty, const RefPtr<WebCLDevice>&, CCerror&);
 
     void enqueueWriteBufferBase(WebCLBuffer*, bool, int, int, void*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void releasePlatformObjectImpl();
 
-    WebCLContext* m_context;
     const RefPtr<WebCLDevice> m_device;
 };
+
+template <class T>
+inline void WebCLCommandQueue::createBase(WebCLContext* context, int commandQueueProperty, const RefPtr<WebCLDevice>& webCLDevice, ExceptionCode& ec, RefPtr<T>& out)
+{
+    out = 0;
+
+    CCerror error = ComputeContext::SUCCESS;
+    CCCommandQueue clCommandQueue = createBaseInternal(context, commandQueueProperty, webCLDevice, error);
+    if (!clCommandQueue) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return;
+    }
+
+    out = adoptRef(new T(context, webCLDevice, clCommandQueue));
+}
 
 } // namespace WebCore
 

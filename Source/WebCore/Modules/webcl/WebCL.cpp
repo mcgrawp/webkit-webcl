@@ -86,39 +86,9 @@ RefPtr<WebCLContextProperties>& WebCL::defaultProperties(ExceptionCode& ec)
 
 PassRefPtr<WebCLContext> WebCL::createContext(PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec)
 {
-    RefPtr<WebCLContextProperties> refProperties = properties;
-    if (refProperties) {
-        if (!refProperties->platform()) {
-            Vector<RefPtr<WebCLPlatform> > webCLPlatforms = getPlatforms(ec);
-            if (ec != WebCLException::SUCCESS)
-                return 0;
-
-            refProperties->setPlatform(webCLPlatforms[0]);
-        }
-
-        if (!refProperties->devices().size()) {
-            Vector<RefPtr<WebCLDevice> > webCLDevices = refProperties->platform()->getDevices(ComputeContext::DEVICE_TYPE_DEFAULT, ec);
-            if (ec != WebCLException::SUCCESS)
-                return 0;
-
-            refProperties->devices().append(webCLDevices[0]);
-        }
-    } else {
-        refProperties = defaultProperties(ec);
-        if (ec != WebCLException::SUCCESS)
-            return 0;
-    }
-
-    CCerror error = ComputeContext::SUCCESS;
-    RefPtr<WebCLContext> webCLContext = WebCLContext::create(this, refProperties.release(), error);
-    if (!webCLContext) {
-        ASSERT(error != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
-    }
-
-    m_context.append(webCLContext);
-    return webCLContext;
+    RefPtr<WebCLContext> context;
+    createContextBase(properties, ec, context);
+    return context.release();
 }
 
 Vector<String> WebCL::getSupportedExtensions(ExceptionCode&)

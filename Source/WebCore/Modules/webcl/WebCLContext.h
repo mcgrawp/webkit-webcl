@@ -39,7 +39,10 @@
 #include "SharedBuffer.h"
 #include "WebCLBuffer.h"
 #include "WebCLCommandQueue.h"
+#include "WebCLDevice.h"
 #include "WebCLException.h"
+#include "WebCLContextProperties.h"
+#include "WebCLGetInfo.h"
 
 #include <OpenCL/opencl.h>
 
@@ -62,6 +65,7 @@ class WebGLRenderbuffer;
 class WebGLBuffer;
 class WebCLDevice;
 class WebCLGetInfo;
+class WebCLCommandQueue;
 
 //NOTE: WebCLObject used by WebCLContext is a bit different, because the
 //other WebCL classes have as platformObject() a native opencl type. However
@@ -71,7 +75,7 @@ typedef ComputeContext* ComputeContextPtr;
 class WebCLContext : public WebCLObject<ComputeContextPtr> {
 public:
     virtual ~WebCLContext();
-    static PassRefPtr<WebCLContext> create(WebCL*, PassRefPtr<WebCLContextProperties>, CCerror&);
+    static PassRefPtr<WebCLContext> create(PassRefPtr<WebCLContextProperties>, CCerror&);
 
     PassRefPtr<WebCLBuffer> createBuffer(int, int, ArrayBuffer*, ExceptionCode&);
     PassRefPtr<WebCLBuffer> createBuffer(int memFlags, int sizeInBytes, ExceptionCode& ec)
@@ -132,9 +136,17 @@ public:
 
     ComputeContext* computeContext() const { return platformObject(); }
 
+protected:
+    WebCLContext(ComputeContext*, PassRefPtr<WebCLContextProperties>);
+    // WebCLContext(CCContextProperties* contextProperties, unsigned int deviceType, int* error);
+
+    template <class T>
+    static void createBase(PassRefPtr<WebCLContextProperties> properties, CCerror& error, RefPtr<T>& out);
+
+    template <class T>
+    void createCommandQueueBase(WebCLDevice*, int queueProperties, ExceptionCode&, RefPtr<T>& out);
+
 private:
-    WebCLContext(WebCL*, ComputeContext*, PassRefPtr<WebCLContextProperties>);
-    // WebCLContext(WebCL*, CCContextProperties* contextProperties, unsigned int deviceType, int* error);
     PassRefPtr<WebCLImage> createImage2DBase(int, int, int, const CCImageFormat&, void*, ExceptionCode&);
 
     void releasePlatformObjectImpl();
@@ -143,6 +155,55 @@ private:
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
     RefPtr<WebCLContextProperties> m_contextProperties;
 };
+
+template <class T>
+inline void WebCLContext::createBase(PassRefPtr<WebCLContextProperties> properties, CCerror& error, RefPtr<T>& out)
+{
+    ASSERT(properties);
+    out = 0;
+
+    Vector<CCDeviceID> ccDevices;
+    for (size_t i = 0; i < properties->devices().size(); ++i)
+        ccDevices.append(properties->devices()[i]->platformObject());
+
+    ComputeContext* computeContext = new ComputeContext(properties->computeContextProperties().data(), ccDevices, error);
+    if (error != ComputeContext::SUCCESS) {
+        delete computeContext;
+        return;
+    }
+
+    out = adoptRef(new T(computeContext, properties));
+}
+
+template <class T>
+inline void WebCLContext::createCommandQueueBase(WebCLDevice* device, int queueProperties, ExceptionCode& ec, RefPtr<T>& out)
+{
+    out = 0;
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return;
+    }
+
+    RefPtr<WebCLDevice> webCLDevice;
+    if (!device) {
+        Vector<RefPtr<WebCLDevice> > webCLDevices = m_contextProperties->devices();
+        // NOTE: This can be slow, depending the number of 'devices' available.
+        for (size_t i = 0; i < webCLDevices.size(); ++i) {
+            WebCLGetInfo info = webCLDevices[i]->getInfo(ComputeContext::DEVICE_QUEUE_PROPERTIES, ec);
+            if (ec == WebCLException::SUCCESS
+                && (info.getUnsignedInt() == static_cast<unsigned>(queueProperties) || !queueProperties)) {
+                webCLDevice = webCLDevices[i];
+                break;
+            }
+        }
+        //FIXME: Spec needs to say what we need to do here
+        ASSERT(webCLDevice);
+    } else
+        webCLDevice = device;
+
+    out = T::create(this, queueProperties, webCLDevice, ec);
+    m_commandQueue = out;
+}
 
 } // namespace WebCore
 

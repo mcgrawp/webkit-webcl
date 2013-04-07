@@ -44,17 +44,11 @@ WebCLCommandQueue::~WebCLCommandQueue()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, int commandQueueProperty, const RefPtr<WebCLDevice>& webCLDevice, ExceptionCode& ec)
+PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, int queueProperties, const RefPtr<WebCLDevice>& webCLDevice, ExceptionCode& ec)
 {
-    CCerror error = ComputeContext::SUCCESS;
-    CCCommandQueue clCommandQueue = context->computeContext()->createCommandQueue(webCLDevice->platformObject(), commandQueueProperty, error);
-    if (!clCommandQueue) {
-        ASSERT(error != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
-    }
-
-    return adoptRef(new WebCLCommandQueue(context, webCLDevice, clCommandQueue));
+    RefPtr<WebCLCommandQueue> queue;
+    createBase(context, queueProperties, webCLDevice, ec, queue);
+    return queue.release();
 }
 
 WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, const RefPtr<WebCLDevice>& webCLDevice, CCCommandQueue commandQueue)
@@ -850,6 +844,11 @@ void WebCLCommandQueue::releasePlatformObjectImpl()
 {
     CCerror computeContextErrorCode = m_context->computeContext()->releaseCommandQueue(platformObject());
     ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+}
+
+CCCommandQueue WebCLCommandQueue::createBaseInternal(WebCLContext* context, int commandQueueProperty, const RefPtr<WebCLDevice>& webCLDevice, CCerror& error)
+{
+    return context->computeContext()->createCommandQueue(webCLDevice->platformObject(), commandQueueProperty, error);
 }
 
 } // namespace WebCore
