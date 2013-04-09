@@ -33,6 +33,8 @@
 #include "ComputeContext.h"
 #include "WebCLContextProperties.h"
 #include "WebCLException.h"
+#include "WebCLExtension.h"
+#include "WebCLGL.h"
 #include <wtf/PassRefPtr.h>
 
 using namespace JSC;
@@ -95,6 +97,18 @@ Vector<String> WebCL::getSupportedExtensions(ExceptionCode&)
 {
     // FIXME: Needs a proper implementation.
     return Vector<String>();
+}
+
+WebCLExtension* WebCL::getExtension(const String& name)
+{
+    if (equalIgnoringCase(name, "KHR_GL_SHARING")) {
+        if (!m_khrGLSharing)
+            m_khrGLSharing = WebCLGL::create();
+
+        return m_khrGLSharing.get();
+    }
+
+    return 0;
 }
 
 } // namespace WebCore

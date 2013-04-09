@@ -39,11 +39,15 @@
 #include "JSWebCLCustom.h"
 #include "JSWebCLDevice.h"
 #include "JSWebCLEvent.h"
+#include "JSWebCLGL.h"
 #include "JSWebCLImage.h"
 #include "JSWebCLImageDescriptor.h"
 #include "JSWebCLMemoryObject.h"
 #include "JSWebCLPlatform.h"
 #include "JSWebCLProgram.h"
+
+#include "WebCLExtension.h"
+#include "WebCLGL.h"
 
 using namespace JSC;
 
@@ -52,6 +56,18 @@ namespace WebCore {
 JSValue JSWebCL::createContext(ExecState* exec)
 {
     return parsePropertiesAndCreateContext<JSWebCL, WebCLContext>(exec, globalObject(), this, true /*shareGroup*/);
+}
+
+static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebCLExtension* extension)
+{
+    if (!extension)
+        return jsNull();
+    switch (extension->getName()) {
+    case WebCLExtension::KhrGLSharingName:
+        return toJS(exec, globalObject, static_cast<WebCLGL*>(extension));
+    }
+    ASSERT_NOT_REACHED();
+    return jsNull();
 }
 
 JSValue JSWebCL::getSupportedExtensions(ExecState* exec)
@@ -69,6 +85,19 @@ JSValue JSWebCL::getSupportedExtensions(ExecState* exec)
         list.append(jsString(exec, value[i]));
 
     return constructArray(exec, 0, globalObject(), list);
+}
+
+JSValue JSWebCL::getExtension(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return throwError(exec, createNotEnoughArgumentsError(exec));
+
+    WebCL* webCL = static_cast<WebCL*>(impl());
+    const String name = exec->argument(0).toString(exec)->value(exec);
+    if (exec->hadException())
+        return jsUndefined();
+    WebCLExtension* extension = webCL->getExtension(name);
+    return toJS(exec, globalObject(), extension);
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInfo& info)

@@ -158,13 +158,16 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/WaveShaperNode.idl \
     $(WebCore)/Modules/webaudio/WaveTable.idl \
     $(WebCore)/Modules/webcl/WebCL.idl \
+    $(WebCore)/Modules/webcl/WebCLGL.idl \
     $(WebCore)/Modules/webcl/DOMWindowWebCLEnvironment.idl \
     $(WebCore)/Modules/webcl/WorkerContextWebCLEnvironment.idl\
     $(WebCore)/Modules/webcl/WebCLKernelArgumentTypes.idl \
     $(WebCore)/Modules/webcl/WebCLPlatform.idl \
     $(WebCore)/Modules/webcl/WebCLDevice.idl \
     $(WebCore)/Modules/webcl/WebCLContext.idl \
+    $(WebCore)/Modules/webcl/WebCLGLContext.idl \
     $(WebCore)/Modules/webcl/WebCLCommandQueue.idl \
+    $(WebCore)/Modules/webcl/WebCLGLCommandQueue.idl \
     $(WebCore)/Modules/webcl/WebCLProgram.idl \
     $(WebCore)/Modules/webcl/WebCLKernel.idl \
     $(WebCore)/Modules/webcl/WebCLEvent.idl \
@@ -172,11 +175,13 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webcl/WebCLMemoryObject.idl \
     $(WebCore)/Modules/webcl/WebCLSampler.idl \
     $(WebCore)/Modules/webcl/WebCLBuffer.idl \
+    $(WebCore)/Modules/webcl/WebCLGLBuffer.idl \
     $(WebCore)/Modules/webcl/WebCLException.idl \
     $(WebCore)/Modules/webcl/WebCLFinishCallback.idl \
     $(WebCore)/Modules/webcl/WebCLContextProperties.idl \
     $(WebCore)/Modules/webcl/WebCLGLObjectInfo.idl \
     $(WebCore)/Modules/webcl/WebCLImage.idl \
+    $(WebCore)/Modules/webcl/WebCLGLImage.idl \
     $(WebCore)/Modules/webdatabase/DOMWindowWebDatabase.idl \
     $(WebCore)/Modules/webdatabase/Database.idl \
     $(WebCore)/Modules/webdatabase/DatabaseCallback.idl \

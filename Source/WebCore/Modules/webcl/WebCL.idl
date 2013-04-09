@@ -263,4 +263,5 @@ interface [
     [StrictTypeChecking, Custom] WebCLContext createContext(in [Optional] WebCLContextProperties webclContextProperties) raises(DOMException);
 
     [StrictTypeChecking, Custom] void getSupportedExtensions() raises(DOMException);
+    [StrictTypeChecking, Custom] any getExtension(in DOMString name);
 };

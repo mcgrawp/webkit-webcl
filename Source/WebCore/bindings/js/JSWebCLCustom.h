@@ -33,6 +33,7 @@
 #include "JSWebCLContext.h"
 #include "JSWebCLDevice.h"
 #include "JSWebCLPlatform.h"
+#include "JSWebCLGLContext.h"
 
 #include <runtime/JSFunction.h>
 
