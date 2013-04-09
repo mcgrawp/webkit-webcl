@@ -78,10 +78,19 @@ function InitCL() {
         }
         var device = devices[0];
 
+        var extension = null;
+        if(userData.isGLCLshared) {
+            extension = cl.getExtension("KHR_GL_SHARING");
+
+            if (extension === null)
+                userData.isGLCLshared = false;
+        }
+
         if(userData.isGLCLshared)
-            context = cl.createContext({platform:platform, devices:devices, deviceType: gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU, shareGroup:1, hint:null});
+            context = extension.createContext({platform:platform, devices:devices, deviceType: gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU, hint:null, shareGroup:1});
         else
-            context = cl.createContext({platform:platform, devices:devices, deviceType: gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU, shareGroup:0, hint:null});
+            context = cl.createContext({platform:platform, devices:devices, deviceType: gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU, hint:null});
+
         if(context === null) {
             console.error("createContext fails");
             return null;
