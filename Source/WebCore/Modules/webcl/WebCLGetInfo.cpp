@@ -91,7 +91,7 @@ WebCLGetInfo::WebCLGetInfo(unsigned int value)
 }
 
 WebCLGetInfo::WebCLGetInfo(unsigned long value)
-    : m_type(kTypeUnsignedInt)
+    : m_type(kTypeUnsignedLong)
     , m_unsignedLong(value)
 {
 }
@@ -117,10 +117,7 @@ WebCLGetInfo::WebCLGetInfo(PassRefPtr<Int32Array> value)
     : m_type(kTypeWebCLIntArray)
     , m_webclIntArray(value)
 {
-
-	printf("Int32 Construcor Called \n");
 }
-
 
 WebCLGetInfo::WebCLGetInfo(PassRefPtr<Int8Array> value)
     : m_type(kTypeWebCLInt8Array)
@@ -245,7 +242,6 @@ PassRefPtr<WebCLImageDescriptor> WebCLGetInfo::getWebCLImageDescriptor() const
 
 PassRefPtr<Int32Array> WebCLGetInfo::getWebCLIntArray() const
 {
-	printf("Int32 Construcor Called \n");
     ASSERT(getType() == kTypeWebCLIntArray);
     return m_webclIntArray;
 }
