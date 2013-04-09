@@ -60,32 +60,6 @@ WebCLImage::WebCLImage(WebCLContext* context, PlatformComputeObject image, int w
 {
 }
 
-int WebCLImage::getGLtextureInfo(int textureInfoType, ExceptionCode& ec)
-{
-    if (!platformObject()) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
-        return 0;
-    }
-
-    CCint err = 0;
-    switch (textureInfoType) {
-    case ComputeContext::GL_TEXTURE_TARGET:
-    case ComputeContext::GL_MIPMAP_LEVEL: {
-        CCint glTextureInfo = 0;
-        err = ComputeContext::getGLTextureInfo(platformObject(), textureInfoType, &glTextureInfo);
-        if (err == CL_SUCCESS)
-            return ((int)glTextureInfo);
-        break;
-    }
-    default:
-        ec = WebCLException::INVALID_VALUE;
-        return 0;
-    }
-    ASSERT(err != CL_SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-    return 0;
-}
-
 PassRefPtr<WebCLImageDescriptor> WebCLImage::getInfo(ExceptionCode& ec)
 {
     if (!platformObject()) {

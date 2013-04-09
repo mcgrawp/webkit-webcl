@@ -30,6 +30,5 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject
 ] interface WebCLImage : WebCLMemoryObject {
-    long getGLtextureInfo (in long paramNameobj) raises(DOMException);
     WebCLImageDescriptor getInfo() raises(DOMException);
 };

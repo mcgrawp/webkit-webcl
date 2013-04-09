@@ -116,14 +116,6 @@
             in [Optional] WebCLEvent event)
         raises(DOMException);
 
-    void enqueueAcquireGLObjects(in WebCLMemoryObject memObjects,
-            in [Optional] sequence<WebCLEvent> eventWaitList,
-            in [Optional] WebCLEvent event) raises(DOMException);
-
-    void enqueueReleaseGLObjects(in WebCLMemoryObject memObjects,
-            in [Optional] sequence<WebCLEvent> eventWaitList,
-            in [Optional] WebCLEvent event) raises(DOMException);
-
     void enqueueCopyBuffer(in WebCLBuffer sourceBuffer,
             in WebCLBuffer targetBuffer,
             in long sourceOffset,

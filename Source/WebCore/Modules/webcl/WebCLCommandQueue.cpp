@@ -494,66 +494,6 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-void WebCLCommandQueue::enqueueAcquireGLObjects(WebCLMemoryObject* memoryObjects, const Vector<RefPtr<WebCLEvent> >& events,
-    WebCLEvent* event, ExceptionCode& ec)
-{
-
-    if (!platformObject()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
-        return;
-    }
-
-    PlatformComputeObject ccMemoryObjectsIDs[1] = {0};
-    if (memoryObjects && memoryObjects->isShared())
-        ccMemoryObjectsIDs[0] = memoryObjects->platformObject();
-    if (!ccMemoryObjectsIDs[0]) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
-        return;
-    }
-
-    Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
-
-    // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
-    if (event)
-        *ccEvent = event->getCLEvent();
-
-    CCerror err = m_context->computeContext()->enqueueAcquireGLObjects(platformObject(), 1, ccMemoryObjectsIDs,
-        ccEvents.size(), ccEvents.data(), ccEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-}
-
-void WebCLCommandQueue::enqueueReleaseGLObjects(WebCLMemoryObject* memoryObjects, const Vector<RefPtr<WebCLEvent> >& events,
-    WebCLEvent* event, ExceptionCode& ec)
-{
-    if (!platformObject()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
-        return;
-    }
-
-    PlatformComputeObject ccMemoryObjectsIDs = 0;
-    if (memoryObjects && memoryObjects->isShared())
-        ccMemoryObjectsIDs = memoryObjects->platformObject();
-    if (!ccMemoryObjectsIDs) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
-        return;
-    }
-
-    Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
-
-    // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
-    if (event)
-        *ccEvent = event->getCLEvent();
-
-    CCerror error = m_context->computeContext()->enqueueReleaseGLObjects(platformObject(), 1, &ccMemoryObjectsIDs,
-        ccEvents.size(), ccEvents.data(), ccEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-}
 void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* targetImage, Int32Array* sourceOrigin,
     Int32Array* targetOrigin, Int32Array* region, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {

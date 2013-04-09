@@ -43,14 +43,11 @@ namespace WebCore {
 class WebCLImage : public WebCLMemoryObject {
 public:
     ~WebCLImage();
-    //FIXME: Remove this method when WebCL WebGL interop become an extension
-    static PassRefPtr<WebCLImage> create() { return adoptRef(new WebCLImage()); }
     static PassRefPtr<WebCLImage> create(WebCLContext*, int flags, int width, int height, const CCImageFormat&, void*, ExceptionCode&);
 
     PassRefPtr<WebCLImageDescriptor> getInfo(ExceptionCode&);
-    int getGLtextureInfo(int, ExceptionCode&);
 
-private:
+protected:
     WebCLImage(WebCLContext*, PlatformComputeObject image, int width, int height, const CCImageFormat& format);
     WebCLImage()
         : WebCLMemoryObject(0, 0, false)

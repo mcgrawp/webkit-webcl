@@ -65,12 +65,4 @@
         raises(DOMException);
     [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in WebCLImageDescriptor descriptor, in [Optional] ArrayBuffer srcBuffer)
         raises(DOMException);
-
-    WebCLBuffer createFromGLBuffer(in long flags, in WebGLBuffer bufobj)
-        raises(DOMException);
-
-    WebCLImage createFromGLRenderBuffer(in long flags, in WebGLRenderbuffer renderbufferobj)
-        raises(DOMException);
-    WebCLMemoryObject createFromGLTexture2D(in long flags, in unsigned long textureTarget, in long miplevel, in unsigned long texture)
-        raises(DOMException);
 };

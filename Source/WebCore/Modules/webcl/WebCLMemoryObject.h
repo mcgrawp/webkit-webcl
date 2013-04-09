@@ -47,7 +47,7 @@ public:
     static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PlatformComputeObject, bool);
     bool isShared();
     WebCLGetInfo getInfo(int, ExceptionCode&);
-    PassRefPtr<WebCLGLObjectInfo> getGLObjectInfo(ExceptionCode&);
+
 protected:
     WebCLMemoryObject(WebCLContext*, PlatformComputeObject, bool);
     virtual void releasePlatformObjectImpl();

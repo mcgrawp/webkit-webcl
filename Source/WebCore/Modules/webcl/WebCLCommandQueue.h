@@ -178,26 +178,6 @@ public:
         enqueueReadImage(image, blockingRead, origin, region, rowPitch, slicePitch, ptr, Vector<RefPtr<WebCLEvent> >(), 0, ec);
     }
 
-    void enqueueAcquireGLObjects(WebCLMemoryObject*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
-    void enqueueAcquireGLObjects(WebCLMemoryObject* memoryList, const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)
-    {
-        enqueueAcquireGLObjects(memoryList, events,  0, ec);
-    }
-    void enqueueAcquireGLObjects(WebCLMemoryObject* memoryList, ExceptionCode& ec)
-    {
-        enqueueAcquireGLObjects(memoryList, Vector<RefPtr<WebCLEvent> >(), 0, ec);
-    }
-
-    void enqueueReleaseGLObjects(WebCLMemoryObject*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
-    void enqueueReleaseGLObjects(WebCLMemoryObject* memoryList, const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)
-    {
-        enqueueReleaseGLObjects(memoryList, events, 0, ec);
-    }
-    void enqueueReleaseGLObjects(WebCLMemoryObject *memoryList, ExceptionCode& ec)
-    {
-        enqueueReleaseGLObjects(memoryList, Vector<RefPtr<WebCLEvent> >(), 0, ec);
-    }
-
     void enqueueCopyBuffer(WebCLBuffer*, WebCLBuffer*, int, int, int, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
     void enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer* targetBuffer, int sourceOffset, int targetOffset,
         int sizeInBytes, const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)

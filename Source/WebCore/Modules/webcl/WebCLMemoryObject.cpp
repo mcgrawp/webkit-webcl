@@ -32,7 +32,6 @@
 #include "WebCLMemoryObject.h"
 
 #include "WebCL.h"
-#include "WebCLGLObjectInfo.h"
 
 namespace WebCore {
 
@@ -56,49 +55,6 @@ WebCLMemoryObject::WebCLMemoryObject(WebCLContext* context, PlatformComputeObjec
 bool WebCLMemoryObject::isShared()
 {
     return m_shared;
-}
-
-PassRefPtr<WebCLGLObjectInfo> WebCLMemoryObject::getGLObjectInfo(ExceptionCode& ec)
-{
-    CCerror err = -1;
-    unsigned* glObjectType = 0;
-    unsigned* glObjectName = 0;
-    if (!platformObject()) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
-        printf("Error: Invalid MEM_OBJECT\n");
-        return 0;
-    }
-    err = clGetGLObjectInfo(platformObject(), glObjectType, glObjectName);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_MEM_OBJECT:
-            printf("Error: CL_INVALID_MEM_OBJECT\n");
-            ec = WebCLException::INVALID_MEM_OBJECT;
-            break;
-        case CL_INVALID_GL_OBJECT:
-            printf("Error: CL_INVALID_GL_OBJECT\n");
-            ec = WebCLException::INVALID_GL_OBJECT;
-            break;
-        case CL_OUT_OF_RESOURCES:
-            printf("Error: CL_OUT_OF_RESOURCES\n");
-            ec = WebCLException::OUT_OF_RESOURCES;
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            printf("Error: CL_OUT_OF_HOST_MEMORY\n");
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            break;
-        default:
-            printf("Error: Invalid ERROR Type\n");
-            ec = WebCLException::FAILURE;
-            break;
-        }
-    } else {
-        RefPtr<WebCLGLObjectInfo> CLGLObjectInfo = WebCLGLObjectInfo::create(glObjectType, glObjectName);
-        if (CLGLObjectInfo)
-            return CLGLObjectInfo;
-        printf("Error:: Error creating WebCLGLObjectInfo object\n");
-    }
-    return 0;
 }
 
 WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)

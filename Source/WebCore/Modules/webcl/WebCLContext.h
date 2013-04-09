@@ -96,12 +96,6 @@ public:
         return createCommandQueue(0, queueProperties, ec);
     }
 
-    PassRefPtr<WebCLBuffer> createFromGLBuffer(int , WebGLBuffer* , ExceptionCode&);
-
-    PassRefPtr<WebCLImage> createFromGLRenderBuffer(int , WebGLRenderbuffer* , ExceptionCode&);
-
-    PassRefPtr<WebCLMemoryObject> createFromGLTexture2D(int , GC3Denum , GC3Dint , GC3Duint , ExceptionCode&);
-
     PassRefPtr<WebCLImage> createImage(int flag, WebCLImageDescriptor*, ArrayBuffer*, ExceptionCode&);
 
     PassRefPtr<WebCLProgram> createProgram(const String&, ExceptionCode&);

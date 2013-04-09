@@ -349,57 +349,6 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, WebCLImageDescriptor
     return createImage2DBase(flags, width, height, imageFormat, data ? data->data() : 0, ec);
 }
 
-
-PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(int flags, WebGLBuffer* webGLBuffer, ExceptionCode& ec)
-{
-    if (!platformObject()) {
-        ec = WebCLException::FAILURE;
-        return 0;
-    }
-
-    if (!webGLBuffer || !webGLBuffer->object()) {
-        ec = WebCLException::INVALID_HOST_PTR;
-        return 0;
-    }
-    Platform3DObject bufferID = webGLBuffer->object();
-
-    return WebCLBuffer::createFromGLBuffer(this, flags, bufferID, ec);
-}
-
-
-PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderBuffer(int flags, WebGLRenderbuffer* renderBuffer, ExceptionCode& ec)
-{
-    if (!platformObject()) {
-        ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-
-    UNUSED_PARAM(flags);
-    UNUSED_PARAM(renderBuffer);
-    UNUSED_PARAM(ec);
-
-    /*FIXME: This method is not following the spec
-    GLuint renderBufferID = 0;
-    if (renderBuffer)
-        renderBufferID =  renderBuffer->getInternalFormat();
-    if (!renderBufferID) {
-        ec = WebCLException::INVALID_HOST_PTR;
-        return 0;
-    }
-
-    CCerror error;
-    PlatformComputeObject ccMemoryID = platformObject()->createFromGLRenderbuffer(flags, renderBufferID, error);
-    if (!ccMemoryID) {
-        ASSERT(error != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
-    }
-    RefPtr<WebCLImage> imageObject = WebCLImage::create(this, ccMemoryID, true);
-    return imageObject.release();*/
-    return WebCLImage::create();
-}
-
-
 PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCoords, int addressingMode, int filterMode, ExceptionCode& ec)
 {
     if (!platformObject()) {
@@ -418,24 +367,6 @@ PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCoords, int addres
     }
 
     return WebCLSampler::create(this, normCoords, addressingMode, filterMode, ec);
-}
-
-PassRefPtr<WebCLMemoryObject> WebCLContext::createFromGLTexture2D(int flags, GC3Denum textureTarget, GC3Dint miplevel, GC3Duint texture, ExceptionCode& ec)
-{
-    if (!platformObject()) {
-        ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-
-    CCerror error;
-    PlatformComputeObject ccMemoryImage = platformObject()->createFromGLTexture2D(flags, textureTarget, miplevel, texture, error);
-    if (!ccMemoryImage) {
-        ASSERT(error != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
-    }
-    RefPtr<WebCLMemoryObject> memoryObject = WebCLMemoryObject::create(this, ccMemoryImage, true);
-    return memoryObject.release();
 }
 
 PassRefPtr<WebCLEvent> WebCLContext::createUserEvent(ExceptionCode& ec)
