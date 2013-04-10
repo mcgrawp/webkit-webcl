@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebCL kernel test return </title>
+<link rel="stylesheet" href="../resources/js-test-style.css"/>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/kernels.js"></script>
+<script src="../resources/webcl-test.js"></script>
+<script src="../resources/webcl-test-utils.js"></script>
+
+<script>
+    var err;                                    // error code returned from API calls
+    var results = new Uint32Array(1);           // results returned from device
+    var kernel;                                 // compute kernel
+    var output;                                 // output
+    var globalWorkSize = new Int32Array(1);     // global domain size for our calculation
+    var localWorkSize = new Int32Array(1);      // local domain size for our calculation
+
+    function runTest()
+    {
+        try {
+            var wclt = WebCLTest;
+            if (typeof(wclt) === "undefined") {
+                testFailed("WebCLTest object is not defined ...");
+                return;
+            }
+
+            var kernelSource = Kernels.kernel_item;
+
+            if (kernelSource === null) {
+                testFailed("No kernel named: " + "kernel_item");
+                return;
+            }
+
+            wclt.setupCLSimpleProgram("gpu", kernelSource);
+
+            // Create the compute kernel in the program we wish to run
+            kernel = wclt.getProgram().createKernel("kernel_item");
+
+            // Get the maximum work group size for executing the kernel on the device
+            var workGroupSize = kernel.getWorkGroupInfo(wclt.getDevice(0), wclt.getCL().KERNEL_WORK_GROUP_SIZE);
+
+            //Create buffer for output
+            output = wclt.getContext().createBuffer(wclt.getCL().MEM_WRITE_ONLY, Uint32Array.BYTES_PER_ELEMENT);
+            globalWorkSize[0] = 1;
+            localWorkSize[0] = 1;
+
+            kernel.setArg(0, output);
+
+            wclt.getQueue().enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
+
+
+            // Read back the results from the device to verify the output
+            wclt.getQueue().enqueueReadBuffer(output, true, 0, Float32Array.BYTES_PER_ELEMENT, results);
+
+            // Wait for the command queue to get serviced before reading back results
+            wclt.getQueue().finish();
+            shouldBe("results[0]", '15');
+
+            } catch (e) {
+                testFailed("WebCL Test Example Failed ; Message: "+ e.message);
+            }
+    }
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Just test if the kernel is working properly and return the expected result");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
