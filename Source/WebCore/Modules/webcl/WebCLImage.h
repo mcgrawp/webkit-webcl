@@ -49,10 +49,6 @@ public:
 
 protected:
     WebCLImage(WebCLContext*, PlatformComputeObject image, int width, int height, const CCImageFormat& format);
-    WebCLImage()
-        : WebCLMemoryObject(0, 0, false)
-    {
-    }
 
     int m_width;
     int m_height;
