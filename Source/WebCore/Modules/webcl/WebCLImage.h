@@ -34,7 +34,6 @@
 #include "WebCLImageDescriptor.h"
 #include "WebCLMemoryObject.h"
 
-#include <OpenCL/opencl.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 

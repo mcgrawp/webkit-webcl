@@ -30,7 +30,8 @@
 
 #if ENABLE(WEBCL)
 
-#include <OpenCL/opencl.h>
+#include "ComputeTypes.h"
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -42,7 +43,7 @@ public:
     virtual ~WebCLImageDescriptor();
 
     static PassRefPtr<WebCLImageDescriptor> create();
-    static PassRefPtr<WebCLImageDescriptor> create(cl_image_format);
+    static PassRefPtr<WebCLImageDescriptor> create(CCImageFormat);
 
     enum {
         // Image Discriptor defaults
@@ -54,7 +55,7 @@ public:
     };
 
     WebCLImageDescriptor();
-    WebCLImageDescriptor(cl_image_format);
+    WebCLImageDescriptor(CCImageFormat);
 
     void setChannelOrder(long);
     long channelOrder() const;

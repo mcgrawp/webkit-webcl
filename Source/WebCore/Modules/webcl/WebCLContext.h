@@ -44,8 +44,6 @@
 #include "WebCLContextProperties.h"
 #include "WebCLGetInfo.h"
 
-#include <OpenCL/opencl.h>
-
 namespace WebCore {
 
 class ImageData;

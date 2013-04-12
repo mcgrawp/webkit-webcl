@@ -35,7 +35,6 @@
 #include "WebCLKernelTypes.h"
 #include "WebCLObject.h"
 
-#include <OpenCL/opencl.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 

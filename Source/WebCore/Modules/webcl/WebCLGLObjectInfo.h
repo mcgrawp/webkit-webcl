@@ -28,13 +28,13 @@
 #ifndef WebCLGLObjectInfo_h
 #define WebCLGLObjectInfo_h
 
-#include <OpenCL/opencl.h>
+#include "WebCLDevice.h"
+#include "WebCLException.h"
+#include "WebCLPlatform.h"
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include "WebCLException.h"
-#include "WebCLDevice.h"
-#include "WebCLPlatform.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
