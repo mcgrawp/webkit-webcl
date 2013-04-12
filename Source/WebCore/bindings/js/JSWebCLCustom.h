@@ -34,6 +34,7 @@
 #include "JSWebCLDevice.h"
 #include "JSWebCLPlatform.h"
 #include "JSWebCLGLContext.h"
+#include "JSWebGLRenderingContext.h"
 
 #include <runtime/JSFunction.h>
 
@@ -44,7 +45,7 @@ namespace WebCore {
 JSValue toJS(ExecState*, JSDOMGlobalObject*, const WebCLGetInfo&);
 
 template <class T, class U>
-inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObject* globalObject, T* jsCustomObject, bool shareGroup)
+inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObject* globalObject, T* jsCustomObject, bool clGLSharing)
 {
     unsigned argumentCount = exec->argumentCount();
     if (!(!argumentCount || argumentCount == 1))
@@ -82,10 +83,14 @@ inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObjec
     if (jsAttrs->hasProperty(exec, deviceTypeIdentifier))
         deviceType = jsAttrs->get(exec, deviceTypeIdentifier).toInt32(exec);
 
-    int resolvedSharedGroup = 0;
-    Identifier shareGroupIdentifier(exec, "shareGroup");
-    if (shareGroup && jsAttrs->hasProperty(exec, shareGroupIdentifier))
-        resolvedSharedGroup = jsAttrs->get(exec, shareGroupIdentifier).toInt32(exec);
+    WebGLRenderingContext* webGLRenderingContext = nullptr;
+    WebCLContextProperties::SharedContextResolutionPolicy contextPolicy = clGLSharing ?
+        WebCLContextProperties::GetCurrentGLContext : WebCLContextProperties::NoSharedGLContext;
+    Identifier sharedContextIdentifier(exec, "sharedContext");
+    if (clGLSharing && jsAttrs->hasProperty(exec, sharedContextIdentifier)) {
+        webGLRenderingContext = toWebGLRenderingContext(jsAttrs->get(exec, sharedContextIdentifier));
+        contextPolicy = webGLRenderingContext ? WebCLContextProperties::UseGLContextProvided : WebCLContextProperties::GetCurrentGLContext;
+    }
 
     // FIXME: Vector of strings.
     String hint;
@@ -93,7 +98,8 @@ inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObjec
     if (jsAttrs->hasProperty(exec, hintIdentifier))
         hint = jsAttrs->get(exec, hintIdentifier).toString(exec)->value(exec);
 
-    RefPtr<WebCore::WebCLContextProperties> webCLContextProperties = WebCLContextProperties::create(platform, devices, deviceType, resolvedSharedGroup, hint);
+    RefPtr<WebCore::WebCLContextProperties> webCLContextProperties = WebCLContextProperties::create(platform, devices, deviceType, hint, contextPolicy, webGLRenderingContext);
+
     webCLContext = jsCustomObject->impl()->createContext(webCLContextProperties.get(), ec);
     if (ec) {
         setDOMException(exec, ec);

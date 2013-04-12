@@ -179,6 +179,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webcl/WebCLException.idl \
     $(WebCore)/Modules/webcl/WebCLFinishCallback.idl \
     $(WebCore)/Modules/webcl/WebCLContextProperties.idl \
+    $(WebCore)/Modules/webcl/WebCLGLContextProperties.idl \
     $(WebCore)/Modules/webcl/WebCLGLObjectInfo.idl \
     $(WebCore)/Modules/webcl/WebCLImage.idl \
     $(WebCore)/Modules/webcl/WebCLGLImage.idl \

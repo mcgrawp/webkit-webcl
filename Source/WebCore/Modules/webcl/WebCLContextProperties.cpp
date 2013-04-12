@@ -33,22 +33,23 @@
 
 #include "ComputeContext.h"
 #include "WebCLDevice.h"
-
-#include <OpenGL/OpenGL.h>
+#include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, int shareGroup, const String& hint)
+PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, const String& hint, SharedContextResolutionPolicy contextPolicy, WebGLRenderingContext* webGLRenderingContext)
 {
-    return adoptRef(new WebCLContextProperties(platform, devices, deviceType, shareGroup, hint));
+    ASSERT(contextPolicy == UseGLContextProvided ? webGLRenderingContext : !webGLRenderingContext);
+    return adoptRef(new WebCLContextProperties(platform, devices, deviceType, hint, contextPolicy, webGLRenderingContext));
 }
 
-WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, int shareGroup, const String& hint)
+WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, const String& hint, SharedContextResolutionPolicy contextPolicy, WebGLRenderingContext* webGLRenderingContext)
     : m_platform(platform)
     , m_devices(devices)
     , m_deviceType(deviceType)
-    , m_shareGroup(shareGroup)
     , m_hint(hint)
+    , m_contextPolicy(contextPolicy)
+    , m_webGLRenderingContext(webGLRenderingContext)
 {
 }
 
@@ -79,14 +80,9 @@ void WebCLContextProperties::setDeviceType(int type)
     m_ccProperties.clear();
 }
 
-int WebCLContextProperties::shareGroup() const
+void WebCLContextProperties::setWebGLRenderingContext(WebGLRenderingContext* webGLRenderingContext)
 {
-    return m_shareGroup;
-}
-
-void WebCLContextProperties::setShareGroup(int shareGroup)
-{
-    m_shareGroup = shareGroup;
+    m_webGLRenderingContext = webGLRenderingContext;
     m_ccProperties.clear();
 }
 
@@ -110,12 +106,15 @@ Vector<CCContextProperties>& WebCLContextProperties::computeContextProperties()
         m_ccProperties.append(reinterpret_cast<CCContextProperties>(platform()->platformObject()));
     }
 
-    if (m_shareGroup) {
-        CGLContextObj kCGLContext = CGLGetCurrentContext();
-        CGLShareGroupObj kCGLShareGroup = CGLGetShareGroup(kCGLContext);
-        m_ccProperties.append(CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE);
-        m_ccProperties.append(reinterpret_cast<CCContextProperties>(kCGLShareGroup));
+    if (m_contextPolicy == NoSharedGLContext) {
+        m_ccProperties.append(0);
+        return m_ccProperties;
     }
+
+    if (m_contextPolicy == UseGLContextProvided)
+        ComputeContext::populatePropertiesForInteroperabilityWithGL(m_ccProperties, m_webGLRenderingContext->graphicsContext3D()->platformGraphicsContext3D());
+    else // if GetCurrentGLContext
+        ComputeContext::populatePropertiesForInteroperabilityWithGL(m_ccProperties, 0);
 
     m_ccProperties.append(0);
     return m_ccProperties;

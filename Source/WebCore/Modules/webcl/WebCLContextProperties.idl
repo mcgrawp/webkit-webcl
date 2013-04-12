@@ -29,9 +29,9 @@
     Conditional=WEBCL,
     //OmitConstructor,
 ] interface WebCLContextProperties {
+    // FIXME: Remove 'readonly'.
     readonly attribute WebCLPlatform platform;
     readonly attribute WebCLDevice[] devices;
     attribute long deviceType;
-    attribute long shareGroup;
     attribute DOMString hint;
 };

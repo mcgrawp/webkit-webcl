@@ -32,6 +32,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#include <OpenGL/OpenGL.h>
+
 namespace WebCore {
 
 #define COMPILE_ASSERT_MATCHING_ENUM(computeContextName, openCLName) \
@@ -842,6 +844,16 @@ Vector<CCKernel> ComputeContext::createKernelsInProgram(CCProgram program, CCerr
 
     error = clCreateKernelsInProgram(program, numberOfKernels, kernels.data(), 0);
     return kernels;
+}
+
+void ComputeContext::populatePropertiesForInteroperabilityWithGL(Vector<CCContextProperties>& properties, PlatformGraphicsContext3D context3D)
+{
+#if PLATFORM(MAC)
+    CGLContextObj kCGLContext = context3D ? context3D : CGLGetCurrentContext();
+    CGLShareGroupObj kCGLShareGroup = CGLGetShareGroup(kCGLContext);
+    properties.append(CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE);
+    properties.append(reinterpret_cast<CCContextProperties>(kCGLShareGroup));
+#endif
 }
 
 }

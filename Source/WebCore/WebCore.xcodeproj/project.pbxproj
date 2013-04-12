@@ -9552,6 +9552,7 @@
 		750D029111D0E7F300BD1B27 /* RenderInputSpeech.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderInputSpeech.cpp; sourceTree = "<group>"; };
 		750D029211D0E7F300BD1B27 /* RenderInputSpeech.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderInputSpeech.h; sourceTree = "<group>"; };
 		75219FDA1708A28C0066DBED /* JSWebCLGLCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLGLCustom.cpp; sourceTree = "<group>"; };
+		753427A817120F210097419A /* WebCLGLContextProperties.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLGLContextProperties.idl; sourceTree = "<group>"; };
 		753802C0170381BA00CB1FDE /* WebCLExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLExtension.h; sourceTree = "<group>"; };
 		753802C1170381BA00CB1FDE /* WebCLGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLGL.h; sourceTree = "<group>"; };
 		753802C2170381BA00CB1FDE /* WebCLGL.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLGL.idl; sourceTree = "<group>"; };
@@ -16899,6 +16900,7 @@
 		75D8AA8716E744EF00FE8264 /* webcl */ = {
 			isa = PBXGroup;
 			children = (
+				753427A817120F210097419A /* WebCLGLContextProperties.idl */,
 				7505781D170B330F00021E29 /* WebCLGLBuffer.cpp */,
 				75BFE8F9170B6DC8001D6B3E /* WebCLGLImage.cpp */,
 				75A1DC77170A4DF100E67DAF /* WebCLGLCommandQueue.cpp */,

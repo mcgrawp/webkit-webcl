@@ -31,6 +31,7 @@
 #include "ComputeTypes.h"
 #include "ComputeTypesTraits.h"
 #include "GraphicsTypes3D.h"
+#include "GraphicsContext3D.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -470,6 +471,8 @@ public:
     {
         return m_clContext;
     }
+
+    static void populatePropertiesForInteroperabilityWithGL(Vector<CCContextProperties>&, PlatformGraphicsContext3D);
 
     // XXX: Create a Pimpl implementation
 private:

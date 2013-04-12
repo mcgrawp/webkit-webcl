@@ -42,11 +42,20 @@ namespace WebCore {
 
 class WebCLDevice;
 class WebCLPlatform;
+class WebGLRenderingContext;
 
 class WebCLContextProperties : public RefCounted<WebCLContextProperties>
 {
 public:
-    static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int, int, const String&);
+    enum SharedContextResolutionPolicy {
+        NoSharedGLContext = 0,
+        GetCurrentGLContext,
+        UseGLContextProvided
+    };
+
+    static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int deviceType, const String&,
+        SharedContextResolutionPolicy = NoSharedGLContext, WebGLRenderingContext* = 0);
+
     ~WebCLContextProperties() { }
 
     Vector<RefPtr<WebCLDevice> >& devices();
@@ -57,8 +66,8 @@ public:
     int deviceType() const;
     void setDeviceType(int type);
 
-    int shareGroup() const;
-    void setShareGroup(int);
+    void setWebGLRenderingContext(WebGLRenderingContext*);
+    WebGLRenderingContext* webGLRenderingContext() const;
 
     String hint() const;
     void setHint(const String&);
@@ -66,15 +75,18 @@ public:
     Vector<CCContextProperties>& computeContextProperties();
 
 private:
-    WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int, int, const String&);
+    WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int deviceType, const String&,
+        SharedContextResolutionPolicy = NoSharedGLContext, WebGLRenderingContext* = 0);
 
     RefPtr<WebCLPlatform> m_platform;
     Vector<RefPtr<WebCLDevice> > m_devices;
     int m_deviceType;
-    int m_shareGroup;
     Vector<CCContextProperties> m_ccProperties;
     // FIXME: spec says DOMString[].
     String m_hint;
+
+    enum SharedContextResolutionPolicy m_contextPolicy;
+    WebGLRenderingContext* m_webGLRenderingContext;
 };
 
 }// namespace WebCore
