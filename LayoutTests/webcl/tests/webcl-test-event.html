@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebCLEvent test </title>
+<link rel="stylesheet" href="../resources/js-test-style.css"/>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/kernels.js"></script>
+<script src="../resources/webcl-test.js"></script>
+
+<script>
+
+var clCallback = function eventCallback() {
+                    console.log("WebCLEventCallback!!");
+                 }
+
+function runTest() {
+
+    var globalWorkSize = new Int32Array(1);
+    var localWorkSize = new Int32Array(1);
+    var results = new Uint32Array(1);
+
+    try {
+
+        var webclTest = WebCLTest;
+        webclTest.init();
+
+        var cl = webclTest.getCL();
+
+        var platform = webclTest.getPlatform(0);
+
+        var device = webclTest.getDevice(0);
+        var devices = webclTest.getDevices();
+
+        var contextProperties = { platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU,
+                                    shareGroup:0, hint: null};
+        var context = webclTest.createContext(contextProperties);
+
+        var queue = webclTest.createCommandQueue();
+
+        var kernelSource = Kernels.kernel_item;
+
+        if (kernelSource === null) {
+            testFailed("No kernel named: " + "kernel_item");
+            return;
+        }
+
+        webclTest.createProgram(kernelSource, "kernel_item");
+        var kernel = webclTest.getKernel();
+
+        var workGroupSize = kernel.getWorkGroupInfo(device, cl.KERNEL_WORK_GROUP_SIZE);
+
+        //Create buffer for output
+        var output = context.createBuffer(cl.MEM_WRITE_ONLY, Uint32Array.BYTES_PER_ELEMENT);
+        globalWorkSize[0] = 1;
+        localWorkSize[0] = 1;
+
+        kernel.setArg(0, output);
+
+        var events = new Array(1);
+
+        var clEvent = webclTest.createEvent(clCallback, cl.STOPPED);
+        events[0] = clEvent;
+
+        queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize, null, clEvent);
+        queue.enqueueWaitForEvents(events);
+
+        // Read back the results from the device to verify the output
+        queue.enqueueReadBuffer(output, true, 0, Float32Array.BYTES_PER_ELEMENT, results);
+
+        // Wait for the command queue to get serviced before reading back results
+        queue.finish();
+
+        } catch (e) {
+            testFailed("WebCLEvent test failed ; Message: "+ e.message);
+        }
+    }
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Just testing if a WebCLEvent is working properly...");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -7,12 +7,10 @@
 <script src="../resources/js-test-pre.js"></script>
 <script src="../resources/kernels.js"></script>
 <script src="../resources/webcl-test.js"></script>
-<script src="../resources/webcl-test-utils.js"></script>
 
 <script>
     var err;                                    // error code returned from API calls
     var results = new Uint32Array(1);           // results returned from device
-    var kernel;                                 // compute kernel
     var output;                                 // output
     var globalWorkSize = new Int32Array(1);     // global domain size for our calculation
     var localWorkSize = new Int32Array(1);      // local domain size for our calculation
@@ -26,40 +24,48 @@
                 return;
             }
 
-            var kernelSource = Kernels.kernel_item;
+            wclt.init();
 
+            var cl = wclt.getCL();
+            var platform = wclt.getPlatform(0);
+            var device = wclt.getDevice(0);
+            var devices = wclt.getDevices();
+            var contextProperties = { platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_ALL,
+                                    shareGroup: 0, hint: null};
+            var context = wclt.createContext(contextProperties);
+            var queue = wclt.createCommandQueue();
+
+            var kernelSource = Kernels.kernel_item;
             if (kernelSource === null) {
                 testFailed("No kernel named: " + "kernel_item");
                 return;
             }
 
-            wclt.setupCLSimpleProgram("gpu", kernelSource);
+            wclt.createProgram(kernelSource, "kernel_item");
 
-            // Create the compute kernel in the program we wish to run
-            kernel = wclt.getProgram().createKernel("kernel_item");
-
+            var kernel = wclt.getKernel();
             // Get the maximum work group size for executing the kernel on the device
-            var workGroupSize = kernel.getWorkGroupInfo(wclt.getDevice(0), wclt.getCL().KERNEL_WORK_GROUP_SIZE);
+            var workGroupSize = kernel.getWorkGroupInfo(device, cl.KERNEL_WORK_GROUP_SIZE);
 
             //Create buffer for output
-            output = wclt.getContext().createBuffer(wclt.getCL().MEM_WRITE_ONLY, Uint32Array.BYTES_PER_ELEMENT);
+            output = context.createBuffer(cl.MEM_WRITE_ONLY, Uint32Array.BYTES_PER_ELEMENT);
             globalWorkSize[0] = 1;
             localWorkSize[0] = 1;
 
             kernel.setArg(0, output);
 
-            wclt.getQueue().enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
+            queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
 
 
             // Read back the results from the device to verify the output
-            wclt.getQueue().enqueueReadBuffer(output, true, 0, Float32Array.BYTES_PER_ELEMENT, results);
+            queue.enqueueReadBuffer(output, true, 0, Float32Array.BYTES_PER_ELEMENT, results);
 
             // Wait for the command queue to get serviced before reading back results
-            wclt.getQueue().finish();
+            queue.finish();
             shouldBe("results[0]", '15');
 
             } catch (e) {
-                testFailed("WebCL Test Example Failed ; Message: "+ e.message);
+                testFailed("WebCL kernel result test failed ; Message: "+ e.message);
             }
     }
 

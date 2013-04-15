@@ -5,20 +5,18 @@ WebCLTest = (function() {
 "use restrict";
 
     var cl = null;
-
-    var platforms = null;
-
-    var platform = null;
-
-    var devices = null;
-
-    var device = null;
-
+    var clEvent = null;
     var context = null;
-
-    var queue = null;
-
+    var device = null;
+    var devices = null;
+    var deviceType = null;
+    var events = null;
+    var kernel = null;
+    var platform = null;
+    var platforms = null;
     var program = null;
+    var queue = null;
+    var sampler = null;
 
     var getCL = function() {
         return cl;
@@ -40,25 +38,27 @@ WebCLTest = (function() {
         return devices;
     };
 
-    var getContext = function() {
-        return context;
+    var getDeviceType = function() {
+        return deviceType;
     };
 
-    var getQueue = function() {
-        return queue;
+    var getEvents = function() {
+        return events;
     };
 
-    var getProgram = function() {
-        return program;
+    var getSampler = function() {
+        return sampler;
+    };
+
+    var getKernel = function() {
+        return kernel;
     };
 
     /**
      * Initialize common CL resources.
-     * @param {string} deviceType The device type(gpu, cpu, etc).
      */
-    var initCL = function(platformId, deviceId, deviceType) {
-
-        if (typeof(webcl) === "undefined") {
+    var init = function(platformId, deviceId, type) {
+        if (webcl === undefined) {
             throw ("Failed to init CL support ...");
         }
 
@@ -72,75 +72,132 @@ WebCLTest = (function() {
             throw ("Failed to get platforms ... ");
         }
 
-        if (platformId === null || platformId === "" || typeof(platformId) === "undefined") {
-            platform = platforms[platformId];
-        } else {
+        if (platformId === null || platformId === "" || platformId === undefined) {
             platform = platforms[0];
+        } else {
+            platform = platforms[platformId];
         }
 
-        devices = platform.getDevices(deviceType === "gpu" ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU);
+        if (type === "gpu" ) {
+            deviceType = cl.DEVICE_TYPE_GPU;
+        } else if (type == "cpu") {
+            deviceType = cl.DEVICE_TYPE_CPU;
+        } else if (type == "all") {
+            deviceType = cl.DEVICE_TYPE_ALL;
+        } else {
+            deviceType = cl.DEVICE_TYPE_DEFAULT;
+        }
+
+        devices = platform.getDevices(deviceType);
         if (devices.length === 0) {
             throw ("Failed to get devices list ... ");
         }
 
-        if (deviceId === null || deviceId === "" || typeof(deviceId) === "undefined") {
-            device = devices[deviceId];
-        } else {
+        if (deviceId === null || deviceId === "" || deviceId === undefined) {
             device = devices[0];
+        } else {
+            device = devices[deviceId];
         }
-
     };
 
-    var initCLContext = function(deviceType) {
-        var contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_ALL, shareGroup: 0, hint: null};
+    var createContext = function(contextProperties) {
+
+        if (contextProperties === null || contextProperties === undefined) {
+            contextProperties = { "platform": platform,
+                                    "devices": devices,
+                                    "deviceType": deviceType,
+                                    "shareGroup": 0,
+                                    "hints": null};
+        }
+
+
         context = cl.createContext(contextProperties);
-        if (context === null || typeof(context) === "undefined") {
+        if (!(context instanceof WebCLContext)) {
             throw("Invalid CL context ...");
         }
+
+        return context;
     };
 
-    var initCLProgram = function(kernelSource) {
-        program = getContext().createProgram(kernelSource);
-        if (program === null || typeof(program) === "undefined") {
+    var createProgram = function(kernelSource, kernelName) {
+        if (!(context instanceof WebCLContext)) {
+            throw("Invalid CL context ...");
+        }
+
+        if (kernelSource === "" || kernelName === "") {
+            throw("Kernel source or kernel name are empty...");
+        }
+
+        program = context.createProgram(kernelSource);
+        if (!(program instanceof WebCLProgram)) {
             throw("Invalid CL program ...");
         }
+
+        program.build(devices);
+        kernel = program.createKernel(kernelName);
+        if (!(kernel instanceof WebCLKernel)) {
+            throw("Invalid kernel instance ...");
+        }
+
+        return program;
     };
 
-    var initCommandQueue = function(deviceId) {
-        var _device = getDevice(deviceId);
-        queue = context.createCommandQueue(_device, null);
-        if (queue === null || typeof(queue) === "undefined") {
+    var createCommandQueue = function() {
+        if (!(context instanceof WebCLContext)) {
+            throw("Invalid CL context ...");
+        }
+
+        queue = context.createCommandQueue(device, null);
+        if (!(queue instanceof WebCLCommandQueue)) {
             throw("Invalid CL queue ...");
         }
+
+        return queue;
     };
 
-    var clBuildProgram = function(deviceId) {
-        var _device = getDevice(deviceId);
-        program.build(_device);
+    var setupSimpleProgram = function(deviceType, kernelSource, kernelName) {
+        init(0, 0, deviceType);
+        createContext(deviceType);
+        createCommandQueue(0);
+        createProgram(kernelSource, kernelName);
     };
 
-    var setupCLSimpleProgram = function(deviceType, kernelSource) {
-        initCL(0, 0, deviceType);
-        initCLContext(deviceType);
-        initCLProgram(kernelSource);
-        initCommandQueue(0);
-        clBuildProgram(0);
+    var createEvent = function(eventCallback, executionStatus) {
+        if (!(context instanceof WebCLContext)) {
+            throw("Invalid CL context ...");
+        }
+
+        clEvent = context.createUserEvent();
+        if (!(clEvent instanceof WebCLEvent)) {
+            throw("Fail when trying to create an event...");
+        }
+
+        // executionStatus could be cl.STOPPED, cl.RUNNING, cl.SUBMITTED, cl.QUEUED
+        clEvent.setCallback(executionStatus, eventCallback, null);
+        return clEvent;
+    };
+
+    var setWaitForEvents = function(eventList, finishedCallback, userData) {
+        cl.waiForEvents(eventList, finishedCallback, userData);
     };
 
     return {
+        createCommandQueue: createCommandQueue,
+        createContext: createContext,
+        createEvent: createEvent,
+        createProgram: createProgram,
         getCL: getCL,
-        getPlatform: getPlatform,
         getDevice: getDevice,
-        getContext: getContext,
-        getQueue: getQueue,
-        getProgram: getProgram,
-        initCL: initCL,
-        initCLContext: initCLContext,
-        initCLProgram: initCLProgram,
-        initCommandQueue: initCommandQueue,
-        clBuildProgram: clBuildProgram,
-        setupCLSimpleProgram: setupCLSimpleProgram,
-        none: false
+        getDevices: getDevices,
+        getDeviceType: getDeviceType,
+        getEvents: getEvents,
+        getKernel: getKernel,
+        getPlatform: getPlatform,
+        getPlatforms: getPlatforms,
+        getSampler: getSampler,
+        init: init,
+        setWaitForEvents: setWaitForEvents,
+        setupSimpleProgram: setupSimpleProgram
     };
 
 }());

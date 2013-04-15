@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebCLEvent stress test </title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/webcl-test.js"></script>
+<script src="../resources/webcl-test-utils.js"></script>
+
+<script>
+
+var callback = function () {
+        console.log("Event callback!");
+}
+
+function runTest() {
+
+    try {
+        var webclTest = WebCLTest;
+        webclTest.init();
+
+        var cl = webclTest.getCL();
+        var platform = webclTest.getPlatform(0);
+        var devices = webclTest.getDevices();
+
+        var properties = { platform: platform, devices: devices,
+                            deviceType: cl.DEVICE_TYPE_GPU, hint: null};
+        var context = webclTest.createContext(properties);
+
+        var clEvent = null;
+        var events = new Array();
+        for (var i = 0; i < STRESS_ITERS; ++i) {
+            clEvent = webclTest.createEvent(callback, cl.STOPPED);
+            if (clEvent === null || !(clEvent instanceof WebCLEvent)) {
+                testFailed("WebCLEvent was not created properly ...");
+                return;
+            }
+            events.push(clEvent);
+            clEvent = null;
+        }
+        testPassed("WebCLEvent creation");
+
+        clEvent = null;
+        for (var i = 0; i < STRESS_ITERS; ++i) {
+            clEvent = events.pop();
+            clEvent.release();
+            clEvent = null;
+        }
+
+        testPassed(" ");
+
+    } catch (e) {
+        testFailed("WebCLEvent stress test failed ; Message: "+ e.message);
+    }
+}
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("WebCLEvent stress test.");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
