@@ -39,7 +39,10 @@ namespace WebCore {
 
 PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, const String& hint, SharedContextResolutionPolicy contextPolicy, WebGLRenderingContext* webGLRenderingContext)
 {
-    ASSERT(contextPolicy == UseGLContextProvided ? webGLRenderingContext : !webGLRenderingContext);
+    if (contextPolicy == UseGLContextProvided)
+        ASSERT(webGLRenderingContext);
+    else
+        ASSERT(!webGLRenderingContext);
     return adoptRef(new WebCLContextProperties(platform, devices, deviceType, hint, contextPolicy, webGLRenderingContext));
 }
 
