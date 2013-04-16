@@ -12,8 +12,7 @@
 
 var DATA_SIZE = 1024;
 
-function runTest()
-{
+function runTest() {
     try {
 
         var wclt = WebCLTest;
@@ -46,7 +45,8 @@ function runTest()
         var outputBuffer;
         var inputTmpBuffer;
 
-        for (var i = 0; i < DATA_SIZE; i++) {
+        var i;
+        for (i = 0; i < DATA_SIZE; i++) {
             data[i] = i + 1;
         }
 
@@ -64,7 +64,7 @@ function runTest()
         kernel.setArg(2, DATA_SIZE, WebCLKernelArgumentTypes.INT);
 
         var queue = wclt.createCommandQueue();
-        for (var i = 0; i < STRESS_ITERS; i++) {
+        for (i = 0; i < STRESS_ITERS; i++) {
             queue.enqueueWriteBuffer(inputTmpBuffer, true, 0, numBytes, data);
             queue.enqueueCopyBuffer(inputTmpBuffer, inputBuffer, 0, 0, numBytes);
             queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
@@ -76,8 +76,8 @@ function runTest()
         var squareValue;
         for (i = 0; i < DATA_SIZE; i++) {
             squareValue = data[i] * data[i];
-            if (results[i] != squareValue) {
-                testFailed("Wrong values: results["+i+"] should be "+squareValue+" instead of "+results[i]);
+            if (results[i] !== squareValue) {
+                testFailed("Wrong values: results[" + i + "] should be " + squareValue + " instead of " + results[i]);
                 break;
             }
         }
@@ -86,9 +86,9 @@ function runTest()
 
         testPassed("");
 
-        } catch (e) {
-            testFailed("WeCLCommandQueue stress test failed ; Message: "+ e.message);
-        }
+    } catch (e) {
+        testFailed("WeCLCommandQueue stress test failed ; Message: " + e.message);
+    }
 }
 
 </script>

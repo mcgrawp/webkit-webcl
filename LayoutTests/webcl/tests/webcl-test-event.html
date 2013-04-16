@@ -11,8 +11,8 @@
 <script>
 
 var clCallback = function eventCallback() {
-                    console.log("WebCLEventCallback!!");
-                 }
+        console.log("WebCLEventCallback!!");
+    };
 
 function runTest() {
 
@@ -33,7 +33,7 @@ function runTest() {
         var devices = webclTest.getDevices();
 
         var contextProperties = { platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU,
-                                    shareGroup:0, hint: null};
+                                    shareGroup: 0, hint: null};
         var context = webclTest.createContext(contextProperties);
 
         var queue = webclTest.createCommandQueue();
@@ -71,10 +71,10 @@ function runTest() {
         // Wait for the command queue to get serviced before reading back results
         queue.finish();
 
-        } catch (e) {
-            testFailed("WebCLEvent test failed ; Message: "+ e.message);
-        }
+    } catch (e) {
+        testFailed("WebCLEvent test failed ; Message: " + e.message);
     }
+}
 
 </script>
 </head>

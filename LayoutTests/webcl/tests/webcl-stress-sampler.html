@@ -9,8 +9,7 @@
 
 <script>
 
-function runTest()
-{
+function runTest() {
     try {
         var wclt = WebCLTest;
         wclt.init();
@@ -23,7 +22,8 @@ function runTest()
         var context = wclt.createContext(contextProperties);
 
         var clSampler = null;
-        for (var i = 0; i < STRESS_ITERS; i++) {
+        var i;
+        for (i = 0; i < STRESS_ITERS; i++) {
             clSampler = context.createSampler(true, cl.ADDRESS_NONE, cl.FILTER_LINEAR);
             if (clSampler === null || !(clSampler instanceof WebCLSampler)) {
                 testFailed("WebCLSampler was not created properly.");
@@ -36,7 +36,7 @@ function runTest()
         testPassed("");
 
     } catch (e) {
-        testFailed("WebCLSampler stress test failed ; Message: "+ e.message);
+        testFailed("WebCLSampler stress test failed ; Message: " + e.message);
     }
 }
 

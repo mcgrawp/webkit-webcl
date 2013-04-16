@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <title>WebCL kernel test return </title>
-<link rel="stylesheet" href="../resources/js-test-style.css"/>
 <script src="../resources/js-test-pre.js"></script>
 <script src="../resources/kernels.js"></script>
 <script src="../resources/webcl-test.js"></script>
@@ -15,11 +14,10 @@
     var globalWorkSize = new Int32Array(1);     // global domain size for our calculation
     var localWorkSize = new Int32Array(1);      // local domain size for our calculation
 
-    function runTest()
-    {
+    function runTest() {
         try {
             var wclt = WebCLTest;
-            if (typeof(wclt) === "undefined") {
+            if (wclt === "undefined") {
                 testFailed("WebCLTest object is not defined ...");
                 return;
             }
@@ -64,9 +62,9 @@
             queue.finish();
             shouldBe("results[0]", '15');
 
-            } catch (e) {
-                testFailed("WebCL kernel result test failed ; Message: "+ e.message);
-            }
+        } catch (e) {
+            testFailed("WebCL kernel result test failed ; Message: " + e.message);
+        }
     }
 
 </script>

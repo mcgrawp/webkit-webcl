@@ -18,8 +18,8 @@ var globalWorkSize = new Int32Array(1);
 var localWorkSize = new Int32Array(1);
 var sizeInBytes = Int32Array.BYTES_PER_ELEMENT * VECTOR_SIZE;
 globalWorkSize[0] = VECTOR_SIZE * VECTOR_SIZE;
-
-for(var k in kernelsName) {
+var k;
+for (k in kernelsName) {
     kernelsSrc[k] = eval('Kernels. ' +  kernelsName[k]);
 }
 
@@ -27,40 +27,39 @@ for(var k in kernelsName) {
 function checkResult(v1, v2, result, kernelName) {
     var operator;
 
-    switch(kernelName) {
-        case 'vector_add':
-            operator = '+';
-            break;
-        case 'vector_sub':
-            operator = '-';
-            break;
-        case 'vector_mult':
-            operator = '*';
-            break;
-        case 'vector_div':
-            operator = '/';
-            break;
-        default:
-            throw new Error('Undefined kernel operation for kernel key ' + kernelName);
+    switch (kernelName) {
+    case 'vector_add':
+        operator = '+';
+        break;
+    case 'vector_sub':
+        operator = '-';
+        break;
+    case 'vector_mult':
+        operator = '*';
+        break;
+    case 'vector_div':
+        operator = '/';
+        break;
+    default:
+        throw new Error('Undefined kernel operation for kernel key ' + kernelName);
     }
-    
+
     var temp, msg;
-    
-    for(var i = 0; i < VECTOR_SIZE; i++){
-       temp = eval('v1[i]' + operator + 'v2[i]'); 
-       if(result[i] != parseInt(temp)){
-           msg = v1[i] + operator + v2[i] + ' should be ' + temp + '. Its ' + result[i];
-           console.log(msg);
-           return msg;
-       }
+    var i;
+    for (i = 0; i < VECTOR_SIZE; i++) {
+        temp = eval('v1[i]' + operator + 'v2[i]');
+        if (result[i] !== parseInt(temp, 10)) {
+            msg = v1[i] + operator + v2[i] + ' should be ' + temp + '. Its ' + result[i];
+            console.log(msg);
+            return msg;
+        }
     }
 
     return "";
 }
 
-function runTest(){
+function runTest() {
 
-    
     try {
 
         var wclt = WebCLTest;
@@ -87,26 +86,28 @@ function runTest(){
         var workGroupSize;
 
         /* Create kernels */
-        for (var i in kernelsName) {
+        var i;
+        for (i in kernelsName) {
             kernels[kernelsName[i]] = program.createKernel(kernelsName[i]);
         }
 
         var v1, v2, result, msg;
 
         var commandQueue = context.createCommandQueue(device, null);
-        
+
         /* Run several times */
-        for(var i = 0; i < STRESS_ITERS; i++){
+        for (i = 0; i < STRESS_ITERS; i++) {
 
             /* Each kernel */
-            for(var key in kernels) {
-                
+            var key;
+            for (key in kernels) {
+
                 v1 = WebCLTestUtils.getRandomVector(VECTOR_SIZE, 100);
                 v2 = WebCLTestUtils.getRandomVector(VECTOR_SIZE, 100);
                 result = new Int32Array(VECTOR_SIZE);
 
                 commandQueue.enqueueWriteBuffer(bufferIn1, true, 0, sizeInBytes, new Int32Array(v1));
-                commandQueue.enqueueWriteBuffer( bufferIn2, true, 0, sizeInBytes, new Int32Array(v2));
+                commandQueue.enqueueWriteBuffer(bufferIn2, true, 0, sizeInBytes, new Int32Array(v2));
 
                 kernels[key].setArg(0, bufferIn1);
                 kernels[key].setArg(1, bufferIn2);
@@ -115,13 +116,13 @@ function runTest(){
 
                 localWorkSize[0] =  kernels[key].getWorkGroupInfo(device, cl.KERNEL_WORK_GROUP_SIZE);
 
-                commandQueue.enqueueNDRangeKernel( kernels[key], null, globalWorkSize, localWorkSize);
+                commandQueue.enqueueNDRangeKernel(kernels[key], null, globalWorkSize, localWorkSize);
                 commandQueue.finish();
 
                 commandQueue.enqueueReadBuffer(bufferOut, true, 0, sizeInBytes, result);
 
                 msg = checkResult(v1, v2, result, key);
-                if(msg != "" ) {
+                if (msg !== "") {
                     throw new Error(msg);
                 }
             }
@@ -130,11 +131,10 @@ function runTest(){
 
         testPassed("OK.");
 
-    }
-    catch(e) {
+    } catch (e) {
         testFailed(e.message);
     }
-    
+
 }
 
 

@@ -32,15 +32,18 @@ var output;
 var globalWorkSize = new Int32Array(1);
 var localWorkSize = new Int32Array(1);
 
-function runTest()
-{
+function runTest() {
+
     count = DATA_SIZE;
-    for (var i = 0; i < count; i++)
+    var i;
+    var j;
+    for (i = 0; i < count; i++) {
         data[i] = Math.random();
+    }
 
     try {
 
-        if (typeof(webcl) === "undefined") {
+        if (webcl === "undefined") {
             testFailed("webcl is yet to be undefined");
             return null;
         }
@@ -69,10 +72,11 @@ function runTest()
         var contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_ALL, hint: null};
         context = cl.createContext(contextProperties);
 
-        queues = new Array(numDevices);
+        queues = [numDevices];
 
-        for (var i = 0; i < numDevices; i++)
+        for (i = 0; i < numDevices; i++) {
             queues[i] = context.createCommandQueue(devices[i], null);
+        }
 
         var kernelSource = Kernels.square;
         if (kernelSource === null) {
@@ -91,17 +95,18 @@ function runTest()
             return;
         }
 
-        outputs = new Array(numDevices);
-        for (var i = 0; i < numDevices; i++) {
-            outputs[i] = context.createBuffer( cl.MEM_WRITE_ONLY, Int32Array.BYTES_PER_ELEMENT * count);
+        var outputs = [numDevices];
+        for (i = 0; i < numDevices; i++) {
+            outputs[i] = context.createBuffer(cl.MEM_WRITE_ONLY, Int32Array.BYTES_PER_ELEMENT * count);
             if (outputs[i] === null) {
                 testFailed("Failed to allocate device memory for output data");
                 return;
             }
         }
 
-        for (var i = 0; i < numDevices; i++)
-            queues[i].enqueueWriteBuffer( input, true, 0, Int32Array.BYTES_PER_ELEMENT * count, data );
+        for (i = 0; i < numDevices; i++) {
+            queues[i].enqueueWriteBuffer(input, true, 0, Int32Array.BYTES_PER_ELEMENT * count, data);
+        }
 
         kernel.setArg(0, input);
         kernel.setArg(1, outputs[0]);
@@ -112,15 +117,17 @@ function runTest()
         globalWorkSize[0] = count;
         localWorkSize[0] = workGroupSize;
 
-        for (var i = 0; i < numDevices; i++)
-            queues[i].enqueueNDRangeKernel( kernel, null, globalWorkSize, localWorkSize);
+        for (i = 0; i < numDevices; i++) {
+            queues[i].enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
+        }
 
-        for (var i = 0; i < numDevices; i++)
+        for (i = 0; i < numDevices; i++) {
             queues[i].finish();
+        }
 
-        for (var i = 0; i < numDevices; i++) {
+        for (i = 0; i < numDevices; i++) {
             queues[i].enqueueReadBuffer(outputs[i], true, 0, Int32Array.BYTES_PER_ELEMENT * count, results);
-            for (var j = 0; j < count; j++) {
+            for (j = 0; j < count; j++) {
                 if (results[j] !== (data[j] * data[j])) {
                     testFailed("");
                     break;
@@ -129,7 +136,7 @@ function runTest()
         }
         testPassed("");
     } catch (e) {
-        testFailed("WebCL: test all devices using a single context has failed. ; Message: "+ e.message);
+        testFailed("WebCL: test all devices using a single context has failed. ; Message: " + e.message);
     }
 }
 </script>

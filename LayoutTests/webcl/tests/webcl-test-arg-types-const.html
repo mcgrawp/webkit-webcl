@@ -1,36 +1,38 @@
 <html>
+<head>
 <title>WebCL WebCLKernelArgTypes constants tests.</title>
 <link rel="stylesheet" href="../resources/js-test-style.css"/>
 <script type="text/javascript" src="../resources/js-test-pre.js"></script>
 <script type="text/javascript">
-    function runTest(){
-        shouldBeTrue("webcl.CHAR == 0");
-        shouldBeTrue("webcl.UCHAR == 1");
-        shouldBeTrue("webcl.SHORT == 2");
-        shouldBeTrue("webcl.USHORT == 3");
-        shouldBeTrue("webcl.INT == 4");
-        shouldBeTrue("webcl.UINT == 5");
-        shouldBeTrue("webcl.LONG == 6");
-        shouldBeTrue("webcl.ULONG == 7");
-        shouldBeTrue("webcl.FLOAT == 8");
-        shouldBeTrue("webcl.HALF == 9");
-        shouldBeTrue("webcl.DOUBLE == 10");
-        shouldBeTrue("webcl.VEC2 == 0x0100");
-        shouldBeTrue("webcl.VEC3 == 0x0200");
-        shouldBeTrue("webcl.VEC4 == 0x0400");
-        shouldBeTrue("webcl.VEC8 == 0x0800");
-        shouldBeTrue("webcl.VEC16 == 0x1000");
-        shouldBeTrue("webcl.LOCAL_MEMORY_SIZE == 255");
-    }
+
+function runTest() {
+    shouldBeTrue("webcl.CHAR == 0");
+    shouldBeTrue("webcl.UCHAR == 1");
+    shouldBeTrue("webcl.SHORT == 2");
+    shouldBeTrue("webcl.USHORT == 3");
+    shouldBeTrue("webcl.INT == 4");
+    shouldBeTrue("webcl.UINT == 5");
+    shouldBeTrue("webcl.LONG == 6");
+    shouldBeTrue("webcl.ULONG == 7");
+    shouldBeTrue("webcl.FLOAT == 8");
+    shouldBeTrue("webcl.HALF == 9");
+    shouldBeTrue("webcl.DOUBLE == 10");
+    shouldBeTrue("webcl.VEC2 == 0x0100");
+    shouldBeTrue("webcl.VEC3 == 0x0200");
+    shouldBeTrue("webcl.VEC4 == 0x0400");
+    shouldBeTrue("webcl.VEC8 == 0x0800");
+    shouldBeTrue("webcl.VEC16 == 0x1000");
+    shouldBeTrue("webcl.LOCAL_MEMORY_SIZE == 255");
+}
 </script>
 </head>
 <body>
 <div id="description"></div>
 <div id="console"></div>
 <script>
-        description(document.title);
-        debug("Test all constants defined in WebCLKernelArgTypes.idl");
-        runTest();
+    description(document.title);
+    debug("Test all constants defined in WebCLKernelArgTypes.idl");
+    runTest();
 </script>
 <script src="../resources/js-test-post.js"></script>
 </body>

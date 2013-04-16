@@ -23,14 +23,15 @@ function runTest() {
                             deviceType: cl.DEVICE_TYPE_GPU, hint: null};
         var context = webclTest.createContext(properties);
 
-        var images = new Array();
+        var images = [];
         var image = null;
 
         var formats = context.getSupportedImageFormats(cl.MEM_READ_WRITE, cl.MEM_OBJECT_IMAGE2D);
         formats[0].width = 10;
         formats[0].height = 10;
 
-        for (var i=0; i < STRESS_ITERS; ++i) {
+        var i;
+        for (i = 0; i < STRESS_ITERS; ++i) {
             image = context.createImage(cl.MEM_READ_WRITE, formats[0], null);
             if (image === null || !(image instanceof WebCLImage)) {
                 testFailed("Failed trying create a WebCLImage instance");
@@ -41,7 +42,7 @@ function runTest() {
         }
 
         image = null;
-        for (var i=0; i < STRESS_ITERS; ++i) {
+        for (i = 0; i < STRESS_ITERS; ++i) {
             image = images.pop();
             if (image === null || !(image instanceof WebCLImage)) {
                 testFailed("Failed to when getting WebCLImage");
@@ -56,7 +57,7 @@ function runTest() {
         testPassed(" ");
 
     } catch (e) {
-        testFailed("WebCLIMage stress test failed ; Message: "+ e.message);
+        testFailed("WebCLIMage stress test failed ; Message: " + e.message);
     }
 }
 

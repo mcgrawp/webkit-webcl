@@ -11,7 +11,7 @@
 
 var callback = function () {
         console.log("Event callback!");
-}
+    };
 
 function runTest() {
 
@@ -28,8 +28,10 @@ function runTest() {
         var context = webclTest.createContext(properties);
 
         var clEvent = null;
-        var events = new Array();
-        for (var i = 0; i < STRESS_ITERS; ++i) {
+        var events = [];
+        var i;
+
+        for (i = 0; i < STRESS_ITERS; ++i) {
             clEvent = webclTest.createEvent(callback, cl.STOPPED);
             if (clEvent === null || !(clEvent instanceof WebCLEvent)) {
                 testFailed("WebCLEvent was not created properly ...");
@@ -41,7 +43,7 @@ function runTest() {
         testPassed("WebCLEvent creation");
 
         clEvent = null;
-        for (var i = 0; i < STRESS_ITERS; ++i) {
+        for (i = 0; i < STRESS_ITERS; ++i) {
             clEvent = events.pop();
             clEvent.release();
             clEvent = null;
@@ -50,7 +52,7 @@ function runTest() {
         testPassed(" ");
 
     } catch (e) {
-        testFailed("WebCLEvent stress test failed ; Message: "+ e.message);
+        testFailed("WebCLEvent stress test failed ; Message: " + e.message);
     }
 }
 

@@ -15,8 +15,7 @@
  * The backtrace is available at: http://pastebin.com/EChVqeLn
  */
 
-function runTest()
-{
+function runTest() {
     var i;
     var wclt;
     var platform;
@@ -40,18 +39,17 @@ function runTest()
                                 "hints": null};
 
         for (i = 0; i < STRESS_ITERS_CONTEXT; i++) {
-           context = wclt.createContext(contextProperties);
-           if (!(context instanceof WebCLContext)) {
-               testFailed("WebCLContext was not created properly.");
-               return;
-           }
-           // TODO clean up when the release has been ok
+            context = wclt.createContext(contextProperties);
+            if (!(context instanceof WebCLContext)) {
+                testFailed("WebCLContext was not created properly.");
+                return;
+            }
+            // TODO clean up when the release has been ok
         }
-
         testPassed("");
-    }
-    catch (e) {
-        testFailed("WebCLContext stress test failed ; Message: "+ e.message);
+
+    } catch (e) {
+        testFailed("WebCLContext stress test failed ; Message: " + e.message);
     }
 }
 

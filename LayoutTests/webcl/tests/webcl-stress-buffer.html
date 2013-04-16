@@ -8,17 +8,15 @@
 
 <script>
 
-function getRandomSize(maxNumber)
-{
+function getRandomSize(maxNumber) {
     var x = Math.floor((Math.random() * maxNumber) + 1);
     return x;
 }
 
-function runTest()
-{
+function runTest() {
     try {
 
-        if (typeof(webcl) === "undefined") {
+        if (webcl === "undefined") {
             testFailed("webcl is yet to be undefined");
             return null;
         }
@@ -55,8 +53,10 @@ function runTest()
         var maxMemAllocSize = device.getInfo(cl.DEVICE_MAX_MEM_ALLOC_SIZE);
         var clBuffer = null;
         var bufferSize;
+        var i;
+        var num;
 
-        for (var i = 0; i < STRESS_ITERS; i++) {
+        for (i = 0; i < STRESS_ITERS; i++) {
             num = getRandomSize(maxMemAllocSize);
             bufferSize = Int32Array.BYTES_PER_ELEMENT * num;
             clBuffer = context.createBuffer(cl.MEM_READ_ONLY, bufferSize);
@@ -70,9 +70,9 @@ function runTest()
 
         testPassed("");
 
-        } catch (e) {
-            testFailed("WebCLBuffer stress test failed ; Message: "+ e.message);
-        }
+    } catch (e) {
+        testFailed("WebCLBuffer stress test failed ; Message: " + e.message);
+    }
 }
 
 </script>
