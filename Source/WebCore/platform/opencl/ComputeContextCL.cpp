@@ -581,10 +581,9 @@ CCerror ComputeContext::getProgramInfoBase(CCProgram program, int infoType, size
    return error;
 }
 
-CCerror ComputeContext::getBuildInfo(CCProgram program, CCDeviceID device, int infoType, size_t sizeOfData, void* data)
+CCerror ComputeContext::getBuildInfoBase(CCProgram program, CCDeviceID device, int infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
-    cl_program_build_info clProgramBuildInfoType = infoType;
-    cl_int error = clGetProgramBuildInfo(program, device, clProgramBuildInfoType, sizeOfData, data, 0);
+    cl_int error = clGetProgramBuildInfo(program, device, infoType, sizeOfData, data, retSize);
     return error;
 }
 
@@ -621,10 +620,9 @@ CCerror ComputeContext::getKernelInfoBase(CCKernel kernel, int infoType, size_t 
     return clGetKernelInfo(kernel, clKernelInfoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getWorkGroupInfo(CCKernel kernel, CCDeviceID device, int infoType, size_t sizeOfData, void* data)
+CCerror ComputeContext::getWorkGroupInfoBase(CCKernel kernel, CCDeviceID device, int infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
-    cl_kernel_work_group_info clKernelWorkGroupInfoType = infoType;
-    return clGetKernelWorkGroupInfo(kernel, device, clKernelWorkGroupInfoType, sizeOfData, data, 0);
+    return clGetKernelWorkGroupInfo(kernel, device, infoType, sizeOfData, data, retSize);
 }
 
 CCerror ComputeContext::getSamplerInfoBase(CCSampler sampler, int infoType, size_t sizeOfData, void* data, size_t* retSize)

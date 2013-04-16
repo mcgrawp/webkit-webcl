@@ -104,18 +104,17 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int infoType, Excep
     switch (infoType) {
     case ComputeContext::PROGRAM_BUILD_OPTIONS:
     case ComputeContext::PROGRAM_BUILD_LOG: {
-        // FIXME: Is 1024 needed here, Igor?
-        Vector<char, 1024> buffer;
-        error = ComputeContext::getBuildInfo(platformObject(), ccDeviceID, infoType, sizeof(buffer), buffer.data());
+        Vector<char> buffer;
+        error = ComputeContext::getBuildInfo(platformObject(), ccDeviceID, infoType, &buffer);
         if (error == ComputeContext::SUCCESS)
             return WebCLGetInfo(String(buffer.data()));
         break;
     }
     case ComputeContext::PROGRAM_BUILD_STATUS: {
         CCBuildStatus buildStatus;
-        error = ComputeContext::getBuildInfo(platformObject(), ccDeviceID, infoType, sizeof(CCBuildStatus), &buildStatus);
+        error = ComputeContext::getBuildInfo(platformObject(), ccDeviceID, infoType, &buildStatus);
         if (error == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(buildStatus));
+            return WebCLGetInfo(buildStatus);
         break;
     }
     default:

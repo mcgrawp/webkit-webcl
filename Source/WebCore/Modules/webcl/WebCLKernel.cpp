@@ -102,7 +102,7 @@ WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
     case ComputeContext::KERNEL_NUM_ARGS: {
         CCuint numberOfArgs = 0;
         err = ComputeContext::getKernelInfo(platformObject(), kernelInfo, &numberOfArgs);
-        if (err == CL_SUCCESS)
+        if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(numberOfArgs));
         break;
     }
@@ -139,15 +139,15 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, int paramName, E
     case ComputeContext::KERNEL_WORK_GROUP_SIZE:
     case ComputeContext::KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE: {
         size_t kernelInfo = 0;
-        err = ComputeContext::getWorkGroupInfo(platformObject(), ccDevice, paramName, sizeof(size_t), &kernelInfo);
-        if (err == CL_SUCCESS)
+        err = ComputeContext::getWorkGroupInfo(platformObject(), ccDevice, paramName, &kernelInfo);
+        if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(kernelInfo));
         break;
     }
     case ComputeContext::KERNEL_COMPILE_WORK_GROUP_SIZE: {
-        size_t workGroupSize[3] = {0, 0, 0};
-        err = ComputeContext::getWorkGroupInfo(platformObject(), ccDevice, paramName, sizeof(size_t) * 3, workGroupSize);
-        if (err == CL_SUCCESS) {
+        Vector<size_t> workGroupSize;
+        err = ComputeContext::getWorkGroupInfo(platformObject(), ccDevice, paramName, &workGroupSize);
+        if (err == ComputeContext::SUCCESS) {
             RefPtr<Int32Array> values = Int32Array::create(3);
             for (int i = 0; i < 3; i++)
                 values->set(i, workGroupSize[i]);
@@ -158,8 +158,8 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, int paramName, E
     case ComputeContext::KERNEL_PRIVATE_MEM_SIZE:
     case ComputeContext::KERNEL_LOCAL_MEM_SIZE: {
         CCulong localMemSize = 0;
-        err = ComputeContext::getWorkGroupInfo(platformObject(), ccDevice, paramName, sizeof(CCulong), &localMemSize);
-        if (err == CL_SUCCESS)
+        err = ComputeContext::getWorkGroupInfo(platformObject(), ccDevice, paramName, &localMemSize);
+        if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned long>(localMemSize));
         break;
     }
@@ -168,7 +168,7 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, int paramName, E
         return WebCLGetInfo();
     }
 
-    ASSERT(err != CL_SUCCESS);
+    ASSERT(err != ComputeContext::SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
 }
@@ -180,7 +180,7 @@ void WebCLKernel::setArg(unsigned argIndex, unsigned argSize, ExceptionCode& ec)
         return;
     }
     CCerror err = ComputeContext::setKernelArg(platformObject(), argIndex, argSize, 0);
-    if (err != CL_SUCCESS)
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -376,7 +376,7 @@ void WebCLKernel::setArg(unsigned argIndex, PassRefPtr<WebCLKernelTypeValue> ker
         ec = WebCLException::INVALID_ARG_VALUE;
         return;
     }
-    if (err != CL_SUCCESS)
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -411,7 +411,7 @@ void WebCLKernel::setArg(unsigned argIndex, WebCLMemoryObject* argValue, Excepti
     }
     // FIXME :: Need to check if we must do above check with default device.
     err = ComputeContext::setKernelArg(platformObject(), argIndex, sizeof(PlatformComputeObject), &ccMemoryObject);
-    if (err != CL_SUCCESS)
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -422,7 +422,7 @@ void WebCLKernel::setArg(unsigned argIndex, unsigned argValue, unsigned argSize,
         return;
     }
     CCerror err = ComputeContext::setKernelArg(platformObject(), argIndex, argSize, &argValue);
-    if (err != CL_SUCCESS)
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 

@@ -417,11 +417,21 @@ public:
     static CCerror getMemoryObjectInfo(PlatformComputeObject computeObject, int infoType, T* data) {
         return getInfoHelper(ComputeContext::getMemoryObjectInfoBase, computeObject, infoType, data);
     }
-    static CCerror getWorkGroupInfo(CCKernel, CCDeviceID, int infoType, size_t, void* data);
-    static CCerror getBuildInfo(CCProgram program, CCDeviceID device, int infoType, size_t sizeOfData, void* data);
+
+    template <typename T>
+    static CCerror getWorkGroupInfo(CCKernel kernel, CCDeviceID device, int infoType, T* data)
+    {
+        return getInfoHelper(ComputeContext::getWorkGroupInfoBase, kernel, device, infoType, data);
+    }
+
+    template <typename T>
+    static CCerror getBuildInfo(CCProgram program, CCDeviceID device, int infoType, T* data)
+    {
+        return getInfoHelper(ComputeContext::getBuildInfoBase, program, device, infoType, data);
+    }
 
     CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
-	size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
+    size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
     CCerror enqueueBarrier(CCCommandQueue);
     CCerror enqueueMarker(CCCommandQueue, CCEvent* event);
     CCerror enqueueTask(CCCommandQueue, CCKernel, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
@@ -487,6 +497,8 @@ private:
     static CCerror getKernelInfoBase(CCKernel kernel, int infoType, size_t size, void *data, size_t* retSize);
     static CCerror getSamplerInfoBase(CCSampler sampler, int infoType, size_t size, void *data, size_t* retSize);
     static CCerror getMemoryObjectInfoBase(PlatformComputeObject computeObject, int infoType, size_t size, void *data, size_t* retSize);
+    static CCerror getBuildInfoBase(CCProgram, CCDeviceID, int infoType, size_t size, void *data, size_t* retSize);
+    static CCerror getWorkGroupInfoBase(CCKernel, CCDeviceID, int infoType, size_t size, void *data, size_t* retSize);
 
     cl_context m_clContext;
 };

@@ -43,8 +43,8 @@ enum {
 template <typename Func, typename T>
 struct Functor {
     Func function;
-    cl_int operator()(T computeType, cl_uint name, size_t size, void* param, size_t* ret_size) {
-        return function(computeType, name, size, param, ret_size);
+    cl_int operator()(T computeType, cl_uint name, size_t size, void* param, size_t* retSize) {
+        return function(computeType, name, size, param, retSize);
     }
 };
 
@@ -88,6 +88,56 @@ template <typename Func, typename T, typename U, size_t inlineCapacity>
 cl_int getInfoHelper(Func func, T computeType, cl_uint name, Vector<U, inlineCapacity>* param)
 {
     return ComputeInfo<Func, T, Vector<U, inlineCapacity> >::get(func, computeType, name, param);
+}
+
+// Functor supporting additional ComputeType.
+template <typename Func, typename T, typename U>
+struct FunctorWithAdditinalCLType {
+    Func function;
+    cl_int operator()(T computeType, U supportingComputeType, cl_uint name, size_t size, void* param, size_t* retSize)
+    {
+        return function(computeType, supportingComputeType, name, size, param, retSize);
+    }
+};
+
+template <typename Func, typename T, typename U, typename V>
+struct ComputeInfoWithAdditinalCLType {
+    static cl_int get(Func getInfoFunc, T computeType, U supportingComputeType, cl_uint name, V* param)
+    {
+        FunctorWithAdditinalCLType<Func, T, U> func = {getInfoFunc};
+        return func(computeType, supportingComputeType, name, sizeof(V), static_cast<void*>(param), 0);
+    }
+};
+
+template <typename Func, typename T, typename U, typename V,  size_t inlineCapacity>
+struct ComputeInfoWithAdditinalCLType<Func, T, U, Vector<V, inlineCapacity> > {
+    static cl_int get(Func getInfoFunc, T computeType, U supportingComputeType, cl_uint name, Vector<V, inlineCapacity>* param)
+    {
+        size_t paramSize;
+        FunctorWithAdditinalCLType<Func, T, U> func = {getInfoFunc};
+        cl_int error = func(computeType, supportingComputeType, name, 0, 0, &paramSize);
+
+        if (error != SUCCESS)
+            return error;
+        paramSize = paramSize / sizeof(V);
+        if (!param->tryReserveCapacity(paramSize))
+            return OUT_OF_HOST_MEMORY;
+        param->resize(paramSize);
+
+        return func(computeType, supportingComputeType, name, param->size() * sizeof(V), static_cast<void*>(param->data()), 0);
+    }
+};
+
+template <typename Func, typename T, typename U, typename V>
+cl_int getInfoHelper(Func func, T computeType, U supportingComputeType, cl_uint name, V* param)
+{
+    return ComputeInfoWithAdditinalCLType<Func, T, U, V>::get(func, computeType, supportingComputeType, name, param);
+}
+
+template <typename Func, typename T, typename U, typename V, size_t inlineCapacity = 0>
+cl_int getInfoHelper(Func func, T computeType, U supportingComputeType, cl_uint name, Vector<V, inlineCapacity>* param)
+{
+    return ComputeInfoWithAdditinalCLType<Func, T, U, Vector<V, inlineCapacity> >::get(func, computeType, supportingComputeType, name, param);
 }
 
 }
