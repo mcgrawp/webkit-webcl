@@ -69,7 +69,7 @@ struct ComputeInfo<Func, T, Vector<U, inlineCapacity> >
 
         if (error != SUCCESS)
             return error;
-
+        paramSize = paramSize / sizeof(U);
         if (!param->tryReserveCapacity(paramSize))
             return OUT_OF_HOST_MEMORY;
         param->resize(paramSize);
