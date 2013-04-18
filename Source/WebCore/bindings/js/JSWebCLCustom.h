@@ -68,7 +68,7 @@ inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObjec
 
     JSObject* jsAttrs = exec->argument(0).getObject();
 
-    WebCLPlatform* platform = nullptr;
+    WebCLPlatform* platform = 0;
     Identifier platformIdentifier(exec, "platform");
     if (jsAttrs->hasProperty(exec, platformIdentifier))
         platform = toWebCLPlatform(jsAttrs->get(exec, platformIdentifier));
@@ -83,7 +83,7 @@ inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObjec
     if (jsAttrs->hasProperty(exec, deviceTypeIdentifier))
         deviceType = jsAttrs->get(exec, deviceTypeIdentifier).toInt32(exec);
 
-    WebGLRenderingContext* webGLRenderingContext = nullptr;
+    WebGLRenderingContext* webGLRenderingContext = 0;
     WebCLContextProperties::SharedContextResolutionPolicy contextPolicy = clGLSharing ?
         WebCLContextProperties::GetCurrentGLContext : WebCLContextProperties::NoSharedGLContext;
     Identifier sharedContextIdentifier(exec, "sharedContext");

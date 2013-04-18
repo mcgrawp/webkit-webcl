@@ -395,7 +395,7 @@ void WebCLKernel::setArg(unsigned argIndex, WebCLMemoryObject* argValue, Excepti
     PlatformComputeObject ccMemoryObject = argValue->platformObject();
 
     CCerror err = 0;
-    CCDeviceID ccDevice = nullptr;
+    CCDeviceID ccDevice = 0;
     if (m_deviceID) {
         ccDevice = m_deviceID->platformObject();
         CCulong maxBufferSize = 0;

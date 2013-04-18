@@ -112,7 +112,7 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, bool blockin
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -183,7 +183,7 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, bool blockin
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -222,7 +222,7 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -268,7 +268,7 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, I
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -302,7 +302,7 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* sourceBuffer, bool blocki
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -354,7 +354,7 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blocking
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -412,7 +412,7 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -484,7 +484,7 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -537,7 +537,7 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -582,7 +582,7 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *sourceImage, WebCLB
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -631,7 +631,7 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *sourceBuffer, WebC
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -662,7 +662,7 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -714,7 +714,7 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -772,7 +772,7 @@ void WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, const Vector<RefPtr<Web
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 

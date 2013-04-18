@@ -119,7 +119,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(int memoryFlags, int size, Ar
         return 0;
     }
 
-    void* arrayBufferData = nullptr;
+    void* arrayBufferData = 0;
     if (data) {
         memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
         arrayBufferData = data->data();
@@ -434,7 +434,7 @@ void WebCLContext::LRUImageBufferCache::bubbleToFront(int idx)
 
 Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(int memoryFlags, ExceptionCode &ec)
 {
-    Vector<RefPtr<WebCLImageDescriptor>> imageDescriptors;
+    Vector<RefPtr<WebCLImageDescriptor> > imageDescriptors;
     if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
         return imageDescriptors;

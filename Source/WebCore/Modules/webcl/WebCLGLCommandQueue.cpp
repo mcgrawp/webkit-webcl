@@ -61,7 +61,7 @@ void WebCLGLCommandQueue::enqueueAcquireGLObjects(WebCLMemoryObject* memoryObjec
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 
@@ -90,7 +90,7 @@ void WebCLGLCommandQueue::enqueueReleaseGLObjects(WebCLMemoryObject* memoryObjec
         ccEvents.append(events[i]->getCLEvent());
 
     // FIXME: Crash!?
-    CCEvent* ccEvent = nullptr;
+    CCEvent* ccEvent = 0;
     if (event)
         *ccEvent = event->getCLEvent();
 

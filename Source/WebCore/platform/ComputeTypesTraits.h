@@ -84,7 +84,7 @@ cl_int getInfoHelper(Func func, T computeType, cl_uint name, U* param)
     return ComputeInfo<Func, T, U>::get(func, computeType, name, param);
 }
 
-template <typename Func, typename T, typename U, size_t inlineCapacity = 0>
+template <typename Func, typename T, typename U, size_t inlineCapacity>
 cl_int getInfoHelper(Func func, T computeType, cl_uint name, Vector<U, inlineCapacity>* param)
 {
     return ComputeInfo<Func, T, Vector<U, inlineCapacity> >::get(func, computeType, name, param);
