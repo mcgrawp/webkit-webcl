@@ -163,7 +163,7 @@ bool WebCLException::initializeDescription(ExceptionCode ec, ExceptionCodeDescri
 	description->type = WebCLExceptionType;
 
     size_t tableSize = WTF_ARRAY_LENGTH(exceptionNames);
-    size_t tableIndex = ec - SUCCESS;
+    size_t tableIndex = ec - WebCLExceptionOffset;
 
     description->name = tableIndex < tableSize ? exceptionNames[tableIndex] : 0;
     description->description = tableIndex < tableSize ? exceptionDescriptions[tableIndex] : 0;
