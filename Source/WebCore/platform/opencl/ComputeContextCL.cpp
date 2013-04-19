@@ -32,7 +32,12 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(MAC)
 #include <OpenGL/OpenGL.h>
+#elif USE(GLX)
+#include <GL/glx.h>
+#include "GLContext.h"
+#endif
 
 namespace WebCore {
 
@@ -853,6 +858,12 @@ void ComputeContext::populatePropertiesForInteroperabilityWithGL(Vector<CCContex
     CGLShareGroupObj kCGLShareGroup = CGLGetShareGroup(kCGLContext);
     properties.append(CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE);
     properties.append(reinterpret_cast<CCContextProperties>(kCGLShareGroup));
+#elif USE(GLX)
+    PlatformGraphicsContext3D glContext = context3D ? context3D : glXGetCurrentContext();
+    properties.append(CL_GL_CONTEXT_KHR);
+    properties.append(reinterpret_cast<CCContextProperties>(glContext));
+    properties.append(CL_GLX_DISPLAY_KHR);
+    properties.append(reinterpret_cast<CCContextProperties>(GLContext::getCurrent()->sharedX11Display()));
 #endif
 }
 
