@@ -1,25 +1,19 @@
-
-//Define the number of iterations that the stress tests will run
-var STRESS_ITERS = 100000;
-
 var WebCLTestUtils = (function () {
 
     /**
-     * Reprents a buffer parameter to setWCLKernelArgs
+     * Represents a buffer parameter to setWCLKernelArgs
      *
      * @param {name} Some string that represents the param name
      * @param {size} Param size in bytes
      * @param {data} The data that object stores
      */
-    var WCLBufferArg = function (name, size, data){
-        var name, memFlag, size;
-
-        if( !(name) ) {
-            throw new Error ("{name} is required");
+    var WCLBufferArg = function (name, size, data) {
+        if (!name) {
+            throw new Error("{name} is required");
         }
 
-        if ( !(size) ) {
-            throw new Error ("{size} is required");
+        if (!size) {
+            throw new Error("{size} is required");
         }
 
         this.name = name;
@@ -31,21 +25,20 @@ var WebCLTestUtils = (function () {
     };
 
     /**
-     * Reprents a scalar parameter to setWCLKernelArgs
+     * Represents a scalar parameter to setWCLKernelArgs
      *
      * @param {name} Some string that represents the param name
      * @param {type} Param size type. webcl.CHAR, webcl.UINT, etc
      * @param {data} The data that object stores
      */
     var WCLScalarArg = function (name, type, data) {
-        var name, type;
 
-        if( !(name) ) {
-            throw new Error ("{name} is required");
+        if (!name) {
+            throw new Error("{name} is required");
         }
 
-        if ( !(type) ) {
-            throw new Error ("{type} is required");
+        if (!type) {
+            throw new Error("{type} is required");
         }
 
         this.name = name;
@@ -60,23 +53,23 @@ var WebCLTestUtils = (function () {
 
         for (i in arrWCLBufferArgs) {
             args = {
-                    "buffer": arrWCLBufferArgs[i].wclBuffer,
-                    "blockingRead": true,
-                    "bufferOffset": 0,
-                    "numBytes": arrWCLBufferArgs[i].size,
-                    "data": arrWCLBufferArgs[i].data
+                "buffer": arrWCLBufferArgs[i].wclBuffer,
+                "blockingRead": true,
+                "bufferOffset": 0,
+                "numBytes": arrWCLBufferArgs[i].size,
+                "data": arrWCLBufferArgs[i].data
             };
 
             try {
                 wclCommandQueue.enqueueReadBuffer(args);
             } catch (e) {
-                throw new Error ("readWCLBuffers", e);
+                throw new Error("readWCLBuffers", e);
             }
         }
     };
 
     /**
-     * This method helps user create ant set arguments to run webcl kernel
+     * This method helps user create and set arguments to run webcl kernel
      *
      * Ex.
      *
@@ -93,20 +86,20 @@ var WebCLTestUtils = (function () {
     var setWCLKernelArgs = function (arrArgs, wclContext, wclCommandQueue, wclKernel) {
         var i, arg, typeArg, type, wclBuffers = [];
 
-        if( wclCommandQueue.id !== "WCLCommandQueue") {
-            throw new Error ("A valid WCLCommandQueue is expected");
+        if (wclCommandQueue.id !== "WCLCommandQueue") {
+            throw new Error("A valid WCLCommandQueue is expected");
         }
 
-        if( wclContext.id !== "WCLContext") {
-            throw new Error ("A valid WCLContext is expected");
+        if (wclContext.id !== "WCLContext") {
+            throw new Error("A valid WCLContext is expected");
         }
 
-        if( wclKernel.id !== "WCLKernel") {
-            throw new Error ("A valid WCLKernel is expected");
+        if (wclKernel.id !== "WCLKernel") {
+            throw new Error("A valid WCLKernel is expected");
         }
 
-        if( !(arrArgs instanceof Array) || arrArgs.length === 0 ) {
-            throw new Error ("{arrArgs} be an array with one or more items");
+        if (!(arrArgs instanceof Array) || arrArgs.length === 0) {
+            throw new Error("{arrArgs} be an array with one or more items");
         }
 
         for (i in arrArgs) {
@@ -120,15 +113,15 @@ var WebCLTestUtils = (function () {
                 typeArg = "scalar";
             }
 
-            if ( !(typeArg) ) {
-                throw new Error ("arrArgs item must be a WCLBufferArg or WCLScalarArg");
+            if (!typeArg) {
+                throw new Error("arrArgs item must be a WCLBufferArg or WCLScalarArg");
             }
 
             if (typeArg === "buffer") {
                 console.log("context: ", wclContext);
                 arrArgs[i].wclBuffer = wclContext.createWCLBuffer(webcl.MEM_READ_WRITE, arrArgs[i].size);
                 arg = arrArgs[i].wclBuffer;
-                wclCommandQueue.enqueueWriteBuffer({"buffer" :arg, "blockingWrite": false,
+                wclCommandQueue.enqueueWriteBuffer({"buffer": arg, "blockingWrite": false,
                     "bufferOffset": 0, "numBytes": arrArgs[i].size, "data": arrArgs[i].data});
             }
 
@@ -145,23 +138,23 @@ var WebCLTestUtils = (function () {
      * Generate random number from 0 to {maxNumber}
      *
      */
-    var getRandomNumber = function (maxNumber){
+    var getRandomNumber = function (maxNumber) {
 
-        try{
+        try {
 
             maxNumber = parseFloat(maxNumber);
-            if(isNaN(parseInt(maxNumber, 10))){
-                throw new Error ('getRandomNumber::maxNumber is not a number');
+            if (isNaN(parseInt(maxNumber, 10))) {
+                throw new Error('getRandomNumber::maxNumber is not a number');
             }
 
-            if(maxNumber <= 0) {
+            if (maxNumber <= 0) {
                 throw new Error('getRandomNumber::maxNumber must be a positive integer');
             }
 
             var x = Math.floor((Math.random() * maxNumber) + 1);
             return x;
 
-        } catch(e){
+        } catch (e) {
             throw e;
         }
     };
@@ -171,17 +164,18 @@ var WebCLTestUtils = (function () {
      * Generate random one dimension arrays
      *
      */
-    var getRandomVector = function( size, maxNumber){
+    var getRandomVector = function (size, maxNumber) {
+        var i;
 
         try {
 
-            var ret = new Array(size);
-            for(var i=0; i< size; i++) {
+            var ret = [];
+            for (i = 0; i < size; i++) {
                 ret[i] = this.getRandomNumber(maxNumber);
             }
 
             return ret;
-        } catch(e) {
+        } catch (e) {
             throw e;
         }
     };

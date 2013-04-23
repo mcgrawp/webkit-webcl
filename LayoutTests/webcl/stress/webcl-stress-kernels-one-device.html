@@ -11,6 +11,7 @@
 <script>
 
 var VECTOR_SIZE = 128;
+var STRESS_ITERS = 100000;
 
 var kernelsName = ['vector_add', 'vector_sub', 'vector_mult', 'vector_div'];
 var kernelsSrc = new Array(4);
@@ -128,6 +129,7 @@ function runTest() {
             }
 
         }
+        //FIXME: Release the resources
 
         testPassed("OK.");
 

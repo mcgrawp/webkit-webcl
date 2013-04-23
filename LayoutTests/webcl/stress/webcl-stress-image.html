@@ -5,15 +5,16 @@
 <title>WebCLImage stress test </title>
 <script src="../resources/js-test-pre.js"></script>
 <script src="../resources/webcl-test.js"></script>
-<script src="../resources/webcl-test-utils.js"></script>
 
 <script>
+
+var STRESS_ITERS = 100000;
 
 function runTest() {
 
     try {
         var webclTest = WebCLTest;
-        webclTest.init();
+        webclTest.init(0, 0, "gpu");
 
         var cl = webclTest.getCL();
         var platform = webclTest.getPlatform(0);

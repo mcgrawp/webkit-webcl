@@ -1,67 +1,273 @@
+/**
+ *   WebCLProxy:
+ *
+ *            -------------
+ *           |             |
+ *           | WebCL Tests |
+ *           |             |
+ *            -------------
+ *                  |
+ *            -------------
+ *           |             |
+ *           | WebCLProxy  |
+ *           |             |
+ *            -------------
+ *                  |
+ *            -------------
+ *           |             |
+ *           |    WebCL    |
+ *           |             |
+ *            -------------
+ */
 
 (function () {
 
     "use strict";
 
-    var console = window.console || { log : function () {} };
+    /* Only errors log */
+    if (window.LOGGER) {
+        window.LOGGER.setLogLevel(0);
+    }
+
+    console.time("Init");
+
     var nativeWebCL = webcl;
 
-    if (!nativeWebCL) { return; }
+    if (!nativeWebCL) {
+        throw new Error("No WebCL detected.");
+    }
 
+    /**
+     * @module WebCLProxy
+     *
+     * It is a framework helpful to run a single kernel in all devices
+     * available for each platform.
+     */
     window.WebCLProxy = (function () {
 
         var API = {
+
+            /**
+             * Returns WCLPlatform instance.
+             *
+             * @name getWCLPlatform
+             * @function
+             * @returns {WCLPlatform} Instance of WCLPlatform.
+             */
             getWCLPlatform : function () {
+
+                console.group("WebCLProxy::getWCLPlatform");
+                console.time("getWCLPlatform");
+
                 var nativePlatforms = nativeWebCL.getPlatforms();
+
+                console.info("nativePlatfforms", nativePlatforms);
+                console.timeEnd("getWCLPlatform");
+                console.groupEnd();
 
                 if (nativePlatforms) {
                     return new WCLPlatform(nativePlatforms);
                 }
 
                 return null;
+            }
+        };
+
+        /**
+         * "Import" all constants from webcl
+         */
+        var constants;
+        for (constants in nativeWebCL) {
+            if (typeof nativeWebCL[constants] !== 'function') {
+                API[constants] = nativeWebCL[constants];
+            }
+        }
+
+        console.info("WebCLProxy", API);
+        console.timeEnd("Init");
+
+        return API;
+    }());
+
+    /**
+     * Check if {wclObject} is a instance of {type}(WCL class)
+     *
+     * @name isWCLType
+     * @function
+     * @param {wclObject} The object to be tested.
+     * @param {type} String that represents the type that the object should be.
+     * @returns {boolean} true if {wclObject} is instance of {type}
+     *                    otherwise returns false.
+     */
+    function isWCLType(wclObject, type) {
+        return wclObject && wclObject.id && wclObject.id  === type;
+    }
+
+    /**
+     * Represents a list of native platforms available from WebCL module.
+     *
+     * @name WCLPlatform
+     * @class
+     */
+
+    /**
+     * Creates a new WCLPlatform instance.
+     *
+     * @name WCLPlatform
+     * @constructor
+     * @param {nativePlatforms} List of native platforms taken from WebCL.
+     */
+    function WCLPlatform(nativePlatforms) {
+
+        return {
+            id : "WCLPlatform",
+
+            getNativePlatforms : function () {
+                return nativePlatforms;
             },
 
-            createWCLContext : function (properties) {
-                /* var nativePlatforms;
-                var platform;
-                var platformGroup;
-                var device;
-                var hint;
-                */
+            /**
+             * TODO: Function description.
+             *
+             * @name getWCLInfo
+             * @function
+             * @param
+             * @returns
+             */
+            getWCLInfo: function (name) {
+                var nativeInfos = [], i;
+
+                console.group("WCLPlatform::getWCLInfo");
+                console.time("WCLPlatform::getWCLInfo");
+
+                for (i in nativePlatforms) {
+                    var nativePlatInfo = nativePlatforms[i].getInfo(name);
+
+                    if (nativePlatInfo) {
+                        nativeInfos.push(nativePlatInfo);
+                    }
+
+                }
+
+                console.info("nativeInfo: ", nativeInfos);
+                console.timeEnd("WCLPlatform::getWCLInfo");
+                console.groupEnd();
+
+                return nativeInfos;
+            },
+
+            /**
+             * TODO: Function description.
+             *
+             * @name getWCLDevice
+             * @function
+             * @param
+             * @returns
+             */
+            getWCLDevice : function (deviceType) {
+                var deviceDic;
+                var deviceGroup;
+                var nativeDevices;
+                var nativePlatform;
+                var types;
+                var i;
+                var j;
+                var k;
+
+                console.group("WCLPlatform::getWCLDevice");
+                console.time("WCLPlatform::getWCLDevice");
+
+                //FIXME: Use DEVICE_TYPE_ALL when it has been working
+                deviceType = deviceType || nativeWebCL.DEVICE_TYPE_ALL;
+
+                types = [nativeWebCL.DEVICE_TYPE_CPU, nativeWebCL.DEVICE_TYPE_GPU];
+                deviceGroup = [];
+
+                console.group("nativePlatforms");
+
+                for (i in nativePlatforms) {
+                    nativePlatform = nativePlatforms[i];
+                    deviceDic = {};
+                    deviceDic.nativePlatform = nativePlatform;
+                    deviceDic.nativeDevices = [];
+
+                    console.info("deviceDic", deviceDic);
+
+                    // remove this "for" when DEVICE_TYPE_ALL has been working
+                    for (j in types) {
+                        console.info("types", types[j]);
+
+                        deviceType = types[j];
+                        nativeDevices = nativePlatform.getDevices(deviceType);
+
+                        console.info("nativeDevice", nativeDevices);
+                        deviceDic.nativeDevices.push(nativeDevices[0]);
+                    }
+
+                    deviceGroup.push(deviceDic);
+                }
+
+                console.groupEnd();
+
+                console.timeEnd("WCLPlatform::getWCLDevice");
+                console.groupEnd();
+
+                if (deviceGroup) {
+                    return new WCLDevice(deviceGroup);
+                }
+
+                return null;
+            },
+
+            /**
+             * TODO: Function description.
+             *
+             * @name createWCLContext
+             * @function
+             * @param
+             * @returns
+             */
+            createWCLContext : function (wclDevice) {
                 var deviceGroup;
                 var contextDic;
                 var contextGroup;
                 var nativeContext;
                 var nativeProperties;
-                var platformGroup;
                 var i;
+                var ex;
 
-                if (!properties) {
-                    throw new Error("Properties is required in createWCLContext");
+                console.group("WCLPlatform::createWCLContext");
+                console.time("WCLPlatform::createWCLContext");
+
+                if (!wclDevice) {
+                    wclDevice = this.getWCLDevice();
                 }
 
-                var platform = properties.platform;
-                var device = properties.device;
+                console.info("wcDevice: ", wclDevice);
 
-                if (!platform) {
-                    throw new Error("WCLPlatform is required in createWCLContext");
+                if (!isWCLType(wclDevice, "WCLDevice")) {
+                    ex = new Error("WCLDevice is required in createWCLContext");
+                    console.error("WCLPlatform::createWCLContext", ex);
+                    throw ex;
                 }
 
-                if (!device) {
-                    throw new Error("WCLDevice is required in createWCLContext");
-                }
-
-                platformGroup = platform.getNativePlatforms();
-                deviceGroup = device.getDeviceGroup();
+                deviceGroup = wclDevice.getDeviceGroup();
                 contextGroup = [];
+
+                console.group("deviceGroup");
 
                 for (i in deviceGroup) {
                     nativeProperties = {};
                     nativeProperties.platform = deviceGroup[i].nativePlatform;
                     nativeProperties.devices = deviceGroup[i].nativeDevices;
-                    nativeProperties.hint = properties.hint;
+                    //FIXME: There is other value to hint?
+                    nativeProperties.hint = null;
+
+                    console.info("nativeProperties: ", nativeProperties);
 
                     nativeContext = nativeWebCL.createContext(nativeProperties);
+
+                    console.info("nativeContext: ", nativeContext);
 
                     if (!(nativeContext instanceof WebCLContext)) {
                         throw (new Error("Could not create a native context"));
@@ -74,94 +280,55 @@
                     contextGroup.push(contextDic);
                 }
 
+                console.groupEnd();
+                console.timeEnd("WCLPlatform::createWCLContext");
+                console.groupEnd();
+
                 return new WCLContext(contextGroup);
-            }
-        };
-
-        var p;
-        for (p in nativeWebCL) {
-            if (typeof nativeWebCL[p] !== 'function') {
-                API[p] = nativeWebCL[p];
-            }
-        }
-
-        return API;
-    }());
-
-    function WCLPlatform(nativePlatforms) {
-        return {
-            id : "WCLPlatform",
-
-            getNativePlatforms : function () {
-                return nativePlatforms;
-            },
-
-            getWCLInfo: function (name) {
-                var nativeInfos = [], i;
-                for (i in nativePlatforms) {
-                    var nativePlatInfo = nativePlatforms[i].getInfo(name);
-
-                    if (nativePlatInfo) {
-                        nativeInfos.push(nativePlatInfo);
-                    }
-
-                }
-                return nativeInfos;
-            },
-
-            getWCLDevice : function (deviceType) {
-                var deviceDic;
-                var deviceGroup;
-                var nativeDevices;
-                var nativePlatform;
-                var types;
-                var i;
-                var j;
-                var k;
-
-                //FIXME: Use DEVICE_TYPE_ALL when it works fine
-                deviceType = deviceType || nativeWebCL.DEVICE_TYPE_ALL;
-
-                types = [nativeWebCL.DEVICE_TYPE_CPU, nativeWebCL.DEVICE_TYPE_GPU];
-                deviceGroup = [];
-
-                for (i in nativePlatforms) {
-                    nativePlatform = nativePlatforms[i];
-                    deviceDic = {};
-                    deviceDic.nativePlatform = nativePlatform;
-                    deviceDic.nativeDevices = [];
-
-                    for (j in types) {
-                        deviceType = types[j];
-                        nativeDevices = nativePlatform.getDevices(deviceType);
-                        for (k in nativeDevices) {
-                            // used for DEVICE_TYPE_ALL
-                            deviceDic.nativeDevices.push(nativeDevices[k]);
-                        }
-                    }
-
-                    deviceGroup.push(deviceDic);
-                }
-
-                if (deviceGroup) {
-                    return new WCLDevice(deviceGroup);
-                }
-                return null;
             }
         };
     }
 
-    /* TODO:
-    * @param {nativeDevices} [{platform: 'native platform', devices: 'platform devices'}, ...]
-    */
+    /**
+     * Represents a list of devices available for each native platform from WebCL module.
+     *
+     * @name WCLDevice
+     * @class
+     */
+
+    /**
+     * Creates a new WCLDevice instance.
+     *
+     * @name WCLDevice
+     * @constructor
+     * @param {nativeDevices} List of all native platforms and their devices
+     *        in a dictionary format. For example:
+     *        [{nativePlatform: 'native platform', nativeDevices: 'platform devices'}, ...]
+     */
     function WCLDevice(deviceGroup) {
         return {
             id : "WCLDevice",
 
+            /**
+             * TODO: Function description.
+             *
+             * @name getDeviceGroup
+             * @function
+             * @param
+             * @returns
+             */
             getDeviceGroup : function () {
                 return deviceGroup;
             },
 
+            /**
+             * TODO: Function description.
+             *
+             * @name getWCLInfo
+             * @function
+             * @param
+             * @returns
+             */
             getWCLInfo : function (info) {
                 var nativeDevice;
                 var nativeDevices;
@@ -169,6 +336,9 @@
                 var deviceInfo;
                 var i;
                 var j;
+
+                console.group("WCLDevice::getWCLInfo");
+                console.time("WCLDevice::getWCLInfo");
 
                 // TODO: Improve this function.
                 nativeDevicesInfo = [];
@@ -181,21 +351,60 @@
                             nativeDevicesInfo.push(deviceInfo);
                         }
                     }
-
                 }
+
+                console.info("nativeDevicesInfo: ", nativeDevicesInfo);
+                console.timeEnd("WCLDevice::getWCLInfo");
+                console.groupEnd();
+
                 return nativeDevicesInfo;
             }
         };
     }
 
+    /**
+     * Represents a list of native contexts. For each native platform and its devices
+     * is created a native context to form that list.
+     *
+     * @name WCLContext
+     * @class
+     */
+
+    /**
+     * Creates a new WCLContext instance.
+     *
+     * @name WCLContext
+     * @constructor
+     * @param {contextGroup} List of native contexts with their platforms
+     *                       and their devices in a dictionary format.
+              For example:
+     *        [{nativeContext: 'native context', nativePlatform: 'context platform',
+     *          nativeDevices: 'platform devices'}, ...]
+     */
     function WCLContext(contextGroup) {
         return {
             id : "WCLContext",
 
+            /**
+             * TODO: Function description.
+             *
+             * @name getContextGroup
+             * @function
+             * @param
+             * @returns
+             */
             getContextGroup : function () {
                 return contextGroup;
             },
 
+            /**
+             * TODO: Function description.
+             *
+             * @name createWCLBuffer
+             * @function
+             * @param
+             * @returns
+             */
             createWCLBuffer : function (memFlags, sizeInBytes, hostPtr) {
                 var nativeContext;
                 var nativeBuffer;
@@ -204,6 +413,11 @@
                 var bufferGroup;
                 var i;
                 var j;
+
+                console.group("WCLContext::createWCLBuffer");
+                console.time("WCLContext::createWCLBuffer");
+
+                console.group("contextGroup");
 
                 bufferGroup = [];
                 for (i in contextGroup) {
@@ -214,19 +428,38 @@
                     for (j in nativeDevices) {
                         nativeBuffer = nativeContext.createBuffer(memFlags,
                                                                    sizeInBytes);
+
+                        console.info("memFlags: ", memFlags, "sizeInBytes: ", sizeInBytes);
+                        console.log("Created nativeBuffer: ", nativeBuffer);
+
                         bufferDic = {};
                         bufferDic.nativePlatform = contextGroup[i].nativePlatform;
                         bufferDic.nativeDevices = [contextGroup[i].nativeDevices[j]];
                         bufferDic.nativeBuffer = nativeBuffer;
                         bufferGroup.push(bufferDic);
                     }
+
+                    console.info("bufferDic: ", bufferDic);
                 }
+
+
+                console.groupEnd();
+                console.info("bufferGroup: ", bufferDic);
+                console.timeEnd("WCLContext::createWCLBuffer");
+                console.groupEnd();
 
                 return new WCLBuffer(bufferGroup);
             },
 
-            createWCLCommandQueue : function (wclDevice, properties) {
-                var deviceGroup;
+            /**
+             * TODO: Function description.
+             *
+             * @name createWCLCommandQueue
+             * @function
+             * @param
+             * @returns
+             */
+            createWCLCommandQueue : function () {
                 var nativeDevice;
                 var nativeDevices;
                 var nativeContext;
@@ -235,40 +468,79 @@
                 var nativeCommandQueue;
                 var i;
                 var j;
+                var ex;
 
-                deviceGroup = wclDevice.getDeviceGroup();
                 queueGroup = [];
 
-                /* this loop can be seen as an iteration over each platform and
+                console.group("WCLContext::createWCLCommandQueue");
+                console.time("WCLContext::createWCLCommandQueue");
+
+                console.group("contextGroup");
+
+                /* this loop could be seen as an iteration over each platform and
                  * the command queue should be created for all contexts whose
                  * devices points to the same platform as the contexts.
                  */
-                for (i in deviceGroup) {
+                for (i in contextGroup) {
+
                     nativeContext = contextGroup[i].nativeContext;
                     nativeDevices = contextGroup[i].nativeDevices;
+
+                    console.info("nativeContext: ", nativeContext);
+
+                    console.group("nativeDevices");
 
                     for (j in nativeDevices) {
                         queueDic = {};
                         nativeDevice = nativeDevices[j];
+
+                        console.info("nativeDevice: ", nativeDevices[j]);
+
                         nativeCommandQueue = nativeContext.createCommandQueue(nativeDevice);
 
+                        console.log("Created nativeCommandoQueue: ", nativeCommandQueue);
+
                         if (!(nativeCommandQueue instanceof WebCLCommandQueue)) {
-                            throw (new Error("Could not create a native command queue"));
+                            ex =  new Error("Could not create a native command queue");
+                            console.error("createCommandQueue", ex);
+                            throw ex;
                         }
                         queueDic.device = nativeDevice;
                         queueDic.nativeCommandQueue = nativeCommandQueue;
                         queueGroup.push(queueDic);
                     }
+
+                    console.groupEnd();
                 }
+
+                console.groupEnd();
+                console.timeEnd("WCLContext::createWCLCommandQueue");
+                console.groupEnd();
 
                 return new WCLCommandQueue(queueGroup);
             },
 
+            /**
+             * TODO: Function description.
+             *
+             * @name createWCLImage
+             * @function
+             * @param
+             * @returns
+             */
             createWCLImage : function (memFlags, descriptor, hostPtr) {
                 //TODO
                 return "";
             },
 
+            /**
+             * TODO: Function description.
+             *
+             * @name createWCLProgram
+             * @function
+             * @param
+             * @returns
+             */
             createWCLProgram : function (source) {
                 var programDic;
                 var programGroup;
@@ -276,59 +548,169 @@
                 var nativeProgram;
                 var i;
 
+                console.group("WCLContext::createWCLCProgram");
+                console.time("WCLContext::createWCLCProgram");
+
+                console.info("source: ", source);
+
                 if (!source) {
                     throw (new Error("source param could not be empty."));
                 }
+
+                console.group("contextGroup");
 
                 programGroup = [];
                 for (i in contextGroup) {
                     programDic = {};
                     nativeContext = contextGroup[i].nativeContext;
+                    console.info("nativeContext: ", nativeContext);
+
                     nativeProgram = nativeContext.createProgram(source);
 
                     if (!(nativeProgram instanceof WebCLProgram)) {
                         throw (new Error("Could not create a native program"));
                     }
 
+                    console.log("Created nativeProgram: ", nativeProgram);
+
                     programDic.nativeProgram = nativeProgram;
                     programDic.nativeDevices = contextGroup[i].nativeDevices;
                     programGroup.push(programDic);
                 }
 
+                console.groupEnd();
+
+                console.timeEnd("WCLContext::createWCLCProgram");
+                console.groupEnd();
+
                 return new WCLProgram(programGroup);
+            },
+
+            createWCLUserEvent : function () {
+                var eventGroup = [];
+                var eventDic;
+                var nativeEvent;
+                var nativeContext;
+                var nativeDevice;
+                var i;
+                var j;
+
+                console.group("WCLContext::createUserEvent");
+                console.time("WCLContext::createUserEvent");
+                console.group("contextGroup");
+
+                for (i in contextGroup) {
+                    eventDic = {};
+
+                    nativeContext = contextGroup[i].nativeContext;
+                    console.info("nativeContext", nativeContext);
+
+                    if (contextGroup[i].nativeDevices &&
+                            (contextGroup[i].nativeDevices instanceof Array)) {
+
+                        for (j in contextGroup[i].nativeDevices) {
+                            nativeEvent = nativeContext.createUserEvent();
+                            console.log("Created WebCLEvent", nativeEvent);
+
+                            eventDic.nativeContext = nativeContext;
+                            eventDic.nativeEvent = nativeEvent;
+                            eventDic.nativeDevice = contextGroup[i].nativeDevices[j];
+                            eventGroup.push(eventDic);
+                        }
+                    }
+                }
+
+                console.groupEnd();
+                console.timeEnd("WCLContext::createUserEvent");
+                console.groupEnd();
+
+                return new WCLEvent(eventGroup);
             }
 
         };
     }
 
     /**
-     * param {nativeProgram} {program: "WebCLProgram", device: "WebCLDevice"}
+     * Represents a list of programs.
+     * There is a native program for each native context.
+     *
+     * @name WCLProgram
+     * @class
+     */
+
+    /*
+     * Creates a new WCLProgram instance.
+     *
+     * @name WCLProgram
+     * @constructor
+     * @param {programGroup} List of native programs and their devices
+     *        in a dictionary format. For example:
+     *        [{nativeProgram: 'native program', nativeDevices: 'program devices'}, ...]
      */
     function WCLProgram(programGroup) {
         return {
             id : "WCLProgram",
 
+            /**
+             * TODO: Function description.
+             *
+             * @name getNativePrograms
+             * @function
+             * @param
+             * @returns
+             */
             getNativePrograms : function () {
                 return programGroup;
             },
 
+            /**
+             * TODO: Function description.
+             *
+             * @name build
+             * @function
+             * @param
+             * @returns
+             */
             build : function () {
                 var program;
                 var devices;
                 var i;
 
+                console.group("WCLProgram::build");
+                console.time("WCLProgram::build");
+
                 try {
+
+                    console.group("programGroup");
+
                     for (i in programGroup) {
                         program = programGroup[i].nativeProgram;
                         devices = programGroup[i].nativeDevices;
+
+                        console.info("program: ", program, "devices: ", devices);
+
                         program.build(devices);
                     }
+
+                    console.groupEnd();
+
                 } catch (e) {
                     var msg = program.getBuildInfo(devices, nativeWebCL.PROGRAM_BUILD_LOG);
-                    throw (new Error(msg));
+                    throw (new Error("Cannot build program: ", msg));
                 }
+
+                console.timeEnd("WCLProgram::build");
+                console.groupEnd();
             },
 
+            /**
+             * TODO: Function description.
+             *
+             * @name createWCLKernel
+             * @function
+             * @param
+             * @returns
+             */
             createWCLKernel : function (kernelName) {
                 var nativeDevice;
                 var nativeDevices;
@@ -339,25 +721,46 @@
                 var i;
                 var j;
 
+                console.group("WCLProgram::createWCLKernel");
+                console.time("WCLProgram::createWCLKernel");
+                console.info("kernelName: ", kernelName);
+
                 kernelGroup = [];
+
+                console.group("programGroup");
+
                 for (i in programGroup) {
                     nativeProgram = programGroup[i].nativeProgram;
                     nativeDevices = programGroup[i].nativeDevices;
 
+                    console.info("nativeProgram: ", nativeProgram);
+                    console.group("devices");
+
                     for (j in nativeDevices) {
                         kernelDic = {};
                         nativeDevice = nativeDevices[j];
+                        console.info("nativeDevice: ", nativeDevice);
+
                         nativeKernel = nativeProgram.createKernel(kernelName);
 
                         if (!(nativeKernel instanceof WebCLKernel)) {
                             throw (new Error("Could not create a native kernel"));
                         }
 
+                        console.log("Created nativeKernel: ", nativeKernel);
+
                         kernelDic.nativeKernel = nativeKernel;
                         kernelDic.nativeDevices = [nativeDevice];
                         kernelGroup.push(kernelDic);
                     }
+
+                    console.groupEnd();
                 }
+
+                console.groupEnd();
+                console.info("kernelGroup: ", kernelGroup);
+                console.timeEnd("WCLProgram::createWCLKernel");
+                console.groupEnd();
 
                 return new WCLKernel(kernelGroup);
             }
@@ -365,38 +768,104 @@
         };
     }
 
+    /**
+     * WebCLBuffer container
+     *
+     * @name WCLBuffer
+     * @class
+     * @param {bufferGroup} List of dictionary which contains a native platform,
+     *                      device and native buffer, ex:
+     *                          [ {nativePlatform: 'native platform',
+     *                              nativeDevice: 'native device',
+     *                              nativeBuffer: 'native buffer'}, ...]
+     */
     function WCLBuffer(bufferGroup) {
         return {
             id : "WCLBuffer",
 
+            /**
+             * @function getBufferGroup
+             * @returns
+             */
             getBufferGroup : function () {
                 return bufferGroup;
             }
         };
     }
 
+    /**
+     * Represents a list of kernels created for each native device from
+     * WCLDevice instance used to create WCLContext instance.
+     *
+     * @name WCLKernel
+     * @class
+     */
+
+    /**
+     * Creates a new WCLKernel instance.
+     *
+     * @name WCLKernel
+     * @constructor
+     * @param {kernelGroup} List of native kernels and their devices
+     *        in a dictionary format. For example:
+     *        [{nativeKernel: 'native kernel', nativeDevices: 'kernel devices'}, ...]
+     */
     function WCLKernel(kernelGroup) {
 
         return {
             id : "WCLKernel",
 
+            /**
+             * TODO: Function description.
+             *
+             * @name getKernelGroup
+             * @function
+             * @param
+             * @returns
+             */
             getKernelGroup : function () {
                 return kernelGroup;
             },
 
+            /**
+             * TODO: Function description.
+             *
+             * @name getWCLInfo
+             * @function
+             * @param
+             * @returns
+             */
             getWCLInfo : function (info) {
                 var nativeKernel;
                 var nativeDevicesInfo = [];
                 var i;
 
+                console.group("WCLKernel::getWCLInfo");
+                console.time("WCLKernel::getWCLInfo");
+                console.group("kernelGroup");
+
                 for (i in kernelGroup) {
                     nativeKernel = kernelGroup[i].nativeKernel;
+                    console.log("nativeKernel: ", nativeKernel);
+
                     nativeDevicesInfo.push(nativeKernel.getInfo(info));
                 }
+
+                console.log("nativeDevicesInfo: ", nativeDevicesInfo);
+                console.timeEnd("WCLKernel::getWCLInfo");
+                console.groupEnd();
 
                 return nativeDevicesInfo;
             },
 
+            /**
+             * TODO: Function description.
+             *
+             * @name getWorkGroupInfo
+             * @function
+             * @param
+             * @returns
+             */
             getWorkGroupInfo: function (wclDevice, info) {
                 var i;
                 var j;
@@ -405,32 +874,72 @@
                 var nativeDevices;
                 var res;
                 var groupInfo;
+                var ex;
+
+                console.group("WCLKernel::getWCLInfo");
+                console.time("WCLKernel::getWCLInfo");
 
                 if (!(wclDevice.id === "WCLDevice")) {
-                    throw new Error("WCLDevice expected");
+                    ex = new Error("WCLDevice expected");
+                    console.error("Error: ", ex);
+                    throw ex;
                 }
+
+                console.info("wclDevice: ", wclDevice);
 
                 //FIXME: Info must be a WebCLEnum KERNEL_WORK_GROUP_SIZE, KERNEL_COMPILE_WORK_GROUP_SIZE,
                 //KERNEL_LOCAL_MEM_SIZE, KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, KERNEL_PRIVATE_MEM_SIZE
                 //A method to validate param info will be created in utils file
                 if (!info) {
-                    throw new Error("WebCLEnum expected");
+                    ex = new Error("WebCLEnum expected");
+                    console.error("Error: ", ex);
+                    throw ex;
                 }
 
+                console.info("info", info);
+
                 groupInfo = [];
+
+                console.group("kernelGroup");
+
                 for (i in kernelGroup) {
+
                     nativeKernel = kernelGroup[i].nativeKernel;
                     nativeDevices = kernelGroup[i].nativeDevices;
+
+                    console.info("nativeKernel: ", nativeKernel);
+                    console.group("nativeDevices");
+
                     for (j in nativeDevices) {
                         nativeDevice = nativeDevices[j];
                         res = nativeKernel.getWorkGroupInfo(nativeDevice, info);
+
+                        console.info("nativeDevice: ", nativeDevice, "getWorkGroupInfo: ", res);
+
                         groupInfo.push(res);
                     }
+
+                    console.groupEnd();
                 }
+
+                console.groupEnd();
+
+                console.log("groupInfo: ", groupInfo);
+
+                console.timeEnd("WCLKernel::getWCLInfo");
+                console.groupEnd();
 
                 return groupInfo;
             },
 
+            /**
+             * TODO: Function description.
+             *
+             * @name release
+             * @function
+             * @param
+             * @returns
+             */
             release: function () {
                 var i;
                 for (i in kernelGroup) {
@@ -439,40 +948,33 @@
 
             },
 
-            /*
-            setWCLKernelArgs : function (index, wclBuffer) {
-                var wclBuffers, nativeKernel, auxArg, i;
-                var wclKernelGroup = this.getKernelGroup();
-
-                for (i in wclKernelGroup) {
-
-                    nativeKernel = wclKernelGroup[i].nativeKernel;
-                    wclBuffers = wclBuffer.getBufferGroup();
-                    auxArg = wclBuffers[i].nativeBuffer;
-
-                    try {
-                        nativeKernel.setArg(index, auxArg);
-                    } catch (e) {
-                        throw e;
-                    }
-                }
-            }
-*/
-
             /**
+             * TODO: Function description.
+             *
+             * @name setWCLKernelArgs
+             * @function
              * @param {index} Integer
-             * @param {arg} WCLBuffer or any
+             * @param {arg} WCLBuffer or any value
              * @param {type} WebCL.ENUM, required when arg is not a WCLBuffer
              */
             setWCLKernelArgs : function (index, arg, type) {
                 var i, wclBuffers = [], wclKernelGroup, nativeKernel;
-                var argType = (arg.id && arg.id === "WCLBuffer") ?  "buffer" : "scalar";
+                var argType = (arg && arg.id === "WCLBuffer") ?  "buffer" : "scalar";
+
+                console.group("WCLKernel::setWCLKernelArgs");
+                console.time("WCLKernel::setWCLKernelArgs");
+
+                console.info("index: ", index, "arg: ", arg, "type: ", type);
 
                 wclKernelGroup = this.getKernelGroup();
+
+                console.group("kernelGroup");
 
                 for (i in wclKernelGroup) {
 
                     nativeKernel = wclKernelGroup[i].nativeKernel;
+
+                    console.info("nativeKernel: ", nativeKernel, "argType: ", argType);
 
                     try {
                         if (argType === "buffer") {
@@ -482,22 +984,75 @@
                             nativeKernel.setArg(index, arg, type);
                         }
                     } catch (e) {
+                        console.error("Error setWCLKernelArgs", e);
                         throw e;
                     }
+
+                    console.log("Passed setArg");
                 }
+
+                console.groupEnd();
+                console.timeEnd("WCLKernel::setWCLKernelArgs");
+                console.groupEnd();
+
             }
         };
     }
 
+    /**
+     * Represents a list of commands queue created for each native device from
+     * WCLDevice instance used to create WCLContext instance.
+     *
+     * @name WCLCommandQueue
+     * @class
+     */
+
+    /**
+     * Creates a new WCLCommandQueue instance.
+     *
+     * @name WCLCommandQueue
+     * @constructor
+     * @param {kernelGroup} List native command queues and their devices
+     *        in a dictionary format. For example:
+     *        [{nativeCommandQueue: 'native cmd queue', nativeDevice: 'native device'}, ...]
+     */
     function WCLCommandQueue(queueGroup) {
-        var nativeQueues;
+
         return {
             id : "WCLCommandQueue",
 
+            /**
+             * TODO: Function description.
+             *
+             * @name getNativeCommandQueue
+             * @function
+             * @returns {nativeQueues} List of native command queues.
+             */
             getNativeCommandQueue : function () {
+                var nativeQueues;
+                var nativeCommandQueue;
+                var i;
+
+                nativeQueues = [];
+                for (i in queueGroup) {
+                    nativeCommandQueue = queueGroup[i].nativeCommandQueue;
+                    nativeQueues.push(nativeCommandQueue);
+                }
+
                 return nativeQueues;
             },
 
+            /**
+             * @function enqueueReadBuffer
+             * Get buffer from device to host and compare the results if there
+             * are more than one device.
+             *
+             * @param {dictionary} {"WCLBuffer": wclbuffer object,
+             *                      "blockingRead": if the read is blocking,
+             *                      "bufferOffset": byte offset,
+             *                      "numBytes": number bytes to read,
+             *                      "data", vector to store the result}
+             */
             enqueueReadBuffer : function (args) {
                 var nativeCommandQueue;
                 var nativeBuffer;
@@ -514,35 +1069,63 @@
                 var msg;
                 var i;
                 var j;
+                var ex;
+                var nativeEvent;
+                var nativeEventList;
+
+                console.group("WCLCommandQueue::enqueueReadBuffer");
+                console.time("WCLCommandQueue::enqueueReadBuffer");
+                console.info("args: ", args);
 
                 try {
-                    if (!(args.buffer.id === "WCLBuffer")) {
-                        throw new Error("No WebCLBuffer in the arguments.");
+                    if (!(args.buffer && args.buffer.id === "WCLBuffer")) {
+                        ex = new Error("No WebCLBuffer in the arguments.");
+                        console.error("Invalid argument error", ex);
+                        throw ex;
                     }
 
                     if (!args.blockingRead) {
-                        throw new Error("No block in the arguments.");
+                        ex = new Error("No block in the arguments.");
+                        console.error("Invalid argument error", ex);
+                        throw ex;
                     }
 
                     if (!args.bufferOffset && args.bufferOffset !== 0) {
-                        throw new Error("No offset in the arguments.");
+                        ex = new Error("No offset in the arguments.");
+                        console.error("Invalid argument error", ex);
+                        throw ex;
                     }
 
                     if (!args.numBytes) {
-                        throw new Error("No numBytes in the arguments.");
+                        ex = new Error("No numBytes in the arguments.");
+                        console.error("Invalid argument error", ex);
+                        throw ex;
                     }
 
                     if (!args.data) {
-                        throw new Error("No numBytes in the arguments.");
+                        ex = new Error("No data in the arguments.");
+                        console.error("Invalid argument error", ex);
+                        throw ex;
                     }
 
-                    // FIXME: use this when the WCEvent is working
-                    /*if (args["eventWaitList"] instanceof Array
-                            && !(args["eventWaitList"][0] === "WCLEvent"))
-                        throw new Error("No eventWaitList in the arguments.");
+                    if (args.eventWaitList) {
 
-                    if (!(args['event'].id === "WCLEvent"))
-                        throw new Error("No event in the arguments.");*/
+                        if (!args.eventWaitList instanceof Array) {
+                            ex = new Error("Arg eventWaitList must be an array");
+                        }
+
+                        for (i in args.eventWaitList) {
+                            if (args.eventWaitList[i].id !== "WCLEvent") {
+                                ex = new Error("No WCLevent in the arguments.");
+                            }
+                        }
+
+                        if (ex) {
+                            console.error("Invalid arguments", ex);
+                            throw ex;
+                        }
+                    }
+
                 } catch (e) {
                     throw e;
                 }
@@ -552,14 +1135,36 @@
                 offset = args.bufferOffset;
                 numBytes = args.numBytes;
                 data = args.data;
-                //eventsList = args["eventWaitList"];
+                eventsList = args.eventWaitList;
                 //readEvent = args["event"];
 
                 lastData = null;
+
+                console.group("queueGroup");
+
                 for (i in queueGroup) {
+
+                    console.info("queueGroup: ", queueGroup[i]);
+
                     nativeCommandQueue = queueGroup[i].nativeCommandQueue;
                     bufferDic = bufferGroup[i];
                     nativeBuffer = bufferDic.nativeBuffer;
+
+                    /* empty events list */
+                    nativeEventList = nativeEvent = null;
+
+                    //TODO: event isnt working at this time, so this code doesnt break anything.
+                    //TODO: Now isnt using listEvents because it breaks webkit.
+                    for (k in eventsList) {
+                        nativeEventList = [];
+                        console.info("wclEvent", eventsList[k].getEventGroup());
+                        console.info("wclEventDic", eventsList[k].getEventGroup()[i]);
+                        nativeEvent = eventsList[k].getEventGroup()[i].nativeEvent;
+                        nativeEventList.push(nativeEvent);
+                    }
+
+                    console.info("nativeCommandQueue: ", nativeCommandQueue, "nativeBuffer: ", nativeBuffer);
+
                     nativeCommandQueue.enqueueReadBuffer(nativeBuffer, block,
                                                         offset, numBytes, data);
                     // check if the results are the same
@@ -572,12 +1177,17 @@
                                 msg += "(Platform " + lastBufferDic.nativePlatform + " ";
                                 msg += "Device " + lastBufferDic.nativeDevices + " ";
                                 msg += "Value " + lastData[j] + ")";
-                                throw (new Error(msg));
+
+                                ex = new Error(msg);
+                                console.error("Diferent results", ex);
+                                throw ex;
                             }
                         }
                     } else {
                         lastData = new Int32Array(data.length);
                     }
+
+                    console.log("Passed WCLCommandQueue::enqueueReadBuffer");
 
                     // copy data
                     for (j in data) {
@@ -585,10 +1195,23 @@
                     }
                     lastBufferDic = bufferDic;
                 }
+
+                console.groupEnd();
+                console.timeEnd("WCLCommandQueue::enqueueReadBuffer");
+                console.groupEnd();
             },
 
+            /**
+             * @function enqueueWriteBuffer
+             * Write buffer from host to device are more than one device.
+             *
+             * @param {dictionary} {"WCLBuffer": wclbuffer object,
+             *                      "blockingWrite": if the write is blocking,
+             *                      "bufferOffset": byte offset,
+             *                      "numBytes": number of bytes to read,
+             *                      "data", vector to write to device}
+             */
             enqueueWriteBuffer : function (args) {
-
                 var nativeCommandQueue;
                 var nativeBuffer;
                 var bufferGroup;
@@ -600,37 +1223,61 @@
                 var i;
                 var eventsList;
                 var readEvent;
+                var ex;
+                var nativeEventList;
+                var nativeEvent;
+
+                console.group("WCLCommandQueue::enqueueWriteBuffer");
+                console.time("WCLCommandQueue::enqueueWriteBuffer");
+
+                console.info("args: ", args);
 
                 try {
                     if (!args.buffer || !(args.buffer.id === "WCLBuffer")) {
-                        throw new Error("No WebCLBuffer in the arguments.");
+                        ex = new Error("No WebCLBuffer in the arguments.");
+                        console.error("Invalid arguments", ex);
+                        throw ex;
                     }
 
                     if (args.blockingWrite === undefined) {
-                        throw new Error("No block in the arguments.");
+                        ex = new Error("No block in the arguments.");
+                        console.error("Invalid arguments", ex);
+                        throw ex;
                     }
 
                     if (!args.bufferOffset && args.bufferOffset !== 0) {
-                        throw new Error("No offset in the arguments.");
+                        ex = new Error("No offset in the arguments.");
+                        console.error("Invalid arguments", ex);
+                        throw ex;
                     }
 
                     if (!args.numBytes) {
+                        console.error("Invalid arguments", ex);
                         throw new Error("No numBytes in the arguments.");
                     }
 
-                    //FIXME: Is really necessary check data ???
-                    /*
-                    if (!args["data"]) {
+                    if (!args.data) {
                         throw new Error("No numBytes in the arguments.");
-                    }*/
+                    }
 
-                    // FIXME: use this when the WCEvent is working
-                    /*if (args["eventWaitList"] instanceof Array
-                            && !(args["eventWaitList"][0] === "WCLEvent"))
-                        throw new Error("No eventWaitList in the arguments.");
+                    if (args.eventWaitList) {
 
-                    if (!(args['event'].id === "WCLEvent"))
-                        throw new Error("No event in the arguments.");*/
+                        if (!args.eventWaitList instanceof Array) {
+                            ex = new Error("Arg eventWaitList must be an array");
+                        }
+
+                        for (i in args.eventWaitList) {
+                            if (args.eventWaitList[i].id !== "WCLEvent") {
+                                ex = new Error("No WCLevent in the arguments.");
+                            }
+                        }
+
+                        if (ex) {
+                            console.error("Invalid arguments", ex);
+                            throw ex;
+                        }
+                    }
+
                 } catch (e) {
                     throw e;
                 }
@@ -640,20 +1287,57 @@
                 offset = args.bufferOffset;
                 numBytes = args.numBytes;
                 data = args.data;
-                //eventsList = args["eventWaitList"];
+                eventsList = args.eventWaitList;
                 //writeEvent = args["event"];
+
+                console.group("queueGroup");
 
                 if (data) {
                     for (i in queueGroup) {
                         bufferDic = bufferGroup[i];
                         nativeBuffer = bufferDic.nativeBuffer;
                         nativeCommandQueue = queueGroup[i].nativeCommandQueue;
+
+                        /* empty events list */
+                        nativeEventList = nativeEvent = null;
+
+                        //TODO: event isn't working at this time, so this code doesn't break anything.
+                        for (k in eventsList) {
+                            nativeEventList = [];
+                            console.info("wclEvent", eventsList[k].getEventGroup());
+                            console.info("wclEventDic", eventsList[k].getEventGroup()[i]);
+                            nativeEvent = eventsList[k].getEventGroup()[i].nativeEvent;
+                            nativeEventList.push(nativeEvent);
+                        }
+
+
+                        console.info("bufferDic: ", bufferDic, "nativeBuffer: ",
+                                nativeBuffer, "nativeCommandQueue: ", nativeCommandQueue);
+
+                        //TODO: Uncomment the "nativeEvent" below when WebCLEvent is working.
                         nativeCommandQueue.enqueueWriteBuffer(nativeBuffer, block,
-                                                            offset, numBytes, data);
+                                                            offset, numBytes, data /*, nativeEventList */);
+
+                        console.log("Passed native enqueueWriteBuffer");
                     }
                 }
+
+                console.groupEnd();
+                console.timeEnd("WCLCommandQueue::enqueueWriteBuffer");
+                console.groupEnd();
+
             },
 
+            /**
+             * @function enqueueCopyBuffer
+             * Copy the contents of source buffer to destiny buffer.
+             *
+             * @param {dictionary} {"srcBuffer": wclbuffer object,
+             *                      "dstBuffer": wclbuffer object,
+             *                      "srcOffset": byte offset for source buffer,
+             *                      "dstOffset": byte offset for destiny buffer,
+             *                      "numBytes": number bytes to copy,
+             */
             enqueueCopyBuffer : function (args) {
                 var nativeCommandQueue;
                 var srcBufferDic;
@@ -666,37 +1350,63 @@
                 var i;
                 var eventsList;
                 var copyEvent;
+                var ex;
+                var nativeEvent;
+                var nativeEventList;
 
-                console.log("enqueueCopyBuffer", args);
+                console.group("WCLCommandQueue::enqueueCopyBuffer");
+                console.time("WCLCommandQueue::enqueueCopyBuffer");
+                console.info("args: ", args);
 
                 try {
                     if (!(args.srcBuffer.id === "WCLBuffer")) {
-                        throw new Error("No srcBuffer in the arguments.");
+                        ex = new Error("No srcBuffer in the arguments.");
+                        console.error("Invalid argument", ex);
+                        throw ex;
                     }
 
                     if (!(args.dstBuffer.id === "WCLBuffer")) {
-                        throw new Error("No dstsBuffer in the arguments.");
+                        ex = new Error("No dstsBuffer in the arguments.");
+                        console.error("Invalid argument", ex);
+                        throw ex;
                     }
 
                     if (!args.srcOffset && args.srcOffset !== 0) {
-                        throw new Error("No srcOffset in the arguments.");
+                        ex = new Error("No srcOffset in the arguments.");
+                        console.error("Invalid argument", ex);
+                        throw ex;
                     }
 
                     if (!args.dstOffset && args.dstOffset !== 0) {
-                        throw new Error("No dstOffset in the arguments.");
+                        ex = new Error("No dstOffset in the arguments.");
+                        console.error("Invalid argument", ex);
+                        throw ex;
                     }
 
                     if (!args.numBytes) {
-                        throw new Error("No numBytes in the arguments.");
+                        ex = new Error("No numBytes in the arguments.");
+                        console.error("Invalid argument", ex);
+                        throw ex;
                     }
 
-                    // FIXME: use this when the WCEvent is working
-                    /*if (args["eventWaitList"] instanceof Array
-                            && !(args["eventWaitList"][0] === "WCLEvent"))
-                        throw new Error("No eventWaitList in the arguments.");
+                    if (args.eventWaitList) {
 
-                    if (!(args['event'].id === "WCLEvent"))
-                        throw new Error("No event in the arguments.");*/
+                        if (!args.eventWaitList instanceof Array) {
+                            ex = new Error("Arg eventWaitList must be an array");
+                        }
+
+                        for (i in args.eventWaitList) {
+                            if (args.eventWaitList[i].id !== "WCLEvent") {
+                                ex = new Error("No WCLevent in the arguments.");
+                            }
+                        }
+
+                        if (ex) {
+                            console.error("Invalid arguments", ex);
+                            throw ex;
+                        }
+                    }
+
                 } catch (e) {
                     throw e;
                 }
@@ -706,23 +1416,59 @@
                 srcOffset = args.srcOffset;
                 dstOffset = args.dstOffset;
                 numBytes = args.numBytes;
-                //eventsList = args["eventWaitList"];
+                eventsList = args.eventWaitList;
                 //copyEvent = args["event"];
+
+                console.group("queueGroup");
 
                 for (i in queueGroup) {
                     srcNativeBuffer = srcBufferDic[i].nativeBuffer;
                     dstNativeBuffer = dstBufferDic[i].nativeBuffer;
                     nativeCommandQueue = queueGroup[i].nativeCommandQueue;
+
+                    /* empty events list */
+                    nativeEventList = nativeEvent = null;
+
+                    //TODO: event isn't working at this time, so this code doesn't break anything.
+                    for (k in eventsList) {
+                        nativeEventList = [];
+                        console.info("wclEvent", eventsList[k].getEventGroup());
+                        console.info("wclEventDic", eventsList[k].getEventGroup()[i]);
+                        nativeEvent = eventsList[k].getEventGroup()[i].nativeEvent;
+                        nativeEventList.push(nativeEvent);
+                    }
+
+                    console.info("srcNativeBuffer: ", srcNativeBuffer, "dstNativeBuffer: ",
+                            dstNativeBuffer, "nativeCommandQueue: ", nativeCommandQueue, nativeEvent);
+
                     nativeCommandQueue.enqueueCopyBuffer(srcNativeBuffer,
                                                     dstNativeBuffer, srcOffset,
-                                                    dstOffset, numBytes);
+                                                    dstOffset, numBytes, nativeEvent);
+
+                    console.log("Passed enqueueCopyBuffer");
                 }
+
+                console.groupEnd();
+                console.timeEnd("WCLCommandQueue::enqueueCopyBuffer");
+                console.groupEnd();
+
             },
 
+            /**
+             * @function enqueueCopyBuffer
+             * Copy the contents of source buffer to destiny buffer.
+             *
+             * @param {dictionary} {"kernel": wclkernel object,
+             *                      "globalWorkOffset": offset to start each id,
+             *                      "globalWorkSize": byte offset for source buffer,
+             *                      "localWorkSize": byte offset for destiny buffer,
+             */
             enqueueNDRangeKernel : function (args) {
                 var nativeCommandQueue;
                 var nativeKernel;
                 var nativeKernels;
+                var nativeEvent;
+                var nativeEventList;
                 var offset;
                 var globalSize;
                 var localSize;
@@ -732,53 +1478,107 @@
                 var kernelGroup;
                 var i;
                 var j;
+                var k;
+                var ex;
+
+                console.group("WCLCommandQueue::enqueueNDRangeKernel");
+                console.time("WCLCommandQueue::enqueueNDRangeKernel");
+                console.info("args: ", args);
 
                 try {
                     if (args.kernel.id !== "WCLKernel") {
-                        throw new Error("No kernel in the arguments.");
+                        ex = new Error("No kernel in the arguments.");
+                        console.error("Invalid arguments", ex);
+                        throw ex;
                     }
 
-                    if (!(args.globalWorkOffset instanceof Int32Array)) {
-                        throw new Error("No offset in the arguments.");
+                    if (!(args.globalWorkOffset === null || args.globalWorkOffset instanceof Int32Array)) {
+                        ex = new Error("No offset in the arguments.");
+                        console.error("Invalid arguments", ex);
+                        throw ex;
                     }
 
                     if (!(args.globalWorkSize instanceof Int32Array)) {
-                        throw new Error("No globalWorkSize in the arguments.");
+                        ex = new Error("No globalWorkSize in the arguments.");
+                        console.error("Invalid arguments", ex);
+                        throw ex;
                     }
 
                     if (!(args.localWorkSize instanceof Int32Array)) {
-                        throw new Error("No globalWorkSize in the arguments.");
+                        ex = new Error("No globalWorkSize in the arguments.");
+                        console.error("Invalid arguments", ex);
+                        throw ex;
                     }
 
-                    // FIXME: use this when the WCEvent is working
-                    /*if (args["eventWaitList"] instanceof Array
-                            && !(args["eventWaitList"][0] === "WCLEvent"))
-                        throw new Error("No eventWaitList in the arguments.");
+                    if (args.eventWaitList) {
 
-                    if (!(args['event'].id === "WCLEvent"))
-                        throw new Error("No event in the arguments.");*/
+                        if (!args.eventWaitList instanceof Array) {
+                            ex = new Error("Arg eventWaitList must be an array");
+                        }
+
+                        for (i in args.eventWaitList) {
+                            if (args.eventWaitList[i].id !== "WCLEvent") {
+                                ex = new Error("No WCLevent in the arguments.");
+                            }
+                        }
+
+                        if (ex) {
+                            console.error("Invalid arguments", ex);
+                            throw ex;
+                        }
+                    }
+
                 } catch (e) {
                     throw e;
                 }
 
-                wclKernel = args.kernel;
+                wclKernel =   args.kernel;
                 kernelGroup = wclKernel.getKernelGroup();
-                offset = args.globalWorkOffset;
-                globalSize = args.globalWorkSize;
-                localSize = args.localWorkSize;
-                //eventsList = args["eventWaitList"];
+                offset =      args.globalWorkOffset;
+                globalSize =  args.globalWorkSize;
+                localSize =   args.localWorkSize;
+                eventList =   args.eventWaitList;
                 //rangeEvent = args["event"];
 
-                for (i in kernelGroup) {
+                console.group("queueGroup");
+
+                for (i in queueGroup) {
+
+                    console.info("queueGroup", queueGroup);
+
+                    /* empty events list */
+                    nativeEventList = nativeEvent = null;
+
                     nativeKernel = kernelGroup[i].nativeKernel;
-                    for (j in queueGroup) {
-                        nativeCommandQueue = queueGroup[j].nativeCommandQueue;
-                        nativeCommandQueue.enqueueNDRangeKernel(nativeKernel, offset,
-                                globalSize, localSize);
+                    console.info("nativeKernel", nativeKernel);
+
+                    //TODO: event isn't working at this time, so this code doesn't break anything.
+                    for (k in eventList) {
+                        nativeEventList = [];
+                        console.info("wclEvent", eventList[k].getEventGroup());
+                        console.info("wclEventDic", eventList[k].getEventGroup()[i]);
+                        nativeEvent = eventList[k].getEventGroup()[i].nativeEvent;
+                        nativeEventList.push(nativeEvent);
                     }
+
+                    nativeCommandQueue = queueGroup[i].nativeCommandQueue;
+                    nativeCommandQueue.enqueueNDRangeKernel(nativeKernel, offset,
+                            globalSize, localSize, nativeEvent);
+
+                    console.info("nativeCommandQueue: ", nativeCommandQueue);
+                    console.log("Passed native enqueueNDRangeKernel");
                 }
+
+                console.groupEnd();
+                console.timeEnd("WCLCommandQueue::enqueueNDRangeKernel");
+                console.groupEnd();
             },
 
+            /**
+             * @function enqueueCopyBuffer
+             * It waits for each command in command queue have been processed
+             * and completed.
+             */
             finish : function () {
                 var nativeCommandQueue;
                 var i;
@@ -791,18 +1591,69 @@
         };
     }
 
+    /**
+     * TODO:
+     *
+     * @name WCLSampler
+     * @class
+     */
     function WCLSampler() {
         return {
             id : "WCLSampler"
         };
     }
 
-    function WCLEvent() {
+    /**
+     * Creates a new WCLEvent instance.
+     *
+     * @name WCLEvent
+     * @constructor
+     * @params {eventGroup} A list of eventDic  {nativeContext: WebCLContext,
+     *                                           nativeEvent: WebCLEvent,
+     *                                           nativeDevice: WebCLDevice}
+     */
+    function WCLEvent(eventGroup) {
         return {
-            id : "WCLEvent"
+            id : "WCLEvent",
+
+            //TODO: Implements method
+            getWCLInfo : function (info) {
+                return "";
+            },
+
+            getEventGroup : function () {
+                return eventGroup;
+            },
+
+            /**
+             * @function setCallBack
+             *
+             * Wrapper to WebCLEvent setCallback method.
+             * Used to set a callBack for all events in eventGroup
+             *
+             * @param {status} - execution status
+             * @param {notify} - function to be executed
+             * @param optional {userData}
+             */
+            setCallback : function (status, notify, userData) {
+                var nativeEvent;
+                var i;
+
+                console.group("WCLEvent::setCallback");
+                console.time("WCLEvent::setCallback");
+
+                for (i in eventGroup) {
+                    nativeEvent = eventGroup[i].nativeEvent;
+                    console.info("nativeEvent", nativeEvent);
+
+                    nativeEvent.setCallback(status, notify, userData);
+                }
+
+                console.timeEnd("WCLEvent::setCallback");
+                console.groupEnd();
+            }
         };
     }
-
 }());
 
 // TEST WEBCLPROXY
@@ -817,37 +1668,31 @@
 
         var enumWGI = [webcl.KERNEL_WORK_GROUP_SIZE, webcl.KERNEL_COMPILE_WORK_GROUP_SIZE, webcl.KERNEL_LOCAL_MEM_SIZE,
                        webcl.KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, webcl.KERNEL_PRIVATE_MEM_SIZE];
-        console.log("Initialization done");
+
+        var logger = window.LOGGER;
+        logger.setLogLevel(2);
 
         var cl = WebCLProxy;
-        console.log(cl);
 
         var plat = cl.getWCLPlatform();
-        console.log("WCLPlatform: ", plat);
-
-        // Context creation
 
         plat.version = plat.getWCLInfo(cl.PLATFORM_VERSION);
-        plat.dev = plat.getWCLDevice();
-        console.log("WCLDevice: ", plat.dev);
 
-        //Get devices
-        console.log("Native devices: ", plat.dev.getDeviceGroup());
+        /* To create the context to all available devices
+           just call createWCLContext without args.
+           Use getWCLDevice to create WCLDevice
+           instance with some specific type of devices
+           like CPU or GPU type.
+        */
+
+        plat.dev = plat.getWCLDevice();
 
         // Get devices info (DEVICE_TYPE)
         plat.dev.info = plat.dev.getWCLInfo(cl.DEVICE_TYPE);
-        console.log("WCLDevice Info: ", plat.dev.info);
 
-        var ctxProperties = {platform: plat, device: plat.dev, hint: null};
-        console.log(ctxProperties);
+        plat.ctx = plat.createWCLContext();
 
-        plat.ctx = cl.createWCLContext(ctxProperties);
-        console.log("WCLContext:", plat.ctx);
-
-        var queue = plat.ctx.createWCLCommandQueue(plat.dev, null);
-        console.log("WCLQueue: ", queue);
-
-        console.log("Created context for platform", plat, ": ", plat.version);
+        var queue = plat.ctx.createWCLCommandQueue();
 
         // Initializing Data
         var DATA_SIZE = 10;
@@ -857,23 +1702,6 @@
         for (i = 0; i < DATA_SIZE; i++) {
             data[i] = i;
         }
-
-        /* Old way to set kernel args
-         * --------------------------
-        var bufferIn = plat.ctx.createWCLBuffer(webcl.MEM_WRITE_ONLY,
-                                            Int32Array.BYTES_PER_ELEMENT * DATA_SIZE);
-        var bufferOut = plat.ctx.createWCLBuffer(webcl.MEM_WRITE_ONLY,
-                                            Int32Array.BYTES_PER_ELEMENT * DATA_SIZE);
-        console.log("WCLBuffer: ", bufferIn);
-
-        var args = {"buffer": bufferIn,
-                    "blockingWrite": true,
-                    "bufferOffset": 0,
-                    "numBytes": Int32Array.BYTES_PER_ELEMENT * DATA_SIZE,
-                    "data": data};
-        queue.enqueueWriteBuffer(args);
-        console.log("WCLCommandQueue: write buffer");
-        */
 
         /* Testing enqueueCopyBuffer */
         var bufferIn = plat.ctx.createWCLBuffer(webcl.MEM_WRITE_ONLY,
@@ -888,21 +1716,13 @@
                 "dstOffset": 0,
                 "numBytes": Int32Array.BYTES_PER_ELEMENT * DATA_SIZE};
         queue.enqueueCopyBuffer(args);
-        console.log("WCLCommandQueue: copy buffer");
 
         // Kernel creation
         try {
             plat.ctx.prog = plat.ctx.createWCLProgram(dummyKernel);
-            console.log("WCLProgram: ", plat.ctx.prog);
 
             plat.ctx.prog.build();
             plat.ctx.kernel = plat.ctx.prog.createWCLKernel("myDummyKernel");
-            console.log("WCLKernel: ", plat.ctx.kernel);
-/*
-            plat.ctx.kernel.setWCLKernelArgs(0, bufferIn);
-            plat.ctx.kernel.setWCLKernelArgs(1, bufferOut);
-            console.log("Set Args: ok");
-*/
 
             var wclBufferIn = new WebCLTestUtils.WCLBufferArg("bufferIn",
                     Int32Array.BYTES_PER_ELEMENT * DATA_SIZE, data);
@@ -926,30 +1746,16 @@
                     "localWorkSize": localWorkSize};
             queue.enqueueNDRangeKernel(kernelArgs);
             queue.finish();
-            console.log("WCLCommandQueue: run and finish");
 
-            /* Old way
-             * --------------------------
-            args = {"buffer": bufferOut,
-                    "blockingRead": true,
-                    "bufferOffset": 0,
-                    "numBytes": Int32Array.BYTES_PER_ELEMENT * DATA_SIZE,
-                    "data": result};
-            queue.enqueueReadBuffer(args);
-            */
             WebCLTestUtils.readWCLBuffers([wclBufferOut], queue);
 
-            console.log("WCLCommandQueue: read buffer");
-            console.log("result: ", result);
-
-            console.log("Kernel Work Group Info:");
-
             var k;
+            var blob;
             for (k = 0; k < enumWGI.length; k++) {
-                console.log("WorkGroupInfo: ", plat.ctx.kernel.getWorkGroupInfo(plat.dev, enumWGI[k]));
+                blob = plat.ctx.kernel.getWorkGroupInfo(plat.dev, enumWGI[k]);
             }
         } catch (e) {
-            console.log("Kernel creation failed for platform", plat, ": ", e);
+            console.error("Error", e);
         }
     }
-}('RUN'));
+}(/*"RUN"*/));

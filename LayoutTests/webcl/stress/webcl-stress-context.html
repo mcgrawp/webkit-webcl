@@ -6,12 +6,10 @@
 <title>WebCL Create Context Stress Test</title>
 <script src="../resources/js-test-pre.js"></script>
 <script src="../resources/webcl-test.js"></script>
-<script src="../resources/webcl-test-utils.js"></script>
 
 <script>
 
-/* Webkit is crashing when the number of iterations is greater than 20.000 and
- * getting time out when the iteration is greater than 10.000.
+/* Webkit is crashing when the number of iterations is greater than 20.000.
  * The backtrace is available at: http://pastebin.com/EChVqeLn
  */
 
@@ -23,7 +21,7 @@ function runTest() {
     var deviceType;
     var context;
     var contextProperties;
-    var STRESS_ITERS_CONTEXT = 10000;
+    var STRESS_ITERS = 20000;
 
     try {
         wclt = WebCLTest;
@@ -38,7 +36,7 @@ function runTest() {
                                 "shareGroup": 0,
                                 "hints": null};
 
-        for (i = 0; i < STRESS_ITERS_CONTEXT; i++) {
+        for (i = 0; i < STRESS_ITERS; i++) {
             context = wclt.createContext(contextProperties);
             if (!(context instanceof WebCLContext)) {
                 testFailed("WebCLContext was not created properly.");

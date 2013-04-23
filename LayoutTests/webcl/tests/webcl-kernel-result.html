@@ -5,7 +5,8 @@
 <title>WebCL kernel test return </title>
 <script src="../resources/js-test-pre.js"></script>
 <script src="../resources/kernels.js"></script>
-<script src="../resources/webcl-test.js"></script>
+<script src="../resources/logger.js"></script>
+<script src="../resources/webcl-proxy.js"></script>
 
 <script>
     var err;                                    // error code returned from API calls
@@ -16,22 +17,16 @@
 
     function runTest() {
         try {
-            var wclt = WebCLTest;
-            if (wclt === "undefined") {
+            var proxy = WebCLProxy;
+            if (!proxy) {
                 testFailed("WebCLTest object is not defined ...");
                 return;
             }
 
-            wclt.init();
-
-            var cl = wclt.getCL();
-            var platform = wclt.getPlatform(0);
-            var device = wclt.getDevice(0);
-            var devices = wclt.getDevices();
-            var contextProperties = { platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_ALL,
-                                    shareGroup: 0, hint: null};
-            var context = wclt.createContext(contextProperties);
-            var queue = wclt.createCommandQueue();
+            var platform = proxy.getWCLPlatform();
+            var device = platform.getWCLDevice();
+            var context = platform.createWCLContext();
+            var queue = context.createWCLCommandQueue(device, null);
 
             var kernelSource = Kernels.kernel_item;
             if (kernelSource === null) {
@@ -39,24 +34,37 @@
                 return;
             }
 
-            wclt.createProgram(kernelSource, "kernel_item");
+            var program = context.createWCLProgram(kernelSource);
+            program.build();
 
-            var kernel = wclt.getKernel();
+            var kernel = program.createWCLKernel("kernel_item");
             // Get the maximum work group size for executing the kernel on the device
-            var workGroupSize = kernel.getWorkGroupInfo(device, cl.KERNEL_WORK_GROUP_SIZE);
+            var workGroupSize = kernel.getWorkGroupInfo(device, proxy.KERNEL_WORK_GROUP_SIZE);
 
             //Create buffer for output
-            output = context.createBuffer(cl.MEM_WRITE_ONLY, Uint32Array.BYTES_PER_ELEMENT);
+            output = context.createWCLBuffer(proxy.MEM_WRITE_ONLY, Uint32Array.BYTES_PER_ELEMENT, null);
             globalWorkSize[0] = 1;
             localWorkSize[0] = 1;
 
-            kernel.setArg(0, output);
+            kernel.setWCLKernelArgs(0, output, null);
 
-            queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
+            var ndRangeDict = {};
+            ndRangeDict.kernel = kernel;
+            ndRangeDict.globalWorkOffset = new Int32Array(0);
+            ndRangeDict.globalWorkSize = globalWorkSize;
+            ndRangeDict.localWorkSize = localWorkSize;
+            ndRangeDict.globalWorkOffset[0] = 0;
+            queue.enqueueNDRangeKernel(ndRangeDict);
 
 
+            var readBufferDict = {};
+            readBufferDict.buffer = output;
+            readBufferDict.blockingRead = true;
+            readBufferDict.bufferOffset = 0;
+            readBufferDict.numBytes = Float32Array.BYTES_PER_ELEMENT;
+            readBufferDict.data = results;
             // Read back the results from the device to verify the output
-            queue.enqueueReadBuffer(output, true, 0, Float32Array.BYTES_PER_ELEMENT, results);
+            queue.enqueueReadBuffer(readBufferDict);
 
             // Wait for the command queue to get serviced before reading back results
             queue.finish();

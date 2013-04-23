@@ -6,17 +6,17 @@
 <script src="../resources/js-test-pre.js"></script>
 <script src="../resources/kernels.js"></script>
 <script src="../resources/webcl-test.js"></script>
-<script src="../resources/webcl-test-utils.js"></script>
 
 <script>
 
 var DATA_SIZE = 1024;
+var STRESS_ITERS = 100000;
 
 function runTest() {
     try {
 
         var wclt = WebCLTest;
-        wclt.init();
+        wclt.init(0, 0, "gpu");
         var platform = wclt.getPlatform(0);
         var device = wclt.getDevice(0);
         var devices = wclt.getDevices();

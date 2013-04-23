@@ -1,0 +1,92 @@
+<html>
+<head>
+<title>WebCLGL instanceof tests.</title>
+<script type="text/javascript" src="../resources/js-test-pre.js"></script>
+<script type="text/javascript">
+
+function runTest() {
+
+var cl;
+var platforms;
+var platform;
+var devices;
+var device;
+var gl;
+var extension;
+var context;
+var commandQueue;
+var buffer;
+var image;
+var glBuffer;
+var glRenderbuffer;
+
+    try {
+        var canvas = document.getElementById("canvas");
+        var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+
+        if (!gl) {
+            testFailed("Failed to create WebGL context");
+        }
+
+        cl = webcl;
+        if (!cl) {
+            testFailed("Failed to get WebCL");
+        }
+
+        platforms = cl.getPlatforms();
+        platform = platforms[0];
+        devices = platform.getDevices();
+        device = devices[0];
+
+        extension = cl.getExtension("KHR_GL_SHARING");
+        if (!extension) {
+            testFailed("GL extension is not available");
+        }
+
+        /* Test instance of WebCLGL */
+        shouldBeTrue('extension instanceof WebCLGL');
+
+        /* Test instance of WebCLGLContext */
+        contextProperties = {platform: platform, devices: devices,
+                             deviceType: cl.DEVICE_TYPE_GPU, hint: null, shareGroup: 1};
+        context = extension.createContext(contextProperties);
+        shouldBeTrue('context instanceof WebCLGLContext');
+
+        /* Test instance of WebCLGLCommandQueue */
+        commandQueue = context.createCommandQueue(device);
+        shouldBeTrue('commandQueue instanceof WebCLGLCommandQueue');
+
+        glBuffer = gl.createBuffer();
+
+        /* Test instance of WebCLGLBuffer */
+        buffer = context.createFromGLBuffer(cl.MEM_READ_ONLY, glBuffer);
+        shouldBeTrue('buffer instanceof WebCLGLBuffer');
+
+        glRenderbuffer = gl.createRenderbuffer();
+
+        /* Test instance of WebCLGLImage */
+        image = context.createFromGLRenderbuffer(cl.MEM_READ_ONLY, glRenderbuffer);
+        shouldBeTrue('image instanceof WebCLGLImage');
+
+        /* If here, all tests passed */
+        testPassed("");
+
+    } catch (e) {
+        testFailed("Error. " + e.message);
+    }
+}
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas" style="width: 50px; height: 50px;"> </canvas>
+<script>
+        description(document.title);
+        debug("Run instanceof tests for all WebCLGL objects");
+        runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

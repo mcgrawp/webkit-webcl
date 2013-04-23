@@ -1,7 +1,6 @@
 <html>
 <head>
 <title>WebCL instanceof tests.</title>
-<link rel="stylesheet" href="../resources/js-test-style.css"/>
 <script type="text/javascript" src="../resources/js-test-pre.js"></script>
 <script type="text/javascript" src="../resources/kernels.js"></script>
 <script type="text/javascript">
@@ -30,6 +29,8 @@ function runTest() {
     try {
 
         cl = webcl;
+        shouldBeTrue('cl instanceof WebCL');
+
         kernelSrc = Kernels.square;
 
         platforms = cl.getPlatforms();

@@ -1,9 +1,55 @@
 var Kernels =
 {
- "square": "__kernel void square(\n        __global int* input,\n        __global int* output,\n        const unsigned int count)\n{\n    int i = get_global_id(0);\n printf(\"%d\", i);\n    if(i < count)\n        output[i] = input[i] * input[i];\n}\n\n", 
- "kernel_item": "__kernel void kernel_item(\n        __global unsigned int *out)\n{\n        int i = get_global_id(0);\n        out[i] = 15;\n}\n",
- "vector_add": "kernel void vector_add(__global  int* vectorIn1, \n                         __global  int* vectorIn2, \n                         __global  int* vectorOut, \n                          int uiVectorWidth) { \n   int x = get_global_id(0);\n   if (x >= (uiVectorWidth)) \n { \n    return;\n  }\n  // add the vector elements\n  vectorOut[x] = vectorIn1[x] + vectorIn2[x];\n}", 
- "vector_sub": "kernel void vector_sub(__global  int* vectorIn1, \n                         __global  int* vectorIn2, \n                         __global  int* vectorOut, \n                          int uiVectorWidth) { \n   int x = get_global_id(0);\n  if (x >= (uiVectorWidth)) \n  { \n    return;\n  }\n  // add the vector elements\n  vectorOut[x] = vectorIn1[x] - vectorIn2[x];\n}", 
- "vector_div": "kernel void vector_div(__global  int* vectorIn1, \n                         __global  int* vectorIn2, \n                         __global  int* vectorOut, \n                          int uiVectorWidth) { \n   int x = get_global_id(0);\n  if (x >= (uiVectorWidth)) \n  { \n    return;\n  }\n  // add the vector elements\n  vectorOut[x] = vectorIn1[x] / vectorIn2[x];\n}", 
- "vector_mult": "kernel void vector_mult(__global  int* vectorIn1, \n                         __global  int* vectorIn2, \n                         __global  int* vectorOut, \n                          int uiVectorWidth) { \n   int x = get_global_id(0);\n  if (x >= (uiVectorWidth)) \n  { \n    return;\n  }\n  // add the vector elements\n  vectorOut[x] = vectorIn1[x] * vectorIn2[x];\n}" 
+  "square": "\
+     kernel void square(global int* input, global int* output, const unsigned int count) {\
+         int i = get_global_id(0);\
+         if(i < count)\
+            output[i] = input[i] * input[i];\
+     }",
+
+  "kernel_item": "\
+     kernel void kernel_item(global unsigned int *out) {\
+         int i = get_global_id(0);\
+         out[i] = 15;\
+     }",
+
+  "vector_add": "\
+      kernel void vector_add( global  int* vectorIn1, global  int* vectorIn2,  global  int* vectorOut, int uiVectorWidth) {\
+          int x = get_global_id(0);\
+          if (x >= (uiVectorWidth))\
+          {\
+              return;\
+          }\
+          vectorOut[x] = vectorIn1[x] + vectorIn2[x];\
+      }",
+
+  "vector_sub": "\
+      kernel void vector_sub(global  int* vectorIn1, global  int* vectorIn2, global  int* vectorOut, int uiVectorWidth) {\
+          int x = get_global_id(0);\
+          if (x >= (uiVectorWidth))\
+          {\
+              return;\
+          }\
+          vectorOut[x] = vectorIn1[x] - vectorIn2[x];\
+      }",
+
+  "vector_div": "\
+      kernel void vector_div(global  int* vectorIn1, global  int* vectorIn2, global  int* vectorOut, int uiVectorWidth) {\
+          int x = get_global_id(0);\
+          if (x >= (uiVectorWidth))\
+          {\
+              return;\
+          }\
+          vectorOut[x] = vectorIn1[x] / vectorIn2[x];\
+      }",
+
+  "vector_mult": "\
+      kernel void vector_mult(global  int* vectorIn1, global  int* vectorIn2, global  int* vectorOut, int uiVectorWidth) {\
+          int x = get_global_id(0);\
+          if (x >= (uiVectorWidth))\
+          {\
+              return;\
+          }\
+          vectorOut[x] = vectorIn1[x] * vectorIn2[x];\
+      }"
 };

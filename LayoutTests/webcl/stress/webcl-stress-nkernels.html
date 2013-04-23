@@ -6,9 +6,10 @@
 <script src="../resources/js-test-pre.js"></script>
 <script src="../resources/kernels.js"></script>
 <script src="../resources/webcl-test.js"></script>
-<script src="../resources/webcl-test-utils.js"></script>
 
 <script>
+
+var STRESS_ITERS = 100000;
 
 function runTest() {
     try {
@@ -18,7 +19,7 @@ function runTest() {
             return;
         }
 
-        wclt.init();
+        wclt.init(0, 0, "gpu");
 
         var cl = wclt.getCL();
         var platform = wclt.getPlatform(0);
