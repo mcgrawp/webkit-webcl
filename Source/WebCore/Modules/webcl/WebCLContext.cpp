@@ -412,7 +412,8 @@ WebCLContext::LRUImageBufferCache::LRUImageBufferCache(int capacity)
 
 ImageBuffer* WebCLContext::LRUImageBufferCache::imageBuffer(const IntSize& size)
 {
-    for (int i = 0; i < m_capacity; ++i) {
+    int i = 0;
+    for (i = 0; i < m_capacity; ++i) {
         ImageBuffer* buf = m_buffers[i].get();
         if (!buf)
             break;
@@ -422,7 +423,7 @@ ImageBuffer* WebCLContext::LRUImageBufferCache::imageBuffer(const IntSize& size)
     OwnPtr<ImageBuffer> temp = ImageBuffer::create(size);
     if (!temp)
         return 0;
-    int i = std::min(m_capacity - 1, i);
+    i = std::min(m_capacity - 1, i);
     m_buffers[i] = temp.release();
     ImageBuffer* buf = m_buffers[i].get();
     bubbleToFront(i);

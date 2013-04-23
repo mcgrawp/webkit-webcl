@@ -29,9 +29,9 @@
 #define ComputeTypes_h
 
 #if PLATFORM(MAC)
-#include <OpenCL/opencl.h>
+   #include <OpenCL/opencl.h>
 #else
-#include <CL/opencl.h>
+   #include <CL/opencl.h>
 #endif
 
 typedef unsigned int CCenum;
