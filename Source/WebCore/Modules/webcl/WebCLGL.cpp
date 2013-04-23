@@ -38,8 +38,20 @@ PassOwnPtr<WebCLGL> WebCLGL::create()
     return adoptPtr(new WebCLGL);
 }
 
+WebCLGL::WebCLGL()
+{
+    // For now, we call relaxAdoptionRequirement to not assert.
+    // See issue #223.
+    relaxAdoptionRequirement();
+}
+
 WebCLGL::~WebCLGL()
 {
+    // FIXME: We manually call derefBase here, since
+    // WebCLGL is a RefCounted-derived class, but we use
+    // OwnPtr to store its instance.
+    // See issue #233.
+    derefBase();
 }
 
 WebCLGL::ExtensionName WebCLGL::getName() const

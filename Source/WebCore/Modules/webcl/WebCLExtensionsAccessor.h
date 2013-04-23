@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+// FIXME: When WebCore switches on support for C++11,
+// replace NullTypePtr by C++11's nullptr_t.
 template <class T = NullTypePtr>
 class WebCLExtensionsAccessor {
 public:

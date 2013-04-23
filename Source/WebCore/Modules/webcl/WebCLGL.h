@@ -46,6 +46,8 @@ public:
     virtual ExtensionName getName() const;
 
     PassRefPtr<WebCLGLContext> createContext(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
+protected:
+    WebCLGL();
 };
 
 } // namespace WebCore
