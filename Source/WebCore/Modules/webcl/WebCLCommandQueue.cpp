@@ -108,12 +108,18 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, bool blockin
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror error = m_context->computeContext()->enqueueWriteBuffer(platformObject(), ccBuffer, blockingWrite, offset, bufferSize, data, events.size(), ccEvents.data(), ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
@@ -179,12 +185,18 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, bool blockin
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueWriteBufferRect(platformObject(), ccBuffer, blockingWrite,
         bufferOriginData.data(), hostOriginData.data(), regionData.data(), bufferRowPitch, bufferSlicePitch,
@@ -218,12 +230,18 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueReadBuffer(platformObject(), ccBuffer, blockingRead, offset,
         bufferSize, bufferArray, ccEvents.size(), ccEvents.data(), ccEvent);
@@ -264,12 +282,18 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, I
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueReadImage(platformObject(), ccImage, blockingRead, originData.data(),
         regionData.data(), rowPitch, slicePitch, ptr->baseAddress(), ccEvents.size(), ccEvents.data(), ccEvent);
@@ -298,12 +322,18 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* sourceBuffer, bool blocki
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueReadBuffer(platformObject(), ccBuffer, blockingRead, offset,
         bufferSize, ptr->baseAddress(), ccEvents.size(), ccEvents.data(), ccEvent);
@@ -350,12 +380,18 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blocking
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueReadBufferRect(platformObject(), ccBuffer, blockingRead,
         bufferOriginData.data(), hostOriginData.data(), regionData.data(), bufferRowPitch, bufferSlicePitch,
@@ -407,12 +443,18 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror computeContextError = m_context->computeContext()->enqueueNDRangeKernel(platformObject(), ccKernel,
         workItemDimensions, globalWorkOffsetCopy.data(), globalWorkSizeCopy.data(), localWorkSizeCopy.data(),
@@ -479,12 +521,18 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueWriteImage(platformObject(), ccImage, blockingWrite,
         originData.data(), regionData.data(), inputRowPitch, inputSlicePitch, ptr->baseAddress(), ccEvents.size(),
@@ -532,12 +580,18 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueCopyImage(platformObject(), ccSourceImage, ccTargetImage,
         sourceOriginData.data(), targetOriginData.data(), regionData.data(), ccEvents.size(), ccEvents.data(), ccEvent);
@@ -577,12 +631,18 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *sourceImage, WebCLB
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueCopyImageToBuffer(platformObject(), ccSourceImage, ccTargetBuffer,
         sourceOriginData.data(), regionData.data(), targetOffset, ccEvents.size(), ccEvents.data(), ccEvent);
@@ -626,12 +686,18 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *sourceBuffer, WebC
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueCopyBufferToImage(platformObject(), ccSourceBuffer, ccTargetImage,
         sourceOffset, targetOriginData.data(), regionData.data(), ccEvents.size(), ccEvents.data(), ccEvent);
@@ -657,12 +723,18 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueCopyBuffer(platformObject(), ccSourceBuffer, ccTargetBuffer,
         sourceOffset, targetOffset, sizeInBytes, ccEvents.size(), ccEvents.data(), ccEvent);
@@ -709,12 +781,18 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueCopyBufferRect(platformObject(), ccSourceBuffer, ccTargetBuffer,
         sourceOriginData.data(), targetOriginData.data(), regionData.data(), sourceRowPitch, sourceSlicePitch,
@@ -740,12 +818,14 @@ void WebCLCommandQueue::enqueueMarker(WebCLEvent* event, ExceptionCode& ec)
         return;
     }
 
-    if (!event || !event->getCLEvent()) {
+    if (!event || event->isReleased()) {
         ec = WebCLException::INVALID_EVENT;
         return;
     }
 
-    CCEvent ccEvent = event->getCLEvent();
+    CCEvent ccEvent = event->platformObject();
+    event->setAssociatedCommandQueue(this);
+
     CCerror computeContextError = m_context->computeContext()->enqueueMarker(platformObject(), &ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
@@ -767,12 +847,18 @@ void WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, const Vector<RefPtr<Web
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->getCLEvent();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueTask(platformObject(), ccKernel, ccEvents.size(), ccEvents.data(), ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);

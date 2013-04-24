@@ -37,33 +37,23 @@
 namespace WebCore {
 WebCLEvent::~WebCLEvent()
 {
-    ASSERT(m_clEvent);
-    CCerror computeContextErrorCode = m_context->computeContext()->releaseEvent(m_clEvent);
-
-    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
-    m_clEvent = 0;
+    releasePlatformObject();
 }
 
-PassRefPtr<WebCLEvent> WebCLEvent::create(WebCLContext* context, CCEvent Event)
+PassRefPtr<WebCLEvent> WebCLEvent::create()
 {
-    return adoptRef(new WebCLEvent(context, Event));
+    return adoptRef(new WebCLEvent());
 }
 
-WebCLEvent::WebCLEvent(WebCLContext* context, CCEvent event)
-    : m_context(context)
-    , m_clEvent(event)
+WebCLEvent::WebCLEvent()
+    : WebCLObject()
+    , m_commandQueue(0)
 {
-}
-
-
-WebCLContext* WebCLEvent::getContext()
-{
-    return m_context;
 }
 
 WebCLGetInfo WebCLEvent::getInfo(int paramName, ExceptionCode& ec)
 {
-    if (!m_clEvent) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_EVENT;
         return WebCLGetInfo();
     }
@@ -71,40 +61,30 @@ WebCLGetInfo WebCLEvent::getInfo(int paramName, ExceptionCode& ec)
     switch (paramName) {
     case ComputeContext::EVENT_COMMAND_EXECUTION_STATUS: {
         CCuint ccExecStatus = 0;
-        err = ComputeContext::getEventInfo(m_clEvent, paramName, &ccExecStatus);
+        err = ComputeContext::getEventInfo(platformObject(), paramName, &ccExecStatus);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccExecStatus));
         break;
     }
     case ComputeContext::EVENT_COMMAND_TYPE: {
         CCCommandType ccCommandType = 0;
-        err= ComputeContext::getEventInfo(m_clEvent, paramName, &ccCommandType);
+        err= ComputeContext::getEventInfo(platformObject(), paramName, &ccCommandType);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccCommandType));
         break;
     }
-    case ComputeContext::EVENT_COMMAND_QUEUE: {
-        /* FIXME: Cannot create a CommandQueue here */
-        /*CCCommandQueue ccCommandQueue = 0;
-        err = ComputeContext::getEventInfo(m_clEvent, paramName, sizeof(CCCommandQueue), &ccCommandQueue);
-        RefPtr<WebCLCommandQueue> commandQueue = WebCLCommandQueue::create(m_context, ccCommandQueue);
-        if (!commandQueue)
+    case ComputeContext::EVENT_CONTEXT: {
+        if (!m_commandQueue)
             return WebCLGetInfo();
 
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo(commandQueue.release());
-        */
-
-        break;
+        ASSERT(m_commandQueue->m_context);
+        return WebCLGetInfo(m_commandQueue->m_context);
     }
-    case ComputeContext::EVENT_CONTEXT: {
-        /* FIXME: Cannot create Context here.
-        err = ComputeContext::getEventInfo(m_clEvent, paramName, sizeof(myContext), myContext);;
-        if (err == CL_SUCCESS)
-            return WebCLGetInfo((String)myContext);
-        }
-        */
-        break;
+    case ComputeContext::EVENT_COMMAND_QUEUE: {
+        if (!m_commandQueue)
+            return WebCLGetInfo();
+
+        return WebCLGetInfo(m_commandQueue);
     }
     default:
         ec = WebCLException::INVALID_VALUE;
@@ -118,7 +98,7 @@ WebCLGetInfo WebCLEvent::getInfo(int paramName, ExceptionCode& ec)
 
 WebCLGetInfo WebCLEvent::getProfilingInfo(int paramName, ExceptionCode& ec)
 {
-    if (!m_clEvent) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_EVENT;
         return WebCLGetInfo();
     }
@@ -129,7 +109,7 @@ WebCLGetInfo WebCLEvent::getProfilingInfo(int paramName, ExceptionCode& ec)
     case ComputeContext::PROFILING_COMMAND_START:
     case ComputeContext::PROFILING_COMMAND_END: {
         CCulong eventProfilingInfo = 0;
-        err = ComputeContext::getEventProfilingInfo(m_clEvent, paramName, &eventProfilingInfo);
+        err = ComputeContext::getEventProfilingInfo(platformObject(), paramName, &eventProfilingInfo);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(eventProfilingInfo));
         }
@@ -143,22 +123,9 @@ WebCLGetInfo WebCLEvent::getProfilingInfo(int paramName, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-void WebCLEvent::setUserEventStatus(int execStatus, ExceptionCode& ec)
+void WebCLEvent::setAssociatedCommandQueue(WebCLCommandQueue* commandQueue)
 {
-    if (!m_clEvent) {
-        ec = WebCLException::INVALID_EVENT;
-        return;
-    }
-    CCerror err = 0;
-    if (execStatus == ComputeContext::COMPLETE || execStatus < 0)
-        err = clSetUserEventStatus(m_clEvent, execStatus);
-    else {
-        err = WebCLException::INVALID_VALUE;
-        return;
-    }
-    ASSERT(err != CL_SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-    return;
+    m_commandQueue = commandQueue;
 }
 
 WebCLEvent* WebCLEvent::thisPointer = 0;
@@ -174,9 +141,10 @@ void WebCLEvent::setCallback(int executionStatus, PassRefPtr<WebCLFinishCallback
     return;
 }
 
-CCEvent WebCLEvent::getCLEvent()
+void WebCLEvent::releasePlatformObjectImpl()
 {
-    return m_clEvent;
+    CCerror computeContextErrorCode = m_commandQueue->m_context->computeContext()->releaseEvent(platformObject());
+    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
 }
 
 } // namespace WebCore

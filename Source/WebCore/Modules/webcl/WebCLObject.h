@@ -43,24 +43,39 @@ public:
 
     T platformObject() const { return m_platformObject; }
 
+    bool isReleased() const { return m_isReleased; }
+
     void releasePlatformObject()
     {
         if (!m_platformObject)
             return;
 
+        ASSERT(m_isReleased);
+
         releasePlatformObjectImpl();
         m_platformObject = 0;
+        m_isReleased = true;
     }
 
 protected:
     WebCLObject(T object)
         : m_platformObject(object)
+        , m_isReleased(false)
     {
     }
+
+    // WebCLEvent uses this constructor
+    WebCLObject()
+        : m_platformObject(0)
+        , m_isReleased(false)
+    {
+    }
+
     virtual void releasePlatformObjectImpl() { }
 
 private:
     T m_platformObject;
+    bool m_isReleased;
 };
 
 } // WebCore

@@ -58,12 +58,12 @@ void WebCLGLCommandQueue::enqueueAcquireGLObjects(WebCLMemoryObject* memoryObjec
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
     // FIXME: Crash!?
     CCEvent* ccEvent = 0;
     if (event)
-        *ccEvent = event->getCLEvent();
+        *ccEvent = event->platformObject();
 
     CCerror err = m_context->computeContext()->enqueueAcquireGLObjects(platformObject(), 1, ccMemoryObjectsIDs,
         ccEvents.size(), ccEvents.data(), ccEvent);
@@ -87,12 +87,12 @@ void WebCLGLCommandQueue::enqueueReleaseGLObjects(WebCLMemoryObject* memoryObjec
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
     // FIXME: Crash!?
     CCEvent* ccEvent = 0;
     if (event)
-        *ccEvent = event->getCLEvent();
+        *ccEvent = event->platformObject();
 
     CCerror error = m_context->computeContext()->enqueueReleaseGLObjects(platformObject(), 1, &ccMemoryObjectsIDs,
         ccEvents.size(), ccEvents.data(), ccEvent);

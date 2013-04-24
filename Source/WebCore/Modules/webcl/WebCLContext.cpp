@@ -371,7 +371,8 @@ PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCoords, int addres
 
 PassRefPtr<WebCLEvent> WebCLContext::createUserEvent(ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    UNUSED_PARAM(ec);
+    /*if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -384,7 +385,9 @@ PassRefPtr<WebCLEvent> WebCLContext::createUserEvent(ExceptionCode& ec)
         return 0;
     }
     RefPtr<WebCLEvent> resultEvent = WebCLEvent::create(this, ccEvent);
-    return resultEvent.release();
+    return resultEvent.release();*/
+
+    return 0;
 }
 
 PassRefPtr<Image> WebCLContext::videoFrameToImage(HTMLVideoElement* video)

@@ -117,6 +117,7 @@ protected:
     WebCLContext* m_context;
 
 private:
+    friend class WebCLEvent;
     static CCCommandQueue createBaseInternal(WebCLContext*, int commandQueueProperty, const RefPtr<WebCLDevice>&, CCerror&);
 
     void enqueueWriteBufferBase(WebCLBuffer*, bool blockingWrite, int, int, void*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);

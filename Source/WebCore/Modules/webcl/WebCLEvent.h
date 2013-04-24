@@ -38,23 +38,22 @@ namespace WebCore {
 
 class WebCLContext;
 
-class WebCLEvent : public RefCounted<WebCLEvent> {
+class WebCLEvent : public WebCLObject<CCEvent> {
 public:
     virtual ~WebCLEvent();
-    static PassRefPtr<WebCLEvent> create(WebCLContext*, CCEvent);
+    static PassRefPtr<WebCLEvent> create();
     WebCLGetInfo getInfo(int, ExceptionCode&);
     WebCLGetInfo getProfilingInfo(int, ExceptionCode&);
-    void setUserEventStatus(int, ExceptionCode&);
     void setCallback(int, PassRefPtr<WebCLFinishCallback>, int , ExceptionCode&);
 
-    CCEvent getCLEvent();
+    void setAssociatedCommandQueue(WebCLCommandQueue* commandQueue);
     RefPtr<WebCLFinishCallback> m_finishCallback;
-    WebCLContext* getContext();
 private:
-    WebCLEvent(WebCLContext*, CCEvent);
-    WebCLContext* m_context;
-    CCEvent m_clEvent;
+    WebCLEvent();
+
+    void releasePlatformObjectImpl();
     static WebCLEvent* thisPointer;
+    WebCLCommandQueue* m_commandQueue;
 };
 
 } // namespace WebCore

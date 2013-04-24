@@ -64,7 +64,7 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCo
     Vector<CCEvent> ccEvents;
 
     for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->getCLEvent());
+        ccEvents.append(events[i]->platformObject());
 
     CCerror error = ComputeContext::waitForEvents(ccEvents);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
