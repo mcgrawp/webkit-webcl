@@ -49,26 +49,14 @@ class WebCLDevice;
 class WebCLProgram : public WebCLObject<CCProgram> {
 public:
     virtual ~WebCLProgram();
-    static PassRefPtr<WebCLProgram> create(WebCLContext*, const String&, ExceptionCode&);
+    static PassRefPtr<WebCLProgram> create(WebCLContext*, const String& programSource, ExceptionCode&);
 
-    WebCLGetInfo getInfo(int, ExceptionCode&);
-    WebCLGetInfo getBuildInfo(WebCLDevice*, int, ExceptionCode&);
+    WebCLGetInfo getInfo(int flag, ExceptionCode&);
+    WebCLGetInfo getBuildInfo(WebCLDevice*, int flag, ExceptionCode&);
 
-    void build(const Vector<RefPtr<WebCLDevice> >&, const String&, PassRefPtr<WebCLFinishCallback>, int, ExceptionCode&);
-    void build(const Vector<RefPtr<WebCLDevice> >& devices, const String& options, PassRefPtr<WebCLFinishCallback> finishCallback, ExceptionCode& ec)
-    {
-        return build(devices, options, finishCallback, 0, ec);
-    }
-    void build(const Vector<RefPtr<WebCLDevice> > devices, const String& options, ExceptionCode& ec)
-    {
-        return build(devices, options, 0, 0, ec);
-    }
-    void build(const Vector<RefPtr<WebCLDevice> >& devices, ExceptionCode& ec)
-    {
-        return build(devices, emptyString(), 0, 0, ec);
-    }
+    void build(const Vector<RefPtr<WebCLDevice> >&, const String& buildOptions, PassRefPtr<WebCLFinishCallback>, int userData, ExceptionCode&);
 
-    PassRefPtr<WebCLKernel> createKernel(const String&, ExceptionCode&);
+    PassRefPtr<WebCLKernel> createKernel(const String& kernelName, ExceptionCode&);
 
     Vector<RefPtr<WebCLKernel> > createKernelsInProgram(ExceptionCode&);
 

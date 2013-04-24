@@ -37,7 +37,7 @@
     sequence<WebCLImageDescriptor> getSupportedImageFormats(in long memFlags)
         raises(DOMException);
 
-    WebCLCommandQueue createCommandQueue(in [Optional] WebCLDevice device, in [Optional] long prop)
+    WebCLCommandQueue createCommandQueue(in [Optional=DefaultIsUndefined] WebCLDevice device, in [Optional=DefaultIsUndefined] long prop)
         raises(DOMException);
 
     WebCLProgram createProgram(in DOMString kernelSource)
@@ -47,7 +47,7 @@
         raises(DOMException);
     [StrictTypeChecking] WebCLBuffer createBuffer(in long memFlags, in HTMLCanvasElement srcCanvas)
         raises(DOMException);
-    [StrictTypeChecking] WebCLBuffer createBuffer(in long memFlags, in long sizeInBytes, in [Optional] ArrayBuffer srcBuffer)
+    [StrictTypeChecking] WebCLBuffer createBuffer(in long memFlags, in long sizeInBytes, in [Optional=DefaultIsUndefined] ArrayBuffer srcBuffer)
         raises(DOMException);
 
     WebCLSampler createSampler(in boolean normCords, in long addrMode, in long fltrMode)
@@ -63,6 +63,6 @@
         raises(DOMException);
     [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in HTMLImageElement imageElement)
         raises(DOMException);
-    [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in WebCLImageDescriptor descriptor, in [Optional] ArrayBuffer srcBuffer)
+    [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in WebCLImageDescriptor descriptor, in [Optional=DefaultIsUndefined] ArrayBuffer srcBuffer)
         raises(DOMException);
 };

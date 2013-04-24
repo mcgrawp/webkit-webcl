@@ -65,9 +65,9 @@ class WebCLDevice;
 class WebCLGetInfo;
 class WebCLCommandQueue;
 
-//NOTE: WebCLObject used by WebCLContext is a bit different, because the
-//other WebCL classes have as platformObject() a native opencl type. However
-//WebCLContext has as platformObject() an abstraction called ComputeContext
+// NOTE: WebCLObject used by WebCLContext is a bit different, because the
+// other WebCL classes have as platformObject() a native opencl type. However
+// WebCLContext has as platformObject() an abstraction called ComputeContext
 
 typedef ComputeContext* ComputeContextPtr;
 class WebCLContext : public WebCLObject<ComputeContextPtr> {
@@ -75,44 +75,29 @@ public:
     virtual ~WebCLContext();
     static PassRefPtr<WebCLContext> create(PassRefPtr<WebCLContextProperties>, CCerror&);
 
-    PassRefPtr<WebCLBuffer> createBuffer(int, int, ArrayBuffer*, ExceptionCode&);
-    PassRefPtr<WebCLBuffer> createBuffer(int memFlags, int sizeInBytes, ExceptionCode& ec)
-    {
-        return createBuffer(memFlags, sizeInBytes, 0, ec);
-    }
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, int, ExceptionCode&);
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice* devices, ExceptionCode& ec)
-    {
-        return createCommandQueue(devices, 0, ec);
-    }
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(ExceptionCode& ec)
-    {
-        return createCommandQueue(0, 0, ec);
-    }
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(int queueProperties, ExceptionCode& ec)
-    {
-        return createCommandQueue(0, queueProperties, ec);
-    }
+    PassRefPtr<WebCLBuffer> createBuffer(int memFlags, int sizeInBytes, ArrayBuffer*, ExceptionCode&);
+
+    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, int commandQueueProperty, ExceptionCode&);
 
     PassRefPtr<WebCLImage> createImage(int flag, WebCLImageDescriptor*, ArrayBuffer*, ExceptionCode&);
 
-    PassRefPtr<WebCLProgram> createProgram(const String&, ExceptionCode&);
+    PassRefPtr<WebCLProgram> createProgram(const String& programSource, ExceptionCode&);
 
-    PassRefPtr<WebCLSampler> createSampler(bool, int, int, ExceptionCode&);
+    PassRefPtr<WebCLSampler> createSampler(bool normalizedCoords, int addressingMode, int filterMode, ExceptionCode&);
 
     PassRefPtr<WebCLEvent> createUserEvent(ExceptionCode&);
 
-    WebCLGetInfo getInfo(int, ExceptionCode&);
+    WebCLGetInfo getInfo(int flag, ExceptionCode&);
 
-    Vector<RefPtr<WebCLImageDescriptor> > getSupportedImageFormats(int, ExceptionCode&);
+    Vector<RefPtr<WebCLImageDescriptor> > getSupportedImageFormats(int memFlag, ExceptionCode&);
 
     // Strawman proposal
-    PassRefPtr<WebCLBuffer> createBuffer(int, ImageData*, ExceptionCode&);
-    PassRefPtr<WebCLBuffer> createBuffer(int, HTMLCanvasElement*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createImage(int, ImageData*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createImage(int, HTMLCanvasElement*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createImage(int, HTMLImageElement*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createImage(int, HTMLVideoElement*, ExceptionCode&);
+    PassRefPtr<WebCLBuffer> createBuffer(int memFlag, ImageData*, ExceptionCode&);
+    PassRefPtr<WebCLBuffer> createBuffer(int memFlag, HTMLCanvasElement*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage(int memFlag, ImageData*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage(int memFlag, HTMLCanvasElement*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage(int memFlag, HTMLImageElement*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage(int memFlag, HTMLVideoElement*, ExceptionCode&);
 
     class LRUImageBufferCache {
     public:
@@ -139,7 +124,7 @@ protected:
     void createCommandQueueBase(WebCLDevice*, int queueProperties, ExceptionCode&, RefPtr<T>& out);
 
 private:
-    PassRefPtr<WebCLImage> createImage2DBase(int, int, int, const CCImageFormat&, void*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage2DBase(int flags, int width, int height, const CCImageFormat&, void*, ExceptionCode&);
 
     void releasePlatformObjectImpl();
 
