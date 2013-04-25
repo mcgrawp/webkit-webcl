@@ -82,10 +82,10 @@ public:
     void flush(ExceptionCode&);
 
     void enqueueWriteImage(WebCLImage*, bool blockingWrite,  Int32Array* origin, Int32Array* region, int inputRowPitch,
-        int inputSlicePitch, ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+        ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void enqueueReadImage(WebCLImage*, bool blockingWrite,  Int32Array* origin, Int32Array* region, int rowPitch,
-        int slicePitch, ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+        ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void enqueueCopyBuffer(WebCLBuffer*, WebCLBuffer*, int sourceOffset, int targetOffset, int sizeInBytes,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);

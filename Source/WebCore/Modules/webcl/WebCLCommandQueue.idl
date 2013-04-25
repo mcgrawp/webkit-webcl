@@ -99,7 +99,6 @@
             in Int32Array origin,
             in Int32Array region,
             in long inputRowPitch,
-            in long inputSlicePitch,
             in ArrayBufferView ptr,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
             in [Optional=DefaultIsUndefined] WebCLEvent event)
@@ -110,7 +109,6 @@
             in Int32Array origin,
             in Int32Array region,
             in long rowPitch,
-            in long slicePitch,
             in ArrayBufferView ptr,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
             in [Optional=DefaultIsUndefined] WebCLEvent event)

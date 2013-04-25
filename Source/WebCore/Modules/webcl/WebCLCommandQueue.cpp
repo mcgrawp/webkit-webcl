@@ -249,7 +249,7 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead
 }
 
 void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, Int32Array* origin, Int32Array* region,
-    int rowPitch, int slicePitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    int rowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
@@ -296,7 +296,7 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, I
     }
 
     CCerror err = m_context->computeContext()->enqueueReadImage(platformObject(), ccImage, blockingRead, originData.data(),
-        regionData.data(), rowPitch, slicePitch, ptr->baseAddress(), ccEvents.size(), ccEvents.data(), ccEvent);
+        regionData.data(), rowPitch, 0, ptr->baseAddress(), ccEvents.size(), ccEvents.data(), ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -486,7 +486,7 @@ void WebCLCommandQueue::flush(ExceptionCode& ec)
 }
 
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite, Int32Array* origin, Int32Array* region,
-    int inputRowPitch, int inputSlicePitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event,
+    int inputRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event,
     ExceptionCode& ec)
 {
     if (!platformObject()) {
@@ -535,7 +535,7 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
     }
 
     CCerror err = m_context->computeContext()->enqueueWriteImage(platformObject(), ccImage, blockingWrite,
-        originData.data(), regionData.data(), inputRowPitch, inputSlicePitch, ptr->baseAddress(), ccEvents.size(),
+        originData.data(), regionData.data(), inputRowPitch, 0, ptr->baseAddress(), ccEvents.size(),
         ccEvents.data(), ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
