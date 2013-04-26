@@ -31,7 +31,7 @@
 #include "WebCL.h"
 
 #include "ComputeContext.h"
-#include "ExtensionsCL.h"
+#include "ComputeExtensions.h"
 #include "WebCLContextProperties.h"
 #include "WebCLException.h"
 #include "WebCLExtension.h"
@@ -106,6 +106,7 @@ Vector<String> WebCL::getSupportedExtensions(ExceptionCode&)
 
 WebCLExtension* WebCL::getExtension(const String& name)
 {
+    ComputeExtensions::get().supports("cl_khr_gl_sharing");
     if (equalIgnoringCase(name, "KHR_GL_SHARING")) {
         if (!m_khrGLSharing)
             m_khrGLSharing = WebCLGL::create();

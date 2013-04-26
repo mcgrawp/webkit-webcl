@@ -31,7 +31,7 @@
 
 #include "WebCLDevice.h"
 
-#include "ExtensionsCL.h"
+#include "ComputeExtensions.h"
 #include "WebCL.h"
 #include "WebCLException.h"
 #include "WebCLInputChecker.h"

@@ -24,26 +24,28 @@
  */
 
 #include "config.h"
-#include "ExtensionsCL.h"
+
+#include "ComputeExtensions.h"
+#include "ComputeExtensionsTraits.h"
 
 namespace WebCore {
 
-ExtensionsCL& ExtensionsCL::get()
+ComputeExtensions& ComputeExtensions::get()
 {
-    DEFINE_STATIC_LOCAL(ExtensionsCL, singleton, ());
+    DEFINE_STATIC_LOCAL(ComputeExtensions, singleton, ());
     return singleton;
 }
 
-ExtensionsCL::ExtensionsCL()
+ComputeExtensions::ComputeExtensions()
     : m_initializedGlobalExtensions(false)
 {
 }
 
-ExtensionsCL::~ExtensionsCL()
+ComputeExtensions::~ComputeExtensions()
 {
 }
 
-bool ExtensionsCL::supports(const String& name)
+bool ComputeExtensions::supports(const String& name)
 {
     if (!m_initializedGlobalExtensions)
         initializeGlobalExtensions();
@@ -51,27 +53,27 @@ bool ExtensionsCL::supports(const String& name)
     return supportsExtension(name);
 }
 
-bool ExtensionsCL::supports(const String& name, CCPlatformID platformID)
+bool ComputeExtensions::supports(const String& name, CCPlatformID platformID)
 {
     if (!m_platformExtensions.contains(platformID)) {
         if (!cacheExtensionsForPlatform(platformID))
             return false;
     }
 
-    return supportsExtension(name, platformID);
+    return supportsExtension(name, platformID, m_platformExtensions);
 }
 
-bool ExtensionsCL::supports(const String& name, CCDeviceID deviceID)
+bool ComputeExtensions::supports(const String& name, CCDeviceID deviceID)
 {
     if (!m_deviceExtensions.contains(deviceID)) {
         if (!cacheExtensionsForDevice(deviceID))
             return false;
     }
 
-    return supportsExtension(name, deviceID);
+    return supportsExtension(name, deviceID, m_deviceExtensions);
 }
 
-void ExtensionsCL::initializeGlobalExtensions()
+void ComputeExtensions::initializeGlobalExtensions()
 {
     if (m_initializedGlobalExtensions)
         return;
@@ -80,7 +82,7 @@ void ExtensionsCL::initializeGlobalExtensions()
     m_initializedGlobalExtensions = true;
 }
 
-bool ExtensionsCL::supportsExtension(const WTF::String& name)
+bool ComputeExtensions::supportsExtension(const WTF::String& name) const
 {
     if (name == "cl_khr_gl_sharing") {
 #if PLATFORM(MAC)
@@ -93,33 +95,21 @@ bool ExtensionsCL::supportsExtension(const WTF::String& name)
     return m_globalExtensions.contains(name);
 }
 
-bool ExtensionsCL::supportsExtension(const WTF::String& name, CCPlatformID platformID)
+template <typename Type, typename Cache>
+bool ComputeExtensions::supportsExtension(const WTF::String& name, Type computeType, Cache& cache) const
 {
     if (name == "cl_khr_gl_sharing") {
 #if PLATFORM(MAC)
-        return m_platformExtensions.get(platformID).contains("cl_APPLE_gl_sharing");
+        return cache.get(computeType).contains("cl_APPLE_gl_sharing");
 #else
         // FIXME: implement support for other platforms.
         return false;
 #endif
     }
-    return m_platformExtensions.get(platformID).contains(name);
+    return cache.get(computeType).contains(name);
 }
 
-bool ExtensionsCL::supportsExtension(const WTF::String& name, CCDeviceID deviceID)
-{
-    if (name == "cl_khr_gl_sharing") {
-#if PLATFORM(MAC)
-        return m_deviceExtensions.get(deviceID).contains("cl_APPLE_gl_sharing");
-#else
-        // FIXME: implement support for other devices.
-        return false;
-#endif
-    }
-    return m_deviceExtensions.get(deviceID).contains(name);
-}
-
-void ExtensionsCL::cacheGlobalExtensions()
+void ComputeExtensions::cacheGlobalExtensions()
 {
     Vector<CCPlatformID> ccPlatforms;
     CCerror error = ComputeContext::getPlatformIDs(ccPlatforms);
@@ -154,6 +144,16 @@ void ExtensionsCL::cacheGlobalExtensions()
         for (size_t j = 0; j < toBeRemoved.size(); ++j)
             m_globalExtensions.remove(toBeRemoved[j]);
     }
+}
+
+bool ComputeExtensions::cacheExtensionsForDevice(CCDeviceID deviceID)
+{
+    return cacheExtensionsHelper(ComputeContext::getDeviceInfo<Vector<char> >, deviceID, ComputeContext::DEVICE_EXTENSIONS, m_deviceExtensions); 
+}
+
+bool ComputeExtensions::cacheExtensionsForPlatform(CCPlatformID platformID)
+{
+    return cacheExtensionsHelper(ComputeContext::getPlatformInfo<Vector<char> >, platformID, ComputeContext::PLATFORM_EXTENSIONS, m_platformExtensions); 
 }
 
 } // namespace WebCore
