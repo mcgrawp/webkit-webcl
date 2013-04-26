@@ -151,14 +151,6 @@ Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode&
 
 void WebCLProgram::finishCallback(cl_program program, void* userData)
 {
-    // FIXME :: Test and clean.
-    printf(" inside finishCallback() call back \n ");
-    if (!program)
-        printf(" program is NULL \n ");
-
-    if (!userData)
-        printf(" userData is NULL \n ");
-
     WebCLProgram* self = static_cast<WebCLProgram*>(WebCLProgram::thisPointer);
     if (self)
         self->m_finishCallback.get()->handleEvent(17);
@@ -202,7 +194,7 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
         ccDevices.append(devices[i]->platformObject());
 
     pfnNotify callback = m_finishCallback ? &WebCLProgram::finishCallback : 0;
-    CCerror err =  m_context->computeContext()->buildProgram(platformObject(), ccDevices, buildOptions, callback, &userData);
+    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, buildOptions, callback, callback ? &userData : 0);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
