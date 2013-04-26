@@ -31,7 +31,7 @@
 
 #include "WebCLSampler.h"
 
-#include "WebCL.h"
+#include "WebCLContext.h"
 #include "WebCLException.h"
 #include <wtf/Assertions.h>
 

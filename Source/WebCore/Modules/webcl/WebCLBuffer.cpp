@@ -31,7 +31,7 @@
 
 #include "WebCLBuffer.h"
 
-#include "WebCL.h"
+#include "WebCLContext.h"
 #include "WebCLInputChecker.h"
 
 namespace WebCore {

@@ -31,7 +31,7 @@
 
 #include "WebCLMemoryObject.h"
 
-#include "WebCL.h"
+#include "WebCLContext.h"
 
 namespace WebCore {
 

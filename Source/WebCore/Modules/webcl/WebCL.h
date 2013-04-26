@@ -44,11 +44,6 @@ public:
     static PassRefPtr<WebCL> create();
     virtual ~WebCL() { }
 
-    // FIXME: Remove the enum below in favor of constants.
-    enum {
-        CHAR_BUFFER_SIZE = 1024,
-    };
-
     Vector<RefPtr<WebCLPlatform> > getPlatforms(ExceptionCode&) const;
 
     void waitForEvents(const Vector<RefPtr<WebCLEvent> >&, ExceptionCode&);

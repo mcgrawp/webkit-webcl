@@ -29,6 +29,7 @@
 
 #if ENABLE(WEBCL)
 #include "JSWebCL.h"
+#include "JSWebCLCustom.h"
 
 #include "JSFloat32Array.h"
 #include "JSInt32Array.h"
@@ -36,16 +37,13 @@
 
 #include "JSWebCLCommandQueue.h"
 #include "JSWebCLContextProperties.h"
-#include "JSWebCLCustom.h"
 #include "JSWebCLDevice.h"
-#include "JSWebCLEvent.h"
 #include "JSWebCLGL.h"
 #include "JSWebCLImage.h"
 #include "JSWebCLImageDescriptor.h"
 #include "JSWebCLMemoryObject.h"
 #include "JSWebCLPlatform.h"
 #include "JSWebCLProgram.h"
-
 #include "WebCLExtension.h"
 #include "WebCLGL.h"
 

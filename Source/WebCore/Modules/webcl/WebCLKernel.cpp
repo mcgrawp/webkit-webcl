@@ -31,7 +31,7 @@
 
 #include "WebCLKernel.h"
 
-#include "WebCL.h"
+#include "WebCLContext.h"
 #include "WebCLException.h"
 #include "WebCLInputChecker.h"
 

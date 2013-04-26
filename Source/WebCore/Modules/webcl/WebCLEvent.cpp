@@ -31,7 +31,7 @@
 
 #include "WebCLEvent.h"
 
-#include "WebCL.h"
+#include "WebCLContext.h"
 #include "WebCLException.h"
 
 namespace WebCore {

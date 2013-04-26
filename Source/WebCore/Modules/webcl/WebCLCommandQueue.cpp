@@ -31,7 +31,6 @@
 
 #include "WebCLCommandQueue.h"
 
-#include "WebCL.h"
 #include "WebCLException.h"
 #include "WebCLInputChecker.h"
 #include <wtf/ArrayBuffer.h>

@@ -30,7 +30,8 @@
 #if ENABLE(WEBCL)
 #include "WebCLProgram.h"
 
-#include "WebCL.h"
+#include "WebCLContext.h"
+#include "WebCLException.h"
 #include "WebCLGetInfo.h"
 #include "WebCLInputChecker.h"
 
@@ -103,7 +104,8 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int infoType, Excep
     switch (infoType) {
     case ComputeContext::PROGRAM_BUILD_OPTIONS:
     case ComputeContext::PROGRAM_BUILD_LOG: {
-        Vector<char, WebCL::CHAR_BUFFER_SIZE> buffer;
+        // FIXME: Is 1024 needed here, Igor?
+        Vector<char, 1024> buffer;
         error = ComputeContext::getBuildInfo(platformObject(), ccDeviceID, infoType, sizeof(buffer), buffer.data());
         if (error == CL_SUCCESS)
             return WebCLGetInfo(String(buffer.data()));
