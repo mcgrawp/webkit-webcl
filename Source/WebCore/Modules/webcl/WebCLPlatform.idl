@@ -30,6 +30,5 @@ interface [
 ] WebCLPlatform {
     sequence<WebCLDevice> getDevices(in [Optional=DefaultIsUndefined] long deviceType) raises(DOMException);
     [StrictTypeChecking, Custom] void getInfo (in long platformInfo) raises(DOMException);
-    //DOMString getSupportedExtensions() raises(DOMException);
     [StrictTypeChecking, Custom] void getSupportedExtensions() raises(DOMException);
 };

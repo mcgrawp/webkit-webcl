@@ -31,6 +31,7 @@
 
 #include "WebCLDevice.h"
 
+#include "ExtensionsCL.h"
 #include "WebCL.h"
 #include "WebCLException.h"
 #include "WebCLInputChecker.h"
@@ -180,8 +181,11 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
 
 Vector<String> WebCLDevice::getSupportedExtensions(ExceptionCode&)
 {
-    // FIXME: Needs a proper implementation.
-    return Vector<String>();
+    Vector<String> result;
+    if (ComputeExtensions::get().supports("cl_khr_gl_sharing", platformObject()))
+        result.append("KHR_GL_SHARING");
+
+    return result;
 }
 
 void toWebCLDeviceArray(const Vector<CCDeviceID>& ccDevices, Vector<RefPtr<WebCLDevice> >& devices)

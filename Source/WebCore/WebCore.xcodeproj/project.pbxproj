@@ -1957,6 +1957,7 @@
 		753802CE170381CF00CB1FDE /* WebCLGLCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 753802C5170381BA00CB1FDE /* WebCLGLCommandQueue.h */; };
 		753802CF170381CF00CB1FDE /* WebCLGLContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 753802C7170381BA00CB1FDE /* WebCLGLContext.h */; };
 		753802D0170381CF00CB1FDE /* WebCLGLImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 753802C9170381BA00CB1FDE /* WebCLGLImage.h */; };
+		753BF9AA1720451100364CD9 /* ExtensionsCL.h in Headers */ = {isa = PBXBuildFile; fileRef = 753BF9A91720450C00364CD9 /* ExtensionsCL.h */; };
 		754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 754133A7102E00E800075D00 /* InspectorTimelineAgent.h */; };
 		754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */; };
 		75415AFD12958D5E003AD669 /* SpeechInputEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75415AF812958D5E003AD669 /* SpeechInputEvent.h */; };
@@ -1995,6 +1996,7 @@
 		75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */; };
 		757BCC0C16E887D900649DDB /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 757BCC0B16E887D900649DDB /* OpenCL.framework */; };
 		758978EC127090D60076D5A9 /* SpeechInputResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 758978EA127090D60076D5A9 /* SpeechInputResult.cpp */; };
+		759193EC1721B72E00D3CC0B /* ExtensionsCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 753BF9AB17204DAD00364CD9 /* ExtensionsCL.cpp */; };
 		75A1DC78170A4DF500E67DAF /* WebCLGLCommandQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75A1DC77170A4DF100E67DAF /* WebCLGLCommandQueue.cpp */; };
 		75B45B2516E85DCC0035C2A6 /* JSDOMWindowWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AF516E85B370035C2A6 /* JSDOMWindowWebCLEnvironment.cpp */; };
 		75B45B2616E85DCC0035C2A6 /* JSDOMWindowWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AF616E85B370035C2A6 /* JSDOMWindowWebCLEnvironment.h */; };
@@ -9576,6 +9578,8 @@
 		753802DA1703841E00CB1FDE /* JSWebCLGLImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLGLImage.h; sourceTree = "<group>"; };
 		753802DB1703841E00CB1FDE /* JSWebCLImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLImage.cpp; sourceTree = "<group>"; };
 		753802DC1703841E00CB1FDE /* JSWebCLImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLImage.h; sourceTree = "<group>"; };
+		753BF9A91720450C00364CD9 /* ExtensionsCL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionsCL.h; sourceTree = "<group>"; };
+		753BF9AB17204DAD00364CD9 /* ExtensionsCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionsCL.cpp; sourceTree = "<group>"; };
 		754133A7102E00E800075D00 /* InspectorTimelineAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTimelineAgent.h; sourceTree = "<group>"; };
 		754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTimelineAgent.cpp; sourceTree = "<group>"; };
 		75415AF812958D5E003AD669 /* SpeechInputEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputEvent.h; sourceTree = "<group>"; };
@@ -16991,6 +16995,8 @@
 		75D8AB1B16E745C900FE8264 /* opencl */ = {
 			isa = PBXGroup;
 			children = (
+				753BF9AB17204DAD00364CD9 /* ExtensionsCL.cpp */,
+				753BF9A91720450C00364CD9 /* ExtensionsCL.h */,
 				75D8AB1C16E745C900FE8264 /* ComputeContextCL.cpp */,
 			);
 			path = opencl;
@@ -27155,6 +27161,7 @@
 				7552DB59170386A8007B4690 /* JSWebCLGLCommandQueue.h in Headers */,
 				7552DB5B170386A8007B4690 /* JSWebCLGLContext.h in Headers */,
 				7552DB5D170386A8007B4690 /* JSWebCLGLImage.h in Headers */,
+				753BF9AA1720451100364CD9 /* ExtensionsCL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -30418,6 +30425,7 @@
 				75A1DC78170A4DF500E67DAF /* WebCLGLCommandQueue.cpp in Sources */,
 				7505781E170B331300021E29 /* WebCLGLBuffer.cpp in Sources */,
 				75BFE8FA170B6DCC001D6B3E /* WebCLGLImage.cpp in Sources */,
+				759193EC1721B72E00D3CC0B /* ExtensionsCL.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

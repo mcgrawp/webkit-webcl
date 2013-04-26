@@ -31,6 +31,7 @@
 #include "WebCL.h"
 
 #include "ComputeContext.h"
+#include "ExtensionsCL.h"
 #include "WebCLContextProperties.h"
 #include "WebCLException.h"
 #include "WebCLExtension.h"
@@ -96,8 +97,11 @@ PassRefPtr<WebCLContext> WebCL::createContext(PassRefPtr<WebCLContextProperties>
 
 Vector<String> WebCL::getSupportedExtensions(ExceptionCode&)
 {
-    // FIXME: Needs a proper implementation.
-    return Vector<String>();
+    Vector<String> result;
+    if (ComputeExtensions::get().supports("cl_khr_gl_sharing"))
+        result.append("KHR_GL_SHARING");
+
+    return result;
 }
 
 WebCLExtension* WebCL::getExtension(const String& name)

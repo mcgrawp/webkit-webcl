@@ -31,6 +31,8 @@
 #if ENABLE(WEBCL)
 
 #include "WebCLPlatform.h"
+
+#include "ExtensionsCL.h"
 #include "WebCL.h"
 #include "WebCLException.h"
 #include "WebCLInputChecker.h"
@@ -101,8 +103,11 @@ Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(int deviceType, Exception
 
 Vector<String> WebCLPlatform::getSupportedExtensions(ExceptionCode&)
 {
-    // FIXME: Needs a proper implementation.
-    return Vector<String>();
+    Vector<String> result;
+    if (ComputeExtensions::get().supports("cl_khr_gl_sharing", platformObject()))
+        result.append("KHR_GL_SHARING");
+
+    return result;
 }
 
 CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >& platforms)
