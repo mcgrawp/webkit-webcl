@@ -29,65 +29,58 @@
 
 #if ENABLE(WEBCL)
 
-#include "JSDOMGlobalObject.h"
 #include "DOMWindow.h"
+#include "JSDOMGlobalObject.h"
 #include "JSDOMWindow.h"
 #include "JSDOMBinding.h"
 #include "JSImageData.h"
+#include "JSWebCLPlatform.h"
+#include "JSWebCLCustom.h"
 #include "JSOESStandardDerivatives.h"
 #include "JSOESTextureFloat.h"
 #include "NotImplemented.h"
+#include "WebCLGetInfo.h"
+
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>
-#include <wtf/FastMalloc.h>
 #include <runtime/JSFunction.h>
-#include "WebCLGetInfo.h"
-#include "JSWebCLPlatform.h"
-#include "JSWebCLCustom.h"
-#include <stdio.h>
-
-using namespace JSC;
-using namespace std;
+#include <wtf/FastMalloc.h>
 
 namespace WebCore { 
 
 JSValue JSWebCLPlatform::getInfo(JSC::ExecState* exec)
 {
-	if (exec->argumentCount() != 1)
-		return throwSyntaxError(exec);
-	ExceptionCode ec = 0;
-	WebCLPlatform* platform = static_cast<WebCLPlatform*>(impl());	
-	if (exec->hadException())
-		return jsUndefined();
-	unsigned platform_info  = exec->argument(0).toInt32(exec);
-	if (exec->hadException())
-		return jsUndefined();
-	WebCLGetInfo info = platform->getInfo(platform_info, ec);
-	if (ec) {
-		setDOMException(exec, ec);
-		return jsUndefined();
-	}
-	return toJS(exec, globalObject(), info);
+    if (exec->argumentCount() != 1)
+        return throwSyntaxError(exec);
+
+    WebCLPlatform* platform = static_cast<WebCLPlatform*>(impl());
+    unsigned platformInfo = exec->argument(0).toInt32(exec);
+    if (exec->hadException())
+        return jsUndefined();
+    ExceptionCode ec = 0;
+    WebCLGetInfo info = platform->getInfo(platformInfo, ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+    return toJS(exec, globalObject(), info);
 }
 
 JSValue JSWebCLPlatform::getSupportedExtensions(ExecState* exec)
 {
-     WebCLPlatform* platform = static_cast<WebCLPlatform*>(impl());
-        ExceptionCode ec = 0;
+    WebCLPlatform* platform = static_cast<WebCLPlatform*>(impl());
+    ExceptionCode ec = 0;
     Vector<String> value = platform->getSupportedExtensions(ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+
     MarkedArgumentBuffer list;
     for (size_t ii = 0; ii < value.size(); ++ii)
         list.append(jsString(exec, value[ii]));
-        if (ec) {
-                setDOMException(exec, ec);
-                return jsUndefined();
-        }
     return constructArray(exec, 0, globalObject(), list);
 }
-
-
-
-
 
 } // namespace WebCore
 

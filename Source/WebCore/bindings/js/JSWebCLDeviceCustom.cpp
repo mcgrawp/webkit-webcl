@@ -51,42 +51,39 @@ using namespace std;
 
 namespace WebCore { 
 
-
 JSValue JSWebCLDevice::getInfo(JSC::ExecState* exec)
 {
-	if (exec->argumentCount() != 1)
-		return throwSyntaxError(exec);
+    if (exec->argumentCount() != 1)
+        return throwSyntaxError(exec);
 
-	ExceptionCode ec = 0;
-	WebCLDevice* device = static_cast<WebCLDevice*>(impl());
-	if (exec->hadException())
-		return jsUndefined();
-	unsigned device_type  = exec->argument(0).toInt32(exec);
-	if (exec->hadException())
-		return jsUndefined();
-	WebCLGetInfo info = device->getInfo(device_type, ec);
-	if (ec) {
-		setDOMException(exec, ec);
-		return jsUndefined();
-	}
-	return toJS(exec, globalObject(), info);
+    WebCLDevice* device = static_cast<WebCLDevice*>(impl());
+    unsigned deviceType = exec->argument(0).toInt32(exec);
+    if (exec->hadException())
+        return jsUndefined();
+    ExceptionCode ec = 0;
+    WebCLGetInfo info = device->getInfo(deviceType, ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+    return toJS(exec, globalObject(), info);
 }
 
 JSValue JSWebCLDevice::getSupportedExtensions(ExecState* exec)
 {
     WebCLDevice* device = static_cast<WebCLDevice*>(impl());
-	ExceptionCode ec = 0;
+    ExceptionCode ec = 0;
     Vector<String> value = device->getSupportedExtensions(ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+
     MarkedArgumentBuffer list;
     for (size_t ii = 0; ii < value.size(); ++ii)
         list.append(jsString(exec, value[ii]));
-	if (ec) {
-		setDOMException(exec, ec);
-		return jsUndefined();
-	}
     return constructArray(exec, 0, globalObject(), list);
 }
-
 
 } // namespace WebCore
 

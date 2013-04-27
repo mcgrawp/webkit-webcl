@@ -81,9 +81,10 @@ JSValue JSWebCL::getSupportedExtensions(ExecState* exec)
     }
 
     MarkedArgumentBuffer list;
-    for (size_t i = 0; i < value.size(); ++i)
+    for (size_t i = 0; i < value.size(); ++i) {
+        // FIXME: use jsStringWithCache?
         list.append(jsString(exec, value[i]));
-
+    }
     return constructArray(exec, 0, globalObject(), list);
 }
 

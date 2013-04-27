@@ -368,7 +368,6 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
     Int32Array* globalWorkSize, Int32Array* localWorkSize, const Vector<RefPtr<WebCLEvent> >& events,
     WebCLEvent* event, ExceptionCode& ec)
 {
-    printf(" DEBUG:: in enqueueNDRangeKernel\n");
     if (!platformObject()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;

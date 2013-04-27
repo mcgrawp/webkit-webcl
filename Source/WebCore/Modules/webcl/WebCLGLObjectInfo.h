@@ -43,30 +43,29 @@ class WebCL;
 
 class WebCLGLObjectInfo : public RefCounted<WebCLGLObjectInfo>
 {
-      public:
-      virtual ~WebCLGLObjectInfo();
-	 // static PassRefPtr<WebCLGLObjectInfo> create();
-	  PassRefPtr<WebCLGLObjectInfo> create();
+public:
+    virtual ~WebCLGLObjectInfo();
+    // static PassRefPtr<WebCLGLObjectInfo> create();
+    PassRefPtr<WebCLGLObjectInfo> create();
 
-	  static PassRefPtr<WebCLGLObjectInfo> create(unsigned int *, unsigned int  *);
-	  
-      WebCLGLObjectInfo();
-      WebCLGLObjectInfo(unsigned int *, unsigned int  *);
-     // long type;   // type of GL object attached to this memory object
-     //  any glObject;  // The GL object used to create this memory object
+    static PassRefPtr<WebCLGLObjectInfo> create(unsigned*, unsigned*);
 
+    WebCLGLObjectInfo();
+    WebCLGLObjectInfo(unsigned*, unsigned*);
+    // long type;   // type of GL object attached to this memory object
+    // any glObject;  // The GL object used to create this memory object
 
-    //  long glObjectType() const;
-      unsigned int glObjectType() const;
-      void setGlObjectType(unsigned int/*long*/);
+    // long glObjectType() const;
+    unsigned glObjectType() const;
+    void setGlObjectType(unsigned/*long*/);
 
-      unsigned int glObject() const;
-      void setGlObject(unsigned int);
-     
-      private:
-      //long objGLObjectType;
-      unsigned int objGLObjectType;
-      unsigned int objGLObject;
+    unsigned glObject() const;
+    void setGlObject(unsigned);
+
+private:
+    //long objGLObjectType;
+    unsigned objGLObjectType;
+    unsigned objGLObject;
 };
 
 }// namespace WebCore
