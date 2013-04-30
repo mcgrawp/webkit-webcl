@@ -50,6 +50,7 @@ PassRefPtr<WebCLPlatform> WebCLPlatform::create(CCPlatformID platformID)
 
 WebCLPlatform::WebCLPlatform(CCPlatformID platformID)
     : WebCLObject(platformID)
+    , WebCLExtensionsAccessor(platformID)
 {
 }
 
@@ -99,15 +100,6 @@ Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(int deviceType, Exception
 
     toWebCLDeviceArray(ccDevices, devices);
     return devices;
-}
-
-Vector<String> WebCLPlatform::getSupportedExtensions(ExceptionCode&)
-{
-    Vector<String> result;
-    if (ComputeExtensions::get().supports("cl_khr_gl_sharing", platformObject()))
-        result.append("KHR_GL_SHARING");
-
-    return result;
 }
 
 CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >& platforms)

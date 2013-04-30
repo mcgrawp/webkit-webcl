@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -25,39 +25,49 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCLDevice_h
-#define WebCLDevice_h
+#ifndef WebCLExtensionsAccessor_h
+#define WebCLExtensionsAccessor_h
 
 #if ENABLE(WEBCL)
 
-#include "ComputeTypes.h"
+#include "ComputeExtensions.h"
 #include "ExceptionCode.h"
-#include "WebCLExtensionsAccessor.h"
-#include "WebCLObject.h"
+#include "WebCLExtension.h"
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class WebCLContext;
-class WebCLGetInfo;
-
-class WebCLDevice : public WebCLObject<CCDeviceID> , public WebCLExtensionsAccessor<CCDeviceID> {
+template <class T = NullTypePtr>
+class WebCLExtensionsAccessor {
 public:
-    virtual ~WebCLDevice();
-    static PassRefPtr<WebCLDevice> create(CCDeviceID);
-    WebCLGetInfo getInfo(int, ExceptionCode&);
+    virtual ~WebCLExtensionsAccessor()
+    {
+    }
 
-private:
-    WebCLDevice(CCDeviceID);
+    T accessor() const
+    {
+        return m_accessor;
+    }
+
+    WebCLExtension* getExtension(const String& name);
+    Vector<String> getSupportedExtensions(ExceptionCode&);
+
+protected:
+    WebCLExtensionsAccessor(T object)
+        : m_accessor(object)
+    {
+    }
+
+    T m_accessor;
+
+    // NOTE: Instead of OwnPtr<WebCLGL> we declare m_khrGLSharing
+    //       as a WebCLExtension otherwise it won't build.
+    OwnPtr<WebCLExtension> m_khrGLSharing;
 };
 
-void toWebCLDeviceArray(const Vector<CCDeviceID>&, Vector<RefPtr<WebCLDevice> >&);
-
-} // namespace WebCore
+} // WebCore
 
 #endif // ENABLE(WEBCL)
-#endif // WebCLDevice_h
+
+#endif // WebCLExtensionsAccessor_h

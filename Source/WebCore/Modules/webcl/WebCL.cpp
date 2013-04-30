@@ -35,7 +35,6 @@
 #include "WebCLContextProperties.h"
 #include "WebCLException.h"
 #include "WebCLExtension.h"
-#include "WebCLGL.h"
 #include <wtf/PassRefPtr.h>
 
 using namespace JSC;
@@ -45,6 +44,11 @@ namespace WebCore {
 PassRefPtr<WebCL> WebCL::create()
 {
     return adoptRef(new WebCL);
+}
+
+WebCL::WebCL()
+    : WebCLExtensionsAccessor(0)
+{
 }
 
 Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec) const
@@ -93,28 +97,6 @@ PassRefPtr<WebCLContext> WebCL::createContext(PassRefPtr<WebCLContextProperties>
     RefPtr<WebCLContext> context;
     createContextBase(properties, ec, context);
     return context.release();
-}
-
-Vector<String> WebCL::getSupportedExtensions(ExceptionCode&)
-{
-    Vector<String> result;
-    if (ComputeExtensions::get().supports("cl_khr_gl_sharing"))
-        result.append("KHR_GL_SHARING");
-
-    return result;
-}
-
-WebCLExtension* WebCL::getExtension(const String& name)
-{
-    ComputeExtensions::get().supports("cl_khr_gl_sharing");
-    if (equalIgnoringCase(name, "KHR_GL_SHARING")) {
-        if (!m_khrGLSharing)
-            m_khrGLSharing = WebCLGL::create();
-
-        return m_khrGLSharing.get();
-    }
-
-    return 0;
 }
 
 } // namespace WebCore

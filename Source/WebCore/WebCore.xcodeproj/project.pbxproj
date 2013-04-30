@@ -1997,7 +1997,9 @@
 		75793ED40D0CE85B007FC0AC /* DOMMessageEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */; };
 		75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */; };
 		757BCC0C16E887D900649DDB /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 757BCC0B16E887D900649DDB /* OpenCL.framework */; };
+		758218D6172D728A00D44B3A /* WebCLExtensionsAccessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 758218D5172D728500D44B3A /* WebCLExtensionsAccessor.h */; };
 		758978EC127090D60076D5A9 /* SpeechInputResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 758978EA127090D60076D5A9 /* SpeechInputResult.cpp */; };
+		759073CB172D7AD1009EBA92 /* WebCLExtensionsAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759073CA172D7ACD009EBA92 /* WebCLExtensionsAccessor.cpp */; };
 		75A1DC78170A4DF500E67DAF /* WebCLGLCommandQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75A1DC77170A4DF100E67DAF /* WebCLGLCommandQueue.cpp */; };
 		75B45B2516E85DCC0035C2A6 /* JSDOMWindowWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B45AF516E85B370035C2A6 /* JSDOMWindowWebCLEnvironment.cpp */; };
 		75B45B2616E85DCC0035C2A6 /* JSDOMWindowWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B45AF616E85B370035C2A6 /* JSDOMWindowWebCLEnvironment.h */; };
@@ -9613,8 +9615,10 @@
 		75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMessageEvent.mm; sourceTree = "<group>"; };
 		75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEventInternal.h; sourceTree = "<group>"; };
 		757BCC0B16E887D900649DDB /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = /System/Library/Frameworks/OpenCL.framework; sourceTree = "<absolute>"; };
+		758218D5172D728500D44B3A /* WebCLExtensionsAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLExtensionsAccessor.h; sourceTree = "<group>"; };
 		758978EA127090D60076D5A9 /* SpeechInputResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechInputResult.cpp; sourceTree = "<group>"; };
 		758978EB127090D60076D5A9 /* SpeechInputResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputResult.h; sourceTree = "<group>"; };
+		759073CA172D7ACD009EBA92 /* WebCLExtensionsAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLExtensionsAccessor.cpp; sourceTree = "<group>"; };
 		75A1DC77170A4DF100E67DAF /* WebCLGLCommandQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLGLCommandQueue.cpp; sourceTree = "<group>"; };
 		75B45AAC16E85AB00035C2A6 /* JSWebCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCL.cpp; sourceTree = "<group>"; };
 		75B45AAD16E85AB00035C2A6 /* JSWebCL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCL.h; sourceTree = "<group>"; };
@@ -16906,6 +16910,8 @@
 		75D8AA8716E744EF00FE8264 /* webcl */ = {
 			isa = PBXGroup;
 			children = (
+				759073CA172D7ACD009EBA92 /* WebCLExtensionsAccessor.cpp */,
+				758218D5172D728500D44B3A /* WebCLExtensionsAccessor.h */,
 				753427A817120F210097419A /* WebCLGLContextProperties.idl */,
 				7505781D170B330F00021E29 /* WebCLGLBuffer.cpp */,
 				75BFE8F9170B6DC8001D6B3E /* WebCLGLImage.cpp */,
@@ -27166,6 +27172,7 @@
 				7552DB5D170386A8007B4690 /* JSWebCLGLImage.h in Headers */,
 				751A205F172B0B530063013C /* ComputeExtensions.h in Headers */,
 				751A2063172B125B0063013C /* ComputeExtensionsTraits.h in Headers */,
+				758218D6172D728A00D44B3A /* WebCLExtensionsAccessor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -30430,6 +30437,7 @@
 				7505781E170B331300021E29 /* WebCLGLBuffer.cpp in Sources */,
 				75BFE8FA170B6DCC001D6B3E /* WebCLGLImage.cpp in Sources */,
 				751A2061172B10240063013C /* ComputeExtensionsCL.cpp in Sources */,
+				759073CB172D7AD1009EBA92 /* WebCLExtensionsAccessor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

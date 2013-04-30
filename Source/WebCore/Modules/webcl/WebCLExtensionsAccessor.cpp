@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -25,39 +25,47 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCLDevice_h
-#define WebCLDevice_h
+#include "config.h"
 
 #if ENABLE(WEBCL)
 
-#include "ComputeTypes.h"
-#include "ExceptionCode.h"
 #include "WebCLExtensionsAccessor.h"
-#include "WebCLObject.h"
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include "WebCLGL.h"
 
 namespace WebCore {
 
-class WebCLContext;
-class WebCLGetInfo;
+template <class T>
+inline WebCLExtension* WebCLExtensionsAccessor<T>::getExtension(const String& name)
+{
+    if (equalIgnoringCase(name, "KHR_GL_SHARING")) {
+        if (!m_khrGLSharing)
+            m_khrGLSharing = WebCLGL::create();
 
-class WebCLDevice : public WebCLObject<CCDeviceID> , public WebCLExtensionsAccessor<CCDeviceID> {
-public:
-    virtual ~WebCLDevice();
-    static PassRefPtr<WebCLDevice> create(CCDeviceID);
-    WebCLGetInfo getInfo(int, ExceptionCode&);
+        return m_khrGLSharing.get();
+    }
 
-private:
-    WebCLDevice(CCDeviceID);
-};
+    return 0;
+}
 
-void toWebCLDeviceArray(const Vector<CCDeviceID>&, Vector<RefPtr<WebCLDevice> >&);
+template <class T>
+Vector<String> WebCLExtensionsAccessor<T>::getSupportedExtensions(ExceptionCode&)
+{
+    Vector<String> result;
+    if (m_accessor) {
+        if (ComputeExtensions::get().supports("cl_khr_gl_sharing", m_accessor))
+            result.append("KHR_GL_SHARING");
+    } else {
+        if (ComputeExtensions::get().supports("cl_khr_gl_sharing"))
+            result.append("KHR_GL_SHARING");
+    }
 
-} // namespace WebCore
+    return result;
+}
+
+template class WebCLExtensionsAccessor<CCPlatformID>;
+template class WebCLExtensionsAccessor<CCDeviceID>;
+template class WebCLExtensionsAccessor<NullTypePtr>;
+
+} // WebCore
 
 #endif // ENABLE(WEBCL)
-#endif // WebCLDevice_h

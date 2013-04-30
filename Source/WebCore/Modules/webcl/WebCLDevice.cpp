@@ -49,6 +49,7 @@ PassRefPtr<WebCLDevice> WebCLDevice::create(CCDeviceID deviceID)
 
 WebCLDevice::WebCLDevice(CCDeviceID deviceID)
     : WebCLObject(deviceID)
+    , WebCLExtensionsAccessor(deviceID)
 {
 }
 
@@ -177,15 +178,6 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
     ASSERT(err != ComputeContext::SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
-}
-
-Vector<String> WebCLDevice::getSupportedExtensions(ExceptionCode&)
-{
-    Vector<String> result;
-    if (ComputeExtensions::get().supports("cl_khr_gl_sharing", platformObject()))
-        result.append("KHR_GL_SHARING");
-
-    return result;
 }
 
 void toWebCLDeviceArray(const Vector<CCDeviceID>& ccDevices, Vector<RefPtr<WebCLDevice> >& devices)

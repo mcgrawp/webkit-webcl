@@ -56,18 +56,6 @@ JSValue JSWebCL::createContext(ExecState* exec)
     return parsePropertiesAndCreateContext<JSWebCL, WebCLContext>(exec, globalObject(), this, false /*CLGLSharing*/);
 }
 
-static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebCLExtension* extension)
-{
-    if (!extension)
-        return jsNull();
-    switch (extension->getName()) {
-    case WebCLExtension::KhrGLSharingName:
-        return toJS(exec, globalObject, static_cast<WebCLGL*>(extension));
-    }
-    ASSERT_NOT_REACHED();
-    return jsNull();
-}
-
 JSValue JSWebCL::getSupportedExtensions(ExecState* exec)
 {
     WebCL* cl = static_cast<WebCL*>(impl());
@@ -97,6 +85,18 @@ JSValue JSWebCL::getExtension(ExecState* exec)
         return jsUndefined();
     WebCLExtension* extension = webCL->getExtension(name);
     return toJS(exec, globalObject(), extension);
+}
+
+JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebCLExtension* extension)
+{
+    if (!extension)
+        return jsNull();
+    switch (extension->getName()) {
+    case WebCLExtension::KhrGLSharingName:
+        return toJS(exec, globalObject, static_cast<WebCLGL*>(extension));
+    }
+    ASSERT_NOT_REACHED();
+    return jsNull();
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInfo& info)

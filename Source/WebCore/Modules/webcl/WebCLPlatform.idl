@@ -31,4 +31,5 @@ interface [
     sequence<WebCLDevice> getDevices(in [Optional=DefaultIsUndefined] long deviceType) raises(DOMException);
     [StrictTypeChecking, Custom] void getInfo (in long platformInfo) raises(DOMException);
     [StrictTypeChecking, Custom] void getSupportedExtensions() raises(DOMException);
+    [StrictTypeChecking, Custom] any getExtension(in DOMString name);
 };

@@ -42,7 +42,10 @@ using namespace JSC;
 
 namespace WebCore {
 
+class WebCLExtension;
+
 JSValue toJS(ExecState*, JSDOMGlobalObject*, const WebCLGetInfo&);
+JSValue toJS(ExecState*, JSDOMGlobalObject*, WebCLExtension*);
 
 template <class T, class U>
 inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObject* globalObject, T* jsCustomObject, bool clGLSharing)

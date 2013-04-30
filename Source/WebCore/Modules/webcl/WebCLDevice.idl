@@ -30,4 +30,5 @@ interface [
 ] WebCLDevice {
     [StrictTypeChecking, Custom] void getInfo(in long deviceType) raises(DOMException);
     [StrictTypeChecking, Custom] void getSupportedExtensions() raises(DOMException);
+    [StrictTypeChecking, Custom] any getExtension(in DOMString name);
 };

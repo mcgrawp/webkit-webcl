@@ -39,7 +39,7 @@ namespace WebCore {
 
 class WebCLContextProperties;
 
-class WebCL : public RefCounted<WebCL> {
+class WebCL : public RefCounted<WebCL> , public WebCLExtensionsAccessor<> {
 public:
     static PassRefPtr<WebCL> create();
     virtual ~WebCL() { }
@@ -50,10 +50,9 @@ public:
 
     PassRefPtr<WebCLContext> createContext(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
 
-    Vector<String> getSupportedExtensions(ExceptionCode&);
-    WebCLExtension* getExtension(const String& extensionName);
-
 protected:
+    WebCL();
+
     template <class T>
     void inline createContextBase(PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec, RefPtr<T>& out);
 
@@ -61,10 +60,6 @@ private:
     RefPtr<WebCLContextProperties>& defaultProperties(ExceptionCode&);
     Vector<RefPtr<WebCLContext> > m_context;
     RefPtr<WebCLContextProperties> m_defaultProperties;
-
-    // NOTE: Instead of OwnPtr<WebCLGL> we declare m_khrGLSharing
-    //       as a WebCLExtension otherwise it won't build.
-    OwnPtr<WebCLExtension> m_khrGLSharing;
 };
 
 template <class T>

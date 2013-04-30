@@ -45,8 +45,9 @@ ComputeExtensions::~ComputeExtensions()
 {
 }
 
-bool ComputeExtensions::supports(const String& name)
+bool ComputeExtensions::supports(const String& name, NullTypePtr nullType)
 {
+    ASSERT_UNUSED(nullType, !nullType);
     if (!m_initializedGlobalExtensions)
         initializeGlobalExtensions();
 

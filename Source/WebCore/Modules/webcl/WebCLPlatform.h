@@ -31,6 +31,7 @@
 #if ENABLE(WEBCL)
 
 #include "WebCLDevice.h"
+#include "WebCLExtensionsAccessor.h"
 #include "WebCLGetInfo.h"
 
 #include <wtf/PassRefPtr.h>
@@ -42,12 +43,11 @@ namespace WebCore {
 
 class WebCLGetInfo;
 
-class WebCLPlatform : public WebCLObject<CCPlatformID> {
+class WebCLPlatform : public WebCLObject<CCPlatformID> , public WebCLExtensionsAccessor<CCPlatformID> {
 public:
     virtual ~WebCLPlatform();
     WebCLGetInfo getInfo (int, ExceptionCode&);
     Vector<RefPtr<WebCLDevice> > getDevices(int, ExceptionCode&) const;
-    Vector<String> getSupportedExtensions(ExceptionCode&);
 
 private:
     friend CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);

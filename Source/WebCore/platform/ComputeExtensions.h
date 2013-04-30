@@ -28,11 +28,15 @@
 
 #include "ComputeContext.h"
 #include "ComputeTypes.h"
+
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
+// FIXME: When c++11 is enforce in WebCore, nullptr_t should be used here.
+typedef void* NullTypePtr;
 
 class ComputeExtensions {
 public:
@@ -41,7 +45,7 @@ public:
     virtual ~ComputeExtensions();
 
     // Takes full name of extension; for example "cl_khr_gl_sharing".
-    bool supports(const String&);
+    bool supports(const String&, NullTypePtr = 0);
     bool supports(const String&, CCPlatformID);
     bool supports(const String&, CCDeviceID);
 
