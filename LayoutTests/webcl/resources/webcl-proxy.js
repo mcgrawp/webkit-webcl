@@ -70,6 +70,22 @@
                 }
 
                 return null;
+            },
+
+            /**
+             * Returns all WebCL supported extensions
+             */
+            getSupportedExtensions : function () {
+                return nativeWebCL.getSupportedExtensions();
+            },
+
+            /**
+             * Returns extension by name
+             *
+             * @param {name} Extension's name
+             */
+            getExtension : function (name) {
+                return nativeWebCL.getExtension(name);
             }
         };
 
@@ -172,7 +188,6 @@
                 var types;
                 var i;
                 var j;
-                var k;
 
                 console.group("WCLPlatform::getWCLDevice");
                 console.time("WCLPlatform::getWCLDevice");
@@ -180,7 +195,21 @@
                 //FIXME: Use DEVICE_TYPE_ALL when it has been working
                 deviceType = deviceType || nativeWebCL.DEVICE_TYPE_ALL;
 
-                types = [nativeWebCL.DEVICE_TYPE_CPU, nativeWebCL.DEVICE_TYPE_GPU];
+                console.info("deviceType", deviceType);
+
+                switch (deviceType) {
+                case nativeWebCL.DEVICE_TYPE_CPU:
+                    types = [deviceType];
+                    break;
+
+                case nativeWebCL.DEVICE_TYPE_GPU:
+                    types = [deviceType];
+                    break;
+
+                default:
+                    types = [nativeWebCL.DEVICE_TYPE_CPU, nativeWebCL.DEVICE_TYPE_GPU];
+                }
+
                 deviceGroup = [];
 
                 console.group("nativePlatforms");
@@ -879,7 +908,7 @@
                 console.group("WCLKernel::getWCLInfo");
                 console.time("WCLKernel::getWCLInfo");
 
-                if (!(wclDevice.id === "WCLDevice")) {
+                if (!isWCLType(wclDevice, "WCLDevice")) {
                     ex = new Error("WCLDevice expected");
                     console.error("Error: ", ex);
                     throw ex;
@@ -959,7 +988,7 @@
              */
             setWCLKernelArgs : function (index, arg, type) {
                 var i, wclBuffers = [], wclKernelGroup, nativeKernel;
-                var argType = (arg && arg.id === "WCLBuffer") ?  "buffer" : "scalar";
+                var argType = isWCLType(arg, "WCLBuffer") ?  "buffer" : "scalar";
 
                 console.group("WCLKernel::setWCLKernelArgs");
                 console.time("WCLKernel::setWCLKernelArgs");
@@ -1065,10 +1094,11 @@
                 var data;
                 var lastData;
                 var eventsList;
-                var readEvent;
+                //var readEvent;
                 var msg;
                 var i;
                 var j;
+                var k;
                 var ex;
                 var nativeEvent;
                 var nativeEventList;
@@ -1078,7 +1108,7 @@
                 console.info("args: ", args);
 
                 try {
-                    if (!(args.buffer && args.buffer.id === "WCLBuffer")) {
+                    if (!isWCLType(args.buffer, "WCLBuffer")) {
                         ex = new Error("No WebCLBuffer in the arguments.");
                         console.error("Invalid argument error", ex);
                         throw ex;
@@ -1115,7 +1145,7 @@
                         }
 
                         for (i in args.eventWaitList) {
-                            if (args.eventWaitList[i].id !== "WCLEvent") {
+                            if (!isWCLType(args.eventWaitList[i], "WCLEvent")) {
                                 ex = new Error("No WCLevent in the arguments.");
                             }
                         }
@@ -1221,8 +1251,9 @@
                 var numBytes;
                 var data;
                 var i;
+                var k;
                 var eventsList;
-                var readEvent;
+                //var writeEvent;
                 var ex;
                 var nativeEventList;
                 var nativeEvent;
@@ -1233,7 +1264,7 @@
                 console.info("args: ", args);
 
                 try {
-                    if (!args.buffer || !(args.buffer.id === "WCLBuffer")) {
+                    if (!isWCLType(args.buffer, "WCLBuffer")) {
                         ex = new Error("No WebCLBuffer in the arguments.");
                         console.error("Invalid arguments", ex);
                         throw ex;
@@ -1267,7 +1298,7 @@
                         }
 
                         for (i in args.eventWaitList) {
-                            if (args.eventWaitList[i].id !== "WCLEvent") {
+                            if (!isWCLType(args.eventWaitList[i], "WCLEvent")) {
                                 ex = new Error("No WCLevent in the arguments.");
                             }
                         }
@@ -1316,7 +1347,7 @@
 
                         //TODO: Uncomment the "nativeEvent" below when WebCLEvent is working.
                         nativeCommandQueue.enqueueWriteBuffer(nativeBuffer, block,
-                                                            offset, numBytes, data /*, nativeEventList */);
+                                                            offset, numBytes, data/*, nativeEventList */);
 
                         console.log("Passed native enqueueWriteBuffer");
                     }
@@ -1348,8 +1379,9 @@
                 var dstOffset;
                 var numBytes;
                 var i;
+                var k;
                 var eventsList;
-                var copyEvent;
+                //var copyEvent;
                 var ex;
                 var nativeEvent;
                 var nativeEventList;
@@ -1359,13 +1391,13 @@
                 console.info("args: ", args);
 
                 try {
-                    if (!(args.srcBuffer.id === "WCLBuffer")) {
+                    if (!isWCLType(args.srcBuffer, "WCLBuffer")) {
                         ex = new Error("No srcBuffer in the arguments.");
                         console.error("Invalid argument", ex);
                         throw ex;
                     }
 
-                    if (!(args.dstBuffer.id === "WCLBuffer")) {
+                    if (!isWCLType(args.dstBuffer, "WCLBuffer")) {
                         ex = new Error("No dstsBuffer in the arguments.");
                         console.error("Invalid argument", ex);
                         throw ex;
@@ -1396,7 +1428,7 @@
                         }
 
                         for (i in args.eventWaitList) {
-                            if (args.eventWaitList[i].id !== "WCLEvent") {
+                            if (!isWCLType(args.eventWaitList[i], "WCLEvent")) {
                                 ex = new Error("No WCLevent in the arguments.");
                             }
                         }
@@ -1466,18 +1498,16 @@
             enqueueNDRangeKernel : function (args) {
                 var nativeCommandQueue;
                 var nativeKernel;
-                var nativeKernels;
                 var nativeEvent;
                 var nativeEventList;
                 var offset;
                 var globalSize;
                 var localSize;
                 var eventList;
-                var rangeEvent;
+                //var rangeEvent;
                 var wclKernel;
                 var kernelGroup;
                 var i;
-                var j;
                 var k;
                 var ex;
 
@@ -1486,13 +1516,14 @@
                 console.info("args: ", args);
 
                 try {
-                    if (args.kernel.id !== "WCLKernel") {
+                    if (!isWCLType(args.kernel, "WCLKernel")) {
                         ex = new Error("No kernel in the arguments.");
                         console.error("Invalid arguments", ex);
                         throw ex;
                     }
 
-                    if (!(args.globalWorkOffset === null || args.globalWorkOffset instanceof Int32Array)) {
+                    if (!(args.globalWorkOffset === null ||
+                            args.globalWorkOffset instanceof Int32Array)) {
                         ex = new Error("No offset in the arguments.");
                         console.error("Invalid arguments", ex);
                         throw ex;
@@ -1517,7 +1548,7 @@
                         }
 
                         for (i in args.eventWaitList) {
-                            if (args.eventWaitList[i].id !== "WCLEvent") {
+                            if (!isWCLType(args.eventWaitList[i], "WCLEvent")) {
                                 ex = new Error("No WCLevent in the arguments.");
                             }
                         }

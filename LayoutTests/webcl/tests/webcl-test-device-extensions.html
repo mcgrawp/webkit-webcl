@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebCLDevice extensions</title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/webcl-test-utils.js"></script>
+
+<script>
+
+function runTest() {
+
+    /* Get WebCL */
+    var cl = webcl;
+    var platforms;
+    var devices = [];
+    var device;
+    var extensions;
+    var originalName;
+    var mixedName;
+    var objectExtension1;
+    var objectExtension2;
+    var i;
+    var j;
+
+    //TODO: Using this array while cl.DEVICE_TYPE_ALL isn't working
+    var deviceTypes = [cl.DEVICE_TYPE_GPU, cl.DEVICE_TYPE_CPU];
+
+    /* Test WebCL support */
+    if (!cl) {
+        testFailed("WebCL is not supported ...");
+        return;
+    }
+
+    /* Get platforms */
+    platforms = cl.getPlatforms();
+
+    if (!platforms || platforms.length === 0) {
+        testFailed("No WebCL platform was found ...");
+        return;
+    }
+
+    /* Get all devices in all platforms */
+    for (i = 0; i < platforms.length; i++) {
+        for (j = 0; j < deviceTypes.length; j++) {
+            devices.push(platforms[i].getDevices(deviceTypes[j])[0]);
+        }
+    }
+
+    if (!devices || devices.length === 0) {
+        testFailed("No WebCL device was found ...");
+        return;
+    }
+
+    /* Each device */
+    for (i = 0; i < devices.length; i++) {
+        device = devices[i];
+        extensions = device.getSupportedExtensions();
+
+        for (j = 0; j < extensions.length; j++) {
+            originalName = extensions[j];
+            mixedName = WebCLTestUtils.mixedString(originalName);
+
+            objectExtension1 = device.getExtension(mixedName);
+
+            if (!objectExtension1) {
+                testFailed("Failed to get extension " + originalName + " as " + mixedName);
+                return;
+            }
+
+            objectExtension2 = device.getExtension(originalName);
+
+            if (!objectExtension2) {
+                testFailed("Failed to get extension " + originalName);
+                return;
+            }
+
+            if (objectExtension1 !== objectExtension2) {
+                testFailed("Same extension should be the same object.");
+                return;
+            }
+        }
+    }
+
+    testPassed("Ok");
+}
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Testing extensions in WebCLDevice...");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

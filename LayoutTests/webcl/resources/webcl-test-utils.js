@@ -180,6 +180,26 @@ var WebCLTestUtils = (function () {
         }
     };
 
+    /**
+     *  Receives a string and returns a mixed string with upper and lower case
+     *
+     *  @param {str} String
+     */
+    var mixedString = function (str) {
+        var i;
+        var newChars = [];
+        var c;
+        var m;
+
+        for (i = 0; i < str.length; ++i) {
+            c = str.substr(i, 1);
+            m = (Math.random() > 0.5) ? c.toLowerCase() : c.toUpperCase();
+            newChars.push(m);
+        }
+
+        return newChars.join("");
+    };
+
     return {
         none: false,
         getRandomVector: getRandomVector,
@@ -187,7 +207,8 @@ var WebCLTestUtils = (function () {
         WCLBufferArg: WCLBufferArg,
         WCLScalarArg: WCLScalarArg,
         setWCLKernelArgs: setWCLKernelArgs,
-        readWCLBuffers: readWCLBuffers
+        readWCLBuffers: readWCLBuffers,
+        mixedString: mixedString
     };
 
 }());

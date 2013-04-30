@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Testing WebCL resource management</title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/kernels.js"></script>
+
+<script>
+
+var SIZE = 1024;
+
+var cl;
+var platforms;
+var platform;
+var devices;
+var contextProperties;
+var kernelSource;
+var context1;
+var context2;
+
+var buffer1;
+var commandQueue1;
+var program1;
+var image1;
+var sampler1;
+var event1;
+
+var buffer2;
+var commandQueue2;
+var program2;
+var image2;
+var sampler2;
+var event2;
+var bufferCopy;
+var commandQueueCopy;
+var programCopy;
+var imageCopy;
+var samplerCopy;
+var eventCopy;
+
+function runTest() {
+
+    try {
+        cl = webcl;
+
+        if (!cl) {
+            testFailed("WebCL is not available.");
+            return;
+        }
+
+        platforms = cl.getPlatforms();
+        if (platforms.length === 0) {
+            testFailed("No platforms available");
+            return;
+        }
+        platform = platforms[0];
+
+        //TODO: Use cl.DEVICE_TYPE_ALL
+        devices = platform.getDevices(cl.DEVICE_TYPE_GPU);
+        if (devices.length === 0) {
+            testFailed("No devices available");
+            return;
+        }
+
+        contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU, hint: null};
+        context1 = cl.createContext(contextProperties);
+        if (!context1) {
+            testFailed("Failed to create WebCLContext 1.");
+            return;
+        }
+
+        buffer1 = context1.createBuffer(cl.MEM_READ_ONLY, Int32Array.BYTES_PER_ELEMENT * SIZE);
+        if (!buffer1) {
+            testFailed("Failed to create WebCLBuffer 1.");
+            return;
+        }
+        commandQueue1 = context1.createCommandQueue(devices[0], null);
+        if (!commandQueue1) {
+            testFailed("Failed to create WebCLCommandQueue 1.");
+            return;
+        }
+        kernelSource = Kernels.square;
+        if (kernelSource === null) {
+            testFailed("No kernel named: " + "square");
+            return;
+        }
+        program1 = context1.createProgram(kernelSource);
+        if (!program1) {
+            testFailed("Failed to create WebCLProgram 1.");
+            return;
+        }
+        var formats = context1.getSupportedImageFormats(cl.MEM_READ_WRITE, cl.MEM_OBJECT_IMAGE2D);
+        formats[0].width = 10;
+        formats[0].height = 10;
+        image1 = context1.createImage(cl.MEM_READ_WRITE, formats[0], null);
+        if (!image1) {
+            testFailed("Failed to create WebCLImage 1.");
+            return;
+        }
+        sampler1 = context1.createSampler(cl.FALSE, cl.ADDRESS_NONE, cl.FILTER_LINEAR);
+        if (!sampler1) {
+            testFailed("Failed to create WebCLSampler 1.");
+            return;
+        }
+        event1 = context1.createUserEvent();
+        if (!event1) {
+            testFailed("Failed to create WebCLEvent 1.");
+            return;
+        }
+
+        /* Releasing context: all its descendant objects should be released also */
+        context1.release();
+        shouldBeNull("context1");
+        shouldBeNull("buffer1");
+        shouldBeNull("commandQueue1");
+        shouldBeNull("program1");
+        shouldBeNull("image1");
+        shouldBeNull("sampler1");
+        shouldBeNull("event1");
+
+        /* Releasing WebCL objects: all copies should be released also */
+        context2 = cl.createContext(contextProperties);
+        if (!context2) {
+            testFailed("Failed to create WebCLContext 2.");
+            return;
+        }
+
+        buffer2 = context2.createBuffer(cl.MEM_READ_ONLY, Int32Array.BYTES_PER_ELEMENT * SIZE);
+        if (!buffer2) {
+            testFailed("Failed to create WebCLBuffer 2.");
+            return;
+        }
+
+        bufferCopy = buffer2;
+        buffer2.release();
+        shouldBeNull("buffer2");
+        shouldBeNull("bufferCopy");
+
+        commandQueue2 = context2.createCommandQueue(devices[0], null);
+        if (!commandQueue2) {
+            testFailed("Failed to create WebCLCommandQueue 2.");
+            return;
+        }
+
+        commandQueueCopy = commandQueue2;
+        commandQueue2.release();
+        shouldBeNull("commandQueue2");
+        shouldBeNull("commandQueueCopy");
+
+        program2 = context2.createProgram(kernelSource);
+        if (!program2) {
+            testFailed("Failed to create WebCLProgram 2");
+            return;
+        }
+
+        programCopy = program2;
+        program2.release();
+        shouldBeNull("program2");
+        shouldBeNull("programCopy");
+
+        image2 = context2.createImage(cl.MEM_READ_WRITE, formats[0], null);
+        if (!image2) {
+            testFailed("Failed to create WebCLImage 2.");
+            return;
+        }
+
+        imageCopy = image2;
+        image2.release();
+        shouldBeNull("image2");
+        shouldBeNull("imageCopy");
+
+        sampler2 = context2.createSampler(cl.FALSE, cl.ADDRESS_NONE, cl.FILTER_LINEAR);
+        if (!sampler2) {
+            testFailed("Failed to create WebCLSampler 2");
+            return;
+        }
+
+        samplerCopy = sampler2;
+        sampler2.release();
+        shouldBeNull("sampler2");
+        shouldBeNull("samplerCopy");
+
+        event2 = context2.createUserEvent();
+        if (!event2) {
+            testFailed("Failed to create WebCLEvent 2");
+            return;
+        }
+
+        eventCopy = event2;
+        event2.release();
+        shouldBeNull("event2");
+        shouldBeNull("eventCopy");
+
+        context2.release();
+        shouldBeNull("context2");
+
+    } catch (e) {
+        testFailed("Test WebCL resource management has failed; Message: " + e.message);
+    }
+}
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description(document.title);
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+Testing WebCL resource management
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS context1 is null
+PASS buffer1 is null
+PASS commandQueue1 is null
+PASS program1 is null
+PASS image1 is null
+PASS sampler1 is null
+PASS event1 is null
+PASS buffer2 is null
+PASS bufferCopy is null
+PASS commandQueue2 is null
+PASS commandQueueCopy is null
+PASS program2 is null
+PASS programCopy is null
+PASS image2 is null
+PASS imageCopy is null
+PASS sampler2 is null
+PASS samplerCopy is null
+PASS event2 is null
+PASS eventCopy is null
+PASS context2 is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

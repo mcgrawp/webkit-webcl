@@ -9,17 +9,21 @@
 <script src="../resources/webcl-proxy.js"></script>
 
 <script>
+var count  = 0;
+var nativeEvent;
+var executionStatus;
+
+var clCallback = function eventCallback() {
+    count++;
+};
+
 
 function runTest() {
 
-    var clCallback = function eventCallback() {
-        alert("WebCLEventCallback!!");
-    };
-
-	var globalWorkSize = new Int32Array(1);
+    var i;
+    var globalWorkSize = new Int32Array(1);
 	var localWorkSize  = new Int32Array(1);
 	var results        = new Uint32Array(1);
-	var events = [];
 
     try {
 
@@ -32,11 +36,15 @@ function runTest() {
             return;
         }
 
+        /* Execution events */
+        executionStatus = [proxy.COMPLETE, proxy.RUNNING, proxy.SUBMITTED, proxy.QUEUED];
+
+
         /* Get wcl objects */
         var platform = proxy.getWCLPlatform();
-        var device =   platform.getWCLDevice();
-        var context =  platform.createWCLContext();
-        var queue =    context.createWCLCommandQueue(device, null);
+        var device   = platform.getWCLDevice(proxy.DEVICE_TYPE_GPU);
+        var context  = platform.createWCLContext(device);
+        var queue    = context.createWCLCommandQueue(device, null);
 
         var kernelSource = Kernels.kernel_item;
         if (kernelSource === null) {
@@ -54,23 +62,35 @@ function runTest() {
         //Create buffer for output
         var output = context.createWCLBuffer(proxy.MEM_WRITE_ONLY, Uint32Array.BYTES_PER_ELEMENT, null);
         globalWorkSize[0] = 1;
-        localWorkSize[0] = 1;
+        localWorkSize[0]  = 1;
 
         kernel.setWCLKernelArgs(0, output, null);
 
-        var wclEvent = context.createWCLUserEvent();
-        wclEvent.setCallback(proxy.STOPPED, clCallback);
+        var events = [];
+        var testEvent;
+
+        /* Create a event for each execution status */
+        for (i in executionStatus) {
+            events[i] = context.createWCLUserEvent();
+            events[i].setCallback(executionStatus[i], clCallback);
+
+            nativeEvent = events[i].getEventGroup()[0].nativeEvent;
+            shouldBeTrue("nativeEvent instanceof WebCLEvent");
+        }
 
         var ndRangeDict = {};
-        ndRangeDict.kernel = kernel;
-        ndRangeDict.globalWorkOffset = new Int32Array(0);
-        ndRangeDict.globalWorkSize = globalWorkSize;
-        ndRangeDict.localWorkSize = localWorkSize;
+        ndRangeDict.kernel              = kernel;
+        ndRangeDict.globalWorkOffset    = new Int32Array(0);
         ndRangeDict.globalWorkOffset[0] = 0;
-        ndRangeDict.eventWaitList = [wclEvent];
+        ndRangeDict.globalWorkSize      = globalWorkSize;
+        ndRangeDict.localWorkSize       = localWorkSize;
+        ndRangeDict.eventWaitList       = events;
+
         queue.enqueueNDRangeKernel(ndRangeDict);
 
         queue.finish();
+
+        shouldBeTrue("count === executionStatus.length");
 
     } catch (e) {
         testFailed("WebCLEvent test failed ; Message: " + e.message);
