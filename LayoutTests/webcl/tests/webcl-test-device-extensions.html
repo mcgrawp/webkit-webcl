@@ -75,8 +75,12 @@ function runTest() {
                 return;
             }
 
-            if (objectExtension1 !== objectExtension2) {
-                testFailed("Same extension should be the same object.");
+            /* Create an arbitrary property in objectExtension1 to check in
+               in objectExtension2 */
+            objectExtension1.newProperty = true;
+
+            if (!objectExtension2.newProperty) {
+                testFailed("Same extension (" + originalName + ") should be the same object.");
                 return;
             }
         }

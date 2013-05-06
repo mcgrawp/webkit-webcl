@@ -8,7 +8,7 @@ PASS commandQueue1 is null
 PASS program1 is null
 PASS image1 is null
 PASS sampler1 is null
-PASS event1 is null
+PASS userEvent1 is null
 PASS buffer2 is null
 PASS bufferCopy is null
 PASS commandQueue2 is null
@@ -19,7 +19,7 @@ PASS image2 is null
 PASS imageCopy is null
 PASS sampler2 is null
 PASS samplerCopy is null
-PASS event2 is null
+PASS userEvent2 is null
 PASS eventCopy is null
 PASS context2 is null
 PASS successfullyParsed is true

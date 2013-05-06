@@ -6,9 +6,9 @@
 	</head>
 
 	<body onload="setup();">
-	
+
 	<!-- Kernel is referenced by ID. -->
-	
+
 <script id="rndGenerator" type="x-kernel">
 /**
  * A random number generator based on the Tiny Encryption Algorithm (TEA),
@@ -112,48 +112,51 @@ __kernel void clRandom1D(__global uchar4* dst,
     <script type="text/javascript">
         var imageDataObject, imagePixelArray, width, height, ctx2d, bufSize, bufferA;
         var seed = 0;
-    
+
         function setup(){
             var dstCanvas = document.getElementById("dstCanvas");
 
             /* Initialize example framework */
-            Framework.initEnv(); 
+            Framework.initEnv();
             
+            /* Show fps rate */
+            Metrics.SHOW_FPS = true;
+
             ctx2d = dstCanvas.getContext("2d");
             width = dstCanvas.width;
             height = dstCanvas.height;
             imageDataObject = ctx2d.createImageData(width, height);
             imagePixelArray = imageDataObject.data;
             bufSize = width*height*4;
-            
+
         }
-    
+
         /* This code is called at 1st execution */
         Framework.clCreateCode = function(){
             /* Put some code to create program, create kernel, create command queue
             and create buffers */
-            
+
             Framework.createProgram('rndGenerator');
             Framework.createCommandQueue();
             Framework.createKernel('clRandom1D');
-            
+
             bufferA = Framework.createBuffer(webcl.MEM_READ_WRITE, bufSize);
         };
-        
+
         /* Add a function to runCL Buttom */
         Framework.clCode = function() {
-    
+
             var globalWS = new Int32Array(1);
             var length = width*height;
             globalWS[0] = length;
-            
+
             var args = new Array();
             args[0] = bufferA,
             args[1] = [length, 5];
             args[2] = [seed++, 5];
 
             Framework.setKernelArgs(args);
-            
+
             /* Execute kernel */
             Framework.enqueueNDRangeKernel(globalWS);
             Framework.finish();
@@ -162,17 +165,17 @@ __kernel void clRandom1D(__global uchar4* dst,
             Framework.readBuffer(bufferA, bufSize, imagePixelArray);
 
             /* Change image */
-            ctx2d.putImageData(imageDataObject, 0, 0);            
+            ctx2d.putImageData(imageDataObject, 0, 0);
         };
-        
+
         /* Add a function do runJS buttom */
         Framework.jsCode = function() {
-            
+
             seed++;
 
             var pixels = imagePixelArray;
             var imageData = imageDataObject;
-            
+
             var delta = 0x9E3779B9;
             var k0 = 0xA341316C;
             var k1 = 0xC8013EA4;
@@ -203,19 +206,20 @@ __kernel void clRandom1D(__global uchar4* dst,
 
             ctx2d.putImageData(imageData, 0, 0);
             var megabytes = (pixels.length / (1024*1024)).toFixed(0);
-            
+
         }
-    </script>	
-	
+
+    </script>
+
 	<div id='showStatus'></div>
-	
+
 	<div id="conteinerControl" style="float: left;">
-	
+
 	    <div style="float: left;">
 	       <button id="btJS">Run JS Code</button>
 	    </div>
-	
-	    <div style="float: left;">   
+
+	    <div style="float: left;">
 	       <button id="btCL">Run CL Code</button>
 	        <div id="listWebCLPlatforms"></div>
 	        <div id="listWebCLDevices"></div>
@@ -226,15 +230,15 @@ __kernel void clRandom1D(__global uchar4* dst,
         <div style="float: left;">
            <button id="btStop">Stop</button>
         </div>
-    
+
 	</div>
-	
+
 	<div id="conteinerMetrics"></div>
-		
+
 	<hr style="clear: both;"/><br />
    <div>
-    <canvas id="dstCanvas" width="512" height="512" style="background:black; height:100%;"></canvas> 
-   </div> 
-   	
+    <canvas id="dstCanvas" width="512" height="512" style="background:black; height:100%;"></canvas>
+   </div>
+
 	</body>
 </html>

@@ -24,14 +24,14 @@ var commandQueue1;
 var program1;
 var image1;
 var sampler1;
-var event1;
+var userEvent1;
 
 var buffer2;
 var commandQueue2;
 var program2;
 var image2;
 var sampler2;
-var event2;
+var userEvent2;
 var bufferCopy;
 var commandQueueCopy;
 var programCopy;
@@ -103,9 +103,9 @@ function runTest() {
             testFailed("Failed to create WebCLSampler 1.");
             return;
         }
-        event1 = context1.createUserEvent();
-        if (!event1) {
-            testFailed("Failed to create WebCLEvent 1.");
+        userEvent1 = context1.createUserEvent();
+        if (!userEvent1) {
+            testFailed("Failed to create WebCLUserEvent 1.");
             return;
         }
 
@@ -117,7 +117,7 @@ function runTest() {
         shouldBeNull("program1");
         shouldBeNull("image1");
         shouldBeNull("sampler1");
-        shouldBeNull("event1");
+        shouldBeNull("userEvent1");
 
         /* Releasing WebCL objects: all copies should be released also */
         context2 = cl.createContext(contextProperties);
@@ -181,15 +181,15 @@ function runTest() {
         shouldBeNull("sampler2");
         shouldBeNull("samplerCopy");
 
-        event2 = context2.createUserEvent();
-        if (!event2) {
-            testFailed("Failed to create WebCLEvent 2");
+        userEvent2 = context2.createUserEvent();
+        if (!userEvent2) {
+            testFailed("Failed to create WebCLUserEvent 2");
             return;
         }
 
-        eventCopy = event2;
-        event2.release();
-        shouldBeNull("event2");
+        eventCopy = userEvent2;
+        userEvent2.release();
+        shouldBeNull("userEvent2");
         shouldBeNull("eventCopy");
 
         context2.release();
