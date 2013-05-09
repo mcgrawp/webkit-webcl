@@ -39,10 +39,11 @@
 #include "SharedBuffer.h"
 #include "WebCLBuffer.h"
 #include "WebCLCommandQueue.h"
+#include "WebCLContextProperties.h"
 #include "WebCLDevice.h"
 #include "WebCLException.h"
-#include "WebCLContextProperties.h"
 #include "WebCLGetInfo.h"
+#include "WebCLInputChecker.h"
 
 namespace WebCore {
 
@@ -160,6 +161,10 @@ inline void WebCLContext::createCommandQueueBase(WebCLDevice* device, int queueP
         ec = WebCLException::INVALID_CONTEXT;
         return;
     }
+    if (!WebCLInputChecker::isValidCommandQueueProperty(queueProperties)) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
 
     RefPtr<WebCLDevice> webCLDevice;
     if (!device) {
@@ -171,6 +176,9 @@ inline void WebCLContext::createCommandQueueBase(WebCLDevice* device, int queueP
                 && (info.getUnsignedInt() == static_cast<unsigned>(queueProperties) || !queueProperties)) {
                 webCLDevice = webCLDevices[i];
                 break;
+            } else {
+                ec = WebCLException::INVALID_QUEUE_PROPERTIES;
+                return;
             }
         }
         //FIXME: Spec needs to say what we need to do here

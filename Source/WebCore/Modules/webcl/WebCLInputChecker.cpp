@@ -181,6 +181,17 @@ bool isValidChannelType(int value)
     return false;
 }
 
+bool isValidCommandQueueProperty(int value)
+{
+    switch (value) {
+    case 0: // 0 as integer value CommandQueueProperty is optional.
+    case ComputeContext::QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE:
+    case ComputeContext::QUEUE_PROFILING_ENABLE:
+        return true;
+    }
+    return false;
+}
+
 }
 }
 

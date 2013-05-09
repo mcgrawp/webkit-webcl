@@ -43,7 +43,7 @@ bool isValidAddressingMode(int);
 bool isValidFilterMode(int);
 bool isValidChannelType(int);
 bool isValidChannelOrder(int);
-
+bool isValidCommandQueueProperty(int);
 template<class T>
 bool validateWebCLObject(WebCLObject<T>* object)
 {
