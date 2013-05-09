@@ -50,7 +50,7 @@ public:
         if (!m_platformObject)
             return;
 
-        ASSERT(m_isReleased);
+        ASSERT(!m_isReleased);
 
         releasePlatformObjectImpl();
         m_platformObject = 0;
