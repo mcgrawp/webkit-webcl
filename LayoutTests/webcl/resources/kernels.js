@@ -51,5 +51,20 @@ var Kernels =
               return;\
           }\
           vectorOut[x] = vectorIn1[x] * vectorIn2[x];\
+      }",
+  "compute_sin": "\
+      kernel void compute_sin(global float4 *vbo, int width, int height, int seq) {\
+          int i = get_global_id(0);\
+          float a, b, w, h;\
+          float4 point;\
+          w = (float) width;\
+          h = (float) height;\
+          a = h / 4;\
+          b = w / 2;\
+          point.x = i;\
+          point.y = b + a * sin(3.1412 * 2 * ( ( (float)(i + seq) ) / w) );\
+          point.z = i + 1;\
+          point.w = b + a * sin(3.1412 * 2 * ( ( (float)(i + 1 + seq) ) / w) );\
+          vbo[i] = point;\
       }"
 };

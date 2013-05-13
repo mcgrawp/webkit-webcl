@@ -98,6 +98,7 @@
                 API[constants] = nativeWebCL[constants];
             }
         }
+        API.kernelArgumentTypes = WebCLKernelArgumentTypes;
 
         console.info("WebCLProxy", API);
         console.timeEnd("Init");
@@ -206,6 +207,10 @@
                     types = [deviceType];
                     break;
 
+                case nativeWebCL.DEVICE_TYPE_DEFAULT:
+                    types = [deviceType];
+                    break;
+
                 default:
                     types = [nativeWebCL.DEVICE_TYPE_CPU, nativeWebCL.DEVICE_TYPE_GPU];
                 }
@@ -256,10 +261,11 @@
              * @param
              * @returns
              */
-            createWCLContext : function (wclDevice) {
+            createWCLContext : function (wclDevice, interop) {
                 var deviceGroup;
                 var contextDic;
                 var contextGroup;
+                var nativeExtension;
                 var nativeContext;
                 var nativeProperties;
                 var i;
@@ -270,6 +276,13 @@
 
                 if (!wclDevice) {
                     wclDevice = this.getWCLDevice();
+                }
+
+                if (interop) {
+                    nativeExtension = nativeWebCL.getExtension("KHR_GL_SHARING");
+                    if (!nativeExtension) {
+                        throw new Error("GL Extension is not supported");
+                    }
                 }
 
                 console.info("wcDevice: ", wclDevice);
@@ -289,12 +302,21 @@
                     nativeProperties = {};
                     nativeProperties.platform = deviceGroup[i].nativePlatform;
                     nativeProperties.devices = deviceGroup[i].nativeDevices;
+                    nativeProperties.deviceType = nativeWebCL.DEVICE_TYPE_DEFAULT;
                     //FIXME: There is other value to hint?
                     nativeProperties.hint = null;
 
                     console.info("nativeProperties: ", nativeProperties);
 
-                    nativeContext = nativeWebCL.createContext(nativeProperties);
+                    try {
+                        if (!interop) {
+                            nativeContext = nativeWebCL.createContext(nativeProperties);
+                        } else {
+                                nativeContext = nativeExtension.createContext(nativeProperties);
+                        }
+                    } catch(e) {
+                        throw new Error("Create Context Exception; Message: ", e.message);
+                    }
 
                     console.info("nativeContext: ", nativeContext);
 
@@ -471,13 +493,12 @@
                     console.info("bufferDic: ", bufferDic);
                 }
 
-
                 console.groupEnd();
                 console.info("bufferGroup: ", bufferDic);
                 console.timeEnd("WCLContext::createWCLBuffer");
                 console.groupEnd();
 
-                return new WCLBuffer(bufferGroup);
+                return new WCLBuffer(bufferGroup, "buffer");
             },
 
             /**
@@ -654,6 +675,51 @@
                 console.groupEnd();
 
                 return new WCLEvent(eventGroup);
+            },
+
+            createFromGLBuffer : function(memFlags, glBuffer) {
+                var nativeContext;
+                var nativeBufferCLGL;
+                var nativeDevices;
+                var bufferDic;
+                var bufferGroup;
+                var i;
+                var j;
+
+                console.group("WCLContext::createWCLBuffer");
+                console.time("WCLContext::createWCLBuffer");
+
+                console.group("contextGroup");
+
+                bufferGroup = [];
+                for (i in contextGroup) {
+                    nativeContext = contextGroup[i].nativeContext;
+                    nativeDevices = contextGroup[i].nativeDevices;
+
+                    // create a WCLBuffer for each device associate to a context
+                    for (j in nativeDevices) {
+                        nativeBufferCLGL = nativeContext.createFromGLBuffer(memFlags,
+                                                                     glBuffer);
+
+                        console.info("memFlags: ", memFlags, "glBuffer: ", glBuffer);
+                        console.log("Created nativeBufferCLGL: ", nativeBufferCLGL);
+
+                        bufferDic = {};
+                        bufferDic.nativePlatform = contextGroup[i].nativePlatform;
+                        bufferDic.nativeDevices = [contextGroup[i].nativeDevices[j]];
+                        bufferDic.nativeBuffer = nativeBufferCLGL;
+                        bufferGroup.push(bufferDic);
+                    }
+
+                    console.info("bufferDic: ", bufferDic);
+                }
+
+                console.groupEnd();
+                console.info("bufferGroup: ", bufferDic);
+                console.timeEnd("WCLContext::createWCLBuffer");
+                console.groupEnd();
+
+                return new WCLBuffer(bufferGroup, "bufferCLGL");
             }
 
         };
@@ -807,10 +873,21 @@
      *                          [ {nativePlatform: 'native platform',
      *                              nativeDevice: 'native device',
      *                              nativeBuffer: 'native buffer'}, ...]
+     * @param {bufferType} Specify which type is the buffer. This class
+     * encapsulates all types of buffer in WebCL.
      */
-    function WCLBuffer(bufferGroup) {
+    function WCLBuffer(bufferGroup, bufferType) {
         return {
             id : "WCLBuffer",
+
+            // Types: buffer, image, bufferCLGL, imageCLGL
+            getType : function () {
+                if (!bufferType) {
+                    return "buffer";
+                } else {
+                    return bufferType;
+                }
+            },
 
             /**
              * @function getBufferGroup
@@ -1053,22 +1130,12 @@
             /**
              * TODO: Function description.
              *
-             * @name getNativeCommandQueue
+             * @name getCommandQueueGroup
              * @function
              * @returns {nativeQueues} List of native command queues.
              */
-            getNativeCommandQueue : function () {
-                var nativeQueues;
-                var nativeCommandQueue;
-                var i;
-
-                nativeQueues = [];
-                for (i in queueGroup) {
-                    nativeCommandQueue = queueGroup[i].nativeCommandQueue;
-                    nativeQueues.push(nativeCommandQueue);
-                }
-
-                return nativeQueues;
+            getCommandQueueGroup : function () {
+                return queueGroup;
             },
 
             /**
@@ -1195,8 +1262,13 @@
 
                     console.info("nativeCommandQueue: ", nativeCommandQueue, "nativeBuffer: ", nativeBuffer);
 
-                    nativeCommandQueue.enqueueReadBuffer(nativeBuffer, block,
-                                                        offset, numBytes, data);
+                    try {
+                        nativeCommandQueue.enqueueReadBuffer(nativeBuffer, block,
+                                                         offset, numBytes, data);
+                    } catch (e) {
+                        throw e;
+                    }
+
                     // check if the results are the same
                     if (lastData !== null) {
                         for (j = 0; j < data.length; j++) {
@@ -1345,9 +1417,13 @@
                         console.info("bufferDic: ", bufferDic, "nativeBuffer: ",
                                 nativeBuffer, "nativeCommandQueue: ", nativeCommandQueue);
 
+                        try {
                         //TODO: Uncomment the "nativeEvent" below when WebCLEvent is working.
-                        nativeCommandQueue.enqueueWriteBuffer(nativeBuffer, block,
-                                                            offset, numBytes, data/*, nativeEventList */);
+                            nativeCommandQueue.enqueueWriteBuffer(nativeBuffer, block,
+                                        offset, numBytes, data, nativeEventList);
+                        } catch (e) {
+                            throw e;
+                        }
 
                         console.log("Passed native enqueueWriteBuffer");
                     }
@@ -1356,7 +1432,6 @@
                 console.groupEnd();
                 console.timeEnd("WCLCommandQueue::enqueueWriteBuffer");
                 console.groupEnd();
-
             },
 
             /**
@@ -1367,7 +1442,7 @@
              *                      "dstBuffer": wclbuffer object,
              *                      "srcOffset": byte offset for source buffer,
              *                      "dstOffset": byte offset for destiny buffer,
-             *                      "numBytes": number bytes to copy,
+             *                      "numBytes": number bytes to copy}
              */
             enqueueCopyBuffer : function (args) {
                 var nativeCommandQueue;
@@ -1381,7 +1456,6 @@
                 var i;
                 var k;
                 var eventsList;
-                //var copyEvent;
                 var ex;
                 var nativeEvent;
                 var nativeEventList;
@@ -1449,7 +1523,6 @@
                 dstOffset = args.dstOffset;
                 numBytes = args.numBytes;
                 eventsList = args.eventWaitList;
-                //copyEvent = args["event"];
 
                 console.group("queueGroup");
 
@@ -1473,9 +1546,14 @@
                     console.info("srcNativeBuffer: ", srcNativeBuffer, "dstNativeBuffer: ",
                             dstNativeBuffer, "nativeCommandQueue: ", nativeCommandQueue, nativeEvent);
 
-                    nativeCommandQueue.enqueueCopyBuffer(srcNativeBuffer,
-                                                    dstNativeBuffer, srcOffset,
-                                                    dstOffset, numBytes, nativeEvent);
+                    try {
+                        nativeCommandQueue.enqueueCopyBuffer(srcNativeBuffer,
+                                                      dstNativeBuffer, srcOffset,
+                                                      dstOffset, numBytes,
+                                                      nativeEvent);
+                    } catch (e) {
+                        throw e;
+                    }
 
                     console.log("Passed enqueueCopyBuffer");
                 }
@@ -1493,7 +1571,7 @@
              * @param {dictionary} {"kernel": wclkernel object,
              *                      "globalWorkOffset": offset to start each id,
              *                      "globalWorkSize": byte offset for source buffer,
-             *                      "localWorkSize": byte offset for destiny buffer,
+             *                      "localWorkSize": byte offset for destiny buffer}
              */
             enqueueNDRangeKernel : function (args) {
                 var nativeCommandQueue;
@@ -1504,9 +1582,9 @@
                 var globalSize;
                 var localSize;
                 var eventList;
-                //var rangeEvent;
                 var wclKernel;
                 var kernelGroup;
+                var kernelDic;
                 var i;
                 var k;
                 var ex;
@@ -1535,7 +1613,7 @@
                         throw ex;
                     }
 
-                    if (!(args.localWorkSize instanceof Int32Array)) {
+                    if (!(args.localWorkSize === null || args.localWorkSize instanceof Int32Array)) {
                         ex = new Error("No globalWorkSize in the arguments.");
                         console.error("Invalid arguments", ex);
                         throw ex;
@@ -1569,7 +1647,6 @@
                 globalSize =  args.globalWorkSize;
                 localSize =   args.localWorkSize;
                 eventList =   args.eventWaitList;
-                //rangeEvent = args["event"];
 
                 console.group("queueGroup");
 
@@ -1593,8 +1670,12 @@
                     }
 
                     nativeCommandQueue = queueGroup[i].nativeCommandQueue;
-                    nativeCommandQueue.enqueueNDRangeKernel(nativeKernel, offset,
-                            globalSize, localSize, nativeEvent);
+                    try {
+                        nativeCommandQueue.enqueueNDRangeKernel(nativeKernel,
+                                    offset, globalSize, localSize, nativeEvent);
+                    } catch (e) {
+                        throw e;
+                    }
 
                     console.info("nativeCommandQueue: ", nativeCommandQueue);
                     console.log("Passed native enqueueNDRangeKernel");
@@ -1606,7 +1687,219 @@
             },
 
             /**
-             * @function enqueueCopyBuffer
+             * @function enqueueAcquireGLObjects
+             *
+             * @param {dictionary} {"memObjects": list of WCLBuffers,
+             *                      "eventWaitList": list of events,
+             *                      "event": variable to keep the AcquireGLObject event}
+             */
+            enqueueAcquireGLObjects : function (args) {
+                var i;
+                var k;
+                var ex;
+                var eventsList;
+                var memObjects;
+                var bufferDic;
+                var bufferGroup;
+                var bufferObjects;
+                var nativeCommandQueue;
+                var nativeEvent;
+                var nativeEventList;
+                var nativeBuffer;
+
+                console.group("WCLCommandQueue::enqueueAcquireGLObjects");
+                console.time("WCLCommandQueue::enqueueAcquireGLObject");
+                console.info("args: ", args);
+
+                try {
+                    if (args.memObjects) {
+
+                        if (!(args.memObjects instanceof Array)) {
+                            ex = new Error("Arg memObjects must be an array");
+                        }
+
+                        for (i in args.memObjects) {
+                            if (!isWCLType(args.memObjects[i], "WCLBuffer")) {
+                                ex = new Error("No WCLBuffer in the arguments");
+                            }
+                        }
+                    }
+
+                    if (args.eventWaitList) {
+
+                        if (!args.eventWaitList instanceof Array) {
+                            ex = new Error("Arg eventWaitList must be an array");
+                        }
+
+                        for (i in args.eventWaitList) {
+                            if (!isWCLType(args.eventWaitList[i], "WCLEvent")) {
+                                ex = new Error("No WCLEvent in the arguments.");
+                            }
+                        }
+
+                        if (ex) {
+                            console.error("Invalid arguments", ex);
+                            throw ex;
+                        }
+                    }
+
+                } catch (e) {
+                    throw e;
+                }
+
+                bufferObjects = args.memObjects;
+                eventsList = args.eventWaitList;
+
+                console.group("queueGroup");
+
+                /* empty events list */
+                nativeEventList = nativeEvent = null;
+
+                //TODO: event isn't working at this time, so this code doesn't break anything.
+                for (k in eventsList) {
+                    nativeEventList = [];
+                    console.info("wclEvent", eventsList[k].getEventGroup());
+                    console.info("wclEventDic", eventsList[k].getEventGroup()[i]);
+                    nativeEvent = eventsList[k].getEventGroup()[i].nativeEvent;
+                    nativeEventList.push(nativeEvent);
+                }
+
+                console.info("memObjects: ", bufferObjects, "nativeCommandQueue: ", nativeCommandQueue);
+
+                // for each device
+                for (i in bufferObjects) {
+                    nativeCommandQueue = queueGroup[i].nativeCommandQueue;
+                    bufferGroup = bufferObjects[i].getBufferGroup();
+                    memObjects = [];
+
+                    // get all buffers related to the interoperability
+                    for (k in bufferGroup) {
+                        nativeBuffer = bufferGroup[k].nativeBuffer;
+                        memObjects.push(nativeBuffer);
+                    }
+
+                    try {
+                        // according to the WD, the 1st parameter must be an array and not an obj
+                        nativeCommandQueue.enqueueAcquireGLObjects(memObjects[0],
+                                                                    eventsList, nativeEvent);
+                    } catch (e) {
+                        throw e;
+                    }
+                }
+
+                console.log("Passed AcquireGLObject");
+
+                console.groupEnd();
+                console.timeEnd("WCLCommandQueue::enqueueAcquireGLObjects");
+                console.groupEnd();
+            },
+
+            /**
+             * @function enqueueReleaseGLObjects
+             *
+             * @param {dictionary} {"memObjects": list of WCLBuffers,
+             *                      "eventWaitList": list of events,
+             *                      "event": variable to keep the ReleaseGLObject event}
+             */
+            enqueueReleaseGLObjects : function (args) {
+                var i;
+                var k;
+                var ex;
+                var eventsList;
+                var memObjects;
+                var bufferDic;
+                var bufferGroup;
+                var bufferObjects;
+                var nativeCommandQueue;
+                var nativeEvent;
+                var nativeEventList;
+                var nativeBuffer;
+
+                console.group("WCLCommandQueue::enqueueReleaseGLObjects");
+                console.time("WCLCommandQueue::enqueueReleaseGLObject");
+                console.info("args: ", args);
+
+                try {
+                    if (args.memObjects) {
+
+                        if (!(args.memObjects instanceof Array)) {
+                            ex = new Error("Arg memObjects must be an array");
+                        }
+
+                        for (i in args.memObjects) {
+                            if (!isWCLType(args.memObjects[i], "WCLBuffer")) {
+                                ex = new Error("No WCLBuffer in the arguments");
+                            }
+                        }
+                    }
+
+                    if (args.eventWaitList) {
+
+                        if (!args.eventWaitList instanceof Array) {
+                            ex = new Error("Arg eventWaitList must be an array");
+                        }
+
+                        for (i in args.eventWaitList) {
+                            if (!isWCLType(args.eventWaitList[i], "WCLEvent")) {
+                                ex = new Error("No WCLEvent in the arguments.");
+                            }
+                        }
+
+                        if (ex) {
+                            console.error("Invalid arguments", ex);
+                            throw ex;
+                        }
+                    }
+
+                } catch (e) {
+                    throw e;
+                }
+
+                bufferObjects = args.memObjects;
+                eventsList = args.eventWaitList;
+
+                console.group("queueGroup");
+
+                /* empty events list */
+                nativeEventList = nativeEvent = null;
+
+                //TODO: event isn't working at this time, so this code doesn't break anything.
+                for (k in eventsList) {
+                    nativeEventList = [];
+                    console.info("wclEvent", eventsList[k].getEventGroup());
+                    console.info("wclEventDic", eventsList[k].getEventGroup()[i]);
+                    nativeEvent = eventsList[k].getEventGroup()[i].nativeEvent;
+                    nativeEventList.push(nativeEvent);
+                }
+
+                console.info("memObjects: ", bufferObjects, "nativeCommandQueue: ", nativeCommandQueue);
+
+                for (i in bufferObjects) {
+                    nativeCommandQueue = queueGroup[i].nativeCommandQueue;
+                    bufferGroup = bufferObjects[i].getBufferGroup();
+                    memObjects = [];
+                    for (k in bufferGroup) {
+                        nativeBuffer = bufferGroup[k].nativeBuffer;
+                        memObjects.push(nativeBuffer);
+                    }
+
+                    try {
+                        // according to the WD, the 1st parameter must be an array and not an obj
+                        nativeCommandQueue.enqueueAcquireGLObjects(memObjects[0],
+                                                                    eventsList, nativeEvent);
+                    } catch (e) {
+                        throw e;
+                    }
+                }
+                console.log("Passed ReleaseGLObject");
+
+                console.groupEnd();
+                console.timeEnd("WCLCommandQueue::enqueueReleaseGLObjects");
+                console.groupEnd();
+            },
+
+            /**
+             * @function finish
              * It waits for each command in command queue have been processed
              * and completed.
              */
