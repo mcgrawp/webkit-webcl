@@ -28,7 +28,11 @@
 #ifndef ComputeTypes_h
 #define ComputeTypes_h
 
+#if PLATFORM(MAC)
 #include <OpenCL/opencl.h>
+#else
+#include <CL/opencl.h>
+#endif
 
 typedef unsigned int CCenum;
 typedef int CCerror;
