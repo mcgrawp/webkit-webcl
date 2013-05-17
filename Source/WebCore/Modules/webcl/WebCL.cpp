@@ -87,8 +87,7 @@ RefPtr<WebCLContextProperties>& WebCL::defaultProperties(ExceptionCode& ec)
     if (ec != WebCLException::SUCCESS)
         return m_defaultProperties;
 
-    // FIXME: Default should use NoSharedGLContext?
-    m_defaultProperties = WebCLContextProperties::create(webCLPlatforms[0], webCLDevices, ComputeContext::DEVICE_TYPE_DEFAULT, emptyString(), WebCLContextProperties::GetCurrentGLContext);
+    m_defaultProperties = WebCLContextProperties::create(webCLPlatforms[0], webCLDevices, ComputeContext::DEVICE_TYPE_DEFAULT, emptyString(), WebCLContextProperties::NoSharedGLContext);
     return m_defaultProperties;
 }
 
