@@ -50,11 +50,11 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memory
         return 0;
     }
 
-    return adoptRef(new WebCLBuffer(context, buffer, false));
+    return adoptRef(new WebCLBuffer(context, buffer));
 }
 
-WebCLBuffer::WebCLBuffer(WebCLContext* context, PlatformComputeObject buffer, bool isShared)
-    : WebCLMemoryObject(context, buffer, isShared)
+WebCLBuffer::WebCLBuffer(WebCLContext* context, PlatformComputeObject buffer)
+    : WebCLMemoryObject(context, buffer)
 {
 }
 
@@ -89,7 +89,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(int memoryFlags, int origin
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-    RefPtr<WebCLBuffer> subBuffer = adoptRef(new WebCLBuffer(m_context, ccSubBuffer, false));
+    RefPtr<WebCLBuffer> subBuffer = adoptRef(new WebCLBuffer(m_context, ccSubBuffer));
     return subBuffer.release();
 }
 

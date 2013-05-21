@@ -108,7 +108,7 @@ PassRefPtr<WebCLMemoryObject> WebCLGLContext::createFromGLTexture2D(int flags, G
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-    RefPtr<WebCLMemoryObject> memoryObject = WebCLMemoryObject::create(this, ccMemoryImage, true);
+    RefPtr<WebCLMemoryObject> memoryObject = WebCLMemoryObject::create(this, ccMemoryImage);
     return memoryObject.release();
 }
 

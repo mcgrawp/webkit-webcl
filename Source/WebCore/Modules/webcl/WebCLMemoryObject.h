@@ -44,16 +44,15 @@ class WebCLGetInfo;
 class WebCLMemoryObject : public WebCLObject<PlatformComputeObject> {
 public:
     virtual ~WebCLMemoryObject();
-    static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PlatformComputeObject, bool);
-    bool isShared();
+    static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PlatformComputeObject);
+    virtual bool isShared() const { return false; }
     WebCLGetInfo getInfo(int, ExceptionCode&);
 
 protected:
-    WebCLMemoryObject(WebCLContext*, PlatformComputeObject, bool);
+    WebCLMemoryObject(WebCLContext*, PlatformComputeObject);
     virtual void releasePlatformObjectImpl();
 
     WebCLContext* m_context;
-    bool m_shared;
 };
 
 } // namespace WebCore

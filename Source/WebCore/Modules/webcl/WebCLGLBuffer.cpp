@@ -45,11 +45,11 @@ PassRefPtr<WebCLGLBuffer> WebCLGLBuffer::create(WebCLContext* context, CCenum me
         return 0;
     }
 
-    return adoptRef(new WebCLGLBuffer(context, buffer, true));
+    return adoptRef(new WebCLGLBuffer(context, buffer));
 }
 
-WebCLGLBuffer::WebCLGLBuffer(WebCLContext* context, PlatformComputeObject object, bool b)
-    : WebCLBuffer(context, object, b)
+WebCLGLBuffer::WebCLGLBuffer(WebCLContext* context, PlatformComputeObject object)
+    : WebCLBuffer(context, object)
 {
 }
 

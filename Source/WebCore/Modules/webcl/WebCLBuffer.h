@@ -41,7 +41,7 @@ public:
     PassRefPtr<WebCLBuffer> createSubBuffer(int, int, int, ExceptionCode&);
 
 protected:
-    WebCLBuffer(WebCLContext*, PlatformComputeObject, bool);
+    WebCLBuffer(WebCLContext*, PlatformComputeObject);
 };
 
 } // namespace WebCore

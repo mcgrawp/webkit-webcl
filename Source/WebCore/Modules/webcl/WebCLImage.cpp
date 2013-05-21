@@ -52,7 +52,7 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, int flags, int 
 }
 
 WebCLImage::WebCLImage(WebCLContext* context, PlatformComputeObject image, int width, int height, const CCImageFormat& format)
-    : WebCLMemoryObject(context, image, false)
+    : WebCLMemoryObject(context, image)
     , m_width(width)
     , m_height(height)
     , m_format(format)
