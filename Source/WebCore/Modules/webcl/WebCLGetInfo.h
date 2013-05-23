@@ -96,18 +96,18 @@ public:
     explicit WebCLGetInfo(unsigned int value);
     explicit WebCLGetInfo(unsigned long value);
     explicit WebCLGetInfo(void* value);
+    explicit WebCLGetInfo(const Vector<RefPtr<WebCLDevice> >& value);
     explicit WebCLGetInfo(PassRefPtr<Float32Array> value);
-    explicit WebCLGetInfo(PassRefPtr<WebCLImageDescriptor> value);
     explicit WebCLGetInfo(PassRefPtr<Int32Array> value);
     explicit WebCLGetInfo(PassRefPtr<Int8Array> value);
-    explicit WebCLGetInfo(PassRefPtr<WebCLProgram> value);
-    explicit WebCLGetInfo(PassRefPtr<WebCLContext> value);
-    explicit WebCLGetInfo(PassRefPtr<WebCLCommandQueue> value);
-    explicit WebCLGetInfo(const Vector<RefPtr<WebCLDevice> >& value);
-    explicit WebCLGetInfo(PassRefPtr<WebCLDevice> value);
-    explicit WebCLGetInfo(PassRefPtr<WebCLMemoryObject> value);
-    explicit WebCLGetInfo(PassRefPtr<WebCLPlatform> value);
-    explicit WebCLGetInfo(PassRefPtr<WebCLContextProperties> value);
+    explicit WebCLGetInfo(WebCLImageDescriptor* value);
+    explicit WebCLGetInfo(WebCLProgram* value);
+    explicit WebCLGetInfo(WebCLContext* value);
+    explicit WebCLGetInfo(WebCLCommandQueue* value);
+    explicit WebCLGetInfo(WebCLDevice* value);
+    explicit WebCLGetInfo(WebCLMemoryObject* value);
+    explicit WebCLGetInfo(WebCLPlatform* value);
+    explicit WebCLGetInfo(WebCLContextProperties* value);
 
     virtual ~WebCLGetInfo();
     Type getType() const;

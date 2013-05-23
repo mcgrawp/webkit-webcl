@@ -70,7 +70,6 @@ WebCLContext::WebCLContext(ComputeContext* computeContext, PassRefPtr<WebCLConte
 WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
 {
     if (!platformObject()) {
-        printf("Error: Invalid CL Context\n");
         ec = WebCLException::INVALID_CONTEXT;
         return WebCLGetInfo();
     }
@@ -81,8 +80,7 @@ WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
     case ComputeContext::CONTEXT_DEVICES:
         return WebCLGetInfo(m_contextProperties->devices());
     case ComputeContext::CONTEXT_PROPERTIES:
-        // FIXME: Is this cast needed?
-        return WebCLGetInfo(PassRefPtr<WebCLContextProperties>(m_contextProperties));
+        return WebCLGetInfo(m_contextProperties.get());
     default:
         ec = WebCLException::INVALID_VALUE;
     }
@@ -100,7 +98,6 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
 PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource, ExceptionCode& ec)
 {
     if (!platformObject()) {
-        printf("Error: Invalid CL Context\n");
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -277,7 +274,6 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLImageElement* im
 PassRefPtr<WebCLImage> WebCLContext::createImage(int flags, HTMLVideoElement* video, ExceptionCode& ec)
 {
     if (ComputeContext::MEM_READ_ONLY != flags) {
-        printf("ERROR:: createImage with HTMLVideoElement can use only MEM_READ_ONLY as flags\n");
         ec = WebCLException::INVALID_VALUE;
         return 0;
     }

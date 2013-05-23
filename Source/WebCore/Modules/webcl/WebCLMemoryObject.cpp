@@ -81,21 +81,10 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
             return WebCLGetInfo(static_cast<size_t>(memorySizeValue));
         break;
         }
-    /* FIXME:: Context must not be created here.
-    case ComputeContext::MEM_CONTEXT: {
-        CCContext ccContextID = 0;
-        err = ComputeContext::getMemoryObjectInfo(m_platformComputeObject, paramName, sizeof(CCContext), &ccContextID);
-        if (err == CL_SUCCESS) {
-            RefPtr<WebCLContext> contextObject = WebCLContext::create(m_context, ccContextID);
-            if(contextObject)
-                return WebCLGetInfo(contextObject.release());
-        }
-        ec = WebCLException::INVALID_CONTEXT;
-        return WebCLGetInfo();
-        break;
-        }
-    */
+    case ComputeContext::MEM_CONTEXT:
+        return WebCLGetInfo(m_context);
     case ComputeContext::MEM_ASSOCIATED_MEMOBJECT: {
+        /* FIXME : Cannot create WebCLMemoryObject/WebCLBuffer object here.
         PlatformComputeObject associatedMemoryObject = 0;
         err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &associatedMemoryObject);
         if (err == CL_SUCCESS && associatedMemoryObject) {
@@ -103,9 +92,8 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
             if (memoryObj)
                 return WebCLGetInfo(memoryObj.release());
         }
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        ec = WebCLException::INVALID_MEM_OBJECT;*/
         return WebCLGetInfo();
-        break;
         }
     case ComputeContext::MEM_OFFSET: {
         size_t memoryOffsetValue = 0;

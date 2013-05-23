@@ -65,18 +65,19 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
     }
 
     CCerror err = 0;
-    CCCommandQueueProperties ccCommandQueueProperties = 0;
 
     switch (paramName) {
     case ComputeContext::QUEUE_CONTEXT:
-        return WebCLGetInfo(PassRefPtr<WebCLContext>(m_context));
+        return WebCLGetInfo(m_context);
     case ComputeContext::QUEUE_DEVICE:
-        return WebCLGetInfo(PassRefPtr<WebCLDevice>(const_cast<WebCLDevice*>(m_device.get())));
-    case ComputeContext::QUEUE_PROPERTIES:
+        return WebCLGetInfo(m_device.get());
+    case ComputeContext::QUEUE_PROPERTIES: {
+        CCCommandQueueProperties ccCommandQueueProperties = 0;
         err = ComputeContext::getCommandQueueInfo(platformObject(), paramName, &ccCommandQueueProperties);
         if (err == CL_SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccCommandQueueProperties));
         break;
+    }
     default:
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();

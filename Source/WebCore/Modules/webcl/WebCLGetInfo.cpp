@@ -107,12 +107,6 @@ WebCLGetInfo::WebCLGetInfo(PassRefPtr<Float32Array> value)
 {
 }
 
-WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLImageDescriptor> value)
-    : m_type(kTypeWebCLImageDescriptor)
-    , m_webclImageDescriptor(value)
-{
-}
-
 WebCLGetInfo::WebCLGetInfo(PassRefPtr<Int32Array> value)
     : m_type(kTypeWebCLIntArray)
     , m_webclIntArray(value)
@@ -124,31 +118,38 @@ WebCLGetInfo::WebCLGetInfo(PassRefPtr<Int8Array> value)
     , m_webclInt8Array(value)
 {
 }
-WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLProgram> value)
+
+WebCLGetInfo::WebCLGetInfo(WebCLImageDescriptor* value)
+    : m_type(kTypeWebCLImageDescriptor)
+    , m_webclImageDescriptor(value)
+{
+}
+
+WebCLGetInfo::WebCLGetInfo(WebCLProgram* value)
     : m_type(kTypeWebCLProgram)
     , m_webclProgram(value)
 {
 }
 
-WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLContext> value)
+WebCLGetInfo::WebCLGetInfo(WebCLContext* value)
     : m_type(kTypeWebCLContext)
     , m_webclContext(value)
 {
 }
 
-WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLCommandQueue> value)
+WebCLGetInfo::WebCLGetInfo(WebCLCommandQueue* value)
     : m_type(kTypeWebCLCommandQueue)
     , m_webCLCommandQueue(value)
 {
 }
 
-WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLDevice> value)
+WebCLGetInfo::WebCLGetInfo(WebCLDevice* value)
     : m_type(kTypeWebCLDevice)
     , m_webCLDevice(value)
 {
 }
 
-WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLMemoryObject> value)
+WebCLGetInfo::WebCLGetInfo(WebCLMemoryObject* value)
     : m_type(kTypeWebCLMemoryObject)
     , m_webCLMemoryObject(value)
 {
@@ -160,13 +161,13 @@ WebCLGetInfo::WebCLGetInfo(const Vector<RefPtr<WebCLDevice> >& value)
 {
 }
 
-WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLPlatform> value)
+WebCLGetInfo::WebCLGetInfo(WebCLPlatform* value)
     : m_type(kTypeWebCLPlatform)
     , m_webCLPlatform(value)
 {
 }
 
-WebCLGetInfo::WebCLGetInfo(PassRefPtr<WebCLContextProperties> value)
+WebCLGetInfo::WebCLGetInfo(WebCLContextProperties* value)
     : m_type(kTypeWebCLContextProperties)
     , m_webCLContextProperties(value)
 {
