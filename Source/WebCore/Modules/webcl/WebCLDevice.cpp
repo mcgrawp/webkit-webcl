@@ -42,21 +42,21 @@ WebCLDevice::~WebCLDevice()
 {
 }
 
-PassRefPtr<WebCLDevice> WebCLDevice::create(CCDeviceID deviceID)
+PassRefPtr<WebCLDevice> WebCLDevice::create(CCDeviceID deviceID, const WebCLPlatform* platform)
 {
-    return adoptRef(new WebCLDevice(deviceID));
+    return adoptRef(new WebCLDevice(deviceID, platform));
 }
 
-WebCLDevice::WebCLDevice(CCDeviceID deviceID)
+WebCLDevice::WebCLDevice(CCDeviceID deviceID, const WebCLPlatform* platform)
     : WebCLObject(deviceID)
     , WebCLExtensionsAccessor(deviceID)
+    , m_platform(platform)
 {
 }
 
 WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
 {
     if (!platformObject()) {
-        printf("Error: Invalid Device ID\n");
         ec = WebCLException::INVALID_DEVICE;
         return WebCLGetInfo();
     }
@@ -154,15 +154,8 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
             return WebCLGetInfo(static_cast<unsigned>(queueProperties));
         break;
     }
-    case ComputeContext::DEVICE_PLATFORM: {
-        /*FIXME: This code will be handled later.
-        CCPlatformID platformID = 0;
-        err = ComputeContext::getDeviceInfo(platformObject(), infoType, sizeof(platformID), &platformID);
-        if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(WebCLPlatform::create(platformID));
-        */
-        break;
-    }
+    case ComputeContext::DEVICE_PLATFORM:
+        return WebCLGetInfo(const_cast<WebCLPlatform*>(m_platform));
     case ComputeContext::DEVICE_LOCAL_MEM_TYPE: {
         CCDeviceLocalMemType localMemoryType = 0;
         err = ComputeContext::getDeviceInfo(platformObject(), infoType, &localMemoryType);
@@ -180,10 +173,10 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-void toWebCLDeviceArray(const Vector<CCDeviceID>& ccDevices, Vector<RefPtr<WebCLDevice> >& devices)
+void toWebCLDeviceArray(const WebCLPlatform* platform, const Vector<CCDeviceID>& ccDevices, Vector<RefPtr<WebCLDevice> >& devices)
 {
     for (size_t i = 0; i < ccDevices.size(); i++) {
-        RefPtr<WebCLDevice> webCLDevice = WebCLDevice::create(ccDevices[i]);
+        RefPtr<WebCLDevice> webCLDevice = WebCLDevice::create(ccDevices[i], platform);
         devices.append(webCLDevice);
     }
 }

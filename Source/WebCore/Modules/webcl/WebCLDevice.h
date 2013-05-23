@@ -43,19 +43,21 @@
 namespace WebCore {
 
 class WebCLContext;
+class WebCLPlatform;
 class WebCLGetInfo;
 
 class WebCLDevice : public WebCLObject<CCDeviceID> , public WebCLExtensionsAccessor<CCDeviceID> {
 public:
     virtual ~WebCLDevice();
-    static PassRefPtr<WebCLDevice> create(CCDeviceID);
+    static PassRefPtr<WebCLDevice> create(CCDeviceID, const WebCLPlatform*);
     WebCLGetInfo getInfo(int, ExceptionCode&);
 
 private:
-    WebCLDevice(CCDeviceID);
+    WebCLDevice(CCDeviceID, const WebCLPlatform*);
+    const WebCLPlatform* m_platform;
 };
 
-void toWebCLDeviceArray(const Vector<CCDeviceID>&, Vector<RefPtr<WebCLDevice> >&);
+void toWebCLDeviceArray(const WebCLPlatform*, const Vector<CCDeviceID>&, Vector<RefPtr<WebCLDevice> >&);
 
 } // namespace WebCore
 

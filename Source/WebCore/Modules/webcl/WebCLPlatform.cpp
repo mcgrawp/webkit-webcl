@@ -98,7 +98,7 @@ Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(unsigned long deviceType,
         return devices;
     }
 
-    toWebCLDeviceArray(ccDevices, devices);
+    toWebCLDeviceArray(this, ccDevices, devices);
     return devices;
 }
 
