@@ -1,0 +1,320 @@
+<html><head>
+<TITLE>2d ink droplet. Buffers</TITLE>
+
+<script src="cl_gl.js" type="text/javascript"></script>
+
+<script id="clProgram" type="text/x-opencl">
+
+constant int n = 512, m = 511, sh = 9;
+constant float h = 1.0f/512.0f;
+
+__kernel void kP(global float* P, global float* G, global float* P1 ){
+  int x = get_global_id(0),  y = get_global_id(1),  ny = y<<sh;
+  P1[x + ny] = (P[((x + m)&m) + ny] + P[((x + 1)&m) + ny] +
+    P[x + (((y + 1)&m)<<sh)] + P[x + (((y + m)&m)<<sh)] - G[x + ny]) *.25f;
+}
+
+__kernel void kShow(global float* D, global uchar4* bPix ){
+  int a = get_global_id(0) + (get_global_id(1)<<sh);
+  int rg = (int)(255.0f*(1.0f + D[a]));
+  bPix[a] = (uchar4)( (uchar)clamp(rg, 0,255), (uchar)clamp(rg, 0,255),
+    (uchar)clamp(255 + rg, 0,255), (uchar)255 );
+}
+
+__kernel void kAdvec(global float2* U, global float* D,
+    global float2* U1, global float* D1){
+  const float dt = .001f, tau = .5f*dt/h;
+
+  int x = get_global_id(0),  y = get_global_id(1),  ny = y<<sh;
+  float2 Dr = -tau*(float2)( U[x + ny].x + U[((x + m)&m) + ny].x,
+    U[x + ny].y + U[x + (((y + m)&m)<<sh)].y);
+  float2 Df = floor(Dr),  Dd = Dr - Df;
+  int x1 = (x + (int)Df.x + n)&m,  x11 = (x1 + 1)&m;
+  int ny1 = (y + (int)Df.y + n)&m,  ny11 = ((ny1 + 1)&m)<<sh;
+  ny1 = ny1<<sh;
+  D1[x + ny] =
+    (D[x1  + ny1]*(1.0f - Dd.y) + D[x1  + ny11]*Dd.y)*(1.0f - Dd.x) +
+    (D[x11 + ny1]*(1.0f - Dd.y) + D[x11 + ny11]*Dd.y)*Dd.x;
+  U1[x + ny] =
+    (U[x1  + ny1]*(1.0f - Dd.y) + U[x1  + ny11]*Dd.y)*(1.0f - Dd.x) +
+    (U[x11 + ny1]*(1.0f - Dd.y) + U[x11 + ny11]*Dd.y)*Dd.x;
+}
+
+__kernel void kG(global float2* U, global float* G ){
+  int x = get_global_id(0),  y = get_global_id(1),  ny = y<<sh;
+  G[x + ny] = (U[x + ny].x - U[((x + m)&m) + ny].x +
+    U[x + ny].y - U[x + (((y + m)&m)<<sh)].y ) * h;
+}
+
+__kernel void kDiv(global float2* U, global float* P, global float2* U1 ){
+  int x = get_global_id(0),  y = get_global_id(1),  ny = y<<sh;
+  float2 u = U[x + ny];
+  u.x -= (P[((x + 1)&m) + ny] - P[x + ny])*n;
+  u.y -= (P[x + (((y + 1)&m)<<sh)] - P[x + ny])*n;
+  U1[x + ny] = u;
+}
+
+__kernel void kForce(global float2* U, global float* D,
+    global float2* U1, float c ){
+  int x = get_global_id(0),  y = get_global_id(1),  ny = y<<sh;
+  float2 u = U[x + ny];
+  u.y += c*(D[x + ny] + D[x + (((y + 1)&m)<<sh)]);
+  U1[x + ny] = u;
+}
+</script>
+
+<script type="text/javascript">
+
+function loadKernel ( id ){
+   var shaderScript = document.getElementById ( id );
+   var str = "";
+   var k = shaderScript.firstChild;
+   while ( k ){
+     if ( k.nodeType == 3 ) str += k.textContent;
+     k = k.nextSibling;
+   }
+   return str;
+}
+requestAnimFrame = (function(){
+  return  window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    function(callback, element){ window.setTimeout(callback, 1000 / 60); }
+})();
+
+var n = 512, kAdvec, kForce, kP, kG, kDiv, kShow, cmdQueue,
+  U, U1, D, D1, P, P1, G,
+  bufPix, outPix, bufferSize = 4*n*n,
+  bu = 10, it = 20, delay = 0, frames = 0, time, animation;
+var types = WebCLKernelArgumentTypes;
+window.WebCL = webcl;
+
+function CL_prog() {
+  var output = document.getElementById("output");
+  output.innerHTML = "";
+  try {
+    if (window.WebCL == undefined) {
+      alert("Unfortunately your system does not support WebCL");
+      return false;
+    }
+    var platforms = WebCL.getPlatforms();
+    if(platforms.length === 0) {
+        alert("No platforms available");
+        return false;
+    }
+
+    var platform = platforms[0];
+
+    var platDevices = platform.getDevices(WebCL.DEVICE_TYPE_GPU);
+    if(platDevices.length === 0) {
+        alert("No devices available");
+        return false;
+    }
+
+    var device = platDevices[0];
+    var contextProperties = {platform: platform, devices: device,
+                             deviceType: WebCL.DEVICE_TYPE_ALL, shareGroup: 0, hint: null};
+
+    var context = WebCL.createContext(contextProperties);
+
+    var kernelSrc = loadKernel("clProgram");
+    var program = context.createProgram(kernelSrc);
+    try {
+      program.build (device, "");
+    } catch(e) {
+      alert ("Failed to build WebCL program. Error " +
+        program.getProgramBuildInfo(device,WebCL.PROGRAM_BUILD_STATUS) +
+        + ":  "
+        + program.getProgramBuildInfo(device,WebCL.PROGRAM_BUILD_LOG));
+      throw e;
+    }
+    D  = context.createBuffer(WebCL.MEM_READ_WRITE, bufferSize);
+    D1 = context.createBuffer(WebCL.MEM_READ_WRITE, bufferSize);
+    P  = context.createBuffer(WebCL.MEM_READ_WRITE, bufferSize);
+    P1 = context.createBuffer(WebCL.MEM_READ_WRITE, bufferSize);
+    U  = context.createBuffer(WebCL.MEM_READ_WRITE, bufferSize*2);
+    U1 = context.createBuffer(WebCL.MEM_READ_WRITE, bufferSize*2);
+    G  = context.createBuffer(WebCL.MEM_READ_WRITE, bufferSize);
+
+    bufPix = context.createBuffer(WebCL.MEM_WRITE_ONLY, bufferSize);
+    kShow = program.createKernel("kShow");
+    kShow.setArg(0, D);
+    kShow.setArg(1, bufPix);
+    kAdvec = program.createKernel("kAdvec");
+    kForce = program.createKernel("kForce");
+    kForce.setArg(3, .001*.5*bu, types.FLOAT);
+    kG = program.createKernel("kG");
+    kG.setArg(1, G);
+    kP = program.createKernel("kP");
+    kP.setArg(1, G);
+    kDiv = program.createKernel("kDiv");
+
+    cmdQueue = context.createCommandQueue(device, 0);
+
+    var inkDensity = new Float32Array( n*n );
+    var t = 0, h = 1/n, d;
+    for(var i = 0; i < n; i++)
+      for(var j = 0; j < n; j++){
+       var x = h*(j-n/2),  y = h*(i-n/2) - .4;
+       if (x*x + y*y > .01) d = 0; else d = -2;
+       inkDensity[t++] = d;
+      }
+    cmdQueue.enqueueWriteBuffer(D, true, 0, bufferSize, inkDensity);
+
+    var velocity = new Float32Array( 2*n*n );
+    var t = 0;
+    for(var i = 0; i < n; i++)
+      for(var j = 0; j < n; j++){
+        velocity[t++] = 0;  velocity[t++] = 0;
+      }
+    cmdQueue.enqueueWriteBuffer(U, true, 0, bufferSize*2, velocity);
+
+    var pressure = new Float32Array( n*n );
+    for(var i = 0; i < n*n; i++) pressure[i] = 0;
+    cmdQueue.enqueueWriteBuffer(P, true, 0, bufferSize, pressure);
+  } catch(e) {
+    document.getElementById("output").innerHTML
+      += "<h3>ERROR:</h3><pre style=\"color:red;\">" + e.message + "</pre>";
+    throw e;
+  }
+  var canvas = document.getElementById("c");
+  init_gl(canvas);
+  outPix = new Uint8Array(4*n*n);
+
+  setInterval(fr, 500);
+  time = new Date().getTime();
+  animation = "animate";
+  anim();
+}
+
+function draw(){
+  kAdvec.setArg(0, U);
+  kAdvec.setArg(1, D);
+  kAdvec.setArg(2, U1);
+  kAdvec.setArg(3, D1);
+  var globalWorkSize = new Int32Array([n,n]);
+  var localWorkSize = new Int32Array([8,8]);
+  var ev = cmdQueue.enqueueNDRangeKernel(kAdvec, [], globalWorkSize, localWorkSize, []);
+  cmdQueue.flush();
+  var tmp;
+  tmp = D;  D = D1;  D1 = tmp;
+  tmp = U;  U = U1;  U1 = tmp;
+
+  kForce.setArg(0, U);
+  kForce.setArg(1, D);
+  kForce.setArg(2, U1);
+  ev = cmdQueue.enqueueNDRangeKernel(kForce, [], globalWorkSize, localWorkSize);
+  cmdQueue.flush();
+  tmp = U;  U = U1;  U1 = tmp;
+
+  kG.setArg(0, U);
+  ev = cmdQueue.enqueueNDRangeKernel(kG, [], globalWorkSize, localWorkSize);
+  cmdQueue.flush();
+
+  for(var j = 0; j < it; j++){
+    kP.setArg(0, P);
+    kP.setArg(2, P1);
+    ev = cmdQueue.enqueueNDRangeKernel(kP, [], globalWorkSize, localWorkSize);
+    cmdQueue.flush();
+    tmp = P;  P = P1;  P1 = tmp;
+  }
+
+  kDiv.setArg(0, U);
+  kDiv.setArg(1, P);
+  kDiv.setArg(2, U1);
+  ev = cmdQueue.enqueueNDRangeKernel(kDiv, [], globalWorkSize, localWorkSize);
+  cmdQueue.flush();
+  tmp = U;  U = U1;  U1 = tmp;
+
+  kShow.setArg(0, D);
+  cmdQueue.enqueueNDRangeKernel(kShow, [], globalWorkSize, localWorkSize);
+  cmdQueue.finish();
+  cmdQueue.enqueueReadBuffer(bufPix, true, 0, bufferSize, outPix);
+  draw_gl(n, n, outPix);
+  frames++;
+}
+function anim(){
+   draw();
+   switch ( animation ){
+     case "reset":
+      var data = new Float32Array( n*n );   // ink density
+      var t = 0, h = 1/n, d;
+      for(var i = 0; i < n; i++)
+        for(var j = 0; j < n; j++){
+         var x = h*(j-n/2),  y = h*(i-n/2) - .4;
+         if (x*x + y*y > .01) d = 0; else d = -2;
+         data[t++] = d;
+        }
+      cmdQueue.enqueueWriteBuffer(D, true, 0, bufferSize, data);
+
+      var data = new Float32Array( 2*n*n );  // velocity
+      var t = 0;
+      for(var i = 0; i < n; i++)
+        for(var j = 0; j < n; j++){
+          data[t++] = 0;  data[t++] = 0;
+        }
+      cmdQueue.enqueueWriteBuffer(U, true, 0, bufferSize*2, data);
+      var data = new Float32Array( n*n );  // pressure
+      for(var i = 0; i < n*n; i++) data[i] = 0;
+      cmdQueue.enqueueWriteBuffer(P, true, 0, bufferSize, data);
+      animation = "animate";
+     case "animate":
+       if (delay == 0) requestAnimFrame(anim);
+       else setTimeout("requestAnimFrame(anim)", delay);
+       break;
+     case "stop":
+       break;
+   }
+}
+function run(v) {
+  if( animation == "animate" ){
+    animation = "stop";
+    document.getElementById('runBtn').value = "Run ";}
+  else{
+    animation = "animate";
+    document.getElementById('runBtn').value = "Stop";
+    anim();
+  }
+}
+function reset() {
+  if( animation == "stop" ){
+    animation = "reset";
+    document.getElementById('runBtn').value = "Stop";
+    anim();}
+  else animation = "reset";
+}
+function fr(){
+  var ti = new Date().getTime();
+  var fps = Math.round(1000*frames/(ti - time));
+  document.getElementById("framerate").value = fps;
+  frames = 0;  time = ti;
+}
+function setDelay(val) {
+  delay = parseInt(val);
+}
+function setIt(val) {
+  it = parseInt(val);
+}
+function setBu(v) {
+  bu = v.valueOf();             //    c = dt*b/2
+  kForce.setArg(3, .001*.5*bu, types.FLOAT);
+}
+</script>
+<style type="text/css">
+  H1{ font-size: 120%; color: green}
+  H2{ font-size: 100%; color: green}
+  pre{ color: darkblue}
+</style>
+</head>
+<body onload="CL_prog()">
+
+<p id="output"></p>
+
+<canvas id="c" width="512" height="512" ></canvas>
+<br><button onclick="reset()">Reset</button>
+<input type="button" onclick="run()" value="Stop" size="1" id="runBtn">
+&beta;<input size="2" value="10" onchange="setBu( this.value )">
+It<input size="1" value="20" onchange="setIt( this.value )">
+delay<input size="1" value="0" onchange="setDelay( this.value )">
+fps<input size="1" id="framerate">
+
+</body></html>
