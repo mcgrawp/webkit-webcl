@@ -30,4 +30,23 @@
     Supplemental=DOMWindow
 ] interface DOMWindowWebCLEnvironment {
     readonly attribute WebCL webcl;
+    attribute WebCLContextConstructor WebCLContext;
+    attribute WebCLCommandQueueConstructor WebCLCommandQueue;
+    attribute WebCLDeviceConstructor WebCLDevice;
+    attribute WebCLEventConstructor WebCLEvent;
+
+    attribute WebCLExceptionConstructor WebCLException;
+
+    attribute WebCLMemoryObjectConstructor WebCLMemoryObject;
+    attribute WebCLBufferConstructor WebCLBuffer;
+    attribute WebCLImageConstructor WebCLImage;
+    attribute WebCLImageDescriptorConstructor WebCLImageDescriptor;
+
+    attribute WebCLProgramConstructor WebCLProgram;
+    attribute WebCLSamplerConstructor WebCLSampler;
+    attribute WebCLPlatformConstructor WebCLPlatform;
+
+    attribute WebCLKernelConstructor WebCLKernel;
+    attribute WebCLKernelArgumentTypesConstructor WebCLKernelArgumentTypes;
+
 };
