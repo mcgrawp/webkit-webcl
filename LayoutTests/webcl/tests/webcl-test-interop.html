@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebCL \<-\> WebGL kernel test return </title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/kernels.js"></script>
+<script src="../resources/logger.js"></script>
+<script src="../resources/webcl-proxy.js"></script>
+
+<script>
+    if (window.testRunner) {
+        testRunner.overridePreference("WebKitWebGLEnabled", "1");
+    }
+
+    var gl;
+    var glProgram;
+    var canvas;
+    var elemSize;
+    var numElems;
+    var vboBuffer;
+    var seq;
+    var data;
+
+    var proxy;
+    var platform;
+    var device;
+    var context;
+    var program;
+    var queue;
+    var kernel;
+    var results;
+    var globalWorkSize;
+
+    function initGL() {
+        canvas = document.getElementById("canvas");
+        getCanvasContext(canvas);
+
+        seq = 0;
+        elemSize = 2; // number of coordinates per vertex
+        numElems = 500; // number of vertexes
+        data = new Float32Array(numElems * 4);
+        gl.lineWidth(50); // for the sine line width
+
+        initShaders();
+    }
+
+    function getCanvasContext(canvas) {
+        try {
+            gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+            gl.viewportWidth = canvas.width;
+            gl.viewportHeight = canvas.height;
+        } catch(e) {
+            throw new Error("Canvas Exception");
+        }
+    }
+
+    function initShaders() {
+        var vSrc;
+        var fSrc;
+        var vShader;
+        var fShader;
+        var program;
+
+        vSrc = document.getElementById("vertex").firstChild.nodeValue;
+        fSrc = document.getElementById("fragment").firstChild.nodeValue;
+
+        vShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vShader, vSrc);
+        gl.compileShader(vShader);
+
+        fShader = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fShader, fSrc);
+        gl.compileShader(fShader);
+
+        program = gl.createProgram();
+        gl.attachShader(program, vShader);
+        gl.attachShader(program, fShader);
+        gl.linkProgram(program);
+
+        if (!gl.getShaderParameter(vShader, gl.COMPILE_STATUS)) {
+            console.error(gl.getShaderInfoLog(vShader));
+            throw new Error("Error in vertex shader");
+        }
+
+        if (!gl.getShaderParameter(fShader, gl.COMPILE_STATUS)) {
+            console.error(gl.getShaderInfoLog(fShader));
+            throw new Error("Error in fragment shader");
+        }
+
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            console.error(gl.getProgramInfoLog(program));
+            throw new Error("Error in link program");
+        }
+
+        glProgram = program;
+        gl.useProgram(program);
+    }
+
+    function initVBO() {
+        var vbuffer;
+
+        vbuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vbuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STREAM_DRAW);
+
+        vboBuffer = vbuffer;
+    }
+
+    function initCL() {
+        var kernelSource;
+
+        try {
+            proxy = WebCLProxy;
+            if (!proxy) {
+                testFailed("WebCLTest object is not defined ...");
+                return;
+            }
+
+            platform = proxy.getWCLPlatform();
+            device = platform.getWCLDevice(proxy.DEVICE_TYPE_DEFAULT);
+            context = platform.createWCLContext(device, true);
+            queue = context.createWCLCommandQueue(device, null);
+
+            kernelSource = Kernels.compute_sin;
+            if (kernelSource === null) {
+                testFailed("No kernel named: " + "compute_sin");
+                return;
+            }
+
+            program = context.createWCLProgram(kernelSource);
+            program.build();
+            kernel = program.createWCLKernel("compute_sin");
+
+            globalWorkSize = new Int32Array(1);
+            results = new Float32Array(numElems);
+        } catch (e) {
+            testFailed("WebCL kernel result test failed ; Message: " + e.message);
+        }
+    }
+
+    function runKernel() {
+        var ndRangeArgs;
+        var readBufferArgs;
+        var output;
+        var acquireGLArgs;
+        var vboBufferCL;
+
+        try {
+            // create buffer for interoperability
+            vboBufferCL = context.createFromGLBuffer(proxy.MEM_READ_WRITE, vboBuffer);
+
+            globalWorkSize[0] = numElems;
+
+            seq = (seq + 1) % canvas.width;
+            kernel.setWCLKernelArgs(0, vboBufferCL);
+            kernel.setWCLKernelArgs(1, canvas.width, proxy.kernelArgumentTypes.INT);
+            kernel.setWCLKernelArgs(2, canvas.height, proxy.kernelArgumentTypes.INT);
+            kernel.setWCLKernelArgs(3, seq, proxy.kernelArgumentTypes.INT);
+
+            // interoperability
+            gl.finish();
+
+            acquireGLArgs  = {};
+            acquireGLArgs.memObjects = [vboBufferCL];
+            acquireGLArgs.eventWaitList = null;
+            queue.enqueueAcquireGLObjects(acquireGLArgs);
+
+            ndRangeArgs = {};
+            ndRangeArgs.kernel = kernel;
+            ndRangeArgs.globalWorkOffset = null;
+            ndRangeArgs.globalWorkSize = globalWorkSize;
+            ndRangeArgs.localWorkSize = null;
+            queue.enqueueNDRangeKernel(ndRangeArgs);
+
+            queue.enqueueReleaseGLObjects(acquireGLArgs);
+
+            queue.finish();
+            seq++;
+        } catch (e) {
+            throw new Error("Kernel execution error");
+        }
+    }
+
+    function runShaders() {
+        var buffer;
+        var shaderParameter;
+        var resolutionLocation;
+        var width;
+        var height;
+
+        width = canvas.width;
+        height = canvas.height;
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, vboBuffer);
+
+        // this helps to fits in the canvas resolution
+        resolutionLocation = gl.getUniformLocation(glProgram, "u_resolution");
+        gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+
+        shaderParameter = gl.getAttribLocation(glProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(shaderParameter);
+        gl.vertexAttribPointer(shaderParameter, elemSize, gl.FLOAT, false, 0, 0);
+
+        gl.useProgram(glProgram);
+        gl.drawArrays(gl.LINES, 0, numElems * 2);
+    }
+
+    function drawScene() {
+        try {
+            gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            runKernel();
+            runShaders(canvas.width, canvas.height);
+
+            testPassed("");
+        } catch(e) {
+            testFailed("WebCL interoperability test failed; Message: " + e.message);
+        }
+    }
+
+    function runTest() {
+        initGL();
+        initVBO();
+        initCL();
+        drawScene();
+    }
+</script>
+
+<script id="vertex" type="x-shader">
+    attribute vec2 aVertexPosition;
+    uniform vec2 u_resolution;
+
+    void main() {
+        vec2 zeroToOne = aVertexPosition / u_resolution;
+        vec2 zeroToTwo = zeroToOne * 2.0;
+        vec2 clipSpace = zeroToTwo - 1.0;
+        gl_Position = vec4(clipSpace, 0, 1);
+    }
+</script>
+
+<script id="fragment" type="x-shader">
+    precision mediump float;
+
+    void main() {
+            gl_FragColor = vec4(0, 0.5, 0.2, 1);
+    }
+</script>
+
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas" style="border" width="800" height="600"></canvas>
+<script>
+    description("A simple test to WebCL <-> WebGL Interoperability");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

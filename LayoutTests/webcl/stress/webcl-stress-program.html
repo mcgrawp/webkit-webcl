@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>WebCL Create Program Stress Test</title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/webcl-test.js"></script>
+<script src="../resources/kernels.js"></script>
+
+<script>
+
+var STRESS_ITERS = 100000;
+
+function runTest() {
+    var i;
+    var wclt;
+    var platform;
+    var devices;
+    var deviceType;
+    var context;
+    var contextProperties;
+    var kernelSource;
+    var program;
+
+    try {
+        wclt = WebCLTest;
+        wclt.init(0, 0, "gpu");
+
+        platform = wclt.getPlatform(0);
+        devices = wclt.getDevices();
+        deviceType = wclt.getDeviceType();
+        contextProperties = { "platform": platform,
+                                "devices": devices,
+                                "deviceType": deviceType,
+                                "shareGroup": 0,
+                                "hints": null};
+        context = wclt.createContext(contextProperties);
+
+        kernelSource = Kernels.square;
+        for (i = 0; i < STRESS_ITERS; i++) {
+            program = context.createProgram(kernelSource);
+            if (!(program instanceof WebCLProgram)) {
+                testFailed("WebCLProgram was not created properly.");
+                return;
+            }
+           // TODO clean up when the release has been ok
+        }
+
+        testPassed("");
+    } catch (e) {
+        testFailed("WebCLProgram stress test failed ; Message: " + e.message);
+    }
+}
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Create several WebCLPrograms. To pass, it should not crash.");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

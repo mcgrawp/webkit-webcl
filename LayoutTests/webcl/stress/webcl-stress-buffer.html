@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebCL create buffer stress test </title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/webcl-test.js"></script>
+<script src="../resources/webcl-test-utils.js"></script>
+
+<script>
+
+var STRESS_ITERS = 100000;
+
+function runTest() {
+
+    var wclt;
+    var cl;
+    var platform;
+    var devices;
+    var device;
+    var deviceType;
+    var context;
+    var maxMemAllocSize;
+    var clBuffer = null;
+    var bufferSize;
+    var i;
+    var num;
+
+    try {
+
+        wclt = WebCLTest;
+        wclt.init(0, 0, "gpu");
+
+        platform = wclt.getPlatform(0);
+        devices = wclt.getDevices();
+        device = wclt.getDevice(0);
+        deviceType = wclt.getDeviceType();
+        cl = wclt.getCL();
+        contextProperties = {"platform": platform,
+                             "devices": devices,
+                             "deviceType": deviceType,
+                             "shareGroup": 0,
+                             "hints": null};
+        context = wclt.createContext(contextProperties);
+
+        maxMemAllocSize = device.getInfo(cl.DEVICE_MAX_MEM_ALLOC_SIZE);
+
+        for (i = 0; i < STRESS_ITERS; i++) {
+            num = WebCLTestUtils.getRandomNumber(maxMemAllocSize);
+            bufferSize = Int32Array.BYTES_PER_ELEMENT * num;
+            clBuffer = context.createBuffer(cl.MEM_READ_ONLY, bufferSize);
+            if (clBuffer === null) {
+                testFailed("WebCLBuffer was not created properly. Buffer size (in bytes): " + bufferSize);
+                return;
+            }
+            //TODO: Release the Memory Object
+            clBuffer = null;
+        }
+
+        testPassed("");
+
+    } catch (e) {
+        testFailed("WebCLBuffer stress test failed ; Message: " + e.message);
+    }
+}
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Create several WebCLBuffer with different sizes. To pass, it should not crash.");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

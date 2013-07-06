@@ -1,0 +1,86 @@
+/*
+* Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+* 
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided the following conditions
+* are met:
+* 
+* 1.  Redistributions of source code must retain the above copyright
+*     notice, this list of conditions and the following disclaimer.
+* 
+* 2.  Redistributions in binary form must reproduce the above copyright
+*     notice, this list of conditions and the following disclaimer in the
+*     documentation and/or other materials provided with the distribution.
+* 
+* THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
+* CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
+* BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+* FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL SAMSUNG
+* ELECTRONICS CORPORATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING
+* BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+* DATA, OR PROFITS, OR BUSINESS INTERRUPTION), HOWEVER CAUSED AND ON ANY THEORY
+* OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING
+* NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+* EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+#ifndef WebCLImageDescriptor_h
+#define WebCLImageDescriptor_h
+
+#if ENABLE(WEBCL)
+
+#include "ComputeTypes.h"
+
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+
+class WebCLImageDescriptor : public RefCounted<WebCLImageDescriptor>
+{
+public:
+    virtual ~WebCLImageDescriptor();
+
+    static PassRefPtr<WebCLImageDescriptor> create();
+    static PassRefPtr<WebCLImageDescriptor> create(CCImageFormat);
+
+    enum {
+        // Image Discriptor defaults
+        DEFAULT_OBJECT_CHANNELORDER = 0x10B5,
+        DEFAULT_OBJECT_CHANNELTYPE  = 0x10D2,
+        DEFAULT_OBJECT_WIDTH        = 0, // CL_DEVICE_IMAGE2D_MAX_WIDTH
+        DEFAULT_OBJECT_HEIGHT       = 0, // CL_DEVICE_IMAGE2D_MAX_HEIGHT
+        DEFAULT_OBJECT_ROWPITCH     = 0,
+    };
+
+    WebCLImageDescriptor();
+    WebCLImageDescriptor(CCImageFormat);
+
+    void setChannelOrder(long);
+    long channelOrder() const;
+
+    void setChannelType(long);
+    long channelType() const;
+
+    void setWidth(long);
+    long width() const;
+
+    void setHeight(long);
+    long height() const;
+
+    void setRowPitch(long);
+    long rowPitch() const;
+
+private:
+    long m_channelOrder;
+    long m_channelType;
+    long m_width;
+    long m_height;
+    long m_rowPitch;
+};
+
+} // namespace WebCore
+
+#endif
+#endif // WebCLImageDescriptor_h

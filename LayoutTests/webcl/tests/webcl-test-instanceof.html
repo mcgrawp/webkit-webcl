@@ -1,0 +1,108 @@
+<html>
+<head>
+<title>WebCL instanceof tests.</title>
+<script type="text/javascript" src="../resources/js-test-pre.js"></script>
+<script type="text/javascript" src="../resources/kernels.js"></script>
+<script type="text/javascript">
+
+var DATA_SIZE = 1024;
+var bufferInput;
+var cl;
+var commandQueue;
+var context;
+var contextProperties;
+var device;
+var devices;
+var formats;
+var kernel;
+var kernelSrc;
+var platform;
+var platforms;
+var program;
+var webclEvent;
+var webclImg;
+var webclImageDescriptor;
+var webclSampler;
+
+function runTest() {
+
+    try {
+
+        cl = webcl;
+        shouldBeTrue('cl instanceof WebCL');
+
+        kernelSrc = Kernels.square;
+
+        platforms = cl.getPlatforms();
+
+        platform = platforms[0];
+        /* Test instance of WebCLPlatform */
+        shouldBeTrue('platform instanceof WebCLPlatform');
+
+        devices = platform.getDevices();
+        device = devices[0];
+
+        /* Test instance of WebCLDevice */
+        shouldBeTrue('device instanceof WebCLDevice');
+
+        /* Test instance of WebCLContext */
+        contextProperties = { platform: platform, devices: devices,
+                                deviceType: cl.DEVICE_TYPE_ALL, shareGroup: 0, hint: null};
+        context = cl.createContext(contextProperties);
+        shouldBeTrue('cl.createContext(contextProperties) instanceof WebCLContext');
+
+        webclEvent = context.createUserEvent();
+        shouldBeTrue('webclEvent instanceof WebCLEvent');
+
+        webclSampler = context.createSampler(cl.FALSE, cl.ADDRESS_NONE, cl.FILTER_LINEAR);
+        shouldBeTrue('webclSampler instanceof WebCLSampler');
+
+        program = context.createProgram(kernelSrc);
+        /* Test instance of WebClProgram */
+        shouldBeTrue('program instanceof WebCLProgram');
+
+        bufferInput = context.createBuffer(cl.MEM_READ_ONLY,
+                        Float32Array.BYTES_PER_ELEMENT * DATA_SIZE);
+        /* Test instance of WebCLBuffer */
+        shouldBeTrue('bufferInput instanceof WebCLBuffer');
+
+        commandQueue = context.createCommandQueue(device, null);
+        /* Test instance of WebCLCommandQueue */
+        shouldBeTrue('commandQueue instanceof WebCLCommandQueue');
+
+        program.build(device);
+        kernel = program.createKernel('square');
+        /* Test instance of WebCLKernel */
+        shouldBeTrue('kernel instanceof WebCLKernel');
+
+        formats = context.getSupportedImageFormats(cl.MEM_READ_WRITE, cl.MEM_OBJECT_IMAGE2D);
+        formats[0].width = 10;
+        formats[0].height = 10;
+        webclImg = context.createImage(cl.MEM_READ_WRITE, formats[0], null);
+        /* Test instance of WebCLImage */
+        shouldBeTrue('webclImg instanceof WebCLImage');
+
+        webclImageDescriptor = webclImg.getInfo();
+        shouldBeTrue('webclImageDescriptor instanceof WebCLImageDescriptor');
+
+        /* If here, all tests passed */
+        testPassed("");
+
+    } catch (e) {
+        testFailed("Error. " + e.message);
+    }
+}
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+        description(document.title);
+        debug("Run instanceof tests for all WebCL objects");
+        runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

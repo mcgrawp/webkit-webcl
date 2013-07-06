@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebCL create several WebCLKernels stress test.</title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/kernels.js"></script>
+<script src="../resources/webcl-test.js"></script>
+
+<script>
+
+var STRESS_ITERS = 100000;
+
+function runTest() {
+    try {
+        var wclt = WebCLTest;
+        if (wclt === "undefined") {
+            testFailed("WebCLTest object is not defined ...");
+            return;
+        }
+
+        wclt.init(0, 0, "gpu");
+
+        var cl = wclt.getCL();
+        var platform = wclt.getPlatform(0);
+        var device = wclt.getDevice(0);
+        var devices = wclt.getDevices();
+        var contextProperties = { platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_ALL,
+                                shareGroup: 0, hint: null};
+        var context = wclt.createContext(contextProperties);
+        var queue = wclt.createCommandQueue();
+
+        var kernelSource = Kernels.kernel_item;
+        if (kernelSource === "") {
+            testFailed("No kernel named: " + "kernel_item");
+            return;
+        }
+
+        var program = wclt.createProgram(kernelSource, "kernel_item");
+        var kernel = wclt.getKernel();
+        var i;
+        for (i = 0; i < STRESS_ITERS; i++) {
+            if (kernel === null || !(kernel instanceof WebCLKernel)) {
+                testFailed("Invalid kernel " + kernel);
+                return;
+            }
+
+            kernel = program.createKernel("kernel_item");
+            // TODO: Add cleanup resources using release
+        }
+
+        testPassed(" ");
+
+    } catch (e) {
+        testFailed("WebCL create several WebCLKernels stress test failed; Message: " + e.message);
+    }
+}
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Create several WebCLKernels. To pass, it should not crash.");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

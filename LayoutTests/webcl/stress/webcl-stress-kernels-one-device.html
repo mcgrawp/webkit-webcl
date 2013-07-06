@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebCL create buffer stress test </title>
+<script type="text/javascript" src="../resources/kernels.js"></script>
+<script src="../resources/webcl-test.js"></script>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/webcl-test-utils.js"></script>
+
+<script>
+
+var VECTOR_SIZE = 128;
+var STRESS_ITERS = 100000;
+
+var kernelsName = ['vector_add', 'vector_sub', 'vector_mult', 'vector_div'];
+var kernelsSrc = new Array(4);
+var globalWorkSize = new Int32Array(1);
+var localWorkSize = new Int32Array(1);
+var sizeInBytes = Int32Array.BYTES_PER_ELEMENT * VECTOR_SIZE;
+globalWorkSize[0] = VECTOR_SIZE * VECTOR_SIZE;
+var k;
+for (k in kernelsName) {
+    kernelsSrc[k] = eval('Kernels. ' +  kernelsName[k]);
+}
+
+
+function checkResult(v1, v2, result, kernelName) {
+    var operator;
+
+    switch (kernelName) {
+    case 'vector_add':
+        operator = '+';
+        break;
+    case 'vector_sub':
+        operator = '-';
+        break;
+    case 'vector_mult':
+        operator = '*';
+        break;
+    case 'vector_div':
+        operator = '/';
+        break;
+    default:
+        throw new Error('Undefined kernel operation for kernel key ' + kernelName);
+    }
+
+    var temp, msg;
+    var i;
+    for (i = 0; i < VECTOR_SIZE; i++) {
+        temp = eval('v1[i]' + operator + 'v2[i]');
+        if (result[i] !== parseInt(temp, 10)) {
+            msg = v1[i] + operator + v2[i] + ' should be ' + temp + '. Its ' + result[i];
+            console.log(msg);
+            return msg;
+        }
+    }
+
+    return "";
+}
+
+function runTest() {
+
+    try {
+
+        var wclt = WebCLTest;
+        wclt.init();
+        var platform = wclt.getPlatform(0);
+        var device = wclt.getDevice(0);
+        var devices = wclt.getDevices();
+        var cl = wclt.getCL();
+        var contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU,
+                                 hint: null};
+        var context = wclt.createContext(contextProperties);
+
+        /* Create buffers */
+        var bufferIn1 = context.createBuffer(cl.MEM_READ_ONLY,  sizeInBytes);
+        var bufferIn2 = context.createBuffer(cl.MEM_READ_ONLY,  sizeInBytes);
+        var bufferOut = context.createBuffer(cl.MEM_WRITE_ONLY,  sizeInBytes);
+
+        /* Create program and buind with some kernel */
+        var program = context.createProgram(kernelsSrc.join("\n"));
+        program.build(device);
+
+        /* Create the kernels for stress test */
+        var kernels = {};
+        var workGroupSize;
+
+        /* Create kernels */
+        var i;
+        for (i in kernelsName) {
+            kernels[kernelsName[i]] = program.createKernel(kernelsName[i]);
+        }
+
+        var v1, v2, result, msg;
+
+        var commandQueue = context.createCommandQueue(device, null);
+
+        /* Run several times */
+        for (i = 0; i < STRESS_ITERS; i++) {
+
+            /* Each kernel */
+            var key;
+            for (key in kernels) {
+
+                v1 = WebCLTestUtils.getRandomVector(VECTOR_SIZE, 100);
+                v2 = WebCLTestUtils.getRandomVector(VECTOR_SIZE, 100);
+                result = new Int32Array(VECTOR_SIZE);
+
+                commandQueue.enqueueWriteBuffer(bufferIn1, true, 0, sizeInBytes, new Int32Array(v1));
+                commandQueue.enqueueWriteBuffer(bufferIn2, true, 0, sizeInBytes, new Int32Array(v2));
+
+                kernels[key].setArg(0, bufferIn1);
+                kernels[key].setArg(1, bufferIn2);
+                kernels[key].setArg(2, bufferOut);
+                kernels[key].setArg(3, VECTOR_SIZE, cl.INT);
+
+                localWorkSize[0] =  kernels[key].getWorkGroupInfo(device, cl.KERNEL_WORK_GROUP_SIZE);
+
+                commandQueue.enqueueNDRangeKernel(kernels[key], null, globalWorkSize, localWorkSize);
+                commandQueue.finish();
+
+                commandQueue.enqueueReadBuffer(bufferOut, true, 0, sizeInBytes, result);
+
+                msg = checkResult(v1, v2, result, key);
+                if (msg !== "") {
+                    throw new Error(msg);
+                }
+            }
+
+        }
+        //FIXME: Release the resources
+
+        testPassed("OK.");
+
+    } catch (e) {
+        testFailed(e.message);
+    }
+
+}
+
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Run several kernels in one device. To pass, it should not crash.");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

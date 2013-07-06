@@ -1,0 +1,9 @@
+Strees a WebCLCommandQueue using buffer. To pass, it should not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebCL create queue stress test </title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/kernels.js"></script>
+<script src="../resources/webcl-test.js"></script>
+
+<script>
+
+var DATA_SIZE = 1024;
+var STRESS_ITERS = 100000;
+
+function runTest() {
+    try {
+
+        var wclt = WebCLTest;
+        wclt.init(0, 0, "gpu");
+        var platform = wclt.getPlatform(0);
+        var device = wclt.getDevice(0);
+        var devices = wclt.getDevices();
+        var cl = wclt.getCL();
+        var contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU,
+                                 hint: null};
+        var context = wclt.createContext(contextProperties);
+        var kernelSource = Kernels.square;
+        if (kernelSource === null) {
+            testFailed("No kernel named: " + "square");
+            return;
+        }
+
+        wclt.createProgram(kernelSource, "square");
+        var kernel = wclt.getKernel();
+
+        var globalWorkSize = new Int32Array(1);
+        var localWorkSize = new Int32Array(1);
+        var workGroupSize = kernel.getWorkGroupInfo(device, cl.KERNEL_WORK_GROUP_SIZE);
+        globalWorkSize[0] = DATA_SIZE;
+        localWorkSize[0] = workGroupSize;
+
+        var data = new Int32Array(DATA_SIZE);
+        var results = new Int32Array(DATA_SIZE);
+        var inputBuffer;
+        var outputBuffer;
+        var inputTmpBuffer;
+
+        var i;
+        for (i = 0; i < DATA_SIZE; i++) {
+            data[i] = i + 1;
+        }
+
+        var numBytes = Int32Array.BYTES_PER_ELEMENT * DATA_SIZE;
+        inputBuffer = context.createBuffer(cl.MEM_READ_WRITE, numBytes);
+        outputBuffer = context.createBuffer(cl.MEM_WRITE_ONLY,  numBytes);
+        inputTmpBuffer = context.createBuffer(cl.MEM_READ_WRITE, numBytes);
+        if (inputBuffer === null || outputBuffer === null || inputTmpBuffer === null) {
+            testFailed("Failed to allocate device memory.");
+            return;
+        }
+
+        kernel.setArg(0, inputBuffer);
+        kernel.setArg(1, outputBuffer);
+        kernel.setArg(2, DATA_SIZE, WebCLKernelArgumentTypes.INT);
+
+        var queue = wclt.createCommandQueue();
+        for (i = 0; i < STRESS_ITERS; i++) {
+            queue.enqueueWriteBuffer(inputTmpBuffer, true, 0, numBytes, data);
+            queue.enqueueCopyBuffer(inputTmpBuffer, inputBuffer, 0, 0, numBytes);
+            queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
+            queue.enqueueReadBuffer(outputBuffer, true, 0, numBytes, results);
+        }
+
+        queue.finish();
+
+        var squareValue;
+        for (i = 0; i < DATA_SIZE; i++) {
+            squareValue = data[i] * data[i];
+            if (results[i] !== squareValue) {
+                testFailed("Wrong values: results[" + i + "] should be " + squareValue + " instead of " + results[i]);
+                break;
+            }
+        }
+
+        //TODO: clean up the resources
+
+        testPassed("");
+
+    } catch (e) {
+        testFailed("WeCLCommandQueue stress test failed ; Message: " + e.message);
+    }
+}
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Strees a WebCLCommandQueue using buffer. To pass, it should not crash.");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
