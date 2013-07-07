@@ -27,7 +27,6 @@
 
 [
     Conditional=WEBCL,
-    Callback
 ] interface WebCLFinishCallback {
     [Custom] boolean handleEvent(in long value);
 };
