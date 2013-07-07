@@ -28,7 +28,7 @@
 [
     Conditional=WEBCL,
 ] interface WebCLPlatform {
-    [RaisesException] sequence<WebCLDevice> getDevices(in [Optional=DefaultIsUndefined] long deviceType);
+    [RaisesException] sequence<WebCLDevice> getDevices(in [Default=Undefined] optional long deviceType);
     [StrictTypeChecking, Custom, RaisesException] void getInfo (in long platformInfo);
     [StrictTypeChecking, Custom, RaisesException] void getSupportedExtensions();
     // FIXME: Misses RaisesException extended attribute?

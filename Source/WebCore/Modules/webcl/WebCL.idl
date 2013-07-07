@@ -260,7 +260,7 @@
 
     [RaisesException] void waitForEvents(in sequence<WebCLEvent> events);
 
-    [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(in [Optional] WebCLContextProperties webclContextProperties);
+    [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(in optional WebCLContextProperties webclContextProperties);
 
     [StrictTypeChecking, Custom, RaisesException] void getSupportedExtensions();
 

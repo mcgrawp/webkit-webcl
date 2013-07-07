@@ -35,13 +35,13 @@
 
     [RaisesException] sequence<WebCLImageDescriptor> getSupportedImageFormats(in long memFlags);
 
-    [RaisesException] WebCLCommandQueue createCommandQueue(in [Optional=DefaultIsUndefined] WebCLDevice device, in [Optional=DefaultIsUndefined] long prop);
+    [RaisesException] WebCLCommandQueue createCommandQueue(in [Default=Undefined] optional WebCLDevice device, in [Default=Undefined] optional long prop);
 
     [RaisesException] WebCLProgram createProgram(in DOMString kernelSource);
 
     [StrictTypeChecking, RaisesException] WebCLBuffer createBuffer(in long memFlags, in ImageData srcPixels);
     [StrictTypeChecking, RaisesException] WebCLBuffer createBuffer(in long memFlags, in HTMLCanvasElement srcCanvas);
-    [StrictTypeChecking, RaisesException] WebCLBuffer createBuffer(in long memFlags, in long sizeInBytes, in [Optional=DefaultIsUndefined] ArrayBuffer srcBuffer);
+    [StrictTypeChecking, RaisesException] WebCLBuffer createBuffer(in long memFlags, in long sizeInBytes, in [Default=Undefined] optional ArrayBuffer srcBuffer);
 
     [RaisesException] WebCLSampler createSampler(in boolean normCords, in long addrMode, in long fltrMode);
 
@@ -51,5 +51,5 @@
     [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(in long flags, in ImageData data);
     [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(in long flags, in HTMLVideoElement videoElement);
     [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(in long flags, in HTMLImageElement imageElement);
-    [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(in long flags, in WebCLImageDescriptor descriptor, in [Optional=DefaultIsUndefined] ArrayBuffer srcBuffer);
+    [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(in long flags, in WebCLImageDescriptor descriptor, in [Default=Undefined] optional ArrayBuffer srcBuffer);
 };

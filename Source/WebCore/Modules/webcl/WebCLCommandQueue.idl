@@ -36,16 +36,16 @@
             in long offset,
             in long bufferSize,
             in ArrayBufferView ptr,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueWriteBuffer(in WebCLBuffer bufferId,
             in boolean blockingWrite,
             in long offset,
             in long bufferSize,
             in ImageData ptr,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueWriteBufferRect(in WebCLBuffer bufferId,
             in boolean blockingWrite,
@@ -57,24 +57,24 @@
             in long targetRowPitch,
             in long targetSlicePitch,
             in ArrayBufferView ptr,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueReadBuffer(in WebCLBuffer bufferId,
             in boolean blockingRead,
             in long offset,
             in long bufferSize,
             in ArrayBufferView ptr,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueReadBuffer(in WebCLBuffer bufferId,
             in boolean blockingRead,
             in long offset,
             in long bufferSize,
             in ImageData ptr,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueReadBufferRect(in WebCLBuffer bufferId,
             in boolean blockingRead,
@@ -86,13 +86,13 @@
             in long targetRowPitch,
             in long targetSlicePitch,
             in ArrayBufferView ptr,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueNDRangeKernel(in WebCLKernel kernel,
             in Int32Array offsets, in Int32Array globalWorkSize,
-            in Int32Array localWorkSize, in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in Int32Array localWorkSize, in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueWriteImage(in WebCLImage image,
             in boolean blockingWrite,
@@ -100,8 +100,8 @@
             in Int32Array region,
             in long inputRowPitch,
             in ArrayBufferView ptr,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event)
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event)
        ;
 
     [RaisesException] void enqueueReadImage(in WebCLImage image,
@@ -110,16 +110,16 @@
             in Int32Array region,
             in long rowPitch,
             in ArrayBufferView ptr,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueCopyBuffer(in WebCLBuffer sourceBuffer,
             in WebCLBuffer targetBuffer,
             in long sourceOffset,
             in long targetOffset,
             in long sizeInBytes,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueCopyBufferRect(in WebCLBuffer sourceBuffer,
             in WebCLBuffer targetBuffer,
@@ -130,40 +130,40 @@
             in long sourceSlicePitch,
             in long targetRowPitch,
             in long targetSlicePitch,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueCopyImage(in WebCLImage sourceImage,
             in WebCLImage targetImage,
             in Int32Array sourceOrigin,
             in Int32Array targetOrigin,
             in Int32Array region,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueCopyImageToBuffer(in WebCLImage sourceImage,
             in WebCLBuffer targetBuffer,
             in Int32Array sourceOrigin,
             in Int32Array region,
             in long targetOffset,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueCopyBufferToImage(in WebCLBuffer sourceBuffer,
             in WebCLImage targetImage,
             in long sourceOffset,
             in Int32Array targetOrigin,
             in Int32Array region,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueBarrier();
 
     [RaisesException] void enqueueMarker(in WebCLEvent event);
 
     [RaisesException] void enqueueTask(in WebCLKernel kernel,
-            in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event);
+            in [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            in [Default=Undefined] optional WebCLEvent event);
 
     [Custom, RaisesException] void finish();
 

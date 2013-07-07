@@ -31,7 +31,7 @@
 ] interface WebCLGLContext : WebCLContext {
 
     // FIXME: spec says "WebCLDevice?"
-    [RaisesException] WebCLGLCommandQueue createCommandQueue(in [Optional] WebCLDevice device, in [Optional] long properties);
+    [RaisesException] WebCLGLCommandQueue createCommandQueue(in optional WebCLDevice device, in optional long properties);
 
     [RaisesException] WebCLGLBuffer createFromGLBuffer(in long memFlags, in WebGLBuffer buffer);
 
