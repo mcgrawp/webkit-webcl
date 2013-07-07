@@ -27,7 +27,7 @@
 
 interface [
     Conditional=WEBCL,
-    OmitConstructor,
+    //OmitConstructor,
 ] WebCLGLObjectInfo {
     attribute long glObjectType;
     attribute long glObject;

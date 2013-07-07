@@ -27,7 +27,7 @@
 
 interface [
     Conditional=WEBCL,
-    OmitConstructor,
+    //OmitConstructor,
 ] WebCL {
     const unsigned long SUCCESS                                    = 0;
     const unsigned long DEVICE_NOT_FOUND                           = -1;
