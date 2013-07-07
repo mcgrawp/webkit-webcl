@@ -25,10 +25,10 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEBCL,
     //OmitConstructor,
-] WebCL {
+] interface WebCL {
     const unsigned long SUCCESS                                    = 0;
     const unsigned long DEVICE_NOT_FOUND                           = -1;
     const unsigned long DEVICE_NOT_AVAILABLE                       = -2;
@@ -256,12 +256,14 @@ interface [
     const unsigned long PROFILING_COMMAND_START                    = 0x1282;
     const unsigned long PROFILING_COMMAND_END                      = 0x1283;
 
-    sequence<WebCLPlatform> getPlatforms() raises(DOMException);
+    [RaisesException] sequence<WebCLPlatform> getPlatforms();
 
-    void waitForEvents(in sequence<WebCLEvent> events) raises(DOMException);
+    [RaisesException] void waitForEvents(in sequence<WebCLEvent> events);
 
-    [StrictTypeChecking, Custom] WebCLContext createContext(in [Optional] WebCLContextProperties webclContextProperties) raises(DOMException);
+    [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(in [Optional] WebCLContextProperties webclContextProperties);
 
-    [StrictTypeChecking, Custom] void getSupportedExtensions() raises(DOMException);
+    [StrictTypeChecking, Custom, RaisesException] void getSupportedExtensions();
+
+    // FIXME: It lacks RaisesException extended attribute?
     [StrictTypeChecking, Custom] any getExtension(in DOMString name);
 };

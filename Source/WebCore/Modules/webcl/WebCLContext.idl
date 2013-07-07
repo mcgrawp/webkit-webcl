@@ -28,41 +28,28 @@
 [
     Conditional=WEBCL,
 ] interface WebCLContext {
-    [StrictTypeChecking, Custom] void getInfo (in long contextinfo)
-        raises(DOMException);
+    // FIXME: Wrong return type.
+    [StrictTypeChecking, Custom, RaisesException] void getInfo (in long contextInfo);
 
-    WebCLEvent createUserEvent()
-        raises(DOMException);
+    [RaisesException] WebCLEvent createUserEvent();
 
-    sequence<WebCLImageDescriptor> getSupportedImageFormats(in long memFlags)
-        raises(DOMException);
+    [RaisesException] sequence<WebCLImageDescriptor> getSupportedImageFormats(in long memFlags);
 
-    WebCLCommandQueue createCommandQueue(in [Optional=DefaultIsUndefined] WebCLDevice device, in [Optional=DefaultIsUndefined] long prop)
-        raises(DOMException);
+    [RaisesException] WebCLCommandQueue createCommandQueue(in [Optional=DefaultIsUndefined] WebCLDevice device, in [Optional=DefaultIsUndefined] long prop);
 
-    WebCLProgram createProgram(in DOMString kernelSource)
-        raises(DOMException);
+    [RaisesException] WebCLProgram createProgram(in DOMString kernelSource);
 
-    [StrictTypeChecking] WebCLBuffer createBuffer(in long memFlags, in ImageData srcPixels)
-        raises(DOMException);
-    [StrictTypeChecking] WebCLBuffer createBuffer(in long memFlags, in HTMLCanvasElement srcCanvas)
-        raises(DOMException);
-    [StrictTypeChecking] WebCLBuffer createBuffer(in long memFlags, in long sizeInBytes, in [Optional=DefaultIsUndefined] ArrayBuffer srcBuffer)
-        raises(DOMException);
+    [StrictTypeChecking, RaisesException] WebCLBuffer createBuffer(in long memFlags, in ImageData srcPixels);
+    [StrictTypeChecking, RaisesException] WebCLBuffer createBuffer(in long memFlags, in HTMLCanvasElement srcCanvas);
+    [StrictTypeChecking, RaisesException] WebCLBuffer createBuffer(in long memFlags, in long sizeInBytes, in [Optional=DefaultIsUndefined] ArrayBuffer srcBuffer);
 
-    WebCLSampler createSampler(in boolean normCords, in long addrMode, in long fltrMode)
-        raises(DOMException);
+    [RaisesException] WebCLSampler createSampler(in boolean normCords, in long addrMode, in long fltrMode);
 
     // FIXME: Use overloading provided by our IDL code generator when
     // WebIDL dictionary gets fully supported: issue #110.
-    [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in HTMLCanvasElement canvasElement)
-        raises (DOMException);
-    [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in ImageData data)
-        raises(DOMException);
-    [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in HTMLVideoElement videoElement)
-        raises(DOMException);
-    [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in HTMLImageElement imageElement)
-        raises(DOMException);
-    [StrictTypeChecking, Custom] WebCLImage createImage(in long flags, in WebCLImageDescriptor descriptor, in [Optional=DefaultIsUndefined] ArrayBuffer srcBuffer)
-        raises(DOMException);
+    [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(in long flags, in HTMLCanvasElement canvasElement);
+    [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(in long flags, in ImageData data);
+    [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(in long flags, in HTMLVideoElement videoElement);
+    [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(in long flags, in HTMLImageElement imageElement);
+    [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(in long flags, in WebCLImageDescriptor descriptor, in [Optional=DefaultIsUndefined] ArrayBuffer srcBuffer);
 };

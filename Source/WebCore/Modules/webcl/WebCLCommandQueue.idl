@@ -29,25 +29,25 @@
     Conditional=WEBCL,
 ] interface WebCLCommandQueue {
 
-    [StrictTypeChecking, Custom] void getInfo(in long queuenfo) raises(DOMException);
+    [StrictTypeChecking, Custom, RaisesException] void getInfo(in long queuenfo);
 
-    void enqueueWriteBuffer(in WebCLBuffer bufferId,
+    [RaisesException] void enqueueWriteBuffer(in WebCLBuffer bufferId,
             in boolean blockingWrite,
             in long offset,
             in long bufferSize,
             in ArrayBufferView ptr,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event) raises(DOMException);
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    void enqueueWriteBuffer(in WebCLBuffer bufferId,
+    [RaisesException] void enqueueWriteBuffer(in WebCLBuffer bufferId,
             in boolean blockingWrite,
             in long offset,
             in long bufferSize,
             in ImageData ptr,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event) raises(DOMException);
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    void enqueueWriteBufferRect(in WebCLBuffer bufferId,
+    [RaisesException] void enqueueWriteBufferRect(in WebCLBuffer bufferId,
             in boolean blockingWrite,
             in Int32Array sourceOrigin,
             in Int32Array targetOrigin,
@@ -58,25 +58,25 @@
             in long targetSlicePitch,
             in ArrayBufferView ptr,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event) raises(DOMException);
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    void enqueueReadBuffer(in WebCLBuffer bufferId,
+    [RaisesException] void enqueueReadBuffer(in WebCLBuffer bufferId,
             in boolean blockingRead,
             in long offset,
             in long bufferSize,
             in ArrayBufferView ptr,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event) raises(DOMException);
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    void enqueueReadBuffer(in WebCLBuffer bufferId,
+    [RaisesException] void enqueueReadBuffer(in WebCLBuffer bufferId,
             in boolean blockingRead,
             in long offset,
             in long bufferSize,
             in ImageData ptr,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event) raises(DOMException);
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    void enqueueReadBufferRect(in WebCLBuffer bufferId,
+    [RaisesException] void enqueueReadBufferRect(in WebCLBuffer bufferId,
             in boolean blockingRead,
             in Int32Array sourceOrigin,
             in Int32Array targetOrigin,
@@ -87,14 +87,14 @@
             in long targetSlicePitch,
             in ArrayBufferView ptr,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event) raises(DOMException);
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    void enqueueNDRangeKernel(in WebCLKernel kernel,
+    [RaisesException] void enqueueNDRangeKernel(in WebCLKernel kernel,
             in Int32Array offsets, in Int32Array globalWorkSize,
             in Int32Array localWorkSize, in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event) raises(DOMException);
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    void enqueueWriteImage(in WebCLImage image,
+    [RaisesException] void enqueueWriteImage(in WebCLImage image,
             in boolean blockingWrite,
             in Int32Array origin,
             in Int32Array region,
@@ -102,27 +102,26 @@
             in ArrayBufferView ptr,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
             in [Optional=DefaultIsUndefined] WebCLEvent event)
-        raises(DOMException);
+       ;
 
-    void enqueueReadImage(in WebCLImage image,
+    [RaisesException] void enqueueReadImage(in WebCLImage image,
             in boolean blockingRead,
             in Int32Array origin,
             in Int32Array region,
             in long rowPitch,
             in ArrayBufferView ptr,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event)
-        raises(DOMException);
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    void enqueueCopyBuffer(in WebCLBuffer sourceBuffer,
+    [RaisesException] void enqueueCopyBuffer(in WebCLBuffer sourceBuffer,
             in WebCLBuffer targetBuffer,
             in long sourceOffset,
             in long targetOffset,
             in long sizeInBytes,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event) raises(DOMException);
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    void enqueueCopyBufferRect(in WebCLBuffer sourceBuffer,
+    [RaisesException] void enqueueCopyBufferRect(in WebCLBuffer sourceBuffer,
             in WebCLBuffer targetBuffer,
             in Int32Array sourceOrigin,
             in Int32Array targetOrigin,
@@ -132,41 +131,41 @@
             in long targetRowPitch,
             in long targetSlicePitch,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event) raises( DOMException );
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    void enqueueCopyImage(in WebCLImage sourceImage,
+    [RaisesException] void enqueueCopyImage(in WebCLImage sourceImage,
             in WebCLImage targetImage,
             in Int32Array sourceOrigin,
             in Int32Array targetOrigin,
             in Int32Array region,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event) raises(DOMException);
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    void enqueueCopyImageToBuffer(in WebCLImage sourceImage,
+    [RaisesException] void enqueueCopyImageToBuffer(in WebCLImage sourceImage,
             in WebCLBuffer targetBuffer,
             in Int32Array sourceOrigin,
             in Int32Array region,
             in long targetOffset,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event) raises(DOMException);
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    void enqueueCopyBufferToImage(in WebCLBuffer sourceBuffer,
+    [RaisesException] void enqueueCopyBufferToImage(in WebCLBuffer sourceBuffer,
             in WebCLImage targetImage,
             in long sourceOffset,
             in Int32Array targetOrigin,
             in Int32Array region,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event) raises(DOMException);
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    void enqueueBarrier() raises(DOMException);
+    [RaisesException] void enqueueBarrier();
 
-    void enqueueMarker(in WebCLEvent event) raises(DOMException);
+    [RaisesException] void enqueueMarker(in WebCLEvent event);
 
-    void enqueueTask(in WebCLKernel kernel,
+    [RaisesException] void enqueueTask(in WebCLKernel kernel,
             in [Optional=DefaultIsUndefined] sequence<WebCLEvent> eventWaitList,
-            in [Optional=DefaultIsUndefined] WebCLEvent event) raises(DOMException);
+            in [Optional=DefaultIsUndefined] WebCLEvent event);
 
-    [Custom] void finish() raises(DOMException);
+    [Custom, RaisesException] void finish();
 
-    void flush() raises(DOMException);
+    [RaisesException] void flush();
 };

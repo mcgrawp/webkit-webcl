@@ -25,8 +25,9 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-interface [
+[
     Conditional=WEBCL,
-] WebCLSampler {
-    [StrictTypeChecking, Custom] void getInfo(in long paramName) raises(DOMException);
+] interface WebCLSampler {
+    // FIXME: Wrong return type.
+    [StrictTypeChecking, Custom, RaisesException] void getInfo(in long paramName);
 };

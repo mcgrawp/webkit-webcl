@@ -33,11 +33,11 @@
 
     // FIXME: First parameters, should be a Vector/Sequence here.
     // FIXME2: Use Optional=DefaultIsUndefined.
-    void enqueueAcquireGLObjects(in WebCLMemoryObject memObjects,
+    [RaisesException] void enqueueAcquireGLObjects(in WebCLMemoryObject memObjects,
         in [Optional] sequence<WebCLEvent> eventWaitList,
-        in [Optional] WebCLEvent event) raises(DOMException);
+        in [Optional] WebCLEvent event);
 
-    void enqueueReleaseGLObjects(in WebCLMemoryObject memObjects,
+    [RaisesException] void enqueueReleaseGLObjects(in WebCLMemoryObject memObjects,
         in [Optional] sequence<WebCLEvent> eventWaitList,
-        in [Optional] WebCLEvent event) raises(DOMException);
+        in [Optional] WebCLEvent event);
 };

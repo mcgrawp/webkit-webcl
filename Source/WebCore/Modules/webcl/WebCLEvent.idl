@@ -29,10 +29,7 @@ interface [
     Conditional=WEBCL,
     Constructor,
 ] WebCLEvent {
-    [StrictTypeChecking, Custom] void getInfo(in long paramName)
-        raises(DOMException);
-    [StrictTypeChecking, Custom] void getProfilingInfo(in long paramName)
-        raises(DOMException);
-    [StrictTypeChecking, Custom] void setCallback(in long execStatus, in  WebCLFinishCallback notifyCallback, in long userData)
-        raises(DOMException);
+    [StrictTypeChecking, Custom, RaisesException] void getInfo(in long paramName);
+    [StrictTypeChecking, Custom, RaisesException] void getProfilingInfo(in long paramName);
+    [StrictTypeChecking, Custom, RaisesException] void setCallback(in long execStatus, in  WebCLFinishCallback notifyCallback, in long userData);
 };

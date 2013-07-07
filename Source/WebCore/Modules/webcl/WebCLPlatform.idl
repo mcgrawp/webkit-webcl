@@ -25,11 +25,12 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-interface [
+[
     Conditional=WEBCL,
-] WebCLPlatform {
-    sequence<WebCLDevice> getDevices(in [Optional=DefaultIsUndefined] long deviceType) raises(DOMException);
-    [StrictTypeChecking, Custom] void getInfo (in long platformInfo) raises(DOMException);
-    [StrictTypeChecking, Custom] void getSupportedExtensions() raises(DOMException);
+] interface WebCLPlatform {
+    [RaisesException] sequence<WebCLDevice> getDevices(in [Optional=DefaultIsUndefined] long deviceType);
+    [StrictTypeChecking, Custom, RaisesException] void getInfo (in long platformInfo);
+    [StrictTypeChecking, Custom, RaisesException] void getSupportedExtensions();
+    // FIXME: Misses RaisesException extended attribute?
     [StrictTypeChecking, Custom] any getExtension(in DOMString name);
 };

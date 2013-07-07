@@ -30,5 +30,5 @@
     JSGenerateToJSObject,
 ] interface WebCLGLBuffer : WebCLBuffer {
     // FIXME: return type should be 'any'
-    WebCLGLObjectInfo getGLObjectInfo() raises(DOMException);
+    [RaisesException] WebCLGLObjectInfo getGLObjectInfo();
 };

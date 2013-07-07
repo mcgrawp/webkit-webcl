@@ -30,5 +30,5 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject
 ] interface WebCLImage : WebCLMemoryObject {
-    WebCLImageDescriptor getInfo() raises(DOMException);
+    [RaisesException] WebCLImageDescriptor getInfo();
 };
