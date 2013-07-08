@@ -20,31 +20,6 @@ var cy = 0;
 var diag = 0;
 var touchDown = false;
 
-function getKernel(fileName) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", fileName, false);
-    xhr.send();
-    var res = null;
-    // HTTP reports success with a 200 status, file protocol reports
-    // success with a 0 status
-    if (xhr.status === 200 || xhr.status === 0) {
-        res = xhr.responseText;
-    }
-    return res;
-}
-
-window.requestAnimFrame = (function () {
-    return window.requestAnimationFrame    ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame    ||
-        window.oRequestAnimationFrame      ||
-        window.msRequestAnimationFrame     ||
-        function (callback, element) {
-            window.setTimeout(callback, 1000 / 60);
-        };
-}());
-
-
 function init() {
     // Start load of an image from a file
     //
