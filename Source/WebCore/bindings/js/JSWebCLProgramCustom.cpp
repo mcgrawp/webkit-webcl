@@ -102,6 +102,10 @@ JSValue JSWebCLProgram::build(JSC::ExecState* exec)
     if (exec->argumentCount() < 1)
         return throwSyntaxError(exec);
 
+    if (!isJSArray(exec->argument(0))) {
+        setDOMException(exec, WebCLException::INVALID_DEVICE);
+        return jsUndefined();
+    }
     Vector<RefPtr<WebCLDevice> > devices = toRefPtrNativeArray<WebCLDevice, JSWebCLDevice>(exec, exec->argument(0), &toWebCLDevice);
     if (exec->hadException())
         return jsUndefined();

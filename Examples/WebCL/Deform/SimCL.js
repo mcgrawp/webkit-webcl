@@ -110,7 +110,7 @@ function InitCL() {
         program = context.createProgram(kernelSource);
 
         // Build the program executable
-        program.build(device);
+        program.build([device]);
 
         // Create the compute kernel in the program we wish to run
         kernel = program.createKernel("displace");
