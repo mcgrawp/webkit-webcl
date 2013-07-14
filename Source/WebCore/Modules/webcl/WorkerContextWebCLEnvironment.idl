@@ -27,6 +27,6 @@
 
 [
     Conditional=WEBCL,
-] partial interface WorkerContext {
+] partial interface WorkerGlobalScope {
     readonly attribute WebCL webcl;
 };

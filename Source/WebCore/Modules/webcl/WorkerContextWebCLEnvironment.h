@@ -29,30 +29,33 @@
 #ifndef WorkerContextWebCLEnvironment_h
 #define WorkerContextWebCLEnvironment_h
 
-#if ENABLE(WORKERS) && ENABLE(WEBCL)
+#if ENABLE(WEBCL)
 
 #include "Supplementable.h"
-
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class ScriptExecutionContext;
+class WorkerGlobalScope;
 class WebCL;
-class WorkerContextWebCLEnvironment: public RefCounted<WorkerContextWebCLEnvironment>, public Supplement<ScriptExecutionContext> {
+
+class WorkerContextWebCLEnvironment: public Supplement<ScriptExecutionContext> {
 public:
     virtual ~WorkerContextWebCLEnvironment();
-    static WorkerContextWebCLEnvironment* from(ScriptExecutionContext*);
-    static WebCL* webcl(ScriptExecutionContext*);
-    WebCL* webcl() const;
 
-    static const char* supplementName();
+    static WorkerContextWebCLEnvironment* from(WorkerGlobalScope*);
+    static WebCL* webcl(WorkerGlobalScope*);
 
 private:
-    explicit WorkerContextWebCLEnvironment(ScriptExecutionContext*);
-    mutable RefPtr<WebCL> m_webcl;
-    ScriptExecutionContext* m_context;
+    explicit WorkerContextWebCLEnvironment(WorkerGlobalScope*);
+
+    WebCL* webcl();
+    static const char* supplementName();
+
+    WorkerGlobalScope* m_context;
+    RefPtr<WebCL> m_webcl;
 };
+
 }
 
 #endif // ENABLE(WEBCL)

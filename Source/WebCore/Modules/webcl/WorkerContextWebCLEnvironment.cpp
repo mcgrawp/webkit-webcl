@@ -30,27 +30,30 @@
 #if ENABLE(WORKERS) && ENABLE(WEBCL)
 
 #include "WorkerContextWebCLEnvironment.h"
-
-#include "ScriptExecutionContext.h"
+#include "WorkerGlobalScope.h"
 #include "WebCL.h"
 
 namespace WebCore {
 
-WorkerContextWebCLEnvironment::~WorkerContextWebCLEnvironment()
-{
-}
-
-WorkerContextWebCLEnvironment::WorkerContextWebCLEnvironment(ScriptExecutionContext* context)
+WorkerContextWebCLEnvironment::WorkerContextWebCLEnvironment(WorkerGlobalScope* context)
     : m_context(context)
 {
     // FIXME: For now, use it in order to silent a clang compiler warning.
     UNUSED_PARAM(m_context);
 }
 
-WorkerContextWebCLEnvironment* WorkerContextWebCLEnvironment::from(ScriptExecutionContext* context)
+WorkerContextWebCLEnvironment::~WorkerContextWebCLEnvironment()
 {
-    WorkerContextWebCLEnvironment* supplement =
-        static_cast<WorkerContextWebCLEnvironment*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
+}
+
+const char* WorkerContextWebCLEnvironment::supplementName()
+{
+    return "WorkerGlobalScopeWebCL";
+}
+
+WorkerContextWebCLEnvironment* WorkerContextWebCLEnvironment::from(WorkerGlobalScope* context)
+{
+    WorkerContextWebCLEnvironment* supplement = static_cast<WorkerContextWebCLEnvironment*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
     if (!supplement) {
         supplement = new WorkerContextWebCLEnvironment(context);
         provideTo(context, supplementName(), adoptPtr(supplement));
@@ -58,22 +61,17 @@ WorkerContextWebCLEnvironment* WorkerContextWebCLEnvironment::from(ScriptExecuti
     return supplement;
 }
 
-WebCL* WorkerContextWebCLEnvironment::webcl(ScriptExecutionContext* context)
+WebCL* WorkerContextWebCLEnvironment::webcl(WorkerGlobalScope* context)
 {
-    return from(context)->webcl();
+    return WorkerContextWebCLEnvironment::from(context)->webcl();
 }
 
-WebCL* WorkerContextWebCLEnvironment::webcl() const
+WebCL* WorkerContextWebCLEnvironment::webcl()
 {
     if (!m_webcl)
         m_webcl = WebCL::create();
 
     return m_webcl.get();
-}
-
-const char* WorkerContextWebCLEnvironment::supplementName()
-{
-    return "WorkerContextWebCLEnvironment";
 }
 
 }
