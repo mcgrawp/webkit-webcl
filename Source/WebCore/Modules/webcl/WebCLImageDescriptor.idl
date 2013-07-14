@@ -25,10 +25,10 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-interface [
+[
     Conditional=WEBCL,
     // OmitConstructor,
-] WebCLImageDescriptor {
+] interface WebCLImageDescriptor {
     attribute long channelOrder;
     attribute long channelType;
     attribute long width;

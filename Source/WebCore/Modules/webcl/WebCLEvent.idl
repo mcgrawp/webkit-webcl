@@ -25,10 +25,10 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-interface [
+[
     Conditional=WEBCL,
     Constructor,
-] WebCLEvent {
+] interface WebCLEvent {
     [StrictTypeChecking, Custom, RaisesException] void getInfo(in long paramName);
     [StrictTypeChecking, Custom, RaisesException] void getProfilingInfo(in long paramName);
     [StrictTypeChecking, Custom, RaisesException] void setCallback(in long execStatus, in  WebCLFinishCallback notifyCallback, in long userData);

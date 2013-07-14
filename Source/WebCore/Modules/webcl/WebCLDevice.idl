@@ -25,9 +25,9 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEBCL,
-] WebCLDevice {
+] interface WebCLDevice {
     [StrictTypeChecking, Custom, RaisesException] void getInfo(in long deviceType);
     [StrictTypeChecking, Custom, RaisesException] void getSupportedExtensions();
     // FIXME: Misses "RaisesException" extended attribute?

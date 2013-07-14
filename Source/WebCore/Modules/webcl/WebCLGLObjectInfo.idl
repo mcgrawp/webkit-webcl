@@ -25,10 +25,10 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-interface [
+[
     Conditional=WEBCL,
     //OmitConstructor,
-] WebCLGLObjectInfo {
+] interface WebCLGLObjectInfo {
     attribute long glObjectType;
     attribute long glObject;
 };

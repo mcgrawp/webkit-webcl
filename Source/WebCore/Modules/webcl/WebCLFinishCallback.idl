@@ -25,9 +25,9 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-interface [
+[
     Conditional=WEBCL,
     Callback
-] WebCLFinishCallback {
+] interface WebCLFinishCallback {
     [Custom] boolean handleEvent(in long value);
 };
