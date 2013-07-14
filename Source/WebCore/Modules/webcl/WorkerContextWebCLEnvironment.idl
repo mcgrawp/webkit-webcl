@@ -25,9 +25,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-interface [
+[
     Conditional=WEBCL,
-    Supplemental=WorkerContext
-] WorkerContextWebCLEnvironment {
+] partial interface WorkerContext {
     readonly attribute WebCL webcl;
 };

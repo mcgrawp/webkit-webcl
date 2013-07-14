@@ -27,8 +27,7 @@
 
 [
     Conditional=WEBCL,
-    Supplemental=DOMWindow
-] interface DOMWindowWebCLEnvironment {
+] partial interface DOMWindow {
     readonly attribute WebCL webcl;
     attribute WebCLContextConstructor WebCLContext;
     attribute WebCLCommandQueueConstructor WebCLCommandQueue;
