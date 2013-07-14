@@ -35,46 +35,38 @@
 #include "ScriptExecutionContext.h"
 #include <runtime/JSLock.h>
 
-
 namespace WebCore {
 
 using namespace JSC;
 //bool JSWebCLFinishCallback::handleEvent(WebCL* webCLComputeContext )
+/*
 bool JSWebCLFinishCallback::handleEvent(int data)
 {
+    if (!m_data || !m_data->globalObject()) {
+        printf(" m_data is NULL  ");
+            return true;
+    }
 
-	
-	printf("Inside JSCustomWebCLFinishCallback starts data = %d  \n",data);
-	if (!m_data || !m_data->globalObject() )
-	{
-		printf(" m_data is NULL  ");
-        	return true;
-	}
-	if ( !(canInvokeCallback()))
-	{
-		printf(" Can'nt invoke call back ");
-		return true;
-	}
-	printf(" JSWebCLFinishCallback after return \n ");
-        
-	RefPtr<JSWebCLFinishCallback> protect(this);
-        
-	JSC::JSLockHolder lock(m_data->globalObject()->globalData());
-	
-	ExecState* exec = m_data->globalObject()->globalExec();
+    if (!(canInvokeCallback())) {
+        printf(" Can'nt invoke call back ");
+        return true;
+    }
 
-        MarkedArgumentBuffer args;
-//      args.append(toJS(exec, m_data->globalObject(), webCLComputeContext));
-        args.append(jsNumber(data));
-	printf("Inside JSCustomWebCLFinishCallback::handleEvent44\n");
-	bool raisedException = false;
-	JSValue result = m_data->invokeCallback(args, &raisedException);
-	printf("Inside JSCustomWebCLFinishCallback::handleEvent55\n");
-        if (raisedException) {
-        	return true;
-    	}
-	return result.toBoolean(exec);
+    RefPtr<JSWebCLFinishCallback> protect(this);
+    JSC::JSLockHolder lock(m_data->globalObject()->globalData());
+    ExecState* exec = m_data->globalObject()->globalExec();
+
+    MarkedArgumentBuffer args;
+    //args.append(toJS(exec, m_data->globalObject(), webCLComputeContext));
+    args.append(jsNumber(data));
+    bool raisedException = false;
+    JSValue result = m_data->invokeCallback(args, &raisedException);
+    if (raisedException)
+        return true;
+    return result.toBoolean(exec);
 }
+*/
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

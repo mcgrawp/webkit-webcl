@@ -28,5 +28,5 @@
 [
     Conditional=WEBCL,
 ] interface WebCLFinishCallback {
-    [Custom] boolean handleEvent(in long value);
+    //[Custom] boolean handleEvent(in long value);
 };

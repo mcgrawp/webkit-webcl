@@ -25,22 +25,23 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCLFinishCallback_h
-#define WebCLFinishCallback_h
+#include "config.h"
 
 #if ENABLE(WEBCL)
 
-#include <wtf/ThreadSafeRefCounted.h>
+#include "WebCLFinishCallback.h"
 
 namespace WebCore {
 
-class WebCLFinishCallback : public ThreadSafeRefCounted<WebCLFinishCallback> {
-public:
-    virtual ~WebCLFinishCallback();
-    virtual bool handleEvent(int);
-};
+WebCLFinishCallback::~WebCLFinishCallback()
+{
+}
+
+bool WebCLFinishCallback::handleEvent(int)
+{
+    return false;
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)
-#endif // WebCLFinishCallback_H

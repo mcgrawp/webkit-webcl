@@ -44,19 +44,17 @@
 #include "WebCLGetInfo.h"
 
 using namespace JSC;
-using namespace std;
 
 namespace WebCore {
 
-
-static PassRefPtr<WebCLFinishCallback> createFinishCallback(ExecState* exec, JSDOMGlobalObject* globalObject, JSValue value)
+static PassRefPtr<WebCLFinishCallback> createFinishCallback(ExecState* exec, JSDOMGlobalObject* /*globalObject*/, JSValue value)
 {
     if (value.isUndefinedOrNull()) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return 0;
     }
-    JSObject* object = asObject(value);
-    return JSWebCLFinishCallback::create(object, globalObject);
+    //JSObject* object = asObject(value);
+    return 0;//JSWebCLFinishCallback::create(object, globalObject);
 }
 
 JSValue JSWebCLEvent::getInfo(JSC::ExecState* exec)
@@ -120,7 +118,7 @@ JSValue JSWebCLEvent::setCallback(JSC::ExecState* exec)
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }
-        callback = JSWebCLFinishCallback::create(object, static_cast<JSDOMGlobalObject*>(globalObject()));
+        callback = 0;//JSWebCLFinishCallback::create(object, static_cast<JSDOMGlobalObject*>(globalObject()));
     }
     RefPtr<WebCLFinishCallback> finishCallback = createFinishCallback(exec,
         static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(1));
