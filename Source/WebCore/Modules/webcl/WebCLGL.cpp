@@ -33,10 +33,17 @@
 
 namespace WebCore {
 
-PassOwnPtr<WebCLGL> WebCLGL::create()
+#if 0
+PassRefPtr<WebCLGL> WebCLGL::create()
 {
-    return adoptPtr(new WebCLGL);
+    return adoptRef(new WebCLGL);
 }
+#else
+WebCLGL* WebCLGL::create()
+{
+    return new WebCLGL;
+}
+#endif
 
 WebCLGL::WebCLGL()
 {

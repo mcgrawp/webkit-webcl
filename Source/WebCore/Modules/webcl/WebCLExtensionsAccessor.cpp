@@ -41,7 +41,11 @@ inline WebCLExtension* WebCLExtensionsAccessor<T>::getExtension(const String& na
         if (!m_khrGLSharing)
             m_khrGLSharing = WebCLGL::create();
 
+#if 0
         return m_khrGLSharing.get();
+#else
+        return m_khrGLSharing;
+#endif
     }
 
     return 0;

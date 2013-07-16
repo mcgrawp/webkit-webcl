@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+class WebCLGL;
+
 // FIXME: When WebCore switches on support for C++11,
 // replace NullTypePtr by C++11's nullptr_t.
 template <class T = NullTypePtr>
@@ -45,6 +47,9 @@ class WebCLExtensionsAccessor {
 public:
     virtual ~WebCLExtensionsAccessor()
     {
+        // FIXME: We are leaking m_khrGLSharing here. Fix me when
+        // we implement the new CLGL extension spec.
+        m_khrGLSharing = 0;
     }
 
     T accessor() const
@@ -58,6 +63,7 @@ public:
 protected:
     WebCLExtensionsAccessor(T object)
         : m_accessor(object)
+        , m_khrGLSharing(0)
     {
     }
 
@@ -65,7 +71,7 @@ protected:
 
     // NOTE: Instead of OwnPtr<WebCLGL> we declare m_khrGLSharing
     //       as a WebCLExtension otherwise it won't build.
-    OwnPtr<WebCLExtension> m_khrGLSharing;
+    WebCLGL* m_khrGLSharing;
 };
 
 } // WebCore

@@ -40,7 +40,12 @@ class WebCLGLContext;
 
 class WebCLGL : public WebCL, public WebCLExtension {
 public:
-    static PassOwnPtr<WebCLGL> create();
+#if 0
+    static PassRefPtr<WebCLGL> create();
+#else
+    static WebCLGL* create();
+#endif
+
     virtual ~WebCLGL();
 
     virtual ExtensionName getName() const;
