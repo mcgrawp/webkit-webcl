@@ -107,7 +107,7 @@ JSValue JSWebCLKernel::setArg(ExecState* exec)
         return jsUndefined();
 
     if (count == 3) {
-        ScriptValue object(exec->globalData(), exec->argument(1));
+        ScriptValue object(exec->vm(), exec->argument(1));
         if (exec->hadException())
             return jsUndefined();
 
@@ -131,7 +131,7 @@ JSValue JSWebCLKernel::setArg(ExecState* exec)
             kernel->setArg(argIndex, argSize, ec);
         } else {
             WebCLMemoryObject* value = toWebCLMemoryObject(exec->argument(1));
-            ScriptValue object(exec->globalData(), exec->argument(1));
+            ScriptValue object(exec->vm(), exec->argument(1));
             if (exec->hadException())
                 return jsUndefined();
             kernel->setArg(argIndex, value, ec);
