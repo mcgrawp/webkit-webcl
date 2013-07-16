@@ -27,6 +27,7 @@
 
 [
     Conditional=WEBCL,
+    ImplementationLacksVTable,
     //OmitConstructor,
 ] interface WebCLContextProperties {
     // FIXME: Remove 'readonly'.

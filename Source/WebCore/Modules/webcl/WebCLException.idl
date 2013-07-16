@@ -28,6 +28,7 @@
 [
     Conditional=WEBCL,
     JSNoStaticTables,
+    ImplementationLacksVTable,
     DoNotCheckConstants
 ] interface WebCLException {
     readonly attribute long code;

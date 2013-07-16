@@ -28,6 +28,7 @@
 [
     Conditional=WEBCL,
     //OmitConstructor,
+    DoNotCheckConstants,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] interface WebCLGL : WebCL {
