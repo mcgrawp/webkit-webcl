@@ -178,9 +178,9 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, bool blockin
     Vector<size_t, 3> regionData;
 
     for (size_t i = 0; i < 3; ++i) {
-        bufferOriginData[i] = bufferOrigin->item(i);
-        hostOriginData[i] = hostOrigin->item(i);
-        regionData[i] = region->item(i);
+        bufferOriginData.append(bufferOrigin->item(i));
+        hostOriginData.append(hostOrigin->item(i));
+        regionData.append(region->item(i));
     }
 
     Vector<CCEvent> ccEvents;
@@ -276,8 +276,8 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, I
     Vector<size_t, 3> originData;
     Vector<size_t, 3> regionData;
     for (size_t i = 0; i < 3; ++i) {
-        originData[i] = origin->item(i);
-        regionData[i] = region->item(i);
+        originData.append(origin->item(i));
+        regionData.append(region->item(i));
     }
 
     Vector<CCEvent> ccEvents;
@@ -373,9 +373,9 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blocking
     Vector<size_t, 3> hostOriginData;
     Vector<size_t, 3> regionData;
     for (size_t i = 0; i < 3; ++i) {
-        bufferOriginData[i] = bufferOrigin->item(i);
-        hostOriginData[i] = hostOrigin->item(i);
-        regionData[i] = region->item(i);
+        bufferOriginData.append(bufferOrigin->item(i));
+        hostOriginData.append(hostOrigin->item(i));
+        regionData.append(region->item(i));
     }
 
     Vector<CCEvent> ccEvents;
@@ -515,8 +515,8 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
     Vector<size_t, 3> originData;
     Vector<size_t, 3> regionData;
     for (size_t i = 0; i < 3; ++i) {
-        originData[i] = origin->item(i);
-        regionData[i] = region->item(i);
+        originData.append(origin->item(i));
+        regionData.append(region->item(i));
     }
 
     Vector<CCEvent> ccEvents;
@@ -573,9 +573,9 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
     Vector<size_t, 3> regionData;
 
     for (size_t i = 0; i < 3; ++i) {
-        sourceOriginData[i] = sourceOrigin->item(i);
-        targetOriginData[i] = targetOrigin->item(i);
-        regionData[i] = region->item(i);
+        sourceOriginData.append(sourceOrigin->item(i));
+        targetOriginData.append(targetOrigin->item(i));
+        regionData.append(region->item(i));
     }
 
     Vector<CCEvent> ccEvents;
@@ -625,8 +625,8 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *sourceImage, WebCLB
     Vector<size_t, 3> sourceOriginData;
     Vector<size_t, 3> regionData;
     for (size_t i = 0; i < 3; ++i) {
-        sourceOriginData[i] = sourceOrigin->item(i);
-        regionData[i] = region->item(i);
+        sourceOriginData.append(sourceOrigin->item(i));
+        regionData.append(region->item(i));
     }
 
     Vector<CCEvent> ccEvents;
@@ -680,8 +680,8 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *sourceBuffer, WebC
     Vector<size_t, 3> targetOriginData;
     Vector<size_t, 3> regionData;
     for (size_t i = 0; i < 3; ++i) {
-        targetOriginData[i] = targetOrigin->item(i);
-        regionData[i] = region->item(i);
+        targetOriginData.append(targetOrigin->item(i));
+        regionData.append(region->item(i));
     }
 
     Vector<CCEvent> ccEvents;
@@ -774,9 +774,9 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
     Vector<size_t, 3> targetOriginData;
     Vector<size_t, 3> regionData;
     for (size_t i = 0; i < 3; ++i) {
-        sourceOriginData[i] = sourceOrigin->item(i);
-        targetOriginData[i] = targetOrigin->item(i);
-        regionData[i] = region->item(i);
+        sourceOriginData.append(sourceOrigin->item(i));
+        targetOriginData.append(targetOrigin->item(i));
+        regionData.append(region->item(i));
     }
 
     Vector<CCEvent> ccEvents;
