@@ -343,8 +343,6 @@ public:
 
         // Special types must not be bitwise-OR'ed with any other type.
         LOCAL_MEMORY_SIZE = 255,
-        // Internal constants to recognize Memory objects.
-        ARG_MEMORY_OBJECT = 256,
     };
 
     ComputeContext(CCContextProperties*, const Vector<CCDeviceID>&, CCerror&);

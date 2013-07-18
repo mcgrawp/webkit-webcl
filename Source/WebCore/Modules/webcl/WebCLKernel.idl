@@ -32,6 +32,5 @@
 
     [StrictTypeChecking, Custom]  void getWorkGroupInfo(in WebCLDevice device, in long param_name) raises(DOMException);
 
-    [CallWith=ScriptState] void setArg(in unsigned long index, any value, [Optional=DefaultIsUndefined] long type)
-        raises(DOMException);
+    // FIXME: void setArg(CLuint index, any value, optional CLtype type)
 };

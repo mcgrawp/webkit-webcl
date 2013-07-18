@@ -31,9 +31,9 @@
 #if ENABLE(WEBCL)
 
 #include "ExceptionCode.h"
-#include "JSWebCLKernelCustom.h"
 #include "WebCLGetInfo.h"
 #include "WebCLObject.h"
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -53,7 +53,6 @@ public:
     WebCLGetInfo getInfo(int, ExceptionCode&);
     WebCLGetInfo getWorkGroupInfo(WebCLDevice*, int, ExceptionCode&);
 
-    void setArg(ScriptState*, unsigned, const ScriptValue&, unsigned, ExceptionCode&);
     void setDevice(PassRefPtr<WebCLDevice>);
 private:
     WebCLKernel(WebCLContext*, WebCLProgram*, CCKernel, const String&);
