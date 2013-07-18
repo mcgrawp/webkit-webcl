@@ -33,4 +33,12 @@
     [StrictTypeChecking, Custom]  void getWorkGroupInfo(in WebCLDevice device, in long param_name) raises(DOMException);
 
     // FIXME: void setArg(CLuint index, any value, optional CLtype type)
+    [Custom] void setArg(in unsigned long argIndex, in DOMObject kernelObject, in long type)
+        raises(DOMException);
+    [Custom] void setArg(in unsigned long argIndex, in WebCLMemoryObject argValue)
+        raises(DOMException);
+    [Custom] void setArg(in unsigned long argIndex, in unsigned long argValue, in unsigned long argSize)
+        raises(DOMException);
+    [Custom] void setArg(in unsigned long argIndex, in unsigned long argSize)
+        raises(DOMException);
 };

@@ -39,6 +39,7 @@
 #include "WebCLDevice.h"
 #include "WebCLGetInfo.h"
 #include "WebCLKernel.h"
+#include "WebCLKernelTypes.h"
 
 using namespace JSC;
 using namespace std;
@@ -87,6 +88,66 @@ JSValue JSWebCLKernel::getWorkGroupInfo(JSC::ExecState* exec)
     }
     return toJS(exec, globalObject(), info);
 }
+
+JSValue JSWebCLKernel::setArg(ExecState* exec)
+{
+
+    unsigned count = exec->argumentCount();
+
+    if (count < 2)
+        return throwSyntaxError(exec);
+
+    ExceptionCode ec = 0;
+    WebCLKernel* kernel = static_cast<WebCLKernel*>(impl());
+    if (exec->hadException())
+        return jsUndefined();
+
+    unsigned argIndex  = exec->argument(0).toInt32(exec);
+    if (exec->hadException())
+        return jsUndefined();
+
+    if (count == 3) {
+        ScriptValue object(exec->globalData(), exec->argument(1));
+        if (exec->hadException())
+            return jsUndefined();
+
+        unsigned argType = exec->argument(2).toInt32(exec);
+        if (exec->hadException())
+            return jsUndefined();
+        kernel->setArg(argIndex, object.toWebCLKernelTypeValue(exec), argType, ec);
+        if (ec) {
+            setDOMException(exec, ec);
+            return jsUndefined();
+        }
+        return jsUndefined();
+    }
+    if (count == 2) {
+        unsigned argIndex  = exec->argument(0).toInt32(exec);
+        if (exec->hadException())
+            return jsUndefined();
+
+        if (exec->argument(1).isInt32()) {
+            unsigned argSize = exec->argument(1).toInt32(exec);
+            kernel->setArg(argIndex, argSize, ec);
+        } else {
+            WebCLMemoryObject* value = toWebCLMemoryObject(exec->argument(1));
+            ScriptValue object(exec->globalData(), exec->argument(1));
+            if (exec->hadException())
+                return jsUndefined();
+            kernel->setArg(argIndex, value, ec);
+            return jsUndefined();
+        }
+        if (ec) {
+            setDOMException(exec, ec);
+            return jsUndefined();
+        }
+        return jsUndefined();
+    }
+    if (ec)
+        setDOMException(exec, ec);
+    return jsUndefined();
+}
+
 
 } // namespace WebCore
 
