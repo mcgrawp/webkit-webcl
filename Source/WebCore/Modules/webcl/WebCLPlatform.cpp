@@ -75,7 +75,7 @@ WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(int deviceType, ExceptionCode& ec) const
+Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(unsigned long deviceType, ExceptionCode& ec) const
 {
     Vector<RefPtr<WebCLDevice> > devices;
     if (!platformObject()) {

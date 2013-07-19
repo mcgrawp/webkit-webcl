@@ -47,7 +47,7 @@ class WebCLPlatform : public WebCLObject<CCPlatformID> , public WebCLExtensionsA
 public:
     virtual ~WebCLPlatform();
     WebCLGetInfo getInfo (int, ExceptionCode&);
-    Vector<RefPtr<WebCLDevice> > getDevices(int, ExceptionCode&) const;
+    Vector<RefPtr<WebCLDevice> > getDevices(unsigned long, ExceptionCode&) const;
 
 private:
     friend CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);
