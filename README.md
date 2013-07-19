@@ -6,6 +6,8 @@ This project aims to implement the [WebCL](http://www.khronos.org/webcl/) suppor
 
 ### OSX
 
+_Note: [Here](http://www.webkit.org/building/tools.html) you will find how to install the WebKit developer tools._
+
 The code is being synchronised with WebKit periodically. For this reason, the branch might be changed before the build. Our actual stable branch is **master_r144637**.
 
 After change the branch, you can run the script: `<src-dir>/Tools/Scripts/build-webkit`
