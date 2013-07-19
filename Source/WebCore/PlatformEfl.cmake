@@ -277,6 +277,9 @@ if (ENABLE_WEBCL)
   list(APPEND WebCore_LIBRARIES
     ${OPENCL_LIBRARIES}
   )
+  list(APPEND WebCore_INCLUDE_DIRECTORIES
+    ${OPENCL_INCLUDE_DIRS}
+  )
 endif ()
 
 if (WTF_USE_3D_GRAPHICS)
@@ -284,6 +287,8 @@ if (WTF_USE_3D_GRAPHICS)
     add_definitions(-DWTF_USE_OPENGL=1)
 
     list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/graphics/egl"
+        "${WEBCORE_DIR}/platform/graphics/glx"
         "${WEBCORE_DIR}/platform/graphics/opengl"
         "${WEBCORE_DIR}/platform/graphics/surfaces"
         "${WEBCORE_DIR}/platform/graphics/surfaces/efl"
@@ -298,7 +303,15 @@ if (WTF_USE_3D_GRAPHICS)
     )
     endif ()
 
+    if (WTF_USE_GLX)
+        list(APPEND WebCore_INCLUDE_DIRECTORIES
+            ${GLX_INCLUDE_DIR}
+            "${WEBCORE_DIR}/platform/graphics/surfaces/glx"
+    )
+    endif ()
+
     list(APPEND WebCore_SOURCES
+        platform/graphics/cairo/GLContext.cpp
         platform/graphics/cairo/DrawingBufferCairo.cpp
         platform/graphics/efl/GraphicsContext3DEfl.cpp
         platform/graphics/efl/GraphicsContext3DPrivate.cpp
@@ -316,6 +329,7 @@ if (WTF_USE_3D_GRAPHICS)
 
     if (WTF_USE_EGL)
         list(APPEND WebCore_SOURCES
+            platform/graphics/egl/GLContextEGL.cpp
             platform/graphics/surfaces/egl/EGLConfigSelector.cpp
             platform/graphics/surfaces/egl/EGLContext.cpp
             platform/graphics/surfaces/egl/EGLHelper.cpp
@@ -324,6 +338,7 @@ if (WTF_USE_3D_GRAPHICS)
         )
     else ()
         list(APPEND WebCore_SOURCES
+            platform/graphics/glx/GLContextGLX.cpp
             platform/graphics/surfaces/glx/GLXContext.cpp
             platform/graphics/surfaces/glx/GLXSurface.cpp
         )
@@ -350,6 +365,11 @@ if (WTF_USE_3D_GRAPHICS)
     if (WTF_USE_EGL)
         list(APPEND WebCore_LIBRARIES
             ${EGL_LIBRARY}
+        )
+    endif ()
+    if (WTF_USE_GLX)
+        list(APPEND WebCore_LIBRARIES
+            ${GLX_LIBRARY}
         )
     endif ()
 endif ()

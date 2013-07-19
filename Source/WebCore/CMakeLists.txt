@@ -2935,6 +2935,7 @@ endif ()
 
 if (ENABLE_WEBCL)
     list(APPEND WebCore_SOURCES
+        platform/opencl/ComputeExtensionsCL.cpp
         Modules/webcl/DOMWindowWebCLEnvironment.cpp
         Modules/webcl/WebCLMemoryObject.cpp
         Modules/webcl/WebCLBuffer.cpp
@@ -2945,13 +2946,20 @@ if (ENABLE_WEBCL)
         Modules/webcl/WebCLDevice.cpp
         Modules/webcl/WebCLEvent.cpp
         Modules/webcl/WebCLException.cpp
+        Modules/webcl/WebCLExtensionsAccessor.cpp
+        Modules/webcl/WebCLFinishCallback.cpp
         Modules/webcl/WebCLGetInfo.cpp
+        Modules/webcl/WebCLGLBuffer.cpp
+        Modules/webcl/WebCLGLCommandQueue.cpp
+        Modules/webcl/WebCLGLContext.cpp
+        Modules/webcl/WebCLGLContextProperties.cpp
+        Modules/webcl/WebCLGL.cpp
+        Modules/webcl/WebCLGLImage.cpp
         Modules/webcl/WebCLGLObjectInfo.cpp
         Modules/webcl/WebCLImage.cpp
         Modules/webcl/WebCLImageDescriptor.cpp
-        Modules/webcl/WebCLKernelArgumentTypes.cpp
+        Modules/webcl/WebCLInputChecker.cpp
         Modules/webcl/WebCLKernel.cpp
-        Modules/webcl/WebCLKernelTypes.cpp
         Modules/webcl/WebCLPlatform.cpp
         Modules/webcl/WebCLProgram.cpp
         Modules/webcl/WebCLSampler.cpp
@@ -2968,10 +2976,15 @@ if (ENABLE_WEBCL)
         Modules/webcl/WebCLEvent.idl
         Modules/webcl/WebCLException.idl
         Modules/webcl/WebCLFinishCallback.idl
+        Modules/webcl/WebCLGLBuffer.idl
+        Modules/webcl/WebCLGLCommandQueue.idl
+        Modules/webcl/WebCLGLContext.idl
+        Modules/webcl/WebCLGLContextProperties.idl
+        Modules/webcl/WebCLGL.idl
+        Modules/webcl/WebCLGLImage.idl
         Modules/webcl/WebCLGLObjectInfo.idl
         Modules/webcl/WebCL.idl
         Modules/webcl/WebCLImageDescriptor.idl
-        Modules/webcl/WebCLKernelArgumentTypes.idl
         Modules/webcl/WebCLKernel.idl
         Modules/webcl/WebCLPlatform.idl
         Modules/webcl/WebCLProgram.idl

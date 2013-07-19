@@ -168,7 +168,6 @@ void WebCLProgram::callbackProxy(CCProgram program, void* userData)
     UNUSED_PARAM(program);
     size_t index = *((int*)userData);
     ASSERT(index < s_thisPointers->size());
-
     WeakPtr<WebCLProgram> webCLProgram = WebCLProgram::s_thisPointers->at(index);
     if (webCLProgram.get())
         webCLProgram.get()->callEvent();

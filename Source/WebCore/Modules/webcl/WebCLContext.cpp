@@ -176,7 +176,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBufferBase(CCenum memoryFlags, CCuin
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint size, ArrayBufferView* data, ExceptionCode& ec)
 {
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     if (data) {
         if (data->byteLength() < size) {
             ec = WebCLException::INVALID_HOST_PTR;
