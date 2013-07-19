@@ -31,17 +31,17 @@
 ] interface WebCLGLContext : WebCLContext {
 
     // FIXME: spec says "WebCLDevice?"
-    [RaisesException] WebCLGLCommandQueue createCommandQueue(in optional WebCLDevice device, in optional long properties);
+    [RaisesException] WebCLGLCommandQueue createCommandQueue(optional WebCLDevice device, optional long properties);
 
-    [RaisesException] WebCLGLBuffer createFromGLBuffer(in long memFlags, in WebGLBuffer buffer);
+    [RaisesException] WebCLGLBuffer createFromGLBuffer(long memFlags, WebGLBuffer buffer);
 
     // FIXME: Buffer x buffer?
-    [RaisesException] WebCLGLImage createFromGLRenderBuffer(in long memFlags, in WebGLRenderbuffer renderbuffer);
+    [RaisesException] WebCLGLImage createFromGLRenderBuffer(long memFlags, WebGLRenderbuffer renderbuffer);
 
     // FIXME: Return a Image or MemoryObject?
     // FIXME2: 'miplevel' should be 'int'
     // FIXME3: Named createFromGLTexture?
     // FIXME4: WebGLTexture instead of long
-    [RaisesException] WebCLImage createFromGLTexture2D(in long memFlags, in long textureTarget, in long miplevel, in long texture);
+    [RaisesException] WebCLImage createFromGLTexture2D(long memFlags, long textureTarget, long miplevel, long texture);
 };
 

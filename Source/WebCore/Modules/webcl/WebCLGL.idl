@@ -32,7 +32,7 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] interface WebCLGL : WebCL {
-    [StrictTypeChecking, Custom, RaisesException] WebCLGLContext createContext(in optional WebCLContextProperties properties);
+    [StrictTypeChecking, Custom, RaisesException] WebCLGLContext createContext(optional WebCLContextProperties properties);
 
     /* Error Codes */
     const long INVALID_GL_OBJECT                         = -60;

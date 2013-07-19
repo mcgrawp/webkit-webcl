@@ -28,8 +28,8 @@
 [
     Conditional=WEBCL,
 ] interface WebCLDevice {
-    [StrictTypeChecking, Custom, RaisesException] void getInfo(in long deviceType);
+    [StrictTypeChecking, Custom, RaisesException] void getInfo(long deviceType);
     [StrictTypeChecking, Custom, RaisesException] void getSupportedExtensions();
     // FIXME: Misses "RaisesException" extended attribute?
-    [StrictTypeChecking, Custom] any getExtension(in DOMString name);
+    [StrictTypeChecking, Custom] any getExtension(DOMString name);
 };

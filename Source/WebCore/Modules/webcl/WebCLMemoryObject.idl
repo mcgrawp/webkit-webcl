@@ -29,5 +29,5 @@
     Conditional=WEBCL,
 ] interface WebCLMemoryObject {
     // FIXME: Wrong return type.
-    [StrictTypeChecking, Custom, RaisesException] void getInfo(in WebCLMemoryObject memObj, in long paramName);
+    [StrictTypeChecking, Custom, RaisesException] void getInfo(WebCLMemoryObject memObj, long paramName);
 };

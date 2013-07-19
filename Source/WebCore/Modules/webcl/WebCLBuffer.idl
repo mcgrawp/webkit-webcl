@@ -30,5 +30,5 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject
 ] interface WebCLBuffer : WebCLMemoryObject {
-    [StrictTypeChecking, RaisesException] WebCLBuffer createSubBuffer(in long memFlags, in long origin, in long size);
+    [StrictTypeChecking, RaisesException] WebCLBuffer createSubBuffer(long memFlags, long origin, long size);
 };

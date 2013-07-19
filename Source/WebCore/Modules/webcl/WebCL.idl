@@ -259,12 +259,12 @@
 
     [RaisesException] sequence<WebCLPlatform> getPlatforms();
 
-    [RaisesException] void waitForEvents(in sequence<WebCLEvent> events);
+    [RaisesException] void waitForEvents(sequence<WebCLEvent> events);
 
-    [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(in optional WebCLContextProperties webclContextProperties);
+    [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(optional WebCLContextProperties webclContextProperties);
 
     [StrictTypeChecking, Custom, RaisesException] void getSupportedExtensions();
 
     // FIXME: It lacks RaisesException extended attribute?
-    [StrictTypeChecking, Custom] any getExtension(in DOMString name);
+    [StrictTypeChecking, Custom] any getExtension(DOMString name);
 };
