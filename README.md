@@ -16,7 +16,17 @@ We have some WebCL examples in `<src-dir>/Examples/WebCL/`. To run the _Hello_ e
 
 ### Linux (EFL port)
 
-_Currently in development._
+_Note: The build steps below were tested using Ubuntu 12.04, 13.04 and NVIDIA graphic cards._
+
+Manually install OpenCL headers package.
+
+    sudo apt-get install opencl-headers
+
+Follow WebKit-EFL build steps described [here](http://trac.webkit.org/wiki/EFLWebKit).
+
+After the build process has been finished, run some of our WebCL example (`<src_dir>/Examples/WebCL`) using _MiniBrowser_:
+
+    <src_dir>/WebKitBuild/Release/bin/MiniBrowser <src_dir>/Examples/WebCL/Hello/index.html
 
 ## Supported Configurations
 
@@ -27,7 +37,8 @@ _Currently in development._
 
 **Linux (EFL port)**
 
-_Currently in development._
+ - Ubuntu: 12.04 and 13.04
+ - OpenCL Headers: 1.1-2010
 
 ## Links
 - [WebCL](http://www.khronos.org/webcl/)
