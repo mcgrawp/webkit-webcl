@@ -151,6 +151,9 @@ Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode&
 
 void WebCLProgram::finishCallback(cl_program program, void* userData)
 {
+	UNUSED_PARAM(program);
+	UNUSED_PARAM(userData);
+
     WebCLProgram* self = static_cast<WebCLProgram*>(WebCLProgram::thisPointer);
     if (self)
         self->m_finishCallback.get()->handleEvent(17);
