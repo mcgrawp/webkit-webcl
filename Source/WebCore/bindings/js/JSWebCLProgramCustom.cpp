@@ -112,7 +112,7 @@ JSValue JSWebCLProgram::build(JSC::ExecState* exec)
 
     // FIXME: This is ugly!
     String options = "";
-    if (exec->argumentCount() > 1 && !exec->argument(1).isNull())
+    if (exec->argumentCount() > 1 && !exec->argument(1).isUndefinedOrNull())
         options = exec->argument(1).toString(exec)->value(exec);
     if (exec->hadException())
         return jsUndefined();
