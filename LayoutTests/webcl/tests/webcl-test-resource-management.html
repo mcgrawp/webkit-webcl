@@ -56,14 +56,13 @@ function runTest() {
         }
         platform = platforms[0];
 
-        //TODO: Use cl.DEVICE_TYPE_ALL
-        devices = platform.getDevices(cl.DEVICE_TYPE_GPU);
+        devices = platform.getDevices(cl.DEVICE_TYPE_ALL);
         if (devices.length === 0) {
             testFailed("No devices available");
             return;
         }
 
-        contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU, hint: null};
+        contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_ALL, hint: null};
         context1 = cl.createContext(contextProperties);
         if (!context1) {
             testFailed("Failed to create WebCLContext 1.");

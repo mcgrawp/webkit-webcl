@@ -23,9 +23,6 @@ function runTest() {
     var i;
     var j;
 
-    //TODO: Using this array while cl.DEVICE_TYPE_ALL isn't working
-    var deviceTypes = [cl.DEVICE_TYPE_GPU, cl.DEVICE_TYPE_CPU];
-
     /* Test WebCL support */
     if (!cl) {
         testFailed("WebCL is not supported ...");
@@ -42,9 +39,7 @@ function runTest() {
 
     /* Get all devices in all platforms */
     for (i = 0; i < platforms.length; i++) {
-        for (j = 0; j < deviceTypes.length; j++) {
-            devices.push(platforms[i].getDevices(deviceTypes[j])[0]);
-        }
+        devices = devices.concat(platforms[i].getDevices(cl.DEVICE_TYPE_ALL));
     }
 
     if (!devices || devices.length === 0) {

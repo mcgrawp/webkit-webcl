@@ -1885,7 +1885,7 @@
 
                     try {
                         // according to the WD, the 1st parameter must be an array and not an obj
-                        nativeCommandQueue.enqueueAcquireGLObjects(memObjects[0],
+                        nativeCommandQueue.enqueueReleaseGLObjects(memObjects[0],
                                                                     eventsList, nativeEvent);
                     } catch (e) {
                         throw e;
