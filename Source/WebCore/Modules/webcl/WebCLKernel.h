@@ -67,6 +67,7 @@ private:
     WebCLKernel(WebCLContext*, WebCLProgram*, CCKernel, const String&); 
 
     template <class T>
+    void setArgHelper(unsigned argIndex, ScriptState*, const ScriptValue& jsArgValue, unsigned vectorSize, ExceptionCode&);
     void setArgHelper(unsigned argIndex, ScriptState*, const ScriptValue& jsArgValue, ExceptionCode&);
     void setMemoryArgHelper(unsigned argIndex, ScriptState*, const ScriptValue& jsArgValue, ExceptionCode&);
 
@@ -79,25 +80,25 @@ private:
 };
 
 template<typename T>
-inline void WebCLKernel::setArgHelper(unsigned argIndex, ScriptState* state, const ScriptValue& jsArgValue, ExceptionCode& ec)
+inline void WebCLKernel::setArgHelper(unsigned argIndex, ScriptState* state, const ScriptValue& jsArgValue, unsigned vectorSize, ExceptionCode& ec)
 {
     Vector<T> argValue;
-    if (jsDecodeKernelArgValue(state, jsArgValue.jsValue(), argValue)) {
+    if (jsDecodeKernelArgValue(state, jsArgValue.jsValue(), vectorSize, argValue)) {
         ec = WebCLException::INVALID_KERNEL_ARGS;
         return;
     }
-    size_t argSize = sizeof(T);
+    size_t argSize = sizeof(T) * (vectorSize ? vectorSize : 1);
     CCerror err = ComputeContext::setKernelArg(platformObject(), argIndex, argSize, argValue.data());
     ASSERT(err != ComputeContext::SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-// Template specialisation for __local kernel variables.
-template<>
-inline void WebCLKernel::setArgHelper<size_t>(unsigned argIndex, ScriptState* state, const ScriptValue& jsArgValue, ExceptionCode& ec)
+// Helper for __local kernel variables.
+inline void WebCLKernel::setArgHelper(unsigned argIndex, ScriptState* state, const ScriptValue& jsArgValue, ExceptionCode& ec)
 {
     Vector<size_t> argValue;
-    if (jsDecodeKernelArgValue(state, jsArgValue.jsValue(), argValue)) {
+    unsigned vectorSize = 0;
+    if (jsDecodeKernelArgValue(state, jsArgValue.jsValue(), vectorSize, argValue)) {
         ec = WebCLException::INVALID_KERNEL_ARGS;
         return;
     }

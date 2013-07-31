@@ -41,7 +41,45 @@ using namespace WebCore;
 
 namespace WebCore {
 
-inline void determineType(const ScriptValue& value, unsigned& argType)
+inline void determineVectorSize(unsigned nativeArrayLength, unsigned& vectorSize)
+{
+    // If user had specified VEC in type, return.
+    if (vectorSize)
+        return;
+    // If value is an array, and type does not specify a vector width,
+    // the array length is rounded down to the nearest available vector width (1, 2, 3, 4, 8, or 16)
+    switch (nativeArrayLength) {
+    case 1:
+        vectorSize = 0;
+        break;
+    case 2:
+        vectorSize = 2;
+        break;
+    case 3:
+        vectorSize = 3;
+        break;
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+        vectorSize = 4;
+        break;
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+        vectorSize = 8;
+        break;
+    default:
+        vectorSize = 16;
+    }
+}
+
+inline void determineType(const ScriptValue& value, unsigned& argType, unsigned& vectorSize)
 {
     JSValue jsValue = value.jsValue();
     bool isArray = isJSArray(jsValue);
@@ -56,23 +94,44 @@ inline void determineType(const ScriptValue& value, unsigned& argType)
         return;
     }
 
+    // Determine VectorSize sent by user in ArgType
+    vectorSize = argType >> 8;
+
     // Mask to remove the higher bytes reserved for Vectors notation.
     argType = argType & 0X00FF;
 }
 
 template <typename T>
-inline int jsDecodeKernelArgValue(ScriptState* state, const JSValue& jsValue, Vector<T>& argValue)
+inline int jsDecodeKernelArgValue(ScriptState* state, const JSValue& jsValue, unsigned &vectorSize, Vector<T>& argValue)
 {
     T jsArgValue;
-    if (jsValue.isNumber())
-        jsArgValue = static_cast<T>(jsValue.toNumber(state));
-    else if (jsValue.isString())
-        jsArgValue = static_cast<T>(jsValue.toWTFString(state)[0]);
-    else
-        return -1;
-    if (state->hadException())
-        return -1;
-    argValue.append(jsArgValue);
+    if (isJSArray(jsValue)) {
+        Vector<float> jsNativeArray;
+        jsNativeArray = toNativeArray<float>(state, jsValue);
+        if (state->hadException())
+            return -1;
+
+        size_t nativeArrayLength = jsNativeArray.size();
+        determineVectorSize(nativeArrayLength, vectorSize);
+        // As per specification, add padding with 0 when user sends arraysize less than the Vector size.
+        for (size_t i = 0; i < vectorSize; i++) {
+            if (i < nativeArrayLength)
+                jsArgValue = static_cast<T>(jsNativeArray[i]);
+            else
+                jsArgValue = 0;
+            argValue.append(jsArgValue);
+        }
+    } else {
+        if (jsValue.isNumber())
+            jsArgValue = static_cast<T>(jsValue.toNumber(state));
+        else if (jsValue.isString())
+            jsArgValue = static_cast<T>(jsValue.toWTFString(state)[0]);
+        else
+            return -1;
+        if (state->hadException())
+            return -1;
+        argValue.append(jsArgValue);
+    }
     return 0;
 }
 
