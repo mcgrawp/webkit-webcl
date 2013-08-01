@@ -21,7 +21,7 @@
  * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
  * DATA, OR PROFITS, OR BUSINESS INTERRUPTION), HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING
- *  NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -34,20 +34,21 @@
 
 namespace WebCore {
 
+class WebCLGLContext;
+
 class WebCLGLImage : public WebCLImage {
 public:
     ~WebCLGLImage() { }
 
-    // FIXME: Use WebCLGLContext instead.
-    static PassRefPtr<WebCLGLImage> create(WebCLContext*, int flags, GC3Dsizei width, GC3Dsizei height, const CCImageFormat&, GLuint renderbufferID, ExceptionCode&);
-    static PassRefPtr<WebCLGLImage> create(WebCLContext*, int flags, int textureTarget, GLint miplevel,
+    static PassRefPtr<WebCLGLImage> create(WebCLGLContext*, int flags, GC3Dsizei width, GC3Dsizei height, const CCImageFormat&, GLuint renderbufferID, ExceptionCode&);
+    static PassRefPtr<WebCLGLImage> create(WebCLGLContext*, int flags, int textureTarget, GLint miplevel,
                                            GC3Dsizei width, GC3Dsizei height, const CCImageFormat&,
                                            GLuint textureID, ExceptionCode&);
 
     int getGLTextureInfo(int paramName, ExceptionCode&);
 
 private:
-    WebCLGLImage(WebCLContext*, PlatformComputeObject image, int width, int height, const CCImageFormat&);
+    WebCLGLImage(WebCLGLContext*, PlatformComputeObject image, int width, int height, const CCImageFormat&);
 };
 
 } // namespace WebCore
