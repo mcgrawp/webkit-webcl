@@ -41,6 +41,7 @@
         [Default=Undefined] optional WebCLFinishCallback whenFinished,
         [Default=Undefined] optional long userdata);
 
-    // FIXME: Should be named "release" instead.
-    void releaseProgram();
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    void release();
+#endif
 };

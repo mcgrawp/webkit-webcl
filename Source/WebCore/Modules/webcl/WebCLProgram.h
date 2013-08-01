@@ -60,7 +60,7 @@ public:
 
     Vector<RefPtr<WebCLKernel> > createKernelsInProgram(ExceptionCode&);
 
-    void releaseProgram();
+    void release();
 
 private:
     WebCLProgram(WebCLContext*, cl_program, const String&);

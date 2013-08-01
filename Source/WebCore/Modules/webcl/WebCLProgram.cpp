@@ -201,7 +201,7 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-void WebCLProgram::releaseProgram()
+void WebCLProgram::release()
 {
     releasePlatformObject();
 }
