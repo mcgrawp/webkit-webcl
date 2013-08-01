@@ -37,20 +37,19 @@
 
 namespace WebCore {
 
-PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, const String& hint, SharedContextResolutionPolicy contextPolicy, WebGLRenderingContext* webGLRenderingContext)
+PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, SharedContextResolutionPolicy contextPolicy, WebGLRenderingContext* webGLRenderingContext)
 {
     if (contextPolicy == UseGLContextProvided)
         ASSERT(webGLRenderingContext);
     else
         ASSERT(!webGLRenderingContext);
-    return adoptRef(new WebCLContextProperties(platform, devices, deviceType, hint, contextPolicy, webGLRenderingContext));
+    return adoptRef(new WebCLContextProperties(platform, devices, deviceType, contextPolicy, webGLRenderingContext));
 }
 
-WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, const String& hint, SharedContextResolutionPolicy contextPolicy, WebGLRenderingContext* webGLRenderingContext)
+WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, SharedContextResolutionPolicy contextPolicy, WebGLRenderingContext* webGLRenderingContext)
     : m_platform(platform)
     , m_devices(devices)
     , m_deviceType(deviceType)
-    , m_hint(hint)
     , m_contextPolicy(contextPolicy)
     , m_webGLRenderingContext(webGLRenderingContext)
 {
@@ -87,16 +86,6 @@ void WebCLContextProperties::setWebGLRenderingContext(WebGLRenderingContext* web
 {
     m_webGLRenderingContext = webGLRenderingContext;
     m_ccProperties.clear();
-}
-
-String WebCLContextProperties::hint() const
-{
-    return m_hint;
-}
-
-void WebCLContextProperties::setHint(const String& hint)
-{
-    m_hint = hint;
 }
 
 Vector<CCContextProperties>& WebCLContextProperties::computeContextProperties()

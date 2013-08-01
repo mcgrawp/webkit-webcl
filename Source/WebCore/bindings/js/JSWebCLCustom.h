@@ -95,13 +95,7 @@ inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObjec
         contextPolicy = webGLRenderingContext ? WebCLContextProperties::UseGLContextProvided : WebCLContextProperties::GetCurrentGLContext;
     }
 
-    // FIXME: Vector of strings.
-    String hint;
-    Identifier hintIdentifier(exec, "hint");
-    if (jsAttrs->hasProperty(exec, hintIdentifier))
-        hint = jsAttrs->get(exec, hintIdentifier).toString(exec)->value(exec);
-
-    RefPtr<WebCore::WebCLContextProperties> webCLContextProperties = WebCLContextProperties::create(platform, devices, deviceType, hint, contextPolicy, webGLRenderingContext);
+    RefPtr<WebCore::WebCLContextProperties> webCLContextProperties = WebCLContextProperties::create(platform, devices, deviceType, contextPolicy, webGLRenderingContext);
 
     webCLContext = jsCustomObject->impl()->createContext(webCLContextProperties.get(), ec);
     if (ec) {

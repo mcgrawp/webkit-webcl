@@ -34,5 +34,4 @@
     readonly attribute WebCLPlatform platform;
     readonly attribute WebCLDevice[] devices;
     attribute long deviceType;
-    attribute DOMString hint;
 };

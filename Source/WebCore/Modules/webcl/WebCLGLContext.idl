@@ -32,14 +32,9 @@ typedef long CLenum;
     Conditional=WEBCL,
     JSGenerateToJSObject,
 ] interface WebCLGLContext : WebCLContext {
-
-    // FIXME: spec says "WebCLDevice?"
     [RaisesException] WebCLGLCommandQueue createCommandQueue(optional WebCLDevice device, optional long properties);
-
     [RaisesException] WebCLGLBuffer createFromGLBuffer(long memFlags, WebGLBuffer buffer);
-
     [RaisesException] WebCLGLImage createFromGLRenderbuffer(long memFlags, WebGLRenderbuffer renderbuffer);
-
     [RaisesException] WebCLGLImage createFromGLTexture(CLenum memFlags, CLenum textureTarget, GLint miplevel, WebGLTexture texture);
 };
 

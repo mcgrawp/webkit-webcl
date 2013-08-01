@@ -53,7 +53,7 @@ public:
         UseGLContextProvided
     };
 
-    static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int deviceType, const String&,
+    static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int deviceType,
         SharedContextResolutionPolicy = NoSharedGLContext, WebGLRenderingContext* = 0);
 
     ~WebCLContextProperties() { }
@@ -69,21 +69,16 @@ public:
     void setWebGLRenderingContext(WebGLRenderingContext*);
     WebGLRenderingContext* webGLRenderingContext() const;
 
-    String hint() const;
-    void setHint(const String&);
-
     Vector<CCContextProperties>& computeContextProperties();
 
 private:
-    WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int deviceType, const String&,
+    WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int deviceType,
         SharedContextResolutionPolicy = NoSharedGLContext, WebGLRenderingContext* = 0);
 
     RefPtr<WebCLPlatform> m_platform;
     Vector<RefPtr<WebCLDevice> > m_devices;
     int m_deviceType;
     Vector<CCContextProperties> m_ccProperties;
-    // FIXME: spec says DOMString[].
-    String m_hint;
 
     enum SharedContextResolutionPolicy m_contextPolicy;
     WebGLRenderingContext* m_webGLRenderingContext;

@@ -138,7 +138,6 @@ window.WebCLCommon = (function (debug) {
             ctxProps.platform = (props && props.platform) ? props.platform : platforms[0];
             ctxProps.devices = (props && props.devices) ? props.devices : [devices[0]];
             ctxProps.deviceType = (props && props.deviceType) ? props.deviceType :  webcl.DEVICE_TYPE_GPU;
-            ctxProps.hint = (props && props.hint) ? props.hint : null;
 
             /* Checking for possible extensions*/
             resource = (props && props.extension) ? props.extension : null;

@@ -87,9 +87,9 @@ function InitCL() {
         }
 
         if(userData.isGLCLshared)
-            context = extension.createContext({platform:platform, devices:devices, deviceType: gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU, sharedContext:null, hint:null});
+            context = extension.createContext({platform:platform, devices:devices, deviceType: gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU, sharedContext:null});
         else
-            context = cl.createContext({platform:platform, devices:devices, deviceType: gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU, hint:null});
+            context = cl.createContext({platform:platform, devices:devices, deviceType: gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU});
         if(context === null) {
             console.error("createContext fails");
             return null;

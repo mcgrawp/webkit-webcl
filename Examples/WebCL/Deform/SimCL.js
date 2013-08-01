@@ -89,9 +89,9 @@ function InitCL() {
 
         // Create a compute context
         if (GLCL_SHARE_MODE) 
-            context = extension.createContext({platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU, hint: null, shareGroup: 1});
+            context = extension.createContext({platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU, shareGroup: 1});
         else
-            context = cl.createContext({platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU, shareGroup: 0, hint: null});
+            context = cl.createContext({platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU, shareGroup: 0});
         if(context === null) {
             console.error("createContext fails");
             return null;

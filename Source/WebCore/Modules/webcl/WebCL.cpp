@@ -87,7 +87,7 @@ RefPtr<WebCLContextProperties>& WebCL::defaultProperties(ExceptionCode& ec)
     if (ec != WebCLException::SUCCESS)
         return m_defaultProperties;
 
-    m_defaultProperties = WebCLContextProperties::create(webCLPlatforms[0], webCLDevices, ComputeContext::DEVICE_TYPE_DEFAULT, emptyString(), WebCLContextProperties::NoSharedGLContext);
+    m_defaultProperties = WebCLContextProperties::create(webCLPlatforms[0], webCLDevices, ComputeContext::DEVICE_TYPE_DEFAULT, WebCLContextProperties::NoSharedGLContext);
     return m_defaultProperties;
 }
 
