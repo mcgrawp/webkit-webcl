@@ -35,10 +35,10 @@
 
 namespace WebCore {
 
-PassRefPtr<WebCLGLImage> WebCLGLImage::create(WebCLContext* context, int flags, GC3Dsizei width, GC3Dsizei height, const CCImageFormat& format, GLuint renderBufferID, ExceptionCode& ec)
+PassRefPtr<WebCLGLImage> WebCLGLImage::create(WebCLContext* context, int flags, GC3Dsizei width, GC3Dsizei height, const CCImageFormat& format, GLuint renderbufferID, ExceptionCode& ec)
 {
     CCerror error;
-    PlatformComputeObject ccMemoryID = context->computeContext()->createFromGLRenderbuffer(flags, renderBufferID, error);
+    PlatformComputeObject ccMemoryID = context->computeContext()->createFromGLRenderbuffer(flags, renderbufferID, error);
     if (!ccMemoryID) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);

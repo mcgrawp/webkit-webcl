@@ -60,7 +60,7 @@ public:
     }
 
     PassRefPtr<WebCLGLBuffer> createFromGLBuffer(int, WebGLBuffer*, ExceptionCode&);
-    PassRefPtr<WebCLGLImage> createFromGLRenderBuffer(int, WebGLRenderbuffer*, ExceptionCode&);
+    PassRefPtr<WebCLGLImage> createFromGLRenderbuffer(int, WebGLRenderbuffer*, ExceptionCode&);
     PassRefPtr<WebCLGLImage> createFromGLTexture(int memoryFlags, int textureTarget, GC3Dint miplevel, WebGLTexture*, ExceptionCode&);
 
 private:

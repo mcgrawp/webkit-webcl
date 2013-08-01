@@ -39,7 +39,7 @@ public:
     ~WebCLGLImage() { }
 
     // FIXME: Use WebCLGLContext instead.
-    static PassRefPtr<WebCLGLImage> create(WebCLContext*, int flags, GC3Dsizei width, GC3Dsizei height, const CCImageFormat&, GLuint renderBufferID, ExceptionCode&);
+    static PassRefPtr<WebCLGLImage> create(WebCLContext*, int flags, GC3Dsizei width, GC3Dsizei height, const CCImageFormat&, GLuint renderbufferID, ExceptionCode&);
     static PassRefPtr<WebCLGLImage> create(WebCLContext*, int flags, int textureTarget, GLint miplevel,
                                            GC3Dsizei width, GC3Dsizei height, const CCImageFormat&,
                                            GLuint textureID, ExceptionCode&);

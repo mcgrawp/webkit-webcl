@@ -38,8 +38,7 @@ typedef long CLenum;
 
     [RaisesException] WebCLGLBuffer createFromGLBuffer(long memFlags, WebGLBuffer buffer);
 
-    // FIXME: Buffer x buffer?
-    [RaisesException] WebCLGLImage createFromGLRenderBuffer(long memFlags, WebGLRenderbuffer renderbuffer);
+    [RaisesException] WebCLGLImage createFromGLRenderbuffer(long memFlags, WebGLRenderbuffer renderbuffer);
 
     [RaisesException] WebCLGLImage createFromGLTexture(CLenum memFlags, CLenum textureTarget, GLint miplevel, WebGLTexture texture);
 };
