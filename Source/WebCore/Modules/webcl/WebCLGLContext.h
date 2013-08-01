@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+class WebGLTexture;
+
 class WebCLGLContext : public WebCLContext {
 public:
     virtual ~WebCLGLContext() { }
@@ -59,7 +61,7 @@ public:
 
     PassRefPtr<WebCLGLBuffer> createFromGLBuffer(int, WebGLBuffer*, ExceptionCode&);
     PassRefPtr<WebCLGLImage> createFromGLRenderBuffer(int, WebGLRenderbuffer*, ExceptionCode&);
-    PassRefPtr<WebCLMemoryObject> createFromGLTexture2D(int, GC3Denum, GC3Dint, GC3Duint, ExceptionCode&);
+    PassRefPtr<WebCLGLImage> createFromGLTexture(int memoryFlags, int textureTarget, GC3Dint miplevel, WebGLTexture*, ExceptionCode&);
 
 private:
     WebCLGLContext(ComputeContext*, PassRefPtr<WebCLContextProperties>);

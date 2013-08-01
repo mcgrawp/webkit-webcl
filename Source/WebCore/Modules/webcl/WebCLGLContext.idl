@@ -25,6 +25,9 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef long GLint;
+typedef long CLenum;
+
 [
     Conditional=WEBCL,
     JSGenerateToJSObject,
@@ -38,10 +41,6 @@
     // FIXME: Buffer x buffer?
     [RaisesException] WebCLGLImage createFromGLRenderBuffer(long memFlags, WebGLRenderbuffer renderbuffer);
 
-    // FIXME: Return a Image or MemoryObject?
-    // FIXME2: 'miplevel' should be 'int'
-    // FIXME3: Named createFromGLTexture?
-    // FIXME4: WebGLTexture instead of long
-    [RaisesException] WebCLImage createFromGLTexture2D(long memFlags, long textureTarget, long miplevel, long texture);
+    [RaisesException] WebCLGLImage createFromGLTexture(CLenum memFlags, CLenum textureTarget, GLint miplevel, WebGLTexture texture);
 };
 

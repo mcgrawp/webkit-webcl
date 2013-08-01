@@ -32,6 +32,7 @@
 #include "WebCLGLContext.h"
 #include "WebGLBuffer.h"
 #include "WebGLRenderbuffer.h"
+#include "WebGLTexture.h"
 
 namespace WebCore {
 
@@ -79,6 +80,7 @@ PassRefPtr<WebCLGLImage> WebCLGLContext::createFromGLRenderBuffer(int flags, Web
 
     GLuint renderBufferID = 0;
     if (renderBuffer)
+        // FIXME: ::getInternalFormat x ::object()
         renderBufferID = renderBuffer->getInternalFormat();
 
     if (!renderBufferID) {
@@ -94,22 +96,28 @@ PassRefPtr<WebCLGLImage> WebCLGLContext::createFromGLRenderBuffer(int flags, Web
     return WebCLGLImage::create(this, flags, width, height, imageFormat, renderBufferID, ec);
 }
 
-PassRefPtr<WebCLMemoryObject> WebCLGLContext::createFromGLTexture2D(int flags, GC3Denum textureTarget, GC3Dint miplevel, GC3Duint texture, ExceptionCode& ec)
+PassRefPtr<WebCLGLImage> WebCLGLContext::createFromGLTexture(int flags, int textureTarget, GC3Dint miplevel, WebGLTexture* texture, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
 
-    CCerror error;
-    PlatformComputeObject ccMemoryImage = platformObject()->createFromGLTexture2D(flags, textureTarget, miplevel, texture, error);
-    if (!ccMemoryImage) {
-        ASSERT(error != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+    GLuint textureID = 0;
+    if (texture)
+        textureID = texture->object();
+
+    if (!textureID) {
+        ec = WebCLException::INVALID_GL_OBJECT;
         return 0;
     }
-    RefPtr<WebCLMemoryObject> memoryObject = WebCLMemoryObject::create(this, ccMemoryImage);
-    return memoryObject.release();
+
+    GC3Dsizei width = texture->getWidth(textureTarget, miplevel);
+    GC3Dsizei height = texture->getHeight(textureTarget, miplevel);
+
+    // FIXME: Format is wrong here. It should have been gotten from WebGLTexture as well.
+    CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
+    return WebCLGLImage::create(this, flags, textureTarget, miplevel, width, height, imageFormat, textureID, ec);
 }
 
 } // namespace WebCore

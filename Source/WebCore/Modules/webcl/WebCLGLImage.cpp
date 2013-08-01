@@ -48,6 +48,21 @@ PassRefPtr<WebCLGLImage> WebCLGLImage::create(WebCLContext* context, int flags, 
     return imageObject.release();
 }
 
+PassRefPtr<WebCLGLImage> WebCLGLImage::create(WebCLContext* context, int flags, int textureTarget, int miplevel,
+                                              GC3Dsizei width, GC3Dsizei height, const CCImageFormat& format,
+                                              GLuint textureID, ExceptionCode& ec)
+{
+    CCerror error;
+    PlatformComputeObject ccMemoryID = context->computeContext()->createFromGLTexture2D(flags, textureTarget, miplevel, textureID, error);
+    if (!ccMemoryID) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return 0;
+    }
+    RefPtr<WebCLGLImage> imageObject = adoptRef(new WebCLGLImage(context, ccMemoryID, width, height, format));
+    return imageObject.release();
+}
+
 WebCLGLImage::WebCLGLImage(WebCLContext* context, PlatformComputeObject image, int width, int height, const CCImageFormat& format)
     : WebCLImage(context, image, width, height, format)
 {
