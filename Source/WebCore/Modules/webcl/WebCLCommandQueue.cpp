@@ -617,6 +617,11 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *sourceImage, WebCLB
     PlatformComputeObject ccSourceImage = sourceImage->platformObject();
     PlatformComputeObject ccTargetBuffer = targetBuffer->platformObject();
 
+    if (!sourceOrigin || !region) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     if (sourceOrigin->length() < 3
         || region->length() < 3) {
         ec = WebCLException::INVALID_VALUE;
