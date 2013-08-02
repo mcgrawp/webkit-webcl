@@ -64,6 +64,7 @@ class QSurface;
 QT_END_NAMESPACE
 #elif PLATFORM(GTK) || PLATFORM(EFL)
 typedef unsigned int GLuint;
+typedef int GLint;
 #endif
 
 #if PLATFORM(MAC)
