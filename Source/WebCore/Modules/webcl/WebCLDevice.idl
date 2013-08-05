@@ -25,11 +25,12 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef long CLenum;
+
 [
     Conditional=WEBCL,
 ] interface WebCLDevice {
-    [StrictTypeChecking, Custom, RaisesException] void getInfo(long deviceType);
-    [StrictTypeChecking, Custom, RaisesException] void getSupportedExtensions();
-    // FIXME: Misses "RaisesException" extended attribute?
-    [StrictTypeChecking, Custom] any getExtension(DOMString name);
+    [StrictTypeChecking, Custom, RaisesException] any getInfo(CLenum name);
+    [StrictTypeChecking, Custom, RaisesException] sequence<DOMString> getSupportedExtensions();
+    [StrictTypeChecking, Custom] any getExtension(DOMString extensionName);
 };
