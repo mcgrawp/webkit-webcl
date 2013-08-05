@@ -440,9 +440,9 @@ public:
         int rowPitch, int slicePitch, void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
     CCerror enqueueWriteImage(CCCommandQueue, PlatformComputeObject image, bool blockingWrite, size_t* originArray, size_t* regionArray,
         int rowPitch, int slicePitch, void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
-    CCerror enqueueAcquireGLObjects(CCCommandQueue, unsigned numberOfObjects, PlatformComputeObject* objects, unsigned eventsLength,
+    CCerror enqueueAcquireGLObjects(CCCommandQueue, const Vector<PlatformComputeObject>&, unsigned eventsLength,
         CCEvent* eventsWaitList, CCEvent* event);
-    CCerror enqueueReleaseGLObjects(CCCommandQueue, unsigned numberOfObjects, PlatformComputeObject* objects, unsigned eventsLength,
+    CCerror enqueueReleaseGLObjects(CCCommandQueue, const Vector<PlatformComputeObject>&, unsigned eventsLength,
         CCEvent* eventsWaitList, CCEvent* event);
     CCerror enqueueCopyImage(CCCommandQueue, PlatformComputeObject originImage, PlatformComputeObject targetImage, size_t* sourceOriginArray,
         size_t* targetOriginArray, size_t* regionArray, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);

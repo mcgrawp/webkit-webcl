@@ -40,20 +40,20 @@ PassRefPtr<WebCLGLCommandQueue> WebCLGLCommandQueue::create(WebCLContext* contex
     return queue.release();
 }
 
-void WebCLGLCommandQueue::enqueueAcquireGLObjects(WebCLMemoryObject* memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLGLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
-    PlatformComputeObject ccMemoryObjectsIDs[1] = {0};
-    if (memoryObjects && memoryObjects->isShared())
-        ccMemoryObjectsIDs[0] = memoryObjects->platformObject();
-
-    if (!ccMemoryObjectsIDs[0]) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
-        return;
+    Vector<PlatformComputeObject> ccMemoryObjectIDs;
+    for (size_t i = 0; i < memoryObjects.size(); ++i) {
+        if (!memoryObjects[i]->isShared()) {
+            ec = WebCLException::INVALID_MEM_OBJECT;
+            return;
+        }
+        ccMemoryObjectIDs.append(memoryObjects[i]->platformObject());
     }
 
     Vector<CCEvent> ccEvents;
@@ -65,24 +65,25 @@ void WebCLGLCommandQueue::enqueueAcquireGLObjects(WebCLMemoryObject* memoryObjec
     if (event)
         *ccEvent = event->platformObject();
 
-    CCerror err = m_context->computeContext()->enqueueAcquireGLObjects(platformObject(), 1, ccMemoryObjectsIDs,
+    CCerror err = m_context->computeContext()->enqueueAcquireGLObjects(platformObject(), ccMemoryObjectIDs,
         ccEvents.size(), ccEvents.data(), ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-void WebCLGLCommandQueue::enqueueReleaseGLObjects(WebCLMemoryObject* memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLGLCommandQueue::enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
-    PlatformComputeObject ccMemoryObjectsIDs = 0;
-    if (memoryObjects && memoryObjects->isShared())
-        ccMemoryObjectsIDs = memoryObjects->platformObject();
-    if (!ccMemoryObjectsIDs) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
-        return;
+    Vector<PlatformComputeObject> ccMemoryObjectIDs;
+    for (size_t i = 0; i < memoryObjects.size(); ++i) {
+        if (!memoryObjects[i]->isShared()) {
+            ec = WebCLException::INVALID_MEM_OBJECT;
+            return;
+        }
+        ccMemoryObjectIDs.append(memoryObjects[i]->platformObject());
     }
 
     Vector<CCEvent> ccEvents;
@@ -94,9 +95,9 @@ void WebCLGLCommandQueue::enqueueReleaseGLObjects(WebCLMemoryObject* memoryObjec
     if (event)
         *ccEvent = event->platformObject();
 
-    CCerror error = m_context->computeContext()->enqueueReleaseGLObjects(platformObject(), 1, &ccMemoryObjectsIDs,
+    CCerror err = m_context->computeContext()->enqueueReleaseGLObjects(platformObject(), ccMemoryObjectIDs,
         ccEvents.size(), ccEvents.data(), ccEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 } // namespace WebCore

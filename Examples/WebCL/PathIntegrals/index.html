@@ -210,7 +210,7 @@ function drawPix() {
     try {
         if (interop) {
             gl.finish();
-            cmdQueue.enqueueAcquireGLObjects(bufPix);
+            cmdQueue.enqueueAcquireGLObjects([bufPix]);
         }
 
         localWorkSize[0] = 1;
@@ -221,7 +221,7 @@ function drawPix() {
         if (!interop) {
             cmdQueue.enqueueReadBuffer(bufPix, true, 0, bufferSize * 2, outBuffer);
         } else {
-            cmdQueue.enqueueReleaseGLObjects(bufPix);
+            cmdQueue.enqueueReleaseGLObjects([bufPix]);
             cmdQueue.finish();
         }
 

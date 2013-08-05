@@ -752,15 +752,15 @@ CCerror ComputeContext::enqueueWriteImage(CCCommandQueue commandQueue, PlatformC
     return error;
 }
 
-CCerror ComputeContext::enqueueAcquireGLObjects(CCCommandQueue commandQueue, unsigned numberOfObjects, PlatformComputeObject* objects, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
+CCerror ComputeContext::enqueueAcquireGLObjects(CCCommandQueue commandQueue, const Vector<PlatformComputeObject>& objects, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
 {
-    cl_int error = clEnqueueAcquireGLObjects(commandQueue, numberOfObjects, objects, eventsLength, eventsWaitList, event);
+    cl_int error = clEnqueueAcquireGLObjects(commandQueue, objects.size(), objects.data(), eventsLength, eventsWaitList, event);
     return error;
 }
 
-CCerror ComputeContext::enqueueReleaseGLObjects(CCCommandQueue commandQueue, unsigned numberOfObjects, PlatformComputeObject* objects, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
+CCerror ComputeContext::enqueueReleaseGLObjects(CCCommandQueue commandQueue, const Vector<PlatformComputeObject>& objects, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event)
 {
-    cl_int error = clEnqueueReleaseGLObjects(commandQueue, numberOfObjects, objects, eventsLength, eventsWaitList, event);
+    cl_int error = clEnqueueReleaseGLObjects(commandQueue, objects.size(), objects.data(), eventsLength, eventsWaitList, event);
     return error;
 }
 
