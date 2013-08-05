@@ -46,6 +46,7 @@ public:
                                            GLuint textureID, ExceptionCode&);
 
     int getGLTextureInfo(int paramName, ExceptionCode&);
+    virtual bool isShared() const { return true; }
 
 private:
     WebCLGLImage(WebCLGLContext*, PlatformComputeObject image, int width, int height, const CCImageFormat&);

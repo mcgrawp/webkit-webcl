@@ -42,7 +42,7 @@ public:
     static PassRefPtr<WebCLGLBuffer> create(WebCLContext*, CCenum, const Platform3DObject&, ExceptionCode&);
 
     PassRefPtr<WebCLGLObjectInfo> getGLObjectInfo(ExceptionCode&);
-    bool isShared() const { return true; }
+    virtual bool isShared() const { return true; }
 
 private:
     WebCLGLBuffer(WebCLContext* context, PlatformComputeObject object);
