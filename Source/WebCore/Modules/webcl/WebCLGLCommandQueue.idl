@@ -32,12 +32,11 @@
 ] interface WebCLGLCommandQueue : WebCLCommandQueue {
 
     // FIXME: First parameters, should be a Vector/Sequence here.
-    // FIXME2: Use Default=Undefined.
     [RaisesException] void enqueueAcquireGLObjects(WebCLMemoryObject memObjects,
-        optional sequence<WebCLEvent> eventWaitList,
-        optional WebCLEvent event);
+        [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+        [Default=Undefined] optional WebCLEvent event);
 
-    [RaisesException] void enqueueReleaseGLObjects(WebCLMemoryObject memObjects,
-        optional sequence<WebCLEvent> eventWaitList,
-        optional WebCLEvent event);
+    [RaisesException] void enqueueReleaseGLObjects(<WebCLMemoryObject memObjects,
+        [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+        [Default=Undefined] optional WebCLEvent event);
 };
