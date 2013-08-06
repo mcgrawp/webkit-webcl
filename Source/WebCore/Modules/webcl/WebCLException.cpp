@@ -157,13 +157,13 @@ bool WebCLException::initializeDescription(ExceptionCode ec, ExceptionCodeDescri
     if(ec < (14 + WebCLExceptionOffset))
         description->code =  WebCLExceptionOffset - ec;
     else
-        description->code =  WebCLExceptionOffset - ec - 16;
+        description->code =  WebCLExceptionOffset - ec - 15;
 
     // Change the type
     description->type = WebCLExceptionType;
 
     size_t tableSize = WTF_ARRAY_LENGTH(exceptionNames);
-    size_t tableIndex = ec - WebCLExceptionOffset + 1;
+    size_t tableIndex = ec - WebCLExceptionOffset;
     description->name = tableIndex < tableSize ? exceptionNames[tableIndex] : 0;
     description->description = tableIndex < tableSize ? exceptionDescriptions[tableIndex] : 0;
     return true;
