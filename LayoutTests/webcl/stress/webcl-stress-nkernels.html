@@ -25,8 +25,7 @@ function runTest() {
         var platform = wclt.getPlatform(0);
         var device = wclt.getDevice(0);
         var devices = wclt.getDevices();
-        var contextProperties = { platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_ALL,
-                                shareGroup: 0, hint: null};
+        var contextProperties = { platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_ALL};
         var context = wclt.createContext(contextProperties);
         var queue = wclt.createCommandQueue();
 

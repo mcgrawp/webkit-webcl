@@ -1,25 +1,25 @@
-WebCL WebCLKernelArgTypes constants tests.
+WebCL WebCLKernelArgumentTypes constants tests.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-Test all constants defined in WebCLKernelArgTypes.idl
-PASS webcl.CHAR == 0 is true
-PASS webcl.UCHAR == 1 is true
-PASS webcl.SHORT == 2 is true
-PASS webcl.USHORT == 3 is true
-PASS webcl.INT == 4 is true
-PASS webcl.UINT == 5 is true
-PASS webcl.LONG == 6 is true
-PASS webcl.ULONG == 7 is true
-PASS webcl.FLOAT == 8 is true
-PASS webcl.HALF == 9 is true
-PASS webcl.DOUBLE == 10 is true
-PASS webcl.VEC2 == 0x0100 is true
-PASS webcl.VEC3 == 0x0200 is true
-PASS webcl.VEC4 == 0x0400 is true
-PASS webcl.VEC8 == 0x0800 is true
-PASS webcl.VEC16 == 0x1000 is true
-PASS webcl.LOCAL_MEMORY_SIZE == 255 is true
+Test all constants defined in WebCLKernelArgumentTypes.idl
+PASS WebCLKernelArgumentTypes.CHAR == 0 is true
+PASS WebCLKernelArgumentTypes.UCHAR == 1 is true
+PASS WebCLKernelArgumentTypes.SHORT == 2 is true
+PASS WebCLKernelArgumentTypes.USHORT == 3 is true
+PASS WebCLKernelArgumentTypes.INT == 4 is true
+PASS WebCLKernelArgumentTypes.UINT == 5 is true
+PASS WebCLKernelArgumentTypes.LONG == 6 is true
+PASS WebCLKernelArgumentTypes.ULONG == 7 is true
+PASS WebCLKernelArgumentTypes.FLOAT == 8 is true
+PASS WebCLKernelArgumentTypes.HALF == 9 is true
+PASS WebCLKernelArgumentTypes.DOUBLE == 10 is true
+FAIL WebCLKernelArgumentTypes.VEC2 == 0x0200 should be true. Was false.
+FAIL WebCLKernelArgumentTypes.VEC3 == 0x0300 should be true. Was false.
+PASS WebCLKernelArgumentTypes.VEC4 == 0x0400 is true
+PASS WebCLKernelArgumentTypes.VEC8 == 0x0800 is true
+PASS WebCLKernelArgumentTypes.VEC16 == 0x1000 is true
+PASS WebCLKernelArgumentTypes.LOCAL_MEMORY_SIZE == 255 is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

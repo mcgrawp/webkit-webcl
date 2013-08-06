@@ -62,7 +62,7 @@ function runTest() {
             return;
         }
 
-        contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_ALL, hint: null};
+        contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_ALL};
         context1 = cl.createContext(contextProperties);
         if (!context1) {
             testFailed("Failed to create WebCLContext 1.");

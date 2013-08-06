@@ -95,9 +95,7 @@ WebCLTest = (function () {
         if (contextProperties === null || contextProperties === undefined) {
             contextProperties = { "platform": platform,
                                     "devices": devices,
-                                    "deviceType": deviceType,
-                                    "shareGroup": 0,
-                                    "hints": null};
+                                    "deviceType": deviceType};
         }
 
 

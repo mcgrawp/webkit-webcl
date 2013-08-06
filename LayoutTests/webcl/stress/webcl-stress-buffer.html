@@ -38,9 +38,7 @@ function runTest() {
         cl = wclt.getCL();
         contextProperties = {"platform": platform,
                              "devices": devices,
-                             "deviceType": deviceType,
-                             "shareGroup": 0,
-                             "hints": null};
+                             "deviceType": deviceType};
         context = wclt.createContext(contextProperties);
 
         maxMemAllocSize = device.getInfo(cl.DEVICE_MAX_MEM_ALLOC_SIZE);

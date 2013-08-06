@@ -3,16 +3,14 @@
 <head>
 <meta charset="utf-8">
 <title>WebCL all devices test.</title>
-<link rel="stylesheet" href="../resources/js-test-style.css"/>
 <script src="../resources/js-test-pre.js"></script>
 <script src="../resources/kernels.js"></script>
+<script src="../resources/webcl-test-utils.js"></script>
 
 <script>
 var DATA_SIZE = 1024;
 
-var err;
-
-var data = new Int32Array(DATA_SIZE);
+var data;
 var results = new Int32Array(DATA_SIZE);
 var count;
 
@@ -35,11 +33,9 @@ var localWorkSize = new Int32Array(1);
 function runTest() {
 
     count = DATA_SIZE;
-    var i;
-    var j;
-    for (i = 0; i < count; i++) {
-        data[i] = Math.random();
-    }
+    // Generate a random vector with random values between 1 - 100
+    var randomVector = WebCLTestUtils.getRandomVector(count, 100);
+    data = new Int32Array(randomVector);
 
     try {
 
@@ -61,7 +57,6 @@ function runTest() {
             return;
         }
         platform = platforms[0];
-
         devices = platform.getDevices(cl.DEVICE_TYPE_ALL);
         numDevices = devices.length;
         if (numDevices === 0) {
@@ -69,7 +64,7 @@ function runTest() {
             return;
         }
 
-        var contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_ALL, hint: null};
+        var contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_ALL};
         context = cl.createContext(contextProperties);
 
         queues = [numDevices];
@@ -108,16 +103,20 @@ function runTest() {
             queues[i].enqueueWriteBuffer(input, true, 0, Int32Array.BYTES_PER_ELEMENT * count, data);
         }
 
+        var types = WebCLKernelArgumentTypes;
         kernel.setArg(0, input);
-        kernel.setArg(1, outputs[0]);
-        kernel.setArg(2, count, cl.LONG);
+        kernel.setArg(2, count, types.UINT);
 
-        var workGroupSize = kernel.getWorkGroupInfo(devices[0], cl.KERNEL_WORK_GROUP_SIZE);
+        var workGroupSize = [numDevices];
+        for (i = 0; i < numDevices; i++) {
+            workGroupSize[i] = kernel.getWorkGroupInfo(devices[i], cl.KERNEL_WORK_GROUP_SIZE);
+        }
 
         globalWorkSize[0] = count;
-        localWorkSize[0] = workGroupSize;
 
         for (i = 0; i < numDevices; i++) {
+            localWorkSize[0] = workGroupSize[i];
+            kernel.setArg(1, outputs[i]);
             queues[i].enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
         }
 
@@ -129,7 +128,7 @@ function runTest() {
             queues[i].enqueueReadBuffer(outputs[i], true, 0, Int32Array.BYTES_PER_ELEMENT * count, results);
             for (j = 0; j < count; j++) {
                 if (results[j] !== (data[j] * data[j])) {
-                    testFailed("");
+                    testFailed("Test failed for device: " + devices[i].getInfo(cl.DEVICE_TYPE));
                     break;
                 }
             }

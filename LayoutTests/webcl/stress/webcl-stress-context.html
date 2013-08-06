@@ -32,9 +32,7 @@ function runTest() {
         deviceType = wclt.getDeviceType();
         contextProperties = { "platform": platform,
                                 "devices": devices,
-                                "deviceType": deviceType,
-                                "shareGroup": 0,
-                                "hints": null};
+                                "deviceType": deviceType};
 
         for (i = 0; i < STRESS_ITERS; i++) {
             context = wclt.createContext(contextProperties);

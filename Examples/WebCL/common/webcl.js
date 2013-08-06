@@ -138,20 +138,19 @@ window.WebCLCommon = (function (debug) {
             ctxProps.platform = (props && props.platform) ? props.platform : platforms[0];
             ctxProps.devices = (props && props.devices) ? props.devices : [devices[0]];
             ctxProps.deviceType = (props && props.deviceType) ? props.deviceType :  webcl.DEVICE_TYPE_GPU;
+            ctxProps.hint = (props && props.hint) ? props.hint : null;
 
             /* Checking for possible extensions*/
             resource = (props && props.extension) ? props.extension : null;
 
             try {
                 if (resource) {
-                    ctxProps.shareGroup = (props && props.shareGroup) ? props.shareGroup : 1;
                     extension = webcl.getExtension(resource);
                     if (!extension) {
                         throw new Error(EXTENSION_NOT_SUPPORTED);
                     }
                     context = extension.createContext(ctxProps);
                 } else {
-                    ctxProps.shareGroup = (props && props.shareGroup) ? props.shareGroup : 0;
                     context = webcl.createContext(ctxProps);
                 }
             } catch (e) {

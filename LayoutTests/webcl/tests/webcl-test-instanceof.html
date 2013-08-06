@@ -14,6 +14,7 @@ var contextProperties;
 var device;
 var devices;
 var formats;
+var buffer;
 var kernel;
 var kernelSrc;
 var platform;
@@ -47,9 +48,9 @@ function runTest() {
 
         /* Test instance of WebCLContext */
         contextProperties = { platform: platform, devices: devices,
-                                deviceType: cl.DEVICE_TYPE_ALL, shareGroup: 0, hint: null};
+                                deviceType: cl.DEVICE_TYPE_ALL};
         context = cl.createContext(contextProperties);
-        shouldBeTrue('cl.createContext(contextProperties) instanceof WebCLContext');
+        shouldBeTrue('context instanceof WebCLContext');
 
         webclEvent = context.createUserEvent();
         shouldBeTrue('webclEvent instanceof WebCLEvent');
@@ -61,16 +62,16 @@ function runTest() {
         /* Test instance of WebClProgram */
         shouldBeTrue('program instanceof WebCLProgram');
 
-        bufferInput = context.createBuffer(cl.MEM_READ_ONLY,
+        buffer = context.createBuffer(cl.MEM_READ_ONLY,
                         Float32Array.BYTES_PER_ELEMENT * DATA_SIZE);
         /* Test instance of WebCLBuffer */
-        shouldBeTrue('bufferInput instanceof WebCLBuffer');
+        shouldBeTrue('buffer instanceof WebCLBuffer');
 
         commandQueue = context.createCommandQueue(device, null);
         /* Test instance of WebCLCommandQueue */
         shouldBeTrue('commandQueue instanceof WebCLCommandQueue');
 
-        program.build(device);
+        program.build([device]);
         kernel = program.createKernel('square');
         /* Test instance of WebCLKernel */
         shouldBeTrue('kernel instanceof WebCLKernel');

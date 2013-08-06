@@ -25,7 +25,7 @@ function runTest() {
         var devices = webclTest.getDevices();
 
         var properties = { platform: platform, devices: devices,
-                            deviceType: cl.DEVICE_TYPE_GPU, hint: null};
+                            deviceType: cl.DEVICE_TYPE_GPU};
         var context = webclTest.createContext(properties);
 
         var clEvent = null;

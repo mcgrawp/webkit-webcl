@@ -50,10 +50,9 @@ function runTest() {
         }
         /* Test instance of WebCLGL */
         shouldBeTrue('extension instanceof WebCLGL');
-
-        /* Test instance of WebCLGLContext */
         contextProperties = {platform: platform, devices: devices,
-                             deviceType: cl.DEVICE_TYPE_GPU, hint: null, shareGroup: 1};
+                             deviceType: cl.DEVICE_TYPE_GPU};
+
         context = extension.createContext(contextProperties);
         shouldBeTrue('context instanceof WebCLGLContext');
 

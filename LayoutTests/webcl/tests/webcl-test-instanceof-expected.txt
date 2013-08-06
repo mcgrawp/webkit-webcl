@@ -3,14 +3,14 @@ WebCL instanceof tests.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 Run instanceof tests for all WebCL objects
-PASS cl instanceof WebCL is true.
-PASS platform instanceof WebCLPlatform is true.
+PASS cl instanceof WebCL is true
+PASS platform instanceof WebCLPlatform is true
 PASS device instanceof WebCLDevice is true
-PASS cl.createContext(contextProperties) instanceof WebCLContext is true
-PASS webclEvent instanceof WebCLEvent is true
+PASS context instanceof WebCLContext is true
+FAIL webclEvent instanceof WebCLEvent should be true. Was false.
 PASS webclSampler instanceof WebCLSampler is true
 PASS program instanceof WebCLProgram is true
-PASS bufferInput instanceof WebCLBuffer is true
+PASS buffer instanceof WebCLBuffer is true
 PASS commandQueue instanceof WebCLCommandQueue is true
 PASS kernel instanceof WebCLKernel is true
 PASS webclImg instanceof WebCLImage is true

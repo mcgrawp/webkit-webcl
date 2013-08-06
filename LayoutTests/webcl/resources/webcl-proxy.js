@@ -303,8 +303,6 @@
                     nativeProperties.platform = deviceGroup[i].nativePlatform;
                     nativeProperties.devices = deviceGroup[i].nativeDevices;
                     nativeProperties.deviceType = nativeWebCL.DEVICE_TYPE_DEFAULT;
-                    //FIXME: There is other value to hint?
-                    nativeProperties.hint = null;
 
                     console.info("nativeProperties: ", nativeProperties);
 
@@ -1780,7 +1778,7 @@
 
                     try {
                         // according to the WD, the 1st parameter must be an array and not an obj
-                        nativeCommandQueue.enqueueAcquireGLObjects(memObjects[0],
+                        nativeCommandQueue.enqueueAcquireGLObjects(memObjects,
                                                                     eventsList, nativeEvent);
                     } catch (e) {
                         throw e;
@@ -1885,7 +1883,7 @@
 
                     try {
                         // according to the WD, the 1st parameter must be an array and not an obj
-                        nativeCommandQueue.enqueueReleaseGLObjects(memObjects[0],
+                        nativeCommandQueue.enqueueReleaseGLObjects(memObjects,
                                                                     eventsList, nativeEvent);
                     } catch (e) {
                         throw e;
