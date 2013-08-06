@@ -142,6 +142,23 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blockingWri
     enqueueWriteBufferBase(buffer, blockingWrite, offset, bufferSize, static_cast<void*>(bufferArray), events, event, ec);
 }
 
+static bool toVector(Int32Array* array, Vector<size_t>& result, int sizeCheck = 0)
+{
+    if (!array)
+        return false;
+    int length = array->length();
+    // When no sizeCheck is specified, take length of Int32Array as sizeCheck
+    // to avoid return false on size check and to copy whole array into vector.
+    sizeCheck = sizeCheck ? sizeCheck : length;
+
+    if (length < sizeCheck)
+        return false;
+
+    for (int i = 0; i < sizeCheck; i++)
+        result.append(array->item(i));
+    return true;
+}
+
 void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, bool blockingWrite, Int32Array* bufferOrigin,
     Int32Array* hostOrigin, Int32Array* region, int bufferRowPitch, int bufferSlicePitch, int hostRowPitch,
     int hostSlicePitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
@@ -162,26 +179,13 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, bool blockin
         ec = WebCLException::INVALID_VALUE;
         return;
     }
-    if (!bufferOrigin || !hostOrigin || !region) {
+
+    Vector<size_t> bufferOriginData, hostOriginData, regionData;
+    if (!toVector(bufferOrigin, bufferOriginData, 3)
+        || !toVector(hostOrigin, hostOriginData, 3)
+        || !toVector(region, regionData, 3)) {
         ec = WebCLException::INVALID_VALUE;
         return;
-    }
-
-    if (bufferOrigin->length() < 3
-        || hostOrigin->length() < 3
-        || region->length() < 3) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
-
-    Vector<size_t, 3> bufferOriginData;
-    Vector<size_t, 3> hostOriginData;
-    Vector<size_t, 3> regionData;
-
-    for (size_t i = 0; i < 3; ++i) {
-        bufferOriginData.append(bufferOrigin->item(i));
-        hostOriginData.append(hostOrigin->item(i));
-        regionData.append(region->item(i));
     }
 
     Vector<CCEvent> ccEvents;
@@ -264,22 +268,21 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, I
 
     PlatformComputeObject ccImage = image->platformObject();
 
-    if (!origin || !region || !ptr) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
-    if (origin->length() < 3
-        || region->length() < 3) {
+    if (!ptr) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
 
-    Vector<size_t, 3> originData;
-    Vector<size_t, 3> regionData;
-    for (size_t i = 0; i < 3; ++i) {
-        originData.append(origin->item(i));
-        regionData.append(region->item(i));
+    Vector<size_t> originData, regionData;
+    if (!toVector(origin, originData, 2)
+        || !toVector(region, regionData, 2)) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
     }
+    // No support for 3D-images, so set default values of 0 for all origin & region arrays at 3rd index.
+    originData.append(0);
+    regionData.append(1);
+
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
@@ -358,25 +361,17 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blocking
 
     PlatformComputeObject ccBuffer = buffer->platformObject();
 
-    if (!bufferOrigin || !hostOrigin ||!region || !ptr) {
+    if (!ptr) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
 
-    if (bufferOrigin->length() < 3
-        || hostOrigin->length() < 3
-        || region->length() < 3) {
+    Vector<size_t> bufferOriginData, hostOriginData, regionData;
+    if (!toVector(bufferOrigin, bufferOriginData, 3)
+        || !toVector(hostOrigin, hostOriginData, 3)
+        || !toVector(region, regionData, 3)) {
         ec = WebCLException::INVALID_VALUE;
         return;
-    }
-
-    Vector<size_t, 3> bufferOriginData;
-    Vector<size_t, 3> hostOriginData;
-    Vector<size_t, 3> regionData;
-    for (size_t i = 0; i < 3; ++i) {
-        bufferOriginData.append(bufferOrigin->item(i));
-        hostOriginData.append(hostOrigin->item(i));
-        regionData.append(region->item(i));
     }
 
     Vector<CCEvent> ccEvents;
@@ -416,30 +411,23 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
 
     CCKernel ccKernel = kernel->platformObject();
 
-    // FIXME: The block of code is repeated all over this class.
     Vector<size_t> globalWorkSizeCopy;
-    int workItemDimensions = 0;
-    if (globalWorkSize) {
-        for (size_t i = 0; i < globalWorkSize->length(); ++i)
-            globalWorkSizeCopy.append(globalWorkSize->item(i));
-        workItemDimensions = globalWorkSize->length();
+    if ((globalWorkSize && !toVector(globalWorkSize, globalWorkSizeCopy))) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
     }
+    int workItemDimensions = globalWorkSizeCopy.size();
 
     if (workItemDimensions < 0 || workItemDimensions > 3) {
         ec = WebCLException::INVALID_WORK_DIMENSION;
         return;
     }
 
-    Vector<size_t> localWorkSizeCopy;
-    if (localWorkSize) {
-        for (size_t i = 0; i < localWorkSize->length(); ++i)
-            localWorkSizeCopy.append(localWorkSize->item(i));
-    }
-
-    Vector<size_t> globalWorkOffsetCopy;
-    if (globalWorkOffsets) {
-        for (unsigned i = 0; i < globalWorkOffsets->length(); ++i)
-            globalWorkOffsetCopy.append(globalWorkOffsets->item(i));
+    Vector<size_t> localWorkSizeCopy, globalWorkOffsetCopy;
+    if ( (localWorkSize && !toVector(localWorkSize, localWorkSizeCopy))
+        || (globalWorkOffsets && !toVector(globalWorkOffsets, globalWorkOffsetCopy))) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
     }
 
     Vector<CCEvent> ccEvents;
@@ -456,7 +444,6 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
         ccEvent = &platformEventObject;
         event->setAssociatedCommandQueue(this);
     }
-
     CCerror computeContextError = m_context->computeContext()->enqueueNDRangeKernel(platformObject(), ccKernel,
         workItemDimensions, globalWorkOffsetCopy.data(), globalWorkSizeCopy.data(), localWorkSizeCopy.data(),
         ccEvents.size(), ccEvents.data(), ccEvent);
@@ -502,23 +489,20 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
 
     PlatformComputeObject ccImage = image->platformObject();
 
-    if (!origin || !region || !ptr) {
+    if (!ptr) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
 
-    if (origin->length() < 3
-        || region->length() < 3) {
+    Vector<size_t> originData, regionData;
+    if (!toVector(origin, originData, 2)
+        || !toVector(region, regionData, 2)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
-
-    Vector<size_t, 3> originData;
-    Vector<size_t, 3> regionData;
-    for (size_t i = 0; i < 3; ++i) {
-        originData.append(origin->item(i));
-        regionData.append(region->item(i));
-    }
+    // No support for 3D-images, so set default values of 0 for all origin & region arrays at 3rd index.
+    originData.append(0);
+    regionData.append(1);
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
@@ -558,26 +542,17 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
     PlatformComputeObject ccSourceImage = sourceImage->platformObject();
     PlatformComputeObject ccTargetImage = targetImage->platformObject();
 
-    if (!sourceOrigin || !targetOrigin || !region) {
+    Vector<size_t> sourceOriginData, targetOriginData, regionData;
+    if (!toVector(sourceOrigin, sourceOriginData, 2)
+        || !toVector(targetOrigin, targetOriginData, 2)
+        || !toVector(region, regionData, 2)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
-    if (sourceOrigin->length() < 3
-        || targetOrigin->length() < 3
-        || region->length() < 3) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
-
-    Vector<size_t, 3> sourceOriginData;
-    Vector<size_t, 3> targetOriginData;
-    Vector<size_t, 3> regionData;
-
-    for (size_t i = 0; i < 3; ++i) {
-        sourceOriginData.append(sourceOrigin->item(i));
-        targetOriginData.append(targetOrigin->item(i));
-        regionData.append(region->item(i));
-    }
+    // No support for 3D-images, so set default values of 0 for all origin & region arrays at 3rd index.
+    sourceOriginData.append(0);
+    targetOriginData.append(0);
+    regionData.append(1);
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
@@ -617,23 +592,16 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *sourceImage, WebCLB
     PlatformComputeObject ccSourceImage = sourceImage->platformObject();
     PlatformComputeObject ccTargetBuffer = targetBuffer->platformObject();
 
-    if (!sourceOrigin || !region) {
+    Vector<size_t> sourceOriginData, regionData;
+    if (!toVector(sourceOrigin, sourceOriginData, 2)
+        || !toVector(region, regionData, 2)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
+    // No support for 3D-images, so set default values of 0 for all origin & region arrays at 3rd index.
+    sourceOriginData.append(0);
+    regionData.append(1);
 
-    if (sourceOrigin->length() < 3
-        || region->length() < 3) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
-
-    Vector<size_t, 3> sourceOriginData;
-    Vector<size_t, 3> regionData;
-    for (size_t i = 0; i < 3; ++i) {
-        sourceOriginData.append(sourceOrigin->item(i));
-        regionData.append(region->item(i));
-    }
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
@@ -672,23 +640,15 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *sourceBuffer, WebC
     PlatformComputeObject ccSourceBuffer = sourceBuffer->platformObject();
     PlatformComputeObject ccTargetImage = targetImage->platformObject();
 
-    if (!targetOrigin || !region) {
+    Vector<size_t> targetOriginData, regionData;
+    if (!toVector(targetOrigin, targetOriginData, 2)
+        || !toVector(region, regionData, 2)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
-
-    if (targetOrigin->length() < 3
-        || region->length() < 3) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
-
-    Vector<size_t, 3> targetOriginData;
-    Vector<size_t, 3> regionData;
-    for (size_t i = 0; i < 3; ++i) {
-        targetOriginData.append(targetOrigin->item(i));
-        regionData.append(region->item(i));
-    }
+    // No support for 3D-images, so set default values of 0 for all origin & region arrays at 3rd index.
+    targetOriginData.append(0);
+    regionData.append(1);
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
@@ -765,24 +725,12 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
     PlatformComputeObject ccSourceBuffer = sourceBuffer->platformObject();
     PlatformComputeObject ccTargetBuffer = targetBuffer->platformObject();
 
-    if (!sourceOrigin || !targetOrigin || !region) {
+    Vector<size_t> sourceOriginData, targetOriginData, regionData;
+    if (!toVector(sourceOrigin, sourceOriginData, 3)
+        || !toVector(targetOrigin, targetOriginData, 3)
+        || !toVector(region, regionData, 3)) {
         ec = WebCLException::INVALID_VALUE;
         return;
-    }
-    if (sourceOrigin->length() < 3
-        || targetOrigin->length() < 3
-        || region->length() < 3) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
-
-    Vector<size_t, 3> sourceOriginData;
-    Vector<size_t, 3> targetOriginData;
-    Vector<size_t, 3> regionData;
-    for (size_t i = 0; i < 3; ++i) {
-        sourceOriginData.append(sourceOrigin->item(i));
-        targetOriginData.append(targetOrigin->item(i));
-        regionData.append(region->item(i));
     }
 
     Vector<CCEvent> ccEvents;
