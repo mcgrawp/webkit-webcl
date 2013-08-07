@@ -31,15 +31,16 @@
 #if ENABLE(WEBCL)
 
 #include "WebCLBuffer.h"
-
 #include "WebCLGLObjectInfo.h"
 
 namespace WebCore {
 
+class WebGLBuffer;
+
 class WebCLGLBuffer : public WebCLBuffer {
 public:
-    ~WebCLGLBuffer() { }
-    static PassRefPtr<WebCLGLBuffer> create(WebCLContext*, CCenum, const Platform3DObject&, ExceptionCode&);
+    virtual ~WebCLGLBuffer() { }
+    static PassRefPtr<WebCLGLBuffer> create(WebCLContext*, CCenum, WebGLBuffer*, ExceptionCode&);
 
     PassRefPtr<WebCLGLObjectInfo> getGLObjectInfo(ExceptionCode&);
     virtual bool isShared() const { return true; }

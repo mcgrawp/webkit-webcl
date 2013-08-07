@@ -32,11 +32,14 @@
 #include "WebCLGLBuffer.h"
 
 #include "WebCLContext.h"
+#include "WebGLBuffer.h"
 
 namespace WebCore {
 
-PassRefPtr<WebCLGLBuffer> WebCLGLBuffer::create(WebCLContext* context, CCenum memoryFlags, const Platform3DObject& platform3DObject, ExceptionCode& ec)
+PassRefPtr<WebCLGLBuffer> WebCLGLBuffer::create(WebCLContext* context, CCenum memoryFlags, WebGLBuffer* webGLBuffer, ExceptionCode& ec)
 {
+    Platform3DObject platform3DObject = webGLBuffer->object();
+    ASSERT(platform3DObject);
     CCerror error = ComputeContext::SUCCESS;
     PlatformComputeObject buffer = context->computeContext()->createFromGLBuffer(memoryFlags, platform3DObject, error);
     if (!buffer) {
@@ -44,8 +47,8 @@ PassRefPtr<WebCLGLBuffer> WebCLGLBuffer::create(WebCLContext* context, CCenum me
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-
-    return adoptRef(new WebCLGLBuffer(context, buffer));
+    RefPtr<WebCLGLBuffer> clglBuffer = adoptRef(new WebCLGLBuffer(context, buffer));
+    return clglBuffer.release();
 }
 
 WebCLGLBuffer::WebCLGLBuffer(WebCLContext* context, PlatformComputeObject object)

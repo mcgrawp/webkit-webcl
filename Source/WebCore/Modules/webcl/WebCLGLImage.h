@@ -35,15 +35,15 @@
 namespace WebCore {
 
 class WebCLGLContext;
+class WebGLRenderbuffer;
+class WebGLTexture;
 
 class WebCLGLImage : public WebCLImage {
 public:
-    ~WebCLGLImage() { }
+    virtual ~WebCLGLImage() { }
 
-    static PassRefPtr<WebCLGLImage> create(WebCLGLContext*, int flags, GC3Dsizei width, GC3Dsizei height, const CCImageFormat&, GLuint renderbufferID, ExceptionCode&);
-    static PassRefPtr<WebCLGLImage> create(WebCLGLContext*, int flags, int textureTarget, GLint miplevel,
-                                           GC3Dsizei width, GC3Dsizei height, const CCImageFormat&,
-                                           GLuint textureID, ExceptionCode&);
+    static PassRefPtr<WebCLGLImage> create(WebCLGLContext*, int flags, WebGLRenderbuffer* webGLRenderbuffer, ExceptionCode&);
+    static PassRefPtr<WebCLGLImage> create(WebCLGLContext*, int flags, int textureTarget, int miplevel, WebGLTexture*, ExceptionCode&);
 
     int getGLTextureInfo(int paramName, ExceptionCode&);
     virtual bool isShared() const { return true; }

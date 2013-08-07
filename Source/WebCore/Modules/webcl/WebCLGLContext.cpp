@@ -58,7 +58,7 @@ PassRefPtr<WebCLGLCommandQueue> WebCLGLContext::createCommandQueue(WebCLDevice* 
 PassRefPtr<WebCLGLBuffer> WebCLGLContext::createFromGLBuffer(int flags, WebGLBuffer* webGLBuffer, ExceptionCode& ec)
 {
     if (!platformObject()) {
-        ec = WebCLException::FAILURE;
+        ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
 
@@ -67,8 +67,7 @@ PassRefPtr<WebCLGLBuffer> WebCLGLContext::createFromGLBuffer(int flags, WebGLBuf
         return 0;
     }
 
-    Platform3DObject bufferID = webGLBuffer->object();
-    return WebCLGLBuffer::create(this, flags, bufferID, ec);
+    return WebCLGLBuffer::create(this, flags, webGLBuffer, ec);
 }
 
 PassRefPtr<WebCLGLImage> WebCLGLContext::createFromGLRenderbuffer(int flags, WebGLRenderbuffer* renderbuffer, ExceptionCode& ec)
@@ -78,22 +77,12 @@ PassRefPtr<WebCLGLImage> WebCLGLContext::createFromGLRenderbuffer(int flags, Web
         return 0;
     }
 
-    GLuint renderbufferID = 0;
-    if (renderbuffer)
-        // FIXME: ::getInternalFormat x ::object()
-        renderbufferID = renderbuffer->getInternalFormat();
-
-    if (!renderbufferID) {
+    if (!renderbuffer) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
 
-    GC3Dsizei width = renderbuffer->getWidth();
-    GC3Dsizei height = renderbuffer->getHeight();
-
-    // FIXME: Format is wrong here. It should have been gotten from WebGLRenderbuffer as well.
-    CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return WebCLGLImage::create(this, flags, width, height, imageFormat, renderbufferID, ec);
+    return WebCLGLImage::create(this, flags, renderbuffer, ec);
 }
 
 PassRefPtr<WebCLGLImage> WebCLGLContext::createFromGLTexture(int flags, int textureTarget, GC3Dint miplevel, WebGLTexture* texture, ExceptionCode& ec)
@@ -103,21 +92,12 @@ PassRefPtr<WebCLGLImage> WebCLGLContext::createFromGLTexture(int flags, int text
         return 0;
     }
 
-    GLuint textureID = 0;
-    if (texture)
-        textureID = texture->object();
-
-    if (!textureID) {
-        ec = WebCLException::INVALID_GL_OBJECT;
+    if (!texture) {
+        ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
 
-    GC3Dsizei width = texture->getWidth(textureTarget, miplevel);
-    GC3Dsizei height = texture->getHeight(textureTarget, miplevel);
-
-    // FIXME: Format is wrong here. It should have been gotten from WebGLTexture as well.
-    CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return WebCLGLImage::create(this, flags, textureTarget, miplevel, width, height, imageFormat, textureID, ec);
+    return WebCLGLImage::create(this, flags, textureTarget, miplevel, texture, ec);
 }
 
 } // namespace WebCore
