@@ -192,6 +192,16 @@ bool isValidCommandQueueProperty(int value)
     return false;
 }
 
+bool isValidGLTextureInfo(int value)
+{
+    switch (value) {
+    case ComputeContext::GL_TEXTURE_TARGET:
+    case ComputeContext::GL_MIPMAP_LEVEL:
+        return true;
+    }
+    return false;
+}
+
 }
 }
 

@@ -106,23 +106,28 @@ int WebCLGLImage::getGLTextureInfo(int textureInfoType, ExceptionCode& ec)
         return 0;
     }
 
+    if (!WebCLInputChecker::isValidGLTextureInfo(textureInfoType)) {
+        ec = WebCLException::INVALID_VALUE;
+        return 0;
+    }
+
+    // FIXME: Is a WebCLGLImage was created from a WebGLRenderbuffer instead of WebGLTexture,
+    // what should happen here?
+    // http://www.khronos.org/bugzilla/show_bug.cgi?id=940
+
     CCint err = 0;
     switch (textureInfoType) {
     case ComputeContext::GL_TEXTURE_TARGET:
     case ComputeContext::GL_MIPMAP_LEVEL: {
         CCint glTextureInfo = 0;
         err = ComputeContext::getGLTextureInfo(platformObject(), textureInfoType, &glTextureInfo);
-        if (err == CL_SUCCESS)
-            return ((int)glTextureInfo);
+        if (err == ComputeContext::SUCCESS)
+            return glTextureInfo;
         break;
     }
-    // FIXME: InputChecker class should perform this validation.
-    default:
-        ec = WebCLException::INVALID_VALUE;
-        return 0;
     }
 
-    ASSERT(err != CL_SUCCESS);
+    ASSERT(err != ComputeContext::SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return 0;
 }

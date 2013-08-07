@@ -44,6 +44,8 @@ bool isValidFilterMode(int);
 bool isValidChannelType(int);
 bool isValidChannelOrder(int);
 bool isValidCommandQueueProperty(int);
+bool isValidGLTextureInfo(int);
+
 template<class T>
 bool validateWebCLObject(WebCLObject<T>* object)
 {
