@@ -46,19 +46,6 @@ public:
     static PassRefPtr<WebCLGLContext> create(PassRefPtr<WebCLContextProperties> properties, CCerror& error);
 
     PassRefPtr<WebCLGLCommandQueue> createCommandQueue(WebCLDevice*, int, ExceptionCode&);
-    PassRefPtr<WebCLGLCommandQueue> createCommandQueue(WebCLDevice* devices, ExceptionCode& ec)
-    {
-        return createCommandQueue(devices, 0, ec);
-    }
-    PassRefPtr<WebCLGLCommandQueue> createCommandQueue(ExceptionCode& ec)
-    {
-        return createCommandQueue(0, 0, ec);
-    }
-    PassRefPtr<WebCLGLCommandQueue> createCommandQueue(int buildProp, ExceptionCode& ec)
-    {
-        return createCommandQueue(0, buildProp, ec);
-    }
-
     PassRefPtr<WebCLGLBuffer> createFromGLBuffer(int, WebGLBuffer*, ExceptionCode&);
     PassRefPtr<WebCLGLImage> createFromGLRenderbuffer(int, WebGLRenderbuffer*, ExceptionCode&);
     PassRefPtr<WebCLGLImage> createFromGLTexture(int memoryFlags, int textureTarget, GC3Dint miplevel, WebGLTexture*, ExceptionCode&);
