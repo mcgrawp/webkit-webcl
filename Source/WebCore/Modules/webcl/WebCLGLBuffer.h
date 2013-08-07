@@ -42,11 +42,14 @@ public:
     virtual ~WebCLGLBuffer() { }
     static PassRefPtr<WebCLGLBuffer> create(WebCLContext*, CCenum, WebGLBuffer*, ExceptionCode&);
 
-    PassRefPtr<WebCLGLObjectInfo> getGLObjectInfo(ExceptionCode&);
+    WebCLGLObjectInfo* getGLObjectInfo(ExceptionCode&);
     virtual bool isShared() const { return true; }
 
 private:
     WebCLGLBuffer(WebCLContext* context, PlatformComputeObject object);
+    void cacheGLObjectInfo(WebGLBuffer*);
+
+    RefPtr<WebCLGLObjectInfo> m_objectInfo;
 };
 
 } // namespace WebCore

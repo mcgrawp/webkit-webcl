@@ -29,6 +29,5 @@
     Conditional=WEBCL,
     JSGenerateToJSObject,
 ] interface WebCLGLBuffer : WebCLBuffer {
-    // FIXME: return type should be 'any'
     [RaisesException] WebCLGLObjectInfo getGLObjectInfo();
 };

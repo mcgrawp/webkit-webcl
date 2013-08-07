@@ -25,10 +25,14 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef long GLint;
+typedef long CLenum;
+
 [
     Conditional=WEBCL,
     JSGenerateToJSObject,
     JSGenerateToNativeObject
 ] interface WebCLGLImage : WebCLImage {
-   [RaisesException] long getGLTextureInfo (long param);
+    [RaisesException] GLint getGLTextureInfo (CLenum param);
+    [RaisesException] WebCLGLObjectInfo getGLObjectInfo();
 };

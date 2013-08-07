@@ -48,6 +48,7 @@ PassRefPtr<WebCLGLBuffer> WebCLGLBuffer::create(WebCLContext* context, CCenum me
         return 0;
     }
     RefPtr<WebCLGLBuffer> clglBuffer = adoptRef(new WebCLGLBuffer(context, buffer));
+    clglBuffer->cacheGLObjectInfo(webGLBuffer);
     return clglBuffer.release();
 }
 
@@ -56,42 +57,19 @@ WebCLGLBuffer::WebCLGLBuffer(WebCLContext* context, PlatformComputeObject object
 {
 }
 
-// FIXME: Route through ComputeContext.
-PassRefPtr<WebCLGLObjectInfo> WebCLGLBuffer::getGLObjectInfo(ExceptionCode& ec)
+void WebCLGLBuffer::cacheGLObjectInfo(WebGLBuffer* webGLBuffer)
+{
+    m_objectInfo = WebCLGLObjectInfo::create(ComputeContext::GL_OBJECT_BUFFER, webGLBuffer);
+}
+
+WebCLGLObjectInfo* WebCLGLBuffer::getGLObjectInfo(ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return 0;
     }
 
-    unsigned* glObjectType = 0;
-    unsigned* glObjectName = 0;
-    CCerror err = clGetGLObjectInfo(platformObject(), glObjectType, glObjectName);
-    if (err != CL_SUCCESS) {
-        switch (err) {
-        case CL_INVALID_MEM_OBJECT:
-            ec = WebCLException::INVALID_MEM_OBJECT;
-            break;
-        case CL_INVALID_GL_OBJECT:
-            ec = WebCLException::INVALID_GL_OBJECT;
-            break;
-        case CL_OUT_OF_RESOURCES:
-            ec = WebCLException::OUT_OF_RESOURCES;
-            break;
-        case CL_OUT_OF_HOST_MEMORY:
-            ec = WebCLException::OUT_OF_HOST_MEMORY;
-            break;
-        default:
-            ec = WebCLException::FAILURE;
-            break;
-        }
-    } else {
-        RefPtr<WebCLGLObjectInfo> CLGLObjectInfo = WebCLGLObjectInfo::create(glObjectType, glObjectName);
-        if (CLGLObjectInfo)
-            return CLGLObjectInfo;
-    }
-
-    return 0;
+    return m_objectInfo.get();
 }
 
 } // namespace WebCore

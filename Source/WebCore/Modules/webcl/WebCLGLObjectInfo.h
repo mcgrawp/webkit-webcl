@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2011, 2013 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -39,36 +39,26 @@
 
 namespace WebCore {
 
-class WebCL;
+class WebGLObject;
 
 class WebCLGLObjectInfo : public RefCounted<WebCLGLObjectInfo>
 {
 public:
-    virtual ~WebCLGLObjectInfo();
-    // static PassRefPtr<WebCLGLObjectInfo> create();
-    PassRefPtr<WebCLGLObjectInfo> create();
+    ~WebCLGLObjectInfo() { }
 
-    static PassRefPtr<WebCLGLObjectInfo> create(unsigned*, unsigned*);
+    static PassRefPtr<WebCLGLObjectInfo> create(int objectType, WebGLObject*);
 
-    WebCLGLObjectInfo();
-    WebCLGLObjectInfo(unsigned*, unsigned*);
-    // long type;   // type of GL object attached to this memory object
-    // any glObject;  // The GL object used to create this memory object
-
-    // long glObjectType() const;
-    unsigned glObjectType() const;
-    void setGlObjectType(unsigned/*long*/);
-
-    unsigned glObject() const;
-    void setGlObject(unsigned);
+    int type() const;
+    WebGLObject* glObject() const;
 
 private:
-    //long objGLObjectType;
-    unsigned objGLObjectType;
-    unsigned objGLObject;
+    WebCLGLObjectInfo(int objectType, WebGLObject*);
+
+    int m_type;
+    WebGLObject* m_glObject;
 };
 
-}// namespace WebCore
+} // namespace WebCore
 
 #endif // WebCLGLObjectInfo_h
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2011, 2013 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -31,62 +31,30 @@
 
 #include "WebCLGLObjectInfo.h"
 
+#include "WebGLObject.h"
+
 namespace WebCore {
 
-PassRefPtr<WebCLGLObjectInfo> WebCLGLObjectInfo::create()
+PassRefPtr<WebCLGLObjectInfo> WebCLGLObjectInfo::create(int glObjectType, WebGLObject* glObject)
 {
-    return adoptRef(new WebCLGLObjectInfo());
+    return adoptRef(new WebCLGLObjectInfo(glObjectType, glObject));
 }
 
-
-WebCLGLObjectInfo::~WebCLGLObjectInfo()
-{
-        
-}
-WebCLGLObjectInfo::WebCLGLObjectInfo()
-{
-
-    this->objGLObjectType = 0;
-    this->objGLObject = 0;
-}
-
-WebCLGLObjectInfo::WebCLGLObjectInfo(unsigned int/*long*/ *gl_object_type,
-                   unsigned int  *gl_object_name)
+WebCLGLObjectInfo::WebCLGLObjectInfo(int glObjectType, WebGLObject* glObject)
+    : m_type(glObjectType)
+    , m_glObject(glObject)
 { 
-    this->objGLObjectType = *gl_object_type;
-    this->objGLObject = *gl_object_name;
-
 }
 
-PassRefPtr<WebCLGLObjectInfo> WebCLGLObjectInfo::create(unsigned int/*long*/ *gl_object_type, unsigned int  *gl_object_name)
+int WebCLGLObjectInfo::type() const
 {
-        return adoptRef(new WebCLGLObjectInfo(gl_object_type, gl_object_name)); 
-}
-
-void WebCLGLObjectInfo::setGlObjectType(unsigned int/*long*/ glObjectType)
-{
-	this->objGLObjectType = glObjectType;
-}
-
-void WebCLGLObjectInfo::setGlObject(unsigned int glObject)
-{
-	this->objGLObject = glObject;
-}
-
-unsigned int /*long*/ WebCLGLObjectInfo::glObjectType() const
-{
-	return this->objGLObjectType;
+    return m_type;
 }            
-	  
 
-unsigned int WebCLGLObjectInfo::glObject() const
+WebGLObject* WebCLGLObjectInfo::glObject() const
 {
-	return this->objGLObject;
+    return m_glObject;
 }      
 
 }
 #endif // ENABLE(WEBCL)
-
-
-
-

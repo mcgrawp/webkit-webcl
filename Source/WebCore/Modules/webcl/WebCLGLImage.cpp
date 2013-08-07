@@ -62,6 +62,7 @@ PassRefPtr<WebCLGLImage> WebCLGLImage::create(WebCLGLContext* context, int flags
     }
 
     RefPtr<WebCLGLImage> imageObject = adoptRef(new WebCLGLImage(context, ccMemoryID, width, height, imageFormat));
+    imageObject->cacheGLObjectInfo(ComputeContext::GL_OBJECT_RENDERBUFFER, webGLRenderbuffer);
     return imageObject.release();
 }
 
@@ -89,6 +90,7 @@ PassRefPtr<WebCLGLImage> WebCLGLImage::create(WebCLGLContext* context, int flags
         return 0;
     }
     RefPtr<WebCLGLImage> imageObject = adoptRef(new WebCLGLImage(context, ccMemoryID, width, height, imageFormat));
+    imageObject->cacheGLObjectInfo(ComputeContext::GL_OBJECT_TEXTURE2D, webGLTexture);
     return imageObject.release();
 }
 
@@ -123,6 +125,21 @@ int WebCLGLImage::getGLTextureInfo(int textureInfoType, ExceptionCode& ec)
     ASSERT(err != CL_SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return 0;
+}
+
+void WebCLGLImage::cacheGLObjectInfo(int type, WebGLObject* glObject)
+{
+    m_objectInfo = WebCLGLObjectInfo::create(type, glObject);
+}
+
+WebCLGLObjectInfo* WebCLGLImage::getGLObjectInfo(ExceptionCode& ec)
+{
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_MEM_OBJECT;
+        return 0;
+    }
+
+    return m_objectInfo.get();
 }
 
 } // namespace WebCore
