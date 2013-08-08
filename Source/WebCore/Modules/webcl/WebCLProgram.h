@@ -63,8 +63,8 @@ public:
     void release();
 
 private:
-    WebCLProgram(WebCLContext*, cl_program, const String&);
-    static void finishCallback(cl_program, void*);
+    WebCLProgram(WebCLContext*, CCProgram, const String&);
+    static void finishCallback(CCProgram, void*);
     void releasePlatformObjectImpl();
 
     static WebCLProgram* thisPointer;

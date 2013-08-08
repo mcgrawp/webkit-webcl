@@ -36,24 +36,22 @@
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class WebCLGetInfo;
-
 class WebCLPlatform : public WebCLObject<CCPlatformID> , public WebCLExtensionsAccessor<CCPlatformID> {
 public:
     virtual ~WebCLPlatform();
+    static PassRefPtr<WebCLPlatform> create(CCPlatformID);
+
     WebCLGetInfo getInfo (int, ExceptionCode&);
     Vector<RefPtr<WebCLDevice> > getDevices(unsigned long, ExceptionCode&) const;
 
 private:
-    friend CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);
+    WebCLPlatform(CCPlatformID);
 
-    static PassRefPtr<WebCLPlatform> create(cl_platform_id platform_id);
-    WebCLPlatform(cl_platform_id platform_id);
+    friend CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);
     Vector<RefPtr<WebCLDevice> > m_webCLDevices;
 };
 

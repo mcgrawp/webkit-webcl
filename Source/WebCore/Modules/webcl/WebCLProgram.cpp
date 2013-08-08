@@ -55,7 +55,7 @@ PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const Strin
     return adoptRef(new WebCLProgram(context, clProgram, kernelSource));
 }
 
-WebCLProgram::WebCLProgram(WebCLContext* context, cl_program program, const String& kernelSource)
+WebCLProgram::WebCLProgram(WebCLContext* context, CCProgram program, const String& kernelSource)
     : WebCLObject(program)
     , m_context(context)
     , m_kernelSource(kernelSource)
@@ -107,14 +107,14 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int infoType, Excep
         // FIXME: Is 1024 needed here, Igor?
         Vector<char, 1024> buffer;
         error = ComputeContext::getBuildInfo(platformObject(), ccDeviceID, infoType, sizeof(buffer), buffer.data());
-        if (error == CL_SUCCESS)
+        if (error == ComputeContext::SUCCESS)
             return WebCLGetInfo(String(buffer.data()));
         break;
     }
     case ComputeContext::PROGRAM_BUILD_STATUS: {
         CCBuildStatus buildStatus;
         error = ComputeContext::getBuildInfo(platformObject(), ccDeviceID, infoType, sizeof(CCBuildStatus), &buildStatus);
-        if (error == CL_SUCCESS)
+        if (error == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(buildStatus));
         break;
     }
@@ -123,7 +123,7 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int infoType, Excep
         return WebCLGetInfo();
     }
 
-    ASSERT(error != CL_SUCCESS);
+    ASSERT(error != ComputeContext::SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
     return WebCLGetInfo();
 }
@@ -149,7 +149,7 @@ Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode&
     return WebCLKernel::createKernelsInProgram(m_context, this, ec);
 }
 
-void WebCLProgram::finishCallback(cl_program program, void* userData)
+void WebCLProgram::finishCallback(CCProgram program, void* userData)
 {
 	UNUSED_PARAM(program);
 	UNUSED_PARAM(userData);

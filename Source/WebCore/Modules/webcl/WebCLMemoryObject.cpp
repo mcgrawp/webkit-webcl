@@ -63,21 +63,21 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
     case ComputeContext::MEM_TYPE: {
         CCMemoryObjectype memoryType = 0;
         err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &memoryType);
-        if (err == CL_SUCCESS)
+        if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(memoryType));
         break;
         }
     case ComputeContext::MEM_FLAGS: {
         CCMemoryFlags memoryFlags = 0;
         err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &memoryFlags);
-        if (err == CL_SUCCESS)
+        if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(memoryFlags));
         break;
         }
     case ComputeContext::MEM_SIZE: {
         size_t memorySizeValue = 0;
         err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &memorySizeValue);
-        if (err == CL_SUCCESS)
+        if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<size_t>(memorySizeValue));
         break;
         }
@@ -87,7 +87,7 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
         /* FIXME : Cannot create WebCLMemoryObject/WebCLBuffer object here.
         PlatformComputeObject associatedMemoryObject = 0;
         err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &associatedMemoryObject);
-        if (err == CL_SUCCESS && associatedMemoryObject) {
+        if (err == ComputeContext::SUCCESS && associatedMemoryObject) {
             RefPtr<WebCLMemoryObject> memoryObj = WebCLMemoryObject::create(m_context, associatedMemoryObject);
             if (memoryObj)
                 return WebCLGetInfo(memoryObj.release());
@@ -98,7 +98,7 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
     case ComputeContext::MEM_OFFSET: {
         size_t memoryOffsetValue = 0;
         err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &memoryOffsetValue);
-        if (err == CL_SUCCESS)
+        if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<size_t>(memoryOffsetValue));
         break;
         }
@@ -107,8 +107,7 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    // FIXME: Avoid accessing OpenCL constants directly.
-    ASSERT(err != CL_SUCCESS);
+    ASSERT(err != ComputeContext::SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
 }

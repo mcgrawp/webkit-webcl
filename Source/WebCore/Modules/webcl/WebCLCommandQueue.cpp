@@ -74,7 +74,7 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
     case ComputeContext::QUEUE_PROPERTIES: {
         CCCommandQueueProperties ccCommandQueueProperties = 0;
         err = ComputeContext::getCommandQueueInfo(platformObject(), paramName, &ccCommandQueueProperties);
-        if (err == CL_SUCCESS)
+        if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccCommandQueueProperties));
         break;
     }
@@ -83,7 +83,7 @@ WebCLGetInfo WebCLCommandQueue::getInfo(int paramName, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    ASSERT(err != CL_SUCCESS);
+    ASSERT(err != ComputeContext::SUCCESS);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     return WebCLGetInfo();
 }
@@ -571,7 +571,7 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
 
     CCerror err = m_context->computeContext()->enqueueCopyImage(platformObject(), ccSourceImage, ccTargetImage,
         sourceOriginData.data(), targetOriginData.data(), regionData.data(), ccEvents.size(), ccEvents.data(), ccEvent);
-    if (err != CL_SUCCESS)
+    if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 

@@ -30,8 +30,6 @@
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
 ] interface WebCLGLCommandQueue : WebCLCommandQueue {
-
-    // FIXME: First parameters, should be a Vector/Sequence here.
     [RaisesException] void enqueueAcquireGLObjects(sequence<WebCLMemoryObject> memObjects,
         [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
         [Default=Undefined] optional WebCLEvent event);
