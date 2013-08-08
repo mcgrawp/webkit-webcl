@@ -25,9 +25,12 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef long CLenum;
+
 [
     Conditional=WEBCL,
 ] interface WebCLMemoryObject {
-    // FIXME: Wrong return type.
-    [StrictTypeChecking, Custom, RaisesException] void getInfo(WebCLMemoryObject memObj, long paramName);
+    [StrictTypeChecking, Custom, RaisesException] any getInfo(CLenum name);
+    // FIXME: Needs implemention.
+    // void release();
 };

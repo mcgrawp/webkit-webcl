@@ -28,8 +28,7 @@
 [
     Conditional=WEBCL,
 ] interface WebCLContext {
-    // FIXME: Wrong return type.
-    [StrictTypeChecking, Custom, RaisesException] void getInfo (long contextInfo);
+    [StrictTypeChecking, Custom, RaisesException] any getInfo (long contextInfo);
 
     [RaisesException] WebCLEvent createUserEvent();
 

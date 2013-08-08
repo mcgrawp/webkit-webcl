@@ -25,12 +25,13 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef long CLenum;
+
 [
     Conditional=WEBCL,
 ] interface WebCLProgram {
-    // FIXME: Wrong return type (on both methods below).
-    [StrictTypeChecking, Custom, RaisesException] void getInfo (long programInfo);
-    [StrictTypeChecking, Custom, RaisesException] void getBuildInfo(WebCLDevice device, long paramName);
+    [StrictTypeChecking, Custom, RaisesException] any getInfo (CLenum name);
+    [StrictTypeChecking, Custom, RaisesException] any getBuildInfo(WebCLDevice device, CLenum name);
 
     [RaisesException] WebCLKernel createKernel(DOMString kernelName);
 

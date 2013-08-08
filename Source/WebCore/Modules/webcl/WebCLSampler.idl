@@ -28,6 +28,5 @@
 [
     Conditional=WEBCL,
 ] interface WebCLSampler {
-    // FIXME: Wrong return type.
-    [StrictTypeChecking, Custom, RaisesException] void getInfo(long paramName);
+    [StrictTypeChecking, Custom, RaisesException] any getInfo(long paramName);
 };
