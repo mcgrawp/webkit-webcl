@@ -3,12 +3,13 @@ WebCLGL instanceof tests.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 Run instanceof tests for all WebCLGL objects
-PASS extension instanceof WebCLGL is true.
-PASS context instanceof WebCLGLContext is true.
-PASS commandQueue instanceof WebCLGLCommandQueue is true.
-PASS buffer instanceof WebCLGLBuffer is true.
-PASS image instanceof WebCLGLImage is true.
-PASS
+PASS extension instanceof WebCLGL is true
+PASS context instanceof WebCLGLContext is true
+PASS commandQueue instanceof WebCLGLCommandQueue is true
+PASS buffer instanceof WebCLGLBuffer is true
+PASS render instanceof WebCLGLImage is true
+PASS texture instanceof WebCLGLImage is true
+PASS 
 PASS successfullyParsed is true
 
 TEST COMPLETE
