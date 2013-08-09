@@ -40,8 +40,7 @@ PassRefPtr<WebCLGLImage> WebCLGLImage::create(WebCLGLContext* context, int flags
 {
     ASSERT(webGLRenderbuffer);
 
-    // FIXME: ::getInternalFormat x ::object()
-    GLuint renderbufferID = webGLRenderbuffer->getInternalFormat();
+    GLuint renderbufferID = webGLRenderbuffer->object();
     if (!renderbufferID) {
         ec = WebCLException::INVALID_GL_OBJECT;
         return 0;
