@@ -25,10 +25,13 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef unsigned long CLuint;
+typedef long CLenum;
+
 [
     Conditional=WEBCL,
     JSGenerateToJSObject,
     JSGenerateToNativeObject
 ] interface WebCLBuffer : WebCLMemoryObject {
-    [StrictTypeChecking, RaisesException] WebCLBuffer createSubBuffer(long memFlags, long origin, long size);
+    [StrictTypeChecking, RaisesException] WebCLBuffer createSubBuffer(CLenum memFlags, CLuint origin, CLuint size);
 };

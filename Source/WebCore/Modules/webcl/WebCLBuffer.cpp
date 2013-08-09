@@ -40,7 +40,7 @@ WebCLBuffer::~WebCLBuffer()
 {
 }
 
-PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, int size, void* data, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, unsigned long size, void* data, ExceptionCode& ec)
 {
     CCerror error = ComputeContext::SUCCESS;
     PlatformComputeObject buffer = context->computeContext()->createBuffer(memoryFlags, size, data, error);
@@ -50,46 +50,42 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memory
         return 0;
     }
 
-    return adoptRef(new WebCLBuffer(context, buffer));
+    return adoptRef(new WebCLBuffer(context, buffer, Buffer));
 }
 
-WebCLBuffer::WebCLBuffer(WebCLContext* context, PlatformComputeObject buffer)
-    : WebCLMemoryObject(context, buffer)
+WebCLBuffer::WebCLBuffer(WebCLContext* context, PlatformComputeObject clBuffer, BufferType bufferType)
+    : WebCLMemoryObject(context, clBuffer)
+    , m_bufferType(bufferType)
 {
 }
 
-PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(int memoryFlags, int origin, int size, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(long memoryFlags, unsigned long origin, unsigned long size, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return 0;
     }
+
+    if (m_bufferType == SubBuffer) {
+        ec = WebCLException::INVALID_MEM_OBJECT;
+        return 0;
+    }
+
     if (!WebCLInputChecker::isValidMemoryObjectFlag(memoryFlags)) {
         ec = WebCLException::INVALID_VALUE;
         return 0;
     }
 
-    CCBufferRegion* bufferCreateInfo = new CCBufferRegion();
-    if (!bufferCreateInfo) {
-        ec = WebCLException::OUT_OF_HOST_MEMORY;
-        return 0;
-    }
-
-    bufferCreateInfo->origin = origin;
-    bufferCreateInfo->size = size;
-
+    CCBufferRegion bufferCreateInfo = {origin, size};
     CCerror error = 0;
     PlatformComputeObject ccSubBuffer = m_context->computeContext()->createSubBuffer(platformObject(), memoryFlags,
-        ComputeContext::BUFFER_CREATE_TYPE_REGION, bufferCreateInfo, error);
-
-    delete(bufferCreateInfo);
-    bufferCreateInfo = 0;
+        ComputeContext::BUFFER_CREATE_TYPE_REGION, &bufferCreateInfo, error);
 
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-    RefPtr<WebCLBuffer> subBuffer = adoptRef(new WebCLBuffer(m_context, ccSubBuffer));
+    RefPtr<WebCLBuffer> subBuffer = adoptRef(new WebCLBuffer(m_context, ccSubBuffer, SubBuffer));
     return subBuffer.release();
 }
 

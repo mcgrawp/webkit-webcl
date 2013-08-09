@@ -45,6 +45,7 @@ class WebCLMemoryObject : public WebCLObject<PlatformComputeObject> {
 public:
     virtual ~WebCLMemoryObject();
     static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PlatformComputeObject);
+
     virtual bool isShared() const { return false; }
     WebCLGetInfo getInfo(int, ExceptionCode&);
 
