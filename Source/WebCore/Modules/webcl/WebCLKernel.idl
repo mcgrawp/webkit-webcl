@@ -31,5 +31,8 @@
     [StrictTypeChecking, Custom, RaisesException] void getInfo (long kernelInfo);
     [StrictTypeChecking, Custom, RaisesException] void getWorkGroupInfo(WebCLDevice device, long paramName); 
 
-    // FIXME: void setArg(CLuint index, any value, optional CLtype type)
+    [CallWith=ScriptState, RaisesException] void setArg(
+        unsigned long index,
+        any value,
+        optional long type);
 };

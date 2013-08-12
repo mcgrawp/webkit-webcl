@@ -38,7 +38,6 @@
 #include "WebCLFinishCallback.h"
 #include "WebCLGetInfo.h"
 #include "WebCLImage.h"
-#include "WebCLKernel.h"
 #include "WebCLProgram.h"
 
 #include <wtf/ArrayBufferView.h>
@@ -50,6 +49,7 @@
 namespace WebCore {
 
 class WebCLContext;
+class WebCLKernel;
 
 class WebCLCommandQueue : public WebCLObject<CCCommandQueue> {
 public:

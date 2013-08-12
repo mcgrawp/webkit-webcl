@@ -43,8 +43,8 @@
     const unsigned long DOUBLE = 10;   // not supported in all implementations
 
     // Vector types; must be bitwise-OR'ed with a scalar type
-    const unsigned long VEC2  = 0x0100;
-    const unsigned long VEC3  = 0x0200;
+    const unsigned long VEC2  = 0x0200;
+    const unsigned long VEC3  = 0x0300;
     const unsigned long VEC4  = 0x0400;
     const unsigned long VEC8  = 0x0800;
     const unsigned long VEC16 = 0x1000;

@@ -33,6 +33,7 @@
 
 #include "WebCLException.h"
 #include "WebCLInputChecker.h"
+#include "WebCLKernel.h"
 #include <wtf/ArrayBuffer.h>
 #include <wtf/Uint8ClampedArray.h>
 

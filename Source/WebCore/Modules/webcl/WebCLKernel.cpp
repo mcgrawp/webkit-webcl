@@ -33,7 +33,6 @@
 
 #include "WebCLContext.h"
 #include "WebCLException.h"
-#include "WebCLInputChecker.h"
 
 namespace WebCore {
 
@@ -182,6 +181,54 @@ void WebCLKernel::releasePlatformObjectImpl()
 {
     CCerror computeContextErrorCode = m_context->computeContext()->releaseKernel(platformObject());
     ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+}
+
+void WebCLKernel::setArg(ScriptState* state, unsigned argIndex, const ScriptValue& value, unsigned argType, ExceptionCode& ec)
+{
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_KERNEL;
+        return;
+    }
+    determineType(value, argType);
+
+    switch (argType) {
+    case WebCLKernelArgumentTypes::INT:
+        setArgHelper<int>(argIndex, state, value, ec);
+        break;
+    case WebCLKernelArgumentTypes::UINT:
+        setArgHelper<unsigned>(argIndex, state, value, ec);
+        break;
+    case WebCLKernelArgumentTypes::CHAR:
+        setArgHelper<char>(argIndex, state, value, ec);
+        break;
+    case WebCLKernelArgumentTypes::UCHAR:
+        setArgHelper<unsigned char>(argIndex, state, value, ec);
+        break;
+    case WebCLKernelArgumentTypes::SHORT:
+        setArgHelper<short>(argIndex, state, value, ec);
+        break;
+    case WebCLKernelArgumentTypes::USHORT:
+        setArgHelper<unsigned short>(argIndex, state, value, ec);
+        break;
+    case WebCLKernelArgumentTypes::LONG:
+        setArgHelper<long>(argIndex, state, value, ec);
+        break;
+    case WebCLKernelArgumentTypes::ULONG:
+        setArgHelper<unsigned long>(argIndex, state, value, ec);
+        break;
+    case WebCLKernelArgumentTypes::FLOAT:
+        setArgHelper<float>(argIndex, state, value, ec);
+        break;
+    case WebCLKernelArgumentTypes::LOCAL_MEMORY_SIZE:
+        setArgHelper<size_t>(argIndex, state, value, ec);
+        break;
+    case WebCLKernelArgumentTypes::ARG_MEMORY_OBJECT:
+        setMemoryArgHelper(argIndex, state, value, ec);
+            break;
+    default:
+        ec = WebCLException::INVALID_KERNEL_ARGS;
+        return;
+    }
 }
 
 } // namespace WebCore

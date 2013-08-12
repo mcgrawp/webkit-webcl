@@ -319,30 +319,6 @@ public:
         GL_OBJECT_RENDERBUFFER = 0x2003,
         GL_TEXTURE_TARGET = 0x2004,
         GL_MIPMAP_LEVEL = 0x2005,
-
-        // FIXME: All enum items below are not COMPILE_ASSERT checked.
-        // Scalar types; may be bitwise-OR'ed with a vector type
-        CHAR   = 0,
-        UCHAR  = 1,
-        SHORT  = 2,
-        USHORT = 3,
-        INT    = 4,
-        UINT   = 5,
-        LONG   = 6,
-        ULONG  = 7,
-        FLOAT_KERNEL_ARG = 8, // FIXME: Issue 117 - Duplicated Type Enums
-        HALF   = 9,  // not supported in all implementations
-        DOUBLE = 10, // not supported in all implementations
-
-        // Vector types; must be bitwise-OR'ed with a scalar type
-        VEC2  = 0x0100,
-        VEC3  = 0x0200,
-        VEC4  = 0x0400,
-        VEC8  = 0x0800,
-        VEC16 = 0x1000,
-
-        // Special types must not be bitwise-OR'ed with any other type.
-        LOCAL_MEMORY_SIZE = 255,
     };
 
     ComputeContext(CCContextProperties*, const Vector<CCDeviceID>&, CCerror&);

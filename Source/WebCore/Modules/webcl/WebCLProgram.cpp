@@ -34,7 +34,7 @@
 #include "WebCLException.h"
 #include "WebCLGetInfo.h"
 #include "WebCLInputChecker.h"
-
+#include "WebCLKernel.h"
 namespace WebCore {
 
 WebCLProgram::~WebCLProgram()
