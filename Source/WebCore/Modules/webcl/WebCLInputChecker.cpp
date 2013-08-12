@@ -92,9 +92,13 @@ bool isValidDeviceInfoType(int infoType)
     case ComputeContext::DEVICE_PLATFORM: // Platform ID is not supported.
     case ComputeContext::DEVICE_LOCAL_MEM_TYPE:
     case ComputeContext::DEVICE_MAX_WORK_ITEM_SIZES:
+    case ComputeContext::DEVICE_MAX_COMPUTE_UNITS:
+    case ComputeContext::DEVICE_GLOBAL_MEM_SIZE:
+    case ComputeContext::DEVICE_MEM_BASE_ADDR_ALIGN:
+    case ComputeContext::DEVICE_SINGLE_FP_CONFIG:
+    case ComputeContext::DEVICE_COMPILER_AVAILABLE:
         return true;
     }
-
     return false;
 }
 

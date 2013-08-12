@@ -256,6 +256,11 @@
     const unsigned long PROFILING_COMMAND_SUBMIT                   = 0x1281;
     const unsigned long PROFILING_COMMAND_START                    = 0x1282;
     const unsigned long PROFILING_COMMAND_END                      = 0x1283;
+    const unsigned long DEVICE_SINGLE_FP_CONFIG                    = 0x101B;
+    const unsigned long DEVICE_MAX_COMPUTE_UNITS                   = 0x1002;
+    const unsigned long DEVICE_GLOBAL_MEM_SIZE                     = 0x101F;
+    const unsigned long DEVICE_MEM_BASE_ADDR_ALIGN                 = 0x1019;
+    const unsigned long DEVICE_COMPILER_AVAILABLE                  = 0x1028;
 
     [RaisesException] sequence<WebCLPlatform> getPlatforms();
 

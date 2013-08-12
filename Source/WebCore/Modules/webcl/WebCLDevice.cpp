@@ -91,7 +91,9 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_LONG:
     case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT:
     case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE:
-    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_HALF: {
+    case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_HALF: 
+    case ComputeContext::DEVICE_MEM_BASE_ADDR_ALIGN: 
+    case ComputeContext::DEVICE_MAX_COMPUTE_UNITS: {
         CCuint infoValue = 0;
         err = ComputeContext::getDeviceInfo(platformObject(), infoType, &infoValue);
         if (err == ComputeContext::SUCCESS)
@@ -122,6 +124,7 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
     }
     case ComputeContext::DEVICE_LOCAL_MEM_SIZE:
     case ComputeContext::DEVICE_MAX_CONSTANT_BUFFER_SIZE:
+    case ComputeContext::DEVICE_GLOBAL_MEM_SIZE:
     case ComputeContext::DEVICE_MAX_MEM_ALLOC_SIZE: { // unsigned long long
         CCulong infoValue = 0;
         err = ComputeContext::getDeviceInfo(platformObject(), infoType, &infoValue);
@@ -131,7 +134,8 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
     }
     case ComputeContext::DEVICE_AVAILABLE:
     case ComputeContext::DEVICE_ENDIAN_LITTLE:
-    case ComputeContext::DEVICE_HOST_UNIFIED_MEMORY: {
+    case ComputeContext::DEVICE_HOST_UNIFIED_MEMORY: 
+    case ComputeContext::DEVICE_COMPILER_AVAILABLE: {
         CCbool infoValue = 0;
         err = ComputeContext::getDeviceInfo(platformObject(), infoType, &infoValue);
         if (err == ComputeContext::SUCCESS)
@@ -161,6 +165,13 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
         err = ComputeContext::getDeviceInfo(platformObject(), infoType, &localMemoryType);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(localMemoryType));
+        break;
+    }
+    case ComputeContext::DEVICE_SINGLE_FP_CONFIG: {
+        CCDeviceFPConfig deviceFPConfig = 0;
+        err = ComputeContext::getDeviceInfo(platformObject(), infoType, &deviceFPConfig);
+        if (err == ComputeContext::SUCCESS)
+            return WebCLGetInfo(static_cast<unsigned long>(deviceFPConfig));
         break;
     }
     default:
