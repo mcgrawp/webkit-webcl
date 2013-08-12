@@ -74,7 +74,7 @@ typedef ComputeContext* ComputeContextPtr;
 class WebCLContext : public WebCLObject<ComputeContextPtr> {
 public:
     virtual ~WebCLContext();
-    static PassRefPtr<WebCLContext> create(PassRefPtr<WebCLContextProperties>, CCerror&);
+    static PassRefPtr<WebCLContext> create(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
 
     PassRefPtr<WebCLBuffer> createBuffer(int memFlags, int sizeInBytes, ArrayBuffer*, ExceptionCode&);
 
@@ -119,7 +119,7 @@ protected:
     // WebCLContext(CCContextProperties* contextProperties, unsigned int deviceType, int* error);
 
     template <class T>
-    static void createBase(PassRefPtr<WebCLContextProperties> properties, CCerror& error, RefPtr<T>& out);
+    static void createBase(PassRefPtr<WebCLContextProperties>, ExceptionCode&, RefPtr<T>& out);
 
     template <class T>
     void createCommandQueueBase(WebCLDevice*, int queueProperties, ExceptionCode&, RefPtr<T>& out);
@@ -135,7 +135,7 @@ private:
 };
 
 template <class T>
-inline void WebCLContext::createBase(PassRefPtr<WebCLContextProperties> properties, CCerror& error, RefPtr<T>& out)
+inline void WebCLContext::createBase(PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec, RefPtr<T>& out)
 {
     ASSERT(properties);
     out = 0;
@@ -144,9 +144,11 @@ inline void WebCLContext::createBase(PassRefPtr<WebCLContextProperties> properti
     for (size_t i = 0; i < properties->devices().size(); ++i)
         ccDevices.append(properties->devices()[i]->platformObject());
 
+    CCerror error = ComputeContext::SUCCESS;
     ComputeContext* computeContext = new ComputeContext(properties->computeContextProperties().data(), ccDevices, error);
     if (error != ComputeContext::SUCCESS) {
         delete computeContext;
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return;
     }
 

@@ -43,7 +43,7 @@ class WebGLTexture;
 class WebCLGLContext : public WebCLContext {
 public:
     virtual ~WebCLGLContext() { }
-    static PassRefPtr<WebCLGLContext> create(PassRefPtr<WebCLContextProperties> properties, CCerror& error);
+    static PassRefPtr<WebCLGLContext> create(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
 
     PassRefPtr<WebCLGLCommandQueue> createCommandQueue(WebCLDevice*, int, ExceptionCode&);
     PassRefPtr<WebCLGLBuffer> createFromGLBuffer(int, WebGLBuffer*, ExceptionCode&);

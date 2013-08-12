@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-PassRefPtr<WebCLGLContext> WebCLGLContext::create(PassRefPtr<WebCLContextProperties> properties, CCerror& error)
+PassRefPtr<WebCLGLContext> WebCLGLContext::create(PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec)
 {
     RefPtr<WebCLGLContext> context;
-    createBase(properties, error, context);
+    createBase(properties, ec, context);
     return context.release();
 }
 

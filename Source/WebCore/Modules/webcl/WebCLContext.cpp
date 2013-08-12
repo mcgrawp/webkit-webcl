@@ -53,10 +53,10 @@ WebCLContext::~WebCLContext()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLContext> WebCLContext::create(PassRefPtr<WebCLContextProperties> properties, CCerror& error)
+PassRefPtr<WebCLContext> WebCLContext::create(PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec)
 {
     RefPtr<WebCLContext> context;
-    createBase(properties, error, context);
+    createBase(properties, ec, context);
     return context.release();
 }
 
