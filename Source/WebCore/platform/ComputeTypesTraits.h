@@ -134,7 +134,7 @@ cl_int getInfoHelper(Func func, T computeType, U supportingComputeType, cl_uint 
     return ComputeInfoWithAdditinalCLType<Func, T, U, V>::get(func, computeType, supportingComputeType, name, param);
 }
 
-template <typename Func, typename T, typename U, typename V, size_t inlineCapacity = 0>
+template <typename Func, typename T, typename U, typename V, size_t inlineCapacity>
 cl_int getInfoHelper(Func func, T computeType, U supportingComputeType, cl_uint name, Vector<V, inlineCapacity>* param)
 {
     return ComputeInfoWithAdditinalCLType<Func, T, U, Vector<V, inlineCapacity> >::get(func, computeType, supportingComputeType, name, param);
