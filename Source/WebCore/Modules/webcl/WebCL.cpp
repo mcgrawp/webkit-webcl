@@ -51,16 +51,18 @@ WebCL::WebCL()
 {
 }
 
-Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec) const
+Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec)
 {
-    Vector<RefPtr<WebCLPlatform> > webCLPlatforms;
-    CCerror error = WebCore::getPlatforms(webCLPlatforms);
+    if (m_platforms.size())
+        return m_platforms;
+
+    CCerror error = WebCore::getPlatforms(m_platforms);
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return webCLPlatforms;
+        m_platforms.clear();
+        return m_platforms;
     }
-
-    return webCLPlatforms;
+    return m_platforms;
 }
 
 void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)

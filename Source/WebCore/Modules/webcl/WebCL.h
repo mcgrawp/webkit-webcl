@@ -44,7 +44,7 @@ public:
     static PassRefPtr<WebCL> create();
     virtual ~WebCL() { }
 
-    Vector<RefPtr<WebCLPlatform> > getPlatforms(ExceptionCode&) const;
+    Vector<RefPtr<WebCLPlatform> > getPlatforms(ExceptionCode&);
 
     void waitForEvents(const Vector<RefPtr<WebCLEvent> >&, ExceptionCode&);
 
@@ -58,8 +58,8 @@ protected:
 
 private:
     RefPtr<WebCLContextProperties>& defaultProperties(ExceptionCode&);
-    Vector<RefPtr<WebCLContext> > m_context;
     RefPtr<WebCLContextProperties> m_defaultProperties;
+    Vector<RefPtr<WebCLPlatform> > m_platforms;
 };
 
 template <class T>
