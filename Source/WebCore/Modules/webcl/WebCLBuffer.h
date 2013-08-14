@@ -34,8 +34,6 @@
 
 namespace WebCore {
 
-typedef enum { Buffer = 0, SubBuffer } BufferType;
-
 class WebCLBuffer : public WebCLMemoryObject {
 public:
     ~WebCLBuffer();
@@ -44,10 +42,7 @@ public:
     PassRefPtr<WebCLBuffer> createSubBuffer(long memFlags, unsigned long origin, unsigned long sizeInBytes, ExceptionCode&);
 
 protected:
-    WebCLBuffer(WebCLContext*, PlatformComputeObject, BufferType = Buffer);
-
-private:
-    BufferType m_bufferType;
+    WebCLBuffer(WebCLContext*, PlatformComputeObject, WebCLBuffer* parentBuffer = 0);
 };
 
 } // namespace WebCore

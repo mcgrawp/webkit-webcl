@@ -50,12 +50,11 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memory
         return 0;
     }
 
-    return adoptRef(new WebCLBuffer(context, buffer, Buffer));
+    return adoptRef(new WebCLBuffer(context, buffer));
 }
 
-WebCLBuffer::WebCLBuffer(WebCLContext* context, PlatformComputeObject clBuffer, BufferType bufferType)
-    : WebCLMemoryObject(context, clBuffer)
-    , m_bufferType(bufferType)
+WebCLBuffer::WebCLBuffer(WebCLContext* context, PlatformComputeObject clBuffer, WebCLBuffer* parentBuffer)
+    : WebCLMemoryObject(context, clBuffer, parentBuffer)
 {
 }
 
@@ -66,7 +65,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(long memoryFlags, unsigned 
         return 0;
     }
 
-    if (m_bufferType == SubBuffer) {
+    if (m_parentMemObject) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return 0;
     }
@@ -85,7 +84,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(long memoryFlags, unsigned 
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-    RefPtr<WebCLBuffer> subBuffer = adoptRef(new WebCLBuffer(m_context, ccSubBuffer, SubBuffer));
+    RefPtr<WebCLBuffer> subBuffer = adoptRef(new WebCLBuffer(m_context, ccSubBuffer, this));
     return subBuffer.release();
 }
 

@@ -45,9 +45,10 @@ PassRefPtr<WebCLMemoryObject> WebCLMemoryObject::create(WebCLContext* context, P
     return adoptRef(new WebCLMemoryObject(context, CCmem));
 }
 
-WebCLMemoryObject::WebCLMemoryObject(WebCLContext* context, PlatformComputeObject CCmem)
+WebCLMemoryObject::WebCLMemoryObject(WebCLContext* context, PlatformComputeObject CCmem, WebCLMemoryObject* parentBuffer)
     : WebCLObject(CCmem)
     , m_context(context)
+    , m_parentMemObject(parentBuffer)
 {
 }
 
@@ -83,18 +84,8 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
         }
     case ComputeContext::MEM_CONTEXT:
         return WebCLGetInfo(m_context);
-    case ComputeContext::MEM_ASSOCIATED_MEMOBJECT: {
-        /* FIXME : Cannot create WebCLMemoryObject/WebCLBuffer object here.
-        PlatformComputeObject associatedMemoryObject = 0;
-        err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &associatedMemoryObject);
-        if (err == ComputeContext::SUCCESS && associatedMemoryObject) {
-            RefPtr<WebCLMemoryObject> memoryObj = WebCLMemoryObject::create(m_context, associatedMemoryObject);
-            if (memoryObj)
-                return WebCLGetInfo(memoryObj.release());
-        }
-        ec = WebCLException::INVALID_MEM_OBJECT;*/
-        return WebCLGetInfo();
-        }
+    case ComputeContext::MEM_ASSOCIATED_MEMOBJECT:
+        return WebCLGetInfo(m_parentMemObject);
     case ComputeContext::MEM_OFFSET: {
         size_t memoryOffsetValue = 0;
         err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &memoryOffsetValue);

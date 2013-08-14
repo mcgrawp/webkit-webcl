@@ -50,10 +50,11 @@ public:
     WebCLGetInfo getInfo(int, ExceptionCode&);
 
 protected:
-    WebCLMemoryObject(WebCLContext*, PlatformComputeObject);
+    WebCLMemoryObject(WebCLContext*, PlatformComputeObject, WebCLMemoryObject* = 0);
     virtual void releasePlatformObjectImpl();
 
     WebCLContext* m_context;
+    WebCLMemoryObject* m_parentMemObject;
 };
 
 } // namespace WebCore
