@@ -66,5 +66,17 @@ var Kernels =
           point.z = i + 1;\
           point.w = b + a * sin(3.1412 * 2 * ( ( (float)(i + 1 + seq) ) / w) );\
           vbo[i] = point;\
-      }"
+      }",
+
+  "imgSquare": "\
+    constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE |\
+                                    CLK_ADDRESS_CLAMP | CLK_FILTER_NEAREST;\
+    kernel void square(read_only image2d_t imgIn, write_only image2d_t imgOut) {\
+        int x = get_global_id(0);\
+        int y = get_global_id(1);\
+        int2 coord = (int2)(x, y);\
+        uint4 pixel = read_imageui(imgIn, sampler, coord);\
+        uint4 pixelSqr = (uint4)(pixel.x * pixel.x, 0, 0, 0);\
+        write_imageui(imgOut, coord, pixelSqr);\
+     }"
 };

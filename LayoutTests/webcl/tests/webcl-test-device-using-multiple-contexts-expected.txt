@@ -1,8 +1,8 @@
-Create a context for each device
+Test two contexts with different kernels in a same device
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-FAIL WebCL Test: Create a context for each device has failed. ; Message: Type error
+PASS 
 PASS successfullyParsed is true
 
 TEST COMPLETE
