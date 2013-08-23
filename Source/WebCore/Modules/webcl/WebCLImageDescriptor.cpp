@@ -42,28 +42,27 @@ PassRefPtr<WebCLImageDescriptor> WebCLImageDescriptor::create()
     return adoptRef(new WebCLImageDescriptor);
 }
 
-PassRefPtr<WebCLImageDescriptor> WebCLImageDescriptor::create(CCImageFormat imageFormat)
+PassRefPtr<WebCLImageDescriptor> WebCLImageDescriptor::create(const CCImageFormat& imageFormat)
 {
     return adoptRef(new WebCLImageDescriptor(imageFormat));
 }
 
 WebCLImageDescriptor::WebCLImageDescriptor()
 {
-    m_channelOrder = DEFAULT_OBJECT_CHANNELORDER;
-    m_channelType = DEFAULT_OBJECT_CHANNELTYPE;
-    m_width = DEFAULT_OBJECT_WIDTH;
-    m_height = DEFAULT_OBJECT_WIDTH;
-    m_rowPitch = DEFAULT_OBJECT_WIDTH;
+    m_channelOrder = DEFAULT_CHANNEL_ORDER;
+    m_channelType = DEFAULT_CHANNEL_TYPE;
+    m_width = DEFAULT_WIDTH;
+    m_height = DEFAULT_WIDTH;
+    m_rowPitch = DEFAULT_WIDTH;
 }
 
-WebCLImageDescriptor::WebCLImageDescriptor(CCImageFormat imageFormat)
+WebCLImageDescriptor::WebCLImageDescriptor(const CCImageFormat& imageFormat)
 {
     m_channelOrder = imageFormat.image_channel_order;
     m_channelType= imageFormat.image_channel_data_type;
-    m_width = DEFAULT_OBJECT_WIDTH;
-    m_height = DEFAULT_OBJECT_WIDTH;
-    // FIXME: PITCH_ROW = OBJECT_WIDTH?
-    m_rowPitch = DEFAULT_OBJECT_WIDTH;
+    m_width = DEFAULT_WIDTH;
+    m_height = DEFAULT_HEIGHT;
+    m_rowPitch = DEFAULT_ROW_PITCH;
 }
 
 void WebCLImageDescriptor::setChannelOrder(long channelOrder)

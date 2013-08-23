@@ -27,7 +27,6 @@
 
 [
     Conditional=WEBCL,
-    // OmitConstructor,
 ] interface WebCLImageDescriptor {
     attribute long channelOrder;
     attribute long channelType;
@@ -35,11 +34,3 @@
     attribute long height;
     attribute long rowPitch;
 };
-
-/*dictionary WebCLImageDescriptor {
-    long channelOrder=0x10B5;
-    long channelType=0x10D2;
-    long width=0;
-    long height = 0;
-    long rowPitch=0;
-};*/

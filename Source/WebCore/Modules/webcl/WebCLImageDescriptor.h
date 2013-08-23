@@ -43,19 +43,15 @@ public:
     virtual ~WebCLImageDescriptor();
 
     static PassRefPtr<WebCLImageDescriptor> create();
-    static PassRefPtr<WebCLImageDescriptor> create(CCImageFormat);
+    static PassRefPtr<WebCLImageDescriptor> create(const CCImageFormat&);
 
     enum {
-        // Image Discriptor defaults
-        DEFAULT_OBJECT_CHANNELORDER = 0x10B5,
-        DEFAULT_OBJECT_CHANNELTYPE  = 0x10D2,
-        DEFAULT_OBJECT_WIDTH        = 0, // CL_DEVICE_IMAGE2D_MAX_WIDTH
-        DEFAULT_OBJECT_HEIGHT       = 0, // CL_DEVICE_IMAGE2D_MAX_HEIGHT
-        DEFAULT_OBJECT_ROWPITCH     = 0,
+        DEFAULT_CHANNEL_ORDER = 0x10B5,
+        DEFAULT_CHANNEL_TYPE  = 0x10D2,
+        DEFAULT_WIDTH         = 0, // CL_DEVICE_IMAGE2D_MAX_WIDTH
+        DEFAULT_HEIGHT        = 0, // CL_DEVICE_IMAGE2D_MAX_HEIGHT
+        DEFAULT_ROW_PITCH     = 0,
     };
-
-    WebCLImageDescriptor();
-    WebCLImageDescriptor(CCImageFormat);
 
     void setChannelOrder(long);
     long channelOrder() const;
@@ -73,6 +69,9 @@ public:
     long rowPitch() const;
 
 private:
+    WebCLImageDescriptor();
+    WebCLImageDescriptor(const CCImageFormat&);
+
     long m_channelOrder;
     long m_channelType;
     long m_width;
