@@ -30,6 +30,7 @@
 
 #if ENABLE(WEBCL)
 
+#include "JSDictionary.h"
 #include "JSWebCLContext.h"
 #include "JSWebCLDevice.h"
 #include "JSWebCLPlatform.h"
@@ -47,6 +48,27 @@ class WebCLExtension;
 JSValue toJS(ExecState*, JSDOMGlobalObject*, const WebCLGetInfo&);
 JSValue toJS(ExecState*, JSDOMGlobalObject*, WebCLExtension*);
 
+// JSDictionary helper functions
+static inline void setPlatform(WebCLContextProperties* properties, const RefPtr<WebCLPlatform>& platform)
+{
+    properties->setPlatform(platform);
+}
+
+static inline void setDevices(WebCLContextProperties* properties, const Vector<RefPtr<WebCLDevice> >& devices)
+{
+    properties->setDevices(devices);
+}
+
+static inline void setDeviceType(WebCLContextProperties* properties, const unsigned long& deviceType)
+{
+    properties->setDeviceType(deviceType);
+}
+
+static inline void setSharedContext(WebCLContextProperties* properties, const RefPtr<WebGLRenderingContext>& context)
+{
+    properties->setWebGLRenderingContext(context);
+}
+
 template <class T, class U>
 inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObject* globalObject, T* jsCustomObject, bool clGLSharing)
 {
@@ -56,7 +78,10 @@ inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObjec
 
     ExceptionCode ec = 0;
     RefPtr<U> webCLContext;
-    if (!argumentCount) {
+
+    // Argument is optional (hence undefined is allowed), and null is allowed.
+    JSValue value = exec->argument(0);
+    if (value.isUndefinedOrNull()) {
         webCLContext = jsCustomObject->impl()->createContext(0, ec);
         if (ec) {
             setDOMException(exec, ec);
@@ -66,38 +91,32 @@ inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObjec
     }
 
     ASSERT(exec->argumentCount() == 1);
-    if (!exec->argument(0).isObject())
+    if (!value.isObject())
         return throwSyntaxError(exec);
 
-    JSObject* jsAttrs = exec->argument(0).getObject();
+    // Given the above test, this will always yield an object.
+    JSObject* object = value.toObject(exec);
 
-    WebCLPlatform* platform = 0;
-    Identifier platformIdentifier(exec, "platform");
-    if (jsAttrs->hasProperty(exec, platformIdentifier))
-        platform = toWebCLPlatform(jsAttrs->get(exec, platformIdentifier));
+    // Create default options.
+    RefPtr<WebCLContextProperties> properties = WebCLContextProperties::create();
 
-    Vector<RefPtr<WebCLDevice> > devices;
-    Identifier devicesIdentifier(exec, "devices");
-    if (jsAttrs->hasProperty(exec, devicesIdentifier))
-        devices = toRefPtrNativeArray<WebCLDevice, JSWebCLDevice>(exec, jsAttrs->get(exec, devicesIdentifier), &toWebCLDevice);
-
-    int deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
-    Identifier deviceTypeIdentifier(exec, "deviceType");
-    if (jsAttrs->hasProperty(exec, deviceTypeIdentifier))
-        deviceType = jsAttrs->get(exec, deviceTypeIdentifier).toInt32(exec);
-
-    WebGLRenderingContext* webGLRenderingContext = 0;
-    WebCLContextProperties::SharedContextResolutionPolicy contextPolicy = clGLSharing ?
-        WebCLContextProperties::GetCurrentGLContext : WebCLContextProperties::NoSharedGLContext;
-    Identifier sharedContextIdentifier(exec, "sharedContext");
-    if (clGLSharing && jsAttrs->hasProperty(exec, sharedContextIdentifier)) {
-        webGLRenderingContext = toWebGLRenderingContext(jsAttrs->get(exec, sharedContextIdentifier));
-        contextPolicy = webGLRenderingContext ? WebCLContextProperties::UseGLContextProvided : WebCLContextProperties::GetCurrentGLContext;
+    // Create the dictionary wrapper from the initializer object.
+    JSDictionary dictionary(exec, object);
+    if (!dictionary.tryGetProperty("platform", properties.get(), setPlatform))
+        return throwSyntaxError(exec);
+    if (!dictionary.tryGetProperty("devices", properties.get(), setDevices))
+        return throwSyntaxError(exec);
+    if (!dictionary.tryGetProperty("deviceType", properties.get(), setDeviceType))
+        return throwSyntaxError(exec);
+    if (clGLSharing) {
+        // We could it with a null GL context so that internally WebCLContextProperties
+        // keeps its control up to date.
+        setSharedContext(properties.get(), 0 /* GL context */);
+        if (!dictionary.tryGetProperty("sharedContext", properties.get(), setSharedContext))
+            return throwSyntaxError(exec);
     }
 
-    RefPtr<WebCore::WebCLContextProperties> webCLContextProperties = WebCLContextProperties::create(platform, devices, deviceType, contextPolicy, webGLRenderingContext);
-
-    webCLContext = jsCustomObject->impl()->createContext(webCLContextProperties.get(), ec);
+    webCLContext = jsCustomObject->impl()->createContext(properties.get(), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

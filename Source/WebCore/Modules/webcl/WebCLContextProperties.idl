@@ -25,13 +25,14 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef long CLenum;
+
+// FIXME: Implement as a WebIDL dictionary type.
 [
     Conditional=WEBCL,
     ImplementationLacksVTable,
-    //OmitConstructor,
 ] interface WebCLContextProperties {
-    // FIXME: Remove 'readonly'.
     readonly attribute WebCLPlatform platform;
     readonly attribute WebCLDevice[] devices;
-    attribute long deviceType;
+    readonly attribute CLenum deviceType;
 };

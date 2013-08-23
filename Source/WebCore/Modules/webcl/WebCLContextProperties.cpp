@@ -33,11 +33,15 @@
 
 #include "ComputeContext.h"
 #include "WebCLDevice.h"
-#include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, SharedContextResolutionPolicy contextPolicy, WebGLRenderingContext* webGLRenderingContext)
+PassRefPtr<WebCLContextProperties> WebCLContextProperties::create()
+{
+    return adoptRef(new WebCLContextProperties());
+}
+
+PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, unsigned long deviceType, SharedContextResolutionPolicy contextPolicy, PassRefPtr<WebGLRenderingContext> webGLRenderingContext)
 {
     if (contextPolicy == UseGLContextProvided)
         ASSERT(webGLRenderingContext);
@@ -46,7 +50,14 @@ PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<Web
     return adoptRef(new WebCLContextProperties(platform, devices, deviceType, contextPolicy, webGLRenderingContext));
 }
 
-WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, int deviceType, SharedContextResolutionPolicy contextPolicy, WebGLRenderingContext* webGLRenderingContext)
+WebCLContextProperties::WebCLContextProperties()
+    : m_deviceType(ComputeContext::DEVICE_TYPE_DEFAULT)
+    , m_contextPolicy(NoSharedGLContext)
+{
+}
+
+
+WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, unsigned long deviceType, SharedContextResolutionPolicy contextPolicy, PassRefPtr<WebGLRenderingContext> webGLRenderingContext)
     : m_platform(platform)
     , m_devices(devices)
     , m_deviceType(deviceType)
@@ -71,19 +82,31 @@ Vector<RefPtr<WebCLDevice> >& WebCLContextProperties::devices()
     return m_devices;
 }
 
-int WebCLContextProperties::deviceType() const
+void WebCLContextProperties::setDevices(Vector<RefPtr<WebCLDevice> > devices)
+{
+    m_devices = devices;
+    m_ccProperties.clear();
+}
+
+unsigned long WebCLContextProperties::deviceType() const
 {
     return m_deviceType;
 }
 
-void WebCLContextProperties::setDeviceType(int type)
+void WebCLContextProperties::setDeviceType(unsigned long type)
 {
     m_deviceType = type;
     m_ccProperties.clear();
 }
 
-void WebCLContextProperties::setWebGLRenderingContext(WebGLRenderingContext* webGLRenderingContext)
+RefPtr<WebGLRenderingContext>& WebCLContextProperties::webGLRenderingContext()
 {
+    return m_webGLRenderingContext;
+}
+
+void WebCLContextProperties::setWebGLRenderingContext(PassRefPtr<WebGLRenderingContext> webGLRenderingContext)
+{
+    m_contextPolicy = webGLRenderingContext ? UseGLContextProvided : GetCurrentGLContext;
     m_webGLRenderingContext = webGLRenderingContext;
     m_ccProperties.clear();
 }

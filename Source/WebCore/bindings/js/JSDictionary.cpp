@@ -38,6 +38,13 @@
 #include "JSTrackCustom.h"
 #include "JSUint8Array.h"
 #include "JSVoidCallback.h"
+#if ENABLE(WEBCL)
+#include "JSWebCLDevice.h"
+#include "JSWebCLPlatform.h"
+#endif
+#if ENABLE(WEBGL)
+#include "JSWebGLRenderingContext.h"
+#endif
 #include "ScriptValue.h"
 #include "SerializedScriptValue.h"
 #include <wtf/HashMap.h>
@@ -142,6 +149,33 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<String>& 
         result.append(itemValue.toString(exec)->value(exec));
     }
 }
+
+#if ENABLE(WEBCL)
+void JSDictionary::convertValue(JSC::ExecState* exec, JSC::JSValue value, Vector<RefPtr<WebCLDevice> >& result)
+{
+    if (value.isUndefinedOrNull())
+        return;
+
+    unsigned length = 0;
+    JSObject* object = toJSSequence(exec, value, length);
+    if (exec->hadException())
+        return;
+
+    result = toRefPtrNativeArray<WebCLDevice, JSWebCLDevice>(exec, object, &toWebCLDevice);
+}
+
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<WebCLPlatform>& result)
+{
+    result = toWebCLPlatform(value);
+}
+#endif
+
+#if ENABLE(WEBGL)
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<WebGLRenderingContext>& result)
+{
+    result = toWebGLRenderingContext(value);
+}
+#endif
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, ScriptValue& result)
 {

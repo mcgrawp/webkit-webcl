@@ -32,6 +32,7 @@
 
 #include "ComputeTypes.h"
 #include "WebCLPlatform.h"
+#include "WebGLRenderingContext.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -53,35 +54,38 @@ public:
         UseGLContextProvided
     };
 
-    static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int deviceType,
-        SharedContextResolutionPolicy = NoSharedGLContext, WebGLRenderingContext* = 0);
+    static PassRefPtr<WebCLContextProperties> create();
+    static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, unsigned long deviceType,
+        SharedContextResolutionPolicy = NoSharedGLContext, PassRefPtr<WebGLRenderingContext> = 0);
 
     ~WebCLContextProperties() { }
 
     Vector<RefPtr<WebCLDevice> >& devices();
+    void setDevices(Vector<RefPtr<WebCLDevice> >);
 
     RefPtr<WebCLPlatform>& platform();
-    void setPlatform(PassRefPtr<WebCLPlatform> platform);
+    void setPlatform(PassRefPtr<WebCLPlatform>);
 
-    int deviceType() const;
-    void setDeviceType(int type);
+    unsigned long deviceType() const;
+    void setDeviceType(unsigned long type);
 
-    void setWebGLRenderingContext(WebGLRenderingContext*);
-    WebGLRenderingContext* webGLRenderingContext() const;
+    RefPtr<WebGLRenderingContext>& webGLRenderingContext();
+    void setWebGLRenderingContext(PassRefPtr<WebGLRenderingContext>);
 
     Vector<CCContextProperties>& computeContextProperties();
 
 private:
-    WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, int deviceType,
-        SharedContextResolutionPolicy = NoSharedGLContext, WebGLRenderingContext* = 0);
+    WebCLContextProperties();
+    WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, unsigned long deviceType,
+        SharedContextResolutionPolicy = NoSharedGLContext, PassRefPtr<WebGLRenderingContext> = 0);
 
     RefPtr<WebCLPlatform> m_platform;
     Vector<RefPtr<WebCLDevice> > m_devices;
-    int m_deviceType;
+    unsigned long m_deviceType;
     Vector<CCContextProperties> m_ccProperties;
 
     enum SharedContextResolutionPolicy m_contextPolicy;
-    WebGLRenderingContext* m_webGLRenderingContext;
+    RefPtr<WebGLRenderingContext> m_webGLRenderingContext;
 };
 
 }// namespace WebCore
