@@ -109,6 +109,7 @@ private:
     static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned short& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned long& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, long& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned long long& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, double& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, Dictionary& result);

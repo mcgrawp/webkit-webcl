@@ -69,6 +69,32 @@ JSValue JSWebCLContext::getInfo(JSC::ExecState* exec)
     return toJS(exec, globalObject(), info);
 }
 
+// JSDictionary helper functions
+static inline void setChannelOrder(WebCLImageDescriptor* descriptor, const long& channelOrder)
+{
+    descriptor->setChannelOrder(channelOrder);
+}
+
+static inline void setChannelType(WebCLImageDescriptor* descriptor, const long& channelType)
+{
+    descriptor->setChannelType(channelType);
+}
+
+static inline void setWidth(WebCLImageDescriptor* descriptor, const unsigned long& width)
+{
+    descriptor->setWidth(width);
+}
+
+static inline void setHeight(WebCLImageDescriptor* descriptor, const unsigned long& height)
+{
+    descriptor->setHeight(height);
+}
+
+static inline void setRowPitch(WebCLImageDescriptor* descriptor, const unsigned long& rowPitch)
+{
+    descriptor->setRowPitch(rowPitch);
+}
+
 JSValue JSWebCLContext::createImage(JSC::ExecState* exec)
 {
     if (!(exec->argumentCount() == 2 || exec->argumentCount() == 3))
@@ -93,33 +119,35 @@ JSValue JSWebCLContext::createImage(JSC::ExecState* exec)
         RefPtr<ImageData> imageData = toImageData(exec->argument(1));
         webCLImage = m_impl->createImage(flags, imageData.get(), ec);
     } else {
+        if (!inputData.isObject())
+            return throwSyntaxError(exec);
+
         RefPtr<WebCLImageDescriptor> webCLImageDescriptor = WebCLImageDescriptor::create();
-        if (inputData.isObject()) {
-            JSObject* jsAttrs = inputData.getObject();
-            Identifier channelOrder(exec, "channelOrder");
-            if (jsAttrs->hasProperty(exec, channelOrder))
-                webCLImageDescriptor->setChannelOrder(jsAttrs->get(exec, channelOrder).toInt32(exec));
 
-            Identifier channelType(exec, "channelType");
-            if (jsAttrs->hasProperty(exec, channelType))
-                webCLImageDescriptor->setChannelType(jsAttrs->get(exec, channelType).toInt32(exec));
+        // Given the above test, this will always yield an object.
+        JSObject* object = inputData.toObject(exec);
 
-            Identifier width(exec, "width");
-            if (jsAttrs->hasProperty(exec, width))
-                webCLImageDescriptor->setWidth(jsAttrs->get(exec, width).toInt32(exec));
-
-            Identifier height(exec, "height");
-            if (jsAttrs->hasProperty(exec, height))
-                webCLImageDescriptor->setHeight(jsAttrs->get(exec, height).toInt32(exec));
-
-            Identifier rowPitch(exec, "rowPitch");
-            if (jsAttrs->hasProperty(exec, rowPitch))
-                webCLImageDescriptor->setRowPitch(jsAttrs->get(exec, rowPitch).toInt32(exec));
-        }
+        // Create the dictionary wrapper from the initializer object.
+        JSDictionary dictionary(exec, object);
+        if (!dictionary.tryGetProperty("channelOrder", webCLImageDescriptor.get(), setChannelOrder))
+            return throwSyntaxError(exec);
+        if (!dictionary.tryGetProperty("channelType", webCLImageDescriptor.get(), setChannelType))
+            return throwSyntaxError(exec);
+        if (!dictionary.tryGetProperty("width", webCLImageDescriptor.get(), setWidth))
+            return throwSyntaxError(exec);
+        if (!dictionary.tryGetProperty("height", webCLImageDescriptor.get(), setHeight))
+            return throwSyntaxError(exec);
+        if (!dictionary.tryGetProperty("rowPitch", webCLImageDescriptor.get(), setRowPitch))
+            return throwSyntaxError(exec);
 
         RefPtr<ArrayBuffer> buffer;
-        if (exec->argumentCount() == 3)
+        // FIXME: Spec has changed to ArrayBufferView - Issue #243.
+        if (exec->argumentCount() == 3) {
+            if (!exec->argument(2).inherits(&JSArrayBuffer::s_info))
+                return throwSyntaxError(exec);
+
             buffer = toArrayBuffer(exec->argument(2));
+        }
 
         webCLImage = m_impl->createImage(flags, webCLImageDescriptor.get(), buffer.get(), ec);
     }

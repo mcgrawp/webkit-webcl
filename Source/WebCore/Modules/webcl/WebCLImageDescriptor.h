@@ -59,14 +59,14 @@ public:
     void setChannelType(long);
     long channelType() const;
 
-    void setWidth(long);
-    long width() const;
+    void setWidth(unsigned long);
+    unsigned long width() const;
 
-    void setHeight(long);
-    long height() const;
+    void setHeight(unsigned long);
+    unsigned long height() const;
 
-    void setRowPitch(long);
-    long rowPitch() const;
+    void setRowPitch(unsigned long);
+    unsigned long rowPitch() const;
 
 private:
     WebCLImageDescriptor();
@@ -74,9 +74,9 @@ private:
 
     long m_channelOrder;
     long m_channelType;
-    long m_width;
-    long m_height;
-    long m_rowPitch;
+    unsigned long m_width;
+    unsigned long m_height;
+    unsigned long m_rowPitch;
 };
 
 } // namespace WebCore

@@ -25,12 +25,16 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef long CLenum;
+typedef unsigned long CLuint;
+
+// FIXME: Implement as a WebIDL dictionary type.
 [
     Conditional=WEBCL,
 ] interface WebCLImageDescriptor {
-    attribute long channelOrder;
-    attribute long channelType;
-    attribute long width;
-    attribute long height;
-    attribute long rowPitch;
+    readonly attribute CLenum channelOrder;
+    readonly attribute CLenum channelType;
+    readonly attribute CLuint width;
+    readonly attribute CLuint height;
+    readonly attribute CLuint rowPitch;
 };

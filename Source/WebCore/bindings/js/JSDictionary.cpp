@@ -111,6 +111,11 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned long& r
     result = static_cast<unsigned long>(value.toUInt32(exec));
 }
 
+void JSDictionary::convertValue(ExecState* exec, JSValue value, long& result)
+{
+    result = static_cast<long>(value.toInt32(exec));
+}
+
 void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned long long& result)
 {
     double d = value.toNumber(exec);

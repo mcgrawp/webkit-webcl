@@ -85,32 +85,32 @@ long WebCLImageDescriptor::channelType() const
     return m_channelType;
 }
 
-void WebCLImageDescriptor::setWidth(long width)
+void WebCLImageDescriptor::setWidth(unsigned long width)
 {
     m_width = width;
 }
 
-long WebCLImageDescriptor::width() const
+unsigned long WebCLImageDescriptor::width() const
 {
     return m_width;
 }
 
-void WebCLImageDescriptor::setHeight(long height)
+void WebCLImageDescriptor::setHeight(unsigned long height)
 {
     m_height = height;
 }
 
-long WebCLImageDescriptor::height() const
+unsigned long WebCLImageDescriptor::height() const
 {
     return m_height;
 }
 
-void WebCLImageDescriptor::setRowPitch(long rowPitch)
+void WebCLImageDescriptor::setRowPitch(unsigned long rowPitch)
 {
     m_rowPitch = rowPitch;
 }
 
-long WebCLImageDescriptor::rowPitch() const
+unsigned long WebCLImageDescriptor::rowPitch() const
 {
     return m_rowPitch;
 }
