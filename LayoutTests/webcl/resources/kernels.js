@@ -78,5 +78,16 @@ var Kernels =
         uint4 pixel = read_imageui(imgIn, sampler, coord);\
         uint4 pixelSqr = (uint4)(pixel.x * pixel.x, 0, 0, 0);\
         write_imageui(imgOut, coord, pixelSqr);\
+     }",
+
+  "copyTexture": "\
+    constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE |\
+                                    CLK_ADDRESS_CLAMP | CLK_FILTER_NEAREST;\
+    kernel void copyTex(read_only image2d_t texIn, write_only image2d_t texOut) {\
+        int x = get_global_id(0);\
+        int y = get_global_id(1);\
+        int2 coord = (int2)(x, y);\
+        float4 pixel = read_imagef(texIn, sampler, coord);\
+        write_imagef(texOut, coord, pixel);\
      }"
 };

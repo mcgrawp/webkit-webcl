@@ -27,6 +27,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(WEBCL)
+
 #include "JSWebCLGLObjectInfo.h"
 
 #include "ComputeContext.h"
@@ -60,3 +63,5 @@ JSValue JSWebCLGLObjectInfo::glObject(ExecState* exec) const
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEBCL)
