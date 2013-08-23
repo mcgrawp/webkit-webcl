@@ -28,6 +28,8 @@
 #ifndef WebCLGLObjectInfo_h
 #define WebCLGLObjectInfo_h
 
+#if ENABLE(WEBCL) && ENABLE(WEBGL)
+
 #include "WebCLDevice.h"
 #include "WebCLException.h"
 #include "WebCLPlatform.h"
@@ -60,5 +62,6 @@ private:
 
 } // namespace WebCore
 
+#endif // ENABLE(WEBCL) && ENABLE(WEBGL)
 #endif // WebCLGLObjectInfo_h
 

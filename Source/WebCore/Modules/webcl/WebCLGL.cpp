@@ -27,7 +27,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBCL)
+#if ENABLE(WEBCL) && ENABLE(WEBGL)
 
 #include "WebCLGL.h"
 

@@ -76,8 +76,11 @@ var Kernels =
         int y = get_global_id(1);\
         int2 coord = (int2)(x, y);\
         uint4 pixel = read_imageui(imgIn, sampler, coord);\
-        uint4 pixelSqr = (uint4)(pixel.x * pixel.x, 0, 0, 0);\
-        write_imageui(imgOut, coord, pixelSqr);\
+        pixel.x *= pixel.x;\
+        pixel.y *= pixel.y;\
+        pixel.z *= pixel.z;\
+        pixel.w *= pixel.w;\
+        write_imageui(imgOut, coord, pixel);\
      }",
 
   "copyTexture": "\

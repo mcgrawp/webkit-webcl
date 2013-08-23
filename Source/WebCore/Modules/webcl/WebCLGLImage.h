@@ -28,7 +28,7 @@
 #ifndef WebCLGLImage_h
 #define WebCLGLImage_h
 
-#if ENABLE(WEBCL)
+#if ENABLE(WEBCL) && ENABLE(WEBGL)
 
 #include "WebCLImage.h"
 

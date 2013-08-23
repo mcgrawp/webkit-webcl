@@ -28,7 +28,7 @@
 #ifndef WebCLGLCommandQueue_h
 #define WebCLGLCommandQueue_h
 
-#if ENABLE(WEBCL)
+#if ENABLE(WEBCL) && ENABLE(WEBGL)
 
 #include "WebCLCommandQueue.h"
 

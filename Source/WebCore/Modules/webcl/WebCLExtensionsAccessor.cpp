@@ -37,6 +37,7 @@ namespace WebCore {
 template <class T>
 inline WebCLExtension* WebCLExtensionsAccessor<T>::getExtension(const String& name)
 {
+#if ENABLE(WEBGL)
     if (equalIgnoringCase(name, "KHR_GL_SHARING")) {
         if (!m_khrGLSharing)
             m_khrGLSharing = WebCLGL::create();
@@ -47,6 +48,9 @@ inline WebCLExtension* WebCLExtensionsAccessor<T>::getExtension(const String& na
         return m_khrGLSharing;
 #endif
     }
+#else
+    UNUSED_PARAM(name);
+#endif
 
     return 0;
 }
@@ -55,12 +59,17 @@ template <class T>
 Vector<String> WebCLExtensionsAccessor<T>::getSupportedExtensions(ExceptionCode&)
 {
     Vector<String> result;
+
     if (m_accessor) {
+#if ENABLE(WEBGL)
         if (ComputeExtensions::get().supports("cl_khr_gl_sharing", m_accessor))
             result.append("KHR_GL_SHARING");
+#endif
     } else {
+#if ENABLE(WEBGL)
         if (ComputeExtensions::get().supports("cl_khr_gl_sharing"))
             result.append("KHR_GL_SHARING");
+#endif
     }
 
     return result;

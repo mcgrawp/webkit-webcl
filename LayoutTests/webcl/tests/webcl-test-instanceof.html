@@ -30,7 +30,6 @@ function runTest() {
     try {
 
         cl = webcl;
-        shouldBeTrue('cl instanceof WebCL');
 
         kernelSrc = Kernels.square;
 
@@ -76,10 +75,12 @@ function runTest() {
         /* Test instance of WebCLKernel */
         shouldBeTrue('kernel instanceof WebCLKernel');
 
-        formats = context.getSupportedImageFormats(cl.MEM_READ_WRITE, cl.MEM_OBJECT_IMAGE2D);
-        formats[0].width = 10;
-        formats[0].height = 10;
-        webclImg = context.createImage(cl.MEM_READ_WRITE, formats[0], null);
+        imgDescriptor = {};
+        imgDescriptor.width = 10;
+        imgDescriptor.height = 10;
+        imgDescriptor.channelOrder = cl.RGBA;
+        imgDescriptor.channelType = cl.UNSIGNED_INT8;
+        webclImg = context.createImage(cl.MEM_READ_WRITE, imgDescriptor);
         /* Test instance of WebCLImage */
         shouldBeTrue('webclImg instanceof WebCLImage');
 
