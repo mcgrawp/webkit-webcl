@@ -57,8 +57,7 @@ bool isValidDeviceInfoType(int infoType)
     case ComputeContext::DEVICE_VERSION:
     case ComputeContext::DEVICE_OPENCL_C_VERSION:
     case ComputeContext::DEVICE_ADDRESS_BITS:
-        //FIXME: See http://www.khronos.org/bugzilla/show_bug.cgi?id=815
-        //case ComputeContext::DEVICE_MAX_CONSTANT_ARGS:
+    case ComputeContext::DEVICE_MAX_CONSTANT_ARGS:
     case ComputeContext::DEVICE_MAX_READ_IMAGE_ARGS:
     case ComputeContext::DEVICE_MAX_SAMPLERS:
     case ComputeContext::DEVICE_MAX_WRITE_IMAGE_ARGS:
