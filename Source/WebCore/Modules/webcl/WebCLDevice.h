@@ -51,6 +51,7 @@ public:
     virtual ~WebCLDevice();
     static PassRefPtr<WebCLDevice> create(CCDeviceID, const WebCLPlatform*);
     WebCLGetInfo getInfo(int, ExceptionCode&);
+    const WebCLPlatform* platform();
 
 private:
     WebCLDevice(CCDeviceID, const WebCLPlatform*);

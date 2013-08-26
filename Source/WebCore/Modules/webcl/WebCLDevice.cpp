@@ -192,5 +192,10 @@ void toWebCLDeviceArray(const WebCLPlatform* platform, const Vector<CCDeviceID>&
     }
 }
 
+const WebCLPlatform* WebCLDevice::platform()
+{
+    return m_platform;
+}
+
 } // namespace WebCore
 #endif // ENABLE(WEBCL)
