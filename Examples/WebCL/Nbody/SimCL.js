@@ -41,6 +41,7 @@ var bufferSize = null;
 var globalWorkSize = new Int32Array(1);
 var localWorkSize = new Int32Array(1);
 var workGroupSize = null;
+var bodyCountPerGroup;
 var gpu = true;
 
 function getKernel(id) {
@@ -95,7 +96,7 @@ function InitCL() {
             return null;
         }
 
-        var kernelSource = getKernel("nbody_kernel");
+        var kernelSource = gpu ? getKernel("nbody_kernel_GPU") : getKernel("nbody_kernel_CPU");
         if (kernelSource === null) {
             console.error("No kernel named: " + "nbody_kernel");
             return null;
@@ -103,8 +104,8 @@ function InitCL() {
 
         queue = context.createCommandQueue(devices, null);
         program = context.createProgram(kernelSource);
-        program.build(devices);
-        kernel = program.createKernel("nbody_kernel");
+        program.build([device]); //,"-cl-auto-vectorize-enable");
+        kernel = gpu ? program.createKernel("nbody_kernel_GPU") : program.createKernel("nbody_kernel_CPU");
 
         bufferSize = NBODY * POS_ATTRIB_SIZE * Float32Array.BYTES_PER_ELEMENT;
 
@@ -165,8 +166,12 @@ function InitCL() {
 
         queue.finish();
 
-        globalWorkSize[0] = NBODY;
-        localWorkSize[0] = Math.min(workGroupSize, NBODY);
+        if (gpu) {
+            globalWorkSize[0] = NBODY;
+        }
+
+        localWorkSize[0] = gpu ? Math.min(workGroupSize, NBODY) : 1;
+        bodyCountPerGroup = NBODY / globalWorkSize[0];
 
         var nWorkGroups = Math.floor(NBODY/workGroupSize);
         if(NBODY % workGroupSize != 0)
@@ -177,6 +182,7 @@ function InitCL() {
         console.log("nWorkGroups:       " + nWorkGroups);
         console.log("localWorkSize[0]:  " + localWorkSize[0]);
         console.log("globalWorkSize[0]: " + globalWorkSize[0]);
+        console.log("bodyCountPerGroup: " + bodyCountPerGroup);
     } catch (e) {
         console.error("Nbody Demo Failed, Message: "+ e.message);
     }
@@ -191,17 +197,23 @@ function SimulateCL(cl) {
             queue.enqueueAcquireGLObjects([curVelBuffer]);
         }
         var karg = WebCLKernelArgumentTypes;
-        var localMemSize = localWorkSize[0] * POS_ATTRIB_SIZE * Float32Array.BYTES_PER_ELEMENT;
         kernel.setArg(0, curPosBuffer);
         kernel.setArg(1, curVelBuffer);
         kernel.setArg(2, NBODY, karg.INT);
         kernel.setArg(3, DT, karg.FLOAT);
         kernel.setArg(4, EPSSQR, karg.INT);
-        kernel.setArg(5, localMemSize, karg.LOCAL_MEMORY_SIZE);
+        //5 set below, depends on CPU or GPU
         kernel.setArg(6, nxtPosBuffer);
         kernel.setArg(7, nxtVelBuffer);
-        //queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
-        queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, null);
+
+        if (gpu) {
+            var localMemSize = localWorkSize[0] * POS_ATTRIB_SIZE * Float32Array.BYTES_PER_ELEMENT;
+            kernel.setArg(5, localMemSize, karg.LOCAL_MEMORY_SIZE);
+            queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, null);
+        } else {
+            kernel.setArg(5, bodyCountPerGroup, karg.INT);
+            queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
+        }
 
         queue.finish();
 
@@ -252,6 +264,7 @@ function GetWorkGroupSize() {
         var device = devices[0];
 
         workGroupSize = device.getInfo(cl.DEVICE_MAX_WORK_GROUP_SIZE);
+        globalWorkSize[0] = device.getInfo(cl.DEVICE_MAX_COMPUTE_UNITS);
     } catch (e) {
         console.error("Nbody Demo Failed, Message: "+ e.message);
         workGroupSize = null;
