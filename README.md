@@ -40,6 +40,12 @@ After the build process has been finished, run some of our WebCL example (`<src_
  - Ubuntu: 12.04 and 13.04
  - OpenCL Headers: 1.1-2010
 
+## Running the Layout Tests
+
+To run the tests, use:
+
+    <src_dir>/Tools/Scripts/./run-webkit-tests LayoutTests/webcl/tests/
+
 ## Links
 - [WebCL](http://www.khronos.org/webcl/)
 - [OpenCL](http://www.khronos.org/opencl/)
