@@ -94,12 +94,12 @@ var barkleyOffSets = new Int32Array([1, 1]);
 function draw() {
     kBarkley.setArg(0, b0);
     kBarkley.setArg(1, b1);
-    cmdQueue.enqueueNDRangeKernel(kBarkley, barkleyOffSets, globalWorkSize, null);
+    cmdQueue.enqueueNDRangeKernel(kBarkley, globalWorkSize.length, barkleyOffSets, globalWorkSize, null);
     cmdQueue.enqueueCopyBuffer(b1, b0, 0, 0, 4 * bufSize);
     cmdQueue.finish();
 
     kShow.setArg(0, b0);
-    cmdQueue.enqueueNDRangeKernel(kShow, 0, globalWorkSize, null);
+    cmdQueue.enqueueNDRangeKernel(kShow, globalWorkSize.length, 0, globalWorkSize, null);
     cmdQueue.enqueueReadBuffer(bufPix, true, 0, bufPixelSize, outBuffer);
     cmdQueue.finish();
     draw_gl(n, n, outBuffer);

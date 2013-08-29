@@ -215,10 +215,10 @@ function SimulateCL(cl) {
         if (userData.gpu) {
             var localMemSize = localWorkSize[0] * POS_ATTRIB_SIZE * Float32Array.BYTES_PER_ELEMENT;
             kernel.setArg(5, new Uint32Array([localMemSize]));
-            queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, null);
+            queue.enqueueNDRangeKernel(kernel, globalWorkSize.length, null, globalWorkSize, null);
         } else {
             kernel.setArg(5, new Int32Array([bodyCountPerGroup]));
-            queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
+            queue.enqueueNDRangeKernel(kernel, globalWorkSize.length, null, globalWorkSize, localWorkSize);
         }
 
         queue.finish();

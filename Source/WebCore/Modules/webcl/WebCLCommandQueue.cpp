@@ -386,7 +386,7 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blocki
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* globalWorkOffsets,
+void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, CCuint workDim, Int32Array* globalWorkOffsets,
     Int32Array* globalWorkSize, Int32Array* localWorkSize, const Vector<RefPtr<WebCLEvent> >& events,
     WebCLEvent* event, ExceptionCode& ec)
 {
@@ -402,22 +402,40 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
 
     CCKernel ccKernel = kernel->platformObject();
 
-    Vector<size_t> globalWorkSizeCopy;
-    if ((globalWorkSize && !toVector(globalWorkSize, globalWorkSizeCopy))) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
-    int workItemDimensions = globalWorkSizeCopy.size();
-
-    if (workItemDimensions < 0 || workItemDimensions > 3) {
+    if (workDim > 3) {
         ec = WebCLException::INVALID_WORK_DIMENSION;
         return;
     }
 
-    Vector<size_t> localWorkSizeCopy, globalWorkOffsetCopy;
-    if ( (localWorkSize && !toVector(localWorkSize, localWorkSizeCopy))
-        || (globalWorkOffsets && !toVector(globalWorkOffsets, globalWorkOffsetCopy))) {
-        ec = WebCLException::INVALID_VALUE;
+    if (workDim != globalWorkSize->length()) {
+        ec = WebCLException::INVALID_GLOBAL_WORK_SIZE;
+        return;
+    }
+
+    if (globalWorkOffsets && workDim != globalWorkOffsets->length()) {
+        ec = WebCLException::INVALID_GLOBAL_OFFSET;
+        return;
+    }
+    if (localWorkSize && workDim != localWorkSize->length()) {
+        ec = WebCLException::INVALID_WORK_GROUP_SIZE;
+        return;
+    }
+
+    // FIXME :: Need to add validation if user sent value in each of globalWorkSize, globalWorkOffset and localWorkSize
+    // array are valid (not more than 2^32 -1). Currently it is auto clamped by webkit.
+
+    Vector<size_t> globalWorkSizeCopy, localWorkSizeCopy, globalWorkOffsetCopy;
+    if (!toVector(globalWorkSize, globalWorkSizeCopy)) {
+        ec = WebCLException::INVALID_GLOBAL_WORK_SIZE;
+        return;
+    }
+
+    if (localWorkSize && !toVector(localWorkSize, localWorkSizeCopy)) {
+        ec = WebCLException::INVALID_WORK_GROUP_SIZE;
+        return;
+    }
+    if (globalWorkOffsets && !toVector(globalWorkOffsets, globalWorkOffsetCopy)) {
+        ec = WebCLException::INVALID_GLOBAL_OFFSET;
         return;
     }
 
@@ -430,8 +448,7 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
         return;
 
     CCerror computeContextError = m_context->computeContext()->enqueueNDRangeKernel(platformObject(), ccKernel,
-        workItemDimensions, globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy,
-        ccEvents, ccEvent);
+        workDim, globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 

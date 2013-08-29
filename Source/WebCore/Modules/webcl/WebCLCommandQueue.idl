@@ -91,7 +91,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueNDRangeKernel(WebCLKernel kernel,
-            Int32Array offsets, Int32Array globalWorkSize,
+            [StrictTypeChecking, EnforceRange] CLuint workDim, Int32Array offsets, Int32Array globalWorkSize,
             Int32Array localWorkSize, [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 

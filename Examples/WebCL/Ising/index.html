@@ -105,16 +105,16 @@ function draw() {
         kSpin.setArg(0, iSpin);
         kSpin.setArg(2, iSpin1);
         kSpin.setArg(3, new Int32Array([0]));
-        cmdQueue.enqueueNDRangeKernel(kSpin, 0, globalWorkSize, localWorkSize);
+        cmdQueue.enqueueNDRangeKernel(kSpin, globalWorkSize.length, 0, globalWorkSize, localWorkSize);
         cmdQueue.flush();
 
         kSpin.setArg(0, iSpin1);
         kSpin.setArg(2, iSpin);
         kSpin.setArg(3, new Int32Array([1]));
-        cmdQueue.enqueueNDRangeKernel(kSpin, 0, globalWorkSize, localWorkSize);
+        cmdQueue.enqueueNDRangeKernel(kSpin, globalWorkSize.length, 0, globalWorkSize, localWorkSize);
         cmdQueue.flush();
     }
-    cmdQueue.enqueueNDRangeKernel(kPix, 0, globalWorkSize, localWorkSize);
+    cmdQueue.enqueueNDRangeKernel(kPix, globalWorkSize.length, 0, globalWorkSize, localWorkSize);
     cmdQueue.enqueueReadBuffer(bufPix, true, 0, bufSize, outBuffer);
     cmdQueue.finish();
     draw_gl(n, n, outBuffer);

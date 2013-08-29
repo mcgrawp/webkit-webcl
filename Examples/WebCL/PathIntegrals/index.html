@@ -213,7 +213,7 @@ function drawPix() {
             cmdQueue.enqueueAcquireGLObjects([bufPix]);
         }
 
-        cmdQueue.enqueueNDRangeKernel(kPix, [], globalWorkSize, localWorkSize);
+        cmdQueue.enqueueNDRangeKernel(kPix, globalWorkSize.length, null, globalWorkSize, localWorkSize);
 
         if (!interop) {
             cmdQueue.enqueueReadBuffer(bufPix, true, 0, bufferSize * 2, outBuffer);
@@ -250,12 +250,12 @@ function draw() {
         kPath.setArg(2, iPath1);
         kPath.setArg(3, new Int32Array([0]));
 
-        ev = cmdQueue.enqueueNDRangeKernel(kPath, [], globalWorkSize, localWorkSize2);
+        ev = cmdQueue.enqueueNDRangeKernel(kPath, globalWorkSize.length, null, globalWorkSize, localWorkSize2);
         cmdQueue.flush();
         kPath.setArg(0, iPath1);
         kPath.setArg(2, iPath);
         kPath.setArg(3, new Int32Array([1]));
-        ev = cmdQueue.enqueueNDRangeKernel(kPath, [], globalWorkSize, localWorkSize2);
+        ev = cmdQueue.enqueueNDRangeKernel(kPath, globalWorkSize.length, null, globalWorkSize, localWorkSize2);
         cmdQueue.flush();
     }
     drawPix();

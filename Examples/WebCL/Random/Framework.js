@@ -303,7 +303,7 @@ Framework = (function(){
             localWorkSize[0] = this.kernel.getWorkGroupInfo(this.selectedDevice, webcl.KERNEL_WORK_GROUP_SIZE);
 
             try {
-                this.queue.enqueueNDRangeKernel(this.kernel, null, globalWorkSize, localWorkSize);
+                this.queue.enqueueNDRangeKernel(this.kernel, globalWorkSize.length, null, globalWorkSize, localWorkSize);
             } catch (e) {
                 console.log(e.message);
                 throw e;

@@ -116,7 +116,7 @@ ScalarField.prototype.draw = function (viewer) {
         globalWS[0] = Math.ceil(canvas.width / 32) * 32;
         globalWS[1] = Math.ceil(canvas.height / 32) * 32;
         var start = Date.now();
-        clQueue.enqueueNDRangeKernel(volumeRayMarchingKernel, null, globalWS, null);
+        clQueue.enqueueNDRangeKernel(volumeRayMarchingKernel, globalWS.length, null, globalWS, null);
         clQueue.enqueueReadBuffer(pixelBuffer, true, 0, pixelCount * 4, pixels, []);
         raymarchTime += Date.now() - start;
     } catch (e) {
@@ -162,7 +162,7 @@ ScalarField.prototype.addField = function (source) {
         scalarAddKernel.setArg(3, new Float32Array([this.dt]));
 
         var start = Date.now();
-        clQueue.enqueueNDRangeKernel(scalarAddKernel, null, globalWS, null);
+        clQueue.enqueueNDRangeKernel(scalarAddKernel, globalWS.length, null, globalWS, null);
         clQueue.finish();
         clTime += Date.now() - start;
     } catch (e) {
@@ -181,7 +181,7 @@ ScalarField.prototype.diffusion = function () {
         scalarCopyKernel.setArg(2, new Uint32Array([this.dim]));
 
         var start = Date.now();
-        clQueue.enqueueNDRangeKernel(scalarCopyKernel, null, globalWS, null);
+        clQueue.enqueueNDRangeKernel(scalarCopyKernel, globalWS.length, null, globalWS, null);
         clTime += Date.now() - start;
 
         for (i = 0; i < 20; i++) {
@@ -192,7 +192,7 @@ ScalarField.prototype.diffusion = function () {
             scalarDiffusionKernel.setArg(4, new Float32Array([this.viscosity]));
 
             start = Date.now();
-            clQueue.enqueueNDRangeKernel(scalarDiffusionKernel, null, globalWS, null);
+            clQueue.enqueueNDRangeKernel(scalarDiffusionKernel, globalWS.length, null, globalWS, null);
             clTime += Date.now() - start;
         }
     } catch (e) {
@@ -212,7 +212,7 @@ ScalarField.prototype.advection = function () {
         scalarCopyKernel.setArg(2, new Uint32Array([this.dim]));
 
         var start = Date.now();
-        clQueue.enqueueNDRangeKernel(scalarCopyKernel, null, globalWS, null);
+        clQueue.enqueueNDRangeKernel(scalarCopyKernel, globalWS.length, null, globalWS, null);
         //clQueue.finish();
         clTime += Date.now() - start;
 
@@ -223,7 +223,7 @@ ScalarField.prototype.advection = function () {
         scalarAdvectionKernel.setArg(4, new Float32Array([this.dt]));
 
         start = Date.now();
-        clQueue.enqueueNDRangeKernel(scalarAdvectionKernel, null, globalWS, null);
+        clQueue.enqueueNDRangeKernel(scalarAdvectionKernel, globalWS.length, null, globalWS, null);
         clTime += Date.now() - start;
     } catch (e) {
         console.error("scalarField.advection", [e]);
@@ -238,10 +238,10 @@ ScalarField.prototype.setBoundaryDensities = function () {
 
     try {
         scalarBoundariesKernel.setArg(0, scalarBuffer);
-        scalarBoundariesKernel.setArg(1, Uint32Array([this.dim]));
+        scalarBoundariesKernel.setArg(1, new Uint32Array([this.dim]));
 
         var start = Date.now();
-        clQueue.enqueueNDRangeKernel(scalarBoundariesKernel, null, globalWS, null);
+        clQueue.enqueueNDRangeKernel(scalarBoundariesKernel, globalWS.length, null, globalWS, null);
         clTime += Date.now() - start;
     } catch (e) {
         console.error("scalarField.setBondaryDensities", [e]);

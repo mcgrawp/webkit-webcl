@@ -65,7 +65,7 @@ public:
         Int32Array* region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
         ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
-    void enqueueNDRangeKernel(WebCLKernel*, Int32Array* globalWorkOffsets, Int32Array* globalWorkSize,
+    void enqueueNDRangeKernel(WebCLKernel*, CCuint workDim, Int32Array* globalWorkOffsets, Int32Array* globalWorkSize,
         Int32Array* localWorkSize, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void finish(ExceptionCode&);

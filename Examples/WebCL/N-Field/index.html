@@ -129,17 +129,17 @@ function draw() {
             kSpin.setArg(2, iSpin1);
             kSpin.setArg(3, new Int32Array([0]));
 
-            cmdQueue.enqueueNDRangeKernel(kSpin, null, globalWorkSize, localWorkSize);
+            cmdQueue.enqueueNDRangeKernel(kSpin, globalWorkSize.length, null, globalWorkSize, localWorkSize);
             cmdQueue.flush();
 
             kSpin.setArg(0, iSpin1);
             kSpin.setArg(2, iSpin);
             kSpin.setArg(3, new Int32Array([1]));
 
-            cmdQueue.enqueueNDRangeKernel(kSpin, null, globalWorkSize, localWorkSize);
+            cmdQueue.enqueueNDRangeKernel(kSpin, globalWorkSize.length, null, globalWorkSize, localWorkSize);
             cmdQueue.flush();
         }
-        cmdQueue.enqueueNDRangeKernel(kPix, null, globalWorkSize, localWorkSize);
+        cmdQueue.enqueueNDRangeKernel(kPix, globalWorkSize.length, null, globalWorkSize, localWorkSize);
         cmdQueue.enqueueReadBuffer(bufPix, true, 0, bufSize, outBuffer);
     } catch (e) {
         console.error(e.message);
