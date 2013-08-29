@@ -1886,6 +1886,8 @@
 		75415D5A129AB2D2003AD669 /* JSSpeechInputResultList.h in Headers */ = {isa = PBXBuildFile; fileRef = 75415D54129AB2D2003AD669 /* JSSpeechInputResultList.h */; };
 		7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */; };
 		7553CFE9108F473F00EA281E /* TimelineRecordFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */; };
+		755F8D1B17CE9A93007B1663 /* JSWebCLGLContextProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 755F8D1917CE9A87007B1663 /* JSWebCLGLContextProperties.cpp */; };
+		755F8D1C17CE9A93007B1663 /* JSWebCLGLContextProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 755F8D1A17CE9A87007B1663 /* JSWebCLGLContextProperties.h */; };
 		7578F90C11DDF26900D933C5 /* SpeechInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 7578F90911DDF26900D933C5 /* SpeechInput.h */; };
 		7578F90D11DDF26900D933C5 /* SpeechInputClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7578F90A11DDF26900D933C5 /* SpeechInputClient.h */; };
 		7578F92011E4E32800D933C5 /* SpeechInputListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7578F91E11E4E32800D933C5 /* SpeechInputListener.h */; };
@@ -1989,6 +1991,7 @@
 		758C8F8C178A12F200FAD9BA /* JSWebCLSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 758C8F22178A12B300FAD9BA /* JSWebCLSampler.h */; };
 		758C8F8D178A12F200FAD9BA /* JSWorkerContextWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 758C8F23178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.cpp */; };
 		758C8F8E178A12F200FAD9BA /* JSWorkerContextWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 758C8F24178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.h */; };
+		759547EA17CE942A0053DDB8 /* WebCLGLContextProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759547E817CE94080053DDB8 /* WebCLGLContextProperties.cpp */; };
 		759EFFC217959B0E00C541FD /* WebCLFinishCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759EFFC117959B0900C541FD /* WebCLFinishCallback.cpp */; };
 		762F1ED7159D960A007408F2 /* HTMLDialogElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 762F1ED6159D960A007408F2 /* HTMLDialogElement.h */; };
 		7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */; };
@@ -8389,6 +8392,8 @@
 		75415D54129AB2D2003AD669 /* JSSpeechInputResultList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSpeechInputResultList.h; sourceTree = "<group>"; };
 		7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimelineRecordFactory.h; sourceTree = "<group>"; };
 		7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimelineRecordFactory.cpp; sourceTree = "<group>"; };
+		755F8D1917CE9A87007B1663 /* JSWebCLGLContextProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLGLContextProperties.cpp; sourceTree = "<group>"; };
+		755F8D1A17CE9A87007B1663 /* JSWebCLGLContextProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLGLContextProperties.h; sourceTree = "<group>"; };
 		7578F90911DDF26900D933C5 /* SpeechInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInput.h; sourceTree = "<group>"; };
 		7578F90A11DDF26900D933C5 /* SpeechInputClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputClient.h; sourceTree = "<group>"; };
 		7578F91E11E4E32800D933C5 /* SpeechInputListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputListener.h; sourceTree = "<group>"; };
@@ -8555,6 +8560,8 @@
 		758C8F24178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContextWebCLEnvironment.h; sourceTree = "<group>"; };
 		758C8F25178A12B300FAD9BA /* JSWebCLGLCommandQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLGLCommandQueue.cpp; sourceTree = "<group>"; };
 		758C8F26178A12B300FAD9BA /* JSWebCLGLCommandQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLGLCommandQueue.h; sourceTree = "<group>"; };
+		759547E817CE94080053DDB8 /* WebCLGLContextProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLGLContextProperties.cpp; sourceTree = "<group>"; };
+		759547E917CE94080053DDB8 /* WebCLGLContextProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLGLContextProperties.h; sourceTree = "<group>"; };
 		759EFFC117959B0900C541FD /* WebCLFinishCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLFinishCallback.cpp; sourceTree = "<group>"; };
 		762F1ED6159D960A007408F2 /* HTMLDialogElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDialogElement.h; sourceTree = "<group>"; };
 		762F1ED8159D961A007408F2 /* HTMLDialogElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDialogElement.idl; sourceTree = "<group>"; };
@@ -15094,6 +15101,8 @@
 		758C8E5917887AD600FAD9BA /* webcl */ = {
 			isa = PBXGroup;
 			children = (
+				759547E817CE94080053DDB8 /* WebCLGLContextProperties.cpp */,
+				759547E917CE94080053DDB8 /* WebCLGLContextProperties.h */,
 				758C8E5A17887AD600FAD9BA /* DOMWindowWebCLEnvironment.cpp */,
 				758C8E5B17887AD600FAD9BA /* DOMWindowWebCLEnvironment.h */,
 				758C8E5C17887AD600FAD9BA /* DOMWindowWebCLEnvironment.idl */,
@@ -15195,6 +15204,8 @@
 		758C8EF2178A11F800FAD9BA /* WebCL */ = {
 			isa = PBXGroup;
 			children = (
+				755F8D1917CE9A87007B1663 /* JSWebCLGLContextProperties.cpp */,
+				755F8D1A17CE9A87007B1663 /* JSWebCLGLContextProperties.h */,
 				758C8EF3178A12B300FAD9BA /* JSDOMWindowWebCLEnvironment.cpp */,
 				758C8EF4178A12B300FAD9BA /* JSDOMWindowWebCLEnvironment.h */,
 				758C8EF5178A12B300FAD9BA /* JSWebCL.cpp */,
@@ -24471,6 +24482,7 @@
 				758C8F8C178A12F200FAD9BA /* JSWebCLSampler.h in Headers */,
 				758C8F8E178A12F200FAD9BA /* JSWorkerContextWebCLEnvironment.h in Headers */,
 				61467D4E17B9191E00443C12 /* JSWebCLKernelCustom.h in Headers */,
+				755F8D1C17CE9A93007B1663 /* JSWebCLGLContextProperties.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27512,6 +27524,8 @@
 				758C8F8D178A12F200FAD9BA /* JSWorkerContextWebCLEnvironment.cpp in Sources */,
 				759EFFC217959B0E00C541FD /* WebCLFinishCallback.cpp in Sources */,
 				7505833317B1ADC9000B55DC /* JSWebCLGLObjectInfoCustom.cpp in Sources */,
+				759547EA17CE942A0053DDB8 /* WebCLGLContextProperties.cpp in Sources */,
+				755F8D1B17CE9A93007B1663 /* JSWebCLGLContextProperties.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

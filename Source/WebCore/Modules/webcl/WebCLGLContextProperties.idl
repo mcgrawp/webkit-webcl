@@ -28,7 +28,7 @@
 [
     Conditional=WEBCL,
     //OmitConstructor,
-    NoInterfaceObject,
+    //NoInterfaceObject,
 ] interface WebCLGLContextProperties : WebCLContextProperties {
     // FIXME: Default value is 'null'.
     attribute WebGLRenderingContext sharedContext;

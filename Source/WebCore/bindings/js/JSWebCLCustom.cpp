@@ -54,7 +54,7 @@ namespace WebCore {
 
 JSValue JSWebCL::createContext(ExecState* exec)
 {
-    return parsePropertiesAndCreateContext<JSWebCL, WebCLContext>(exec, globalObject(), this, false /*CLGLSharing*/);
+    return parsePropertiesAndCreateContext<JSWebCL, WebCLContext, WebCLContextProperties>(exec, globalObject(), this, false /*CLGLSharing*/);
 }
 
 JSValue JSWebCL::getSupportedExtensions(ExecState* exec)

@@ -30,7 +30,7 @@ typedef long CLenum;
 // FIXME: Implement as a WebIDL dictionary type.
 [
     Conditional=WEBCL,
-    ImplementationLacksVTable,
+    SkipVTableValidation,
 ] interface WebCLContextProperties {
     readonly attribute WebCLPlatform platform;
     readonly attribute WebCLDevice[] devices;

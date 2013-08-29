@@ -37,6 +37,9 @@
 #include "JSWebCLGLContext.h"
 #include "JSWebGLRenderingContext.h"
 
+#include "WebCLContextProperties.h"
+#include "WebCLGLContextProperties.h"
+
 #include <runtime/JSFunction.h>
 
 using namespace JSC;
@@ -66,10 +69,10 @@ static inline void setDeviceType(WebCLContextProperties* properties, const unsig
 
 static inline void setSharedContext(WebCLContextProperties* properties, const RefPtr<WebGLRenderingContext>& context)
 {
-    properties->setWebGLRenderingContext(context);
+    properties->setSharedContext(context);
 }
 
-template <class T, class U>
+template <class T, class U, class V>
 inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObject* globalObject, T* jsCustomObject, bool clGLSharing)
 {
     unsigned argumentCount = exec->argumentCount();
@@ -98,7 +101,7 @@ inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObjec
     JSObject* object = value.toObject(exec);
 
     // Create default options.
-    RefPtr<WebCLContextProperties> properties = WebCLContextProperties::create();
+    RefPtr<WebCLContextProperties> properties = V::create();
 
     // Create the dictionary wrapper from the initializer object.
     JSDictionary dictionary(exec, object);
@@ -109,7 +112,7 @@ inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObjec
     if (!dictionary.tryGetProperty("deviceType", properties.get(), setDeviceType))
         return throwSyntaxError(exec);
     if (clGLSharing) {
-        // We could it with a null GL context so that internally WebCLContextProperties
+        // We call it with a null GL context so that internally WebCLContextProperties
         // keeps its control up to date.
         setSharedContext(properties.get(), 0 /* GL context */);
         if (!dictionary.tryGetProperty("sharedContext", properties.get(), setSharedContext))

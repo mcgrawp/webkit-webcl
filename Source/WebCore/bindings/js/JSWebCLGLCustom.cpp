@@ -31,6 +31,7 @@
 
 #include "JSWebCLCustom.h"
 #include "JSWebCLGL.h"
+#include "WebCLGLContextProperties.h"
 
 using namespace JSC;
 
@@ -38,7 +39,7 @@ namespace WebCore {
 
 JSValue JSWebCLGL::createContext(ExecState* exec)
 {
-    return parsePropertiesAndCreateContext<JSWebCLGL, WebCLGLContext>(exec, globalObject(), this, true /*CLGLSharing*/);
+    return parsePropertiesAndCreateContext<JSWebCLGL, WebCLGLContext, WebCLGLContextProperties>(exec, globalObject(), this, true /*CLGLSharing*/);
 }
 
 } // namespace WebCore

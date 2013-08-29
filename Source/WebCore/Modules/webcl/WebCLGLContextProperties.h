@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -25,67 +25,37 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCLContextProperties_h
-#define WebCLContextProperties_h
+#ifndef WebCLGLContextProperties_h
+#define WebCLGLContextProperties_h
 
 #if ENABLE(WEBCL)
 
-#include "ComputeTypes.h"
-#include "WebCLPlatform.h"
-#include "WebGLRenderingContext.h"
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#include "WebCLContextProperties.h"
 
 namespace WebCore {
 
-class WebCLDevice;
-
-class WebCLContextProperties : public RefCounted<WebCLContextProperties>
+class WebCLGLContextProperties : public WebCLContextProperties
 {
 public:
-    enum SharedContextResolutionPolicy {
-        NoSharedGLContext = 0,
-        GetCurrentGLContext,
-        UseGLContextProvided
-    };
+    static PassRefPtr<WebCLGLContextProperties> create();
+    static PassRefPtr<WebCLGLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, unsigned long deviceType,
+        SharedContextResolutionPolicy = GetCurrentGLContext, PassRefPtr<WebGLRenderingContext> = 0);
 
-    static PassRefPtr<WebCLContextProperties> create();
-    static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, unsigned long deviceType);
-
-    virtual ~WebCLContextProperties() { }
-
-    Vector<RefPtr<WebCLDevice> >& devices();
-    void setDevices(Vector<RefPtr<WebCLDevice> >);
-
-    RefPtr<WebCLPlatform>& platform();
-    void setPlatform(PassRefPtr<WebCLPlatform>);
-
-    unsigned long deviceType() const;
-    void setDeviceType(unsigned long type);
+    virtual ~WebCLGLContextProperties() { }
 
     virtual RefPtr<WebGLRenderingContext>& sharedContext();
     virtual void setSharedContext(PassRefPtr<WebGLRenderingContext>);
 
-    virtual Vector<CCContextProperties>& computeContextProperties();
+private:
 
-protected:
-    WebCLContextProperties();
-    WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, unsigned long deviceType);
+    WebCLGLContextProperties();
+    WebCLGLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, unsigned long deviceType,
+        SharedContextResolutionPolicy = GetCurrentGLContext, PassRefPtr<WebGLRenderingContext> = 0);
 
     virtual void computeContextPropertiesInternal();
-
-    RefPtr<WebCLPlatform> m_platform;
-    Vector<RefPtr<WebCLDevice> > m_devices;
-    unsigned long m_deviceType;
-    Vector<CCContextProperties> m_ccProperties;
-
-    enum SharedContextResolutionPolicy m_contextPolicy;
-    RefPtr<WebGLRenderingContext> m_webGLRenderingContext;
 };
 
 }// namespace WebCore
 
 #endif // ENABLE(WEBCL)
-#endif // WebCLContextProperties_h
+#endif // WebCLGLContextProperties_h
