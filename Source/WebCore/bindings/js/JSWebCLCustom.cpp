@@ -45,6 +45,7 @@
 #include "JSWebCLMemoryObject.h"
 #include "JSWebCLPlatform.h"
 #include "JSWebCLProgram.h"
+#include "JSWebCLGLContextProperties.h"
 #include "WebCLExtension.h"
 #include "WebCLGL.h"
 
@@ -145,6 +146,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInf
     case WebCLGetInfo::kTypeWebCLPlatform:
         return toJS(exec, globalObject, info.getWebCLPlatform());
     case WebCLGetInfo::kTypeWebCLContextProperties:
+        if (info.getWebCLContextProperties()->isGLCapable())
+            return toJS(exec, globalObject, static_cast<WebCLGLContextProperties*>(info.getWebCLContextProperties().get()));
         return toJS(exec, globalObject, info.getWebCLContextProperties());
     default:
         return jsUndefined();

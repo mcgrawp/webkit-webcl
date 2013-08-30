@@ -70,6 +70,8 @@ public:
 
     virtual Vector<CCContextProperties>& computeContextProperties();
 
+    virtual bool isGLCapable() const { return false; }
+
 protected:
     WebCLContextProperties();
     WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, unsigned long deviceType);

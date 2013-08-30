@@ -36,7 +36,5 @@ typedef long CLenum;
     [RaisesException] WebCLGLImage createFromGLRenderbuffer(long memFlags, WebGLRenderbuffer renderbuffer);
     [RaisesException] WebCLGLCommandQueue createCommandQueue([Default=Undefined] optional WebCLDevice device, [Default=Undefined] optional CLenum properties);
     [RaisesException] WebCLGLImage createFromGLTexture(CLenum memFlags, CLenum textureTarget, GLint miplevel, WebGLTexture texture);
-    // FIXME: Needs implementation.
-    // [RaisesException, StrictTypeChecking] any getInfo(CLenum name);
 };
 

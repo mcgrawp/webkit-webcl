@@ -46,6 +46,8 @@ public:
     virtual RefPtr<WebGLRenderingContext>& sharedContext();
     virtual void setSharedContext(PassRefPtr<WebGLRenderingContext>);
 
+    virtual bool isGLCapable() const { return true; }
+
 private:
 
     WebCLGLContextProperties();
