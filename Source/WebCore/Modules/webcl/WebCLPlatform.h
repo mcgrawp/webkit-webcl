@@ -46,13 +46,14 @@ public:
     static PassRefPtr<WebCLPlatform> create(CCPlatformID);
 
     WebCLGetInfo getInfo (int, ExceptionCode&);
-    Vector<RefPtr<WebCLDevice> > getDevices(unsigned long, ExceptionCode&) const;
+    Vector<RefPtr<WebCLDevice> > getDevices(unsigned long, ExceptionCode&);
 
 private:
     WebCLPlatform(CCPlatformID);
 
     friend CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);
     Vector<RefPtr<WebCLDevice> > m_webCLDevices;
+    unsigned long m_cachedDeviceType;
 };
 
 CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);

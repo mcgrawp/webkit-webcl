@@ -51,6 +51,7 @@ PassRefPtr<WebCLPlatform> WebCLPlatform::create(CCPlatformID platformID)
 WebCLPlatform::WebCLPlatform(CCPlatformID platformID)
     : WebCLObject(platformID)
     , WebCLExtensionsAccessor(platformID)
+    , m_cachedDeviceType(0)
 {
 }
 
@@ -75,31 +76,39 @@ WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(unsigned long deviceType, ExceptionCode& ec) const
+Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(unsigned long deviceType, ExceptionCode& ec)
 {
-    Vector<RefPtr<WebCLDevice> > devices;
     if (!platformObject()) {
         ec = WebCLException::INVALID_PLATFORM;
-        return devices;
+        return Vector<RefPtr<WebCLDevice> >();
     }
 
     if (deviceType && !WebCLInputChecker::isValidDeviceType(deviceType)) {
         ec = WebCLException::INVALID_VALUE;
-        return devices;
+        return Vector<RefPtr<WebCLDevice> >();
     }
 
     if (!deviceType)
         deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
 
+    // If cached copy of devices are of same type, return from cache.
+    if (m_cachedDeviceType == deviceType && m_webCLDevices.size())
+        return m_webCLDevices;
+
     Vector<CCDeviceID> ccDevices;
     CCerror error = ComputeContext::getDeviceIDs(platformObject(), deviceType, ccDevices);
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return devices;
+        return Vector<RefPtr<WebCLDevice> >();
     }
+    // New device array fetched. Update the cache.
+    m_webCLDevices.clear();
 
-    toWebCLDeviceArray(this, ccDevices, devices);
-    return devices;
+    // Store the new device list to cache and also update the type to m_cachedDeviceType.
+    toWebCLDeviceArray(this, ccDevices, m_webCLDevices);
+    m_cachedDeviceType = deviceType;
+
+    return m_webCLDevices;
 }
 
 CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >& platforms)
