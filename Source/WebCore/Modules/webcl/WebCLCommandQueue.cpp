@@ -181,6 +181,11 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, bool blockin
         return;
     }
 
+    if (bufferRowPitch < 0 || bufferSlicePitch < 0 || hostRowPitch < 0 || hostSlicePitch < 0) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     Vector<size_t> bufferOriginData, hostOriginData, regionData;
     if (!toVector(bufferOrigin, bufferOriginData, 3)
         || !toVector(hostOrigin, hostOriginData, 3)
@@ -274,6 +279,11 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, I
         return;
     }
 
+    if (rowPitch < 0) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     Vector<size_t> originData, regionData;
     if (!toVector(origin, originData, 2)
         || !toVector(region, regionData, 2)) {
@@ -363,6 +373,11 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blocking
     PlatformComputeObject ccBuffer = buffer->platformObject();
 
     if (!ptr) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
+    if (bufferRowPitch < 0 || bufferSlicePitch < 0 || hostRowPitch < 0 || hostSlicePitch < 0) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -491,6 +506,11 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
     PlatformComputeObject ccImage = image->platformObject();
 
     if (!ptr) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
+    if (inputRowPitch < 0) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -720,6 +740,11 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
     if (!WebCLInputChecker::validateWebCLObject(sourceBuffer)
         || !WebCLInputChecker::validateWebCLObject(targetBuffer)) {
         ec = WebCLException::INVALID_MEM_OBJECT;
+        return;
+    }
+
+    if (sourceRowPitch < 0 || sourceSlicePitch < 0 || targetRowPitch < 0 || targetSlicePitch < 0) {
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
