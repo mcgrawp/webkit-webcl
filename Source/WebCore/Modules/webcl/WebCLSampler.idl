@@ -24,9 +24,10 @@
  * NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+typedef unsigned long CLenum;
 
 [
     Conditional=WEBCL,
 ] interface WebCLSampler {
-    [StrictTypeChecking, Custom, RaisesException] any getInfo(long paramName);
+    [StrictTypeChecking, Custom, RaisesException] any getInfo(CLenum paramName);
 };

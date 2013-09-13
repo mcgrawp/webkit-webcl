@@ -36,15 +36,15 @@
 namespace WebCore {
 namespace WebCLInputChecker {
 
-bool isValidDeviceType(long int);
-bool isValidDeviceInfoType(int);
-bool isValidMemoryObjectFlag(int);
-bool isValidAddressingMode(int);
-bool isValidFilterMode(int);
-bool isValidChannelType(int);
-bool isValidChannelOrder(int);
-bool isValidCommandQueueProperty(int);
-bool isValidGLTextureInfo(int);
+bool isValidDeviceType(unsigned long);
+bool isValidDeviceInfoType(unsigned long);
+bool isValidMemoryObjectFlag(unsigned long);
+bool isValidAddressingMode(unsigned long);
+bool isValidFilterMode(unsigned long);
+bool isValidChannelType(unsigned long);
+bool isValidChannelOrder(unsigned long);
+bool isValidCommandQueueProperty(unsigned long);
+bool isValidGLTextureInfo(unsigned long);
 
 template<class T>
 bool validateWebCLObject(WebCLObject<T>* object)

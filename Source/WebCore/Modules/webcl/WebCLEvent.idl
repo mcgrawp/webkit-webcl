@@ -24,12 +24,15 @@
  * NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+typedef unsigned long CLenum;
 
 [
     Conditional=WEBCL,
     Constructor,
 ] interface WebCLEvent {
-    [StrictTypeChecking, Custom, RaisesException] void getInfo(long paramName);
-    [StrictTypeChecking, Custom, RaisesException] void getProfilingInfo(long paramName);
-    [StrictTypeChecking, Custom, RaisesException] void setCallback(long execStatus,  WebCLFinishCallback notifyCallback, long userData);
+    // FIXME :: wrong return type. Must be "any"
+    [StrictTypeChecking, Custom, RaisesException] void getInfo(CLenum paramName);
+    // FIXME :: wrong return type. Must be "any"
+    [StrictTypeChecking, Custom, RaisesException] void getProfilingInfo(CLenum paramName);
+    [StrictTypeChecking, Custom, RaisesException] void setCallback(CLenum execStatus,  WebCLFinishCallback notifyCallback, long userData);
 };

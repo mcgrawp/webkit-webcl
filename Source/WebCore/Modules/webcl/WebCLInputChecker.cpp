@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace WebCLInputChecker {
 
-bool isValidDeviceType(long int deviceType)
+bool isValidDeviceType(unsigned long deviceType)
 {
     switch (deviceType) {
     case ComputeContext::DEVICE_TYPE_CPU:
@@ -49,7 +49,7 @@ bool isValidDeviceType(long int deviceType)
     return false;
 }
 
-bool isValidDeviceInfoType(int infoType)
+bool isValidDeviceInfoType(unsigned long infoType)
 {
     switch (infoType) {
     case ComputeContext::DEVICE_EXTENSIONS:
@@ -101,7 +101,7 @@ bool isValidDeviceInfoType(int infoType)
     return false;
 }
 
-bool isValidMemoryObjectFlag(int memoryObjectFlag)
+bool isValidMemoryObjectFlag(unsigned long memoryObjectFlag)
 {
     switch (memoryObjectFlag) {
     case ComputeContext::MEM_READ_ONLY:
@@ -113,7 +113,7 @@ bool isValidMemoryObjectFlag(int memoryObjectFlag)
     return false;
 }
 
-bool isValidAddressingMode(int value)
+bool isValidAddressingMode(unsigned long value)
 {
     switch(value) {
     case ComputeContext::ADDRESS_NONE:
@@ -127,7 +127,7 @@ bool isValidAddressingMode(int value)
     return false;
 }
 
-bool isValidFilterMode(int value)
+bool isValidFilterMode(unsigned long value)
 {
     switch(value) {
     case ComputeContext::FILTER_NEAREST:
@@ -138,7 +138,8 @@ bool isValidFilterMode(int value)
     return false;
 
 }
-bool isValidChannelOrder(int value)
+
+bool isValidChannelOrder(unsigned long value)
 {
     switch (value) {
     case ComputeContext::R:
@@ -160,7 +161,7 @@ bool isValidChannelOrder(int value)
     return false;
 }
 
-bool isValidChannelType(int value)
+bool isValidChannelType(unsigned long value)
 {
     switch (value) {
     case ComputeContext::SNORM_INT8:
@@ -184,7 +185,7 @@ bool isValidChannelType(int value)
     return false;
 }
 
-bool isValidCommandQueueProperty(int value)
+bool isValidCommandQueueProperty(unsigned long value)
 {
     switch (value) {
     case 0: // 0 as integer value CommandQueueProperty is optional.
@@ -195,7 +196,7 @@ bool isValidCommandQueueProperty(int value)
     return false;
 }
 
-bool isValidGLTextureInfo(int value)
+bool isValidGLTextureInfo(unsigned long value)
 {
     switch (value) {
     case ComputeContext::GL_TEXTURE_TARGET:

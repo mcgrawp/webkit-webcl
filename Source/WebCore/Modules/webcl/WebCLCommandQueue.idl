@@ -24,67 +24,70 @@
  * NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+typedef unsigned long CLenum;
+typedef boolean CLboolean;
+typedef unsigned long CLuint;
 
 [
     Conditional=WEBCL,
 ] interface WebCLCommandQueue {
 
-    [StrictTypeChecking, Custom, RaisesException] void getInfo(long queuenfo);
+    [StrictTypeChecking, Custom, RaisesException] void getInfo(CLenum queuenfo);
 
     [RaisesException] void enqueueWriteBuffer(WebCLBuffer bufferId,
-            boolean blockingWrite,
-            long offset,
-            long bufferSize,
+            CLboolean blockingWrite,
+            CLuint offset,
+            CLuint bufferSize,
             ArrayBufferView ptr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueWriteBuffer(WebCLBuffer bufferId,
-            boolean blockingWrite,
-            long offset,
-            long bufferSize,
+            CLboolean blockingWrite,
+            CLuint offset,
+            CLuint bufferSize,
             ImageData ptr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueWriteBufferRect(WebCLBuffer bufferId,
-            boolean blockingWrite,
+            CLboolean blockingWrite,
             Int32Array sourceOrigin,
             Int32Array targetOrigin,
             Int32Array region,
-            long sourceRowPitch,
-            long sourceSlicePitch,
-            long targetRowPitch,
-            long targetSlicePitch,
+            CLuint sourceRowPitch,
+            CLuint sourceSlicePitch,
+            CLuint targetRowPitch,
+            CLuint targetSlicePitch,
             ArrayBufferView ptr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueReadBuffer(WebCLBuffer bufferId,
-            boolean blockingRead,
-            long offset,
-            long bufferSize,
+            CLboolean blockingRead,
+            CLuint offset,
+            CLuint bufferSize,
             ArrayBufferView ptr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueReadBuffer(WebCLBuffer bufferId,
-            boolean blockingRead,
-            long offset,
-            long bufferSize,
+            CLboolean blockingRead,
+            CLuint offset,
+            CLuint bufferSize,
             ImageData ptr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueReadBufferRect(WebCLBuffer bufferId,
-            boolean blockingRead,
+            CLboolean blockingRead,
             Int32Array sourceOrigin,
             Int32Array targetOrigin,
             Int32Array region,
-            long sourceRowPitch,
-            long sourceSlicePitch,
-            long targetRowPitch,
-            long targetSlicePitch,
+            CLuint sourceRowPitch,
+            CLuint sourceSlicePitch,
+            CLuint targetRowPitch,
+            CLuint targetSlicePitch,
             ArrayBufferView ptr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
@@ -95,28 +98,28 @@
             [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueWriteImage(WebCLImage image,
-            boolean blockingWrite,
+            CLboolean blockingWrite,
             Int32Array origin,
             Int32Array region,
-            long inputRowPitch,
+            CLuint inputRowPitch,
             ArrayBufferView ptr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueReadImage(WebCLImage image,
-            boolean blockingRead,
+            CLboolean blockingRead,
             Int32Array origin,
             Int32Array region,
-            long rowPitch,
+            CLuint rowPitch,
             ArrayBufferView ptr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueCopyBuffer(WebCLBuffer sourceBuffer,
             WebCLBuffer targetBuffer,
-            long sourceOffset,
-            long targetOffset,
-            long sizeInBytes,
+            CLuint sourceOffset,
+            CLuint targetOffset,
+            CLuint sizeInBytes,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
@@ -125,10 +128,10 @@
             Int32Array sourceOrigin,
             Int32Array targetOrigin,
             Int32Array region,
-            long sourceRowPitch,
-            long sourceSlicePitch,
-            long targetRowPitch,
-            long targetSlicePitch,
+            CLuint sourceRowPitch,
+            CLuint sourceSlicePitch,
+            CLuint targetRowPitch,
+            CLuint targetSlicePitch,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
@@ -144,13 +147,13 @@
             WebCLBuffer targetBuffer,
             Int32Array sourceOrigin,
             Int32Array region,
-            long targetOffset,
+            CLuint targetOffset,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueCopyBufferToImage(WebCLBuffer sourceBuffer,
             WebCLImage targetImage,
-            long sourceOffset,
+            CLuint sourceOffset,
             Int32Array targetOrigin,
             Int32Array region,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,

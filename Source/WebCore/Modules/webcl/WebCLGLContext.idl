@@ -26,14 +26,14 @@
  */
 
 typedef long GLint;
-typedef long CLenum;
+typedef unsigned long CLenum;
 
 [
     Conditional=WEBCL,
     JSGenerateToJSObject,
 ] interface WebCLGLContext : WebCLContext {
-    [RaisesException] WebCLGLBuffer createFromGLBuffer(long memFlags, WebGLBuffer buffer);
-    [RaisesException] WebCLGLImage createFromGLRenderbuffer(long memFlags, WebGLRenderbuffer renderbuffer);
+    [RaisesException] WebCLGLBuffer createFromGLBuffer(CLenum memFlags, WebGLBuffer buffer);
+    [RaisesException] WebCLGLImage createFromGLRenderbuffer(CLenum memFlags, WebGLRenderbuffer renderbuffer);
     [RaisesException] WebCLGLCommandQueue createCommandQueue([Default=Undefined] optional WebCLDevice device, [Default=Undefined] optional CLenum properties);
     [RaisesException] WebCLGLImage createFromGLTexture(CLenum memFlags, CLenum textureTarget, GLint miplevel, WebGLTexture texture);
 };
