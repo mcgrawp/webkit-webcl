@@ -810,40 +810,6 @@ void WebCLCommandQueue::enqueueMarker(WebCLEvent* event, ExceptionCode& ec)
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
-void WebCLCommandQueue::enqueueTask(WebCLKernel* kernel, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event,
-    ExceptionCode& ec)
-{
-    if (!platformObject()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
-        return;
-    }
-
-    if (!WebCLInputChecker::validateWebCLObject(kernel)) {
-        ec = WebCLException::INVALID_KERNEL;
-        return;
-    }
-
-    CCKernel ccKernel = kernel->platformObject();
-
-    Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
-
-    CCEvent* ccEvent = 0;
-    if (event) {
-        CCEvent platformEventObject = event->platformObject();
-        if (event->isReleased()) {
-            ec = WebCLException::INVALID_EVENT;
-            return;
-        }
-        ccEvent = &platformEventObject;
-        event->setAssociatedCommandQueue(this);
-    }
-
-    CCerror err = m_context->computeContext()->enqueueTask(platformObject(), ccKernel, ccEvents.size(), ccEvents.data(), ccEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-}
-
 void WebCLCommandQueue::releasePlatformObjectImpl()
 {
     CCerror computeContextErrorCode = m_context->computeContext()->releaseCommandQueue(platformObject());

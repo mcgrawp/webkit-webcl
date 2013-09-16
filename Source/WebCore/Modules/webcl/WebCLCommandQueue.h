@@ -107,7 +107,6 @@ public:
 
     void enqueueMarker(WebCLEvent*, ExceptionCode&);
 
-    void enqueueTask(WebCLKernel*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 protected:
     WebCLCommandQueue(WebCLContext*, const RefPtr<WebCLDevice>&, CCCommandQueue);
 
