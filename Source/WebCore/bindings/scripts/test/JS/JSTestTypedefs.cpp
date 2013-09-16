@@ -369,8 +369,6 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(ExecState* exec
         return JSValue::encode(jsUndefined());
     }
 
-    if (exec->argumentCount() > 0 && !exec->argument(0).isUndefinedOrNull() && !exec->argument(0).inherits(&JSlong[]::s_info))
-        return throwVMTypeError(exec);
     Vector<int> x(toNativeArray<int>(exec, exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
