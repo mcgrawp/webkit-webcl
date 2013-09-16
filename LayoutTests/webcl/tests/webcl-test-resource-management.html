@@ -22,6 +22,7 @@ var context2;
 var buffer1;
 var commandQueue1;
 var program1;
+var imgDescriptor = {};
 var image1;
 var sampler1;
 var userEvent1;
@@ -89,10 +90,11 @@ function runTest() {
             testFailed("Failed to create WebCLProgram 1.");
             return;
         }
-        var formats = context1.getSupportedImageFormats(cl.MEM_READ_WRITE, cl.MEM_OBJECT_IMAGE2D);
-        formats[0].width = 10;
-        formats[0].height = 10;
-        image1 = context1.createImage(cl.MEM_READ_WRITE, formats[0], null);
+        imgDescriptor.width = 10;
+        imgDescriptor.height = 10;
+        imgDescriptor.channelOrder = cl.RGBA;
+        imgDescriptor.channelType = cl.UNSIGNED_INT8;
+        image1 = context1.createImage(cl.MEM_READ_WRITE, imgDescriptor);
         if (!image1) {
             testFailed("Failed to create WebCLImage 1.");
             return;
@@ -158,7 +160,7 @@ function runTest() {
         shouldBeNull("program2");
         shouldBeNull("programCopy");
 
-        image2 = context2.createImage(cl.MEM_READ_WRITE, formats[0], null);
+        image2 = context2.createImage(cl.MEM_READ_WRITE, imgDescriptor);
         if (!image2) {
             testFailed("Failed to create WebCLImage 2.");
             return;

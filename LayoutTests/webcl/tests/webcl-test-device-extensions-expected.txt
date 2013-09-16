@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 42: [object WebCLException]
 Testing extensions in WebCLDevice...
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+PASS Ok
+PASS successfullyParsed is true
 
 TEST COMPLETE
 
