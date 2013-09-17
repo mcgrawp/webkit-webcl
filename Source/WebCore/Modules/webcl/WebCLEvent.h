@@ -44,7 +44,7 @@ public:
     static PassRefPtr<WebCLEvent> create();
     WebCLGetInfo getInfo(int, ExceptionCode&);
     WebCLGetInfo getProfilingInfo(int, ExceptionCode&);
-    void setCallback(int, PassRefPtr<WebCLFinishCallback>, int , ExceptionCode&);
+    void setCallback(int, PassRefPtr<WebCLFinishCallback>, ExceptionCode&);
 
     void setAssociatedCommandQueue(WebCLCommandQueue* commandQueue);
     RefPtr<WebCLFinishCallback> m_finishCallback;

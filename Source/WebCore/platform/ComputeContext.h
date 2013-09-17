@@ -333,7 +333,7 @@ public:
     CCEvent createUserEvent(CCerror&);
 
     CCProgram createProgram(const String& kernelSource, CCerror& error);
-    CCerror buildProgram(CCProgram, const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, void* userData);
+    CCerror buildProgram(CCProgram, const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction);
     static CCerror setKernelArg(CCKernel, CCuint argIndex, size_t argSize, const void* argValue);
 
     PlatformComputeObject createBuffer(int type, size_t size, void* data, CCerror& error);

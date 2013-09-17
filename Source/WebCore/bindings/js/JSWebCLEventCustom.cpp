@@ -125,11 +125,10 @@ JSValue JSWebCLEvent::setCallback(JSC::ExecState* exec)
     if (exec->hadException())
         return jsUndefined();
 
-    unsigned userParam  = exec->argument(2).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
 
-    m_impl->setCallback(executionStatus, callback.release(), userParam, ec);
+    m_impl->setCallback(executionStatus, callback.release(), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

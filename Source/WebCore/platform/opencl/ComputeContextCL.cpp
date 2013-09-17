@@ -456,11 +456,12 @@ CCProgram ComputeContext::createProgram(const String& kernelSource, CCerror& err
     return clProgram;
 }
 
-CCerror ComputeContext::buildProgram(CCProgram program, const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, void* userData)
+CCerror ComputeContext::buildProgram(CCProgram program, const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction)
 {
     const CString& optionsCString = options.utf8();
     const char* optionsPtr = optionsCString.data();
-    cl_int clError = clBuildProgram(program, devices.size(), devices.data(), optionsPtr, notifyFunction, userData);
+    /* WebCL does not support userData, so sending NULL. */
+    cl_int clError = clBuildProgram(program, devices.size(), devices.data(), optionsPtr, notifyFunction, 0 /*userData*/);
     return clError;
 }
 

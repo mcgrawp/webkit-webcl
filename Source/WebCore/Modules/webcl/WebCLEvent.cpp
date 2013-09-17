@@ -130,11 +130,10 @@ void WebCLEvent::setAssociatedCommandQueue(WebCLCommandQueue* commandQueue)
 
 WebCLEvent* WebCLEvent::thisPointer = 0;
 
-void WebCLEvent::setCallback(int executionStatus, PassRefPtr<WebCLFinishCallback> notify, int userData, ExceptionCode& ec)
+void WebCLEvent::setCallback(int executionStatus, PassRefPtr<WebCLFinishCallback> notify, ExceptionCode& ec)
 {
     UNUSED_PARAM(executionStatus);
     UNUSED_PARAM(notify);
-    UNUSED_PARAM(userData);
     UNUSED_PARAM(ec);
     // FIXME :: Callback implementation is not working. Need to rework.
     // Issue # 102

@@ -119,9 +119,8 @@ JSValue JSWebCLProgram::build(JSC::ExecState* exec)
 
     ExceptionCode ec = 0;
     RefPtr<WebCLFinishCallback> callback;
-    int userData = exec->argument(3).toInt32(exec);
     if (!exec->argument(2).getObject())
-        m_impl->build(devices, options, 0 /*WebCLFinishCallback*/, userData, ec);
+        m_impl->build(devices, options, 0 /*WebCLFinishCallback*/, ec);
     else {
         if (!exec->argument(2).isUndefinedOrNull()) {
             JSObject* object = exec->argument(2).getObject();
@@ -135,7 +134,7 @@ JSValue JSWebCLProgram::build(JSC::ExecState* exec)
             static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(2));
         if (exec->hadException())
             return jsUndefined();
-        m_impl->build(devices, options, callback.release(), userData, ec);
+        m_impl->build(devices, options, callback.release(), ec);
     }
     if (ec) {
         setDOMException(exec, ec);

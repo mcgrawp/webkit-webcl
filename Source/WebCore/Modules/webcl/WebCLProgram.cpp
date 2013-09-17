@@ -163,7 +163,7 @@ void WebCLProgram::finishCallback(CCProgram program, void* userData)
 
 WebCLProgram* WebCLProgram::thisPointer = 0;
 
-void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const String& buildOptions, PassRefPtr<WebCLFinishCallback> finishCallback, int userData, ExceptionCode& ec)
+void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const String& buildOptions, PassRefPtr<WebCLFinishCallback> finishCallback, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_PROGRAM;
@@ -196,7 +196,7 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
         ccDevices.append(devices[i]->platformObject());
 
     pfnNotify callback = m_finishCallback ? &WebCLProgram::finishCallback : 0;
-    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, buildOptions, callback, callback ? &userData : 0);
+    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, buildOptions, callback);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 

@@ -54,7 +54,7 @@ public:
     WebCLGetInfo getInfo(int flag, ExceptionCode&);
     WebCLGetInfo getBuildInfo(WebCLDevice*, int flag, ExceptionCode&);
 
-    void build(const Vector<RefPtr<WebCLDevice> >&, const String& buildOptions, PassRefPtr<WebCLFinishCallback>, int userData, ExceptionCode&);
+    void build(const Vector<RefPtr<WebCLDevice> >&, const String& buildOptions, PassRefPtr<WebCLFinishCallback>, ExceptionCode&);
 
     PassRefPtr<WebCLKernel> createKernel(const String& kernelName, ExceptionCode&);
 

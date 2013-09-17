@@ -39,8 +39,7 @@ typedef unsigned long CLenum;
 
     [StrictTypeChecking, Custom, RaisesException] void build (sequence<WebCLDevice> devices,
         [Default=Undefined, TreatNullAs = NullString, TreatUndefinedAs = NullString] optional DOMString options,
-        [Default=Undefined] optional WebCLFinishCallback whenFinished,
-        [Default=Undefined] optional long userdata);
+        [Default=Undefined] optional WebCLFinishCallback whenFinished);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     void release();
