@@ -35,6 +35,7 @@
 #include "WebCLGetInfo.h"
 #include "WebCLInputChecker.h"
 #include "WebCLKernel.h"
+
 namespace WebCore {
 
 WebCLProgram::~WebCLProgram()
@@ -60,6 +61,7 @@ WebCLProgram::WebCLProgram(WebCLContext* context, CCProgram program, const Strin
     , m_context(context)
     , m_kernelSource(kernelSource)
 {
+
 }
 
 WebCLGetInfo WebCLProgram::getInfo(int infoType, ExceptionCode& ec)
@@ -173,30 +175,51 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
 
     m_finishCallback = finishCallback;
 
-    // FIXME: This should not be here.
     if (buildOptions.length() > 0) {
-        if (!((buildOptions == "-cl-single-precision-constant")
-        || (buildOptions == "-cl-denorms-are-zero")
-        || (buildOptions == "-cl-opt-disable")
-        || (buildOptions == "-cl-mad-enable")
-        || (buildOptions == "-cl-no-signed-zeros")
-        || (buildOptions == "-cl-unsafe-math-optimizations")
-        || (buildOptions == "-cl-finite-math-only")
-        || (buildOptions == "-cl-fast-relaxed-math")
-        || (buildOptions == "-w")
-        || (buildOptions == "-Werror")
-        || (buildOptions == "-cl-std="))) {
+        DEFINE_STATIC_LOCAL(AtomicString, buildOptionDashD, ("-D", AtomicString::ConstructFromLiteral));
+        DEFINE_STATIC_LOCAL(HashSet<AtomicString>, webCLSupportedBuildOptions, ());
+        if (webCLSupportedBuildOptions.isEmpty()) {
+            webCLSupportedBuildOptions.add(AtomicString("-cl-opt-disable", AtomicString::ConstructFromLiteral));
+            webCLSupportedBuildOptions.add(AtomicString("-cl-single-precision-constant", AtomicString::ConstructFromLiteral));
+            webCLSupportedBuildOptions.add(AtomicString("-cl-denorms-are-zero", AtomicString::ConstructFromLiteral));
+            webCLSupportedBuildOptions.add(AtomicString("-cl-mad-enable", AtomicString::ConstructFromLiteral));
+            webCLSupportedBuildOptions.add(AtomicString("-cl-no-signed-zeros", AtomicString::ConstructFromLiteral));
+            webCLSupportedBuildOptions.add(AtomicString("-cl-unsafe-math-optimizations", AtomicString::ConstructFromLiteral));
+            webCLSupportedBuildOptions.add(AtomicString("-cl-finite-math-only", AtomicString::ConstructFromLiteral));
+            webCLSupportedBuildOptions.add(AtomicString("-cl-fast-relaxed-math", AtomicString::ConstructFromLiteral));
+            webCLSupportedBuildOptions.add(AtomicString("-W", AtomicString::ConstructFromLiteral));
+            webCLSupportedBuildOptions.add(AtomicString("-Werror", AtomicString::ConstructFromLiteral));
+        }
+
+        Vector<String> webCLBuildOptionsVector;
+        buildOptions.split(" ", false /* allowEmptyEntries */, webCLBuildOptionsVector);
+        for (size_t i = 0; i < webCLBuildOptionsVector.size(); i++) {
+            if (webCLSupportedBuildOptions.contains(webCLBuildOptionsVector[i]))
+                continue;
+            if (buildOptionDashD == webCLBuildOptionsVector[i]) {
+                i++;
+                if (i >= webCLBuildOptionsVector.size()) {
+                    ec = WebCLException::INVALID_BUILD_OPTIONS;
+                    return;
+                }
+                continue;
+            }
             ec = WebCLException::INVALID_BUILD_OPTIONS;
             return;
         }
     }
+
+    // As per the specification, implicitly set -cl-std=CL1.1.
+    StringBuilder webclBuildOptions;
+    webclBuildOptions.append(buildOptions);
+    webclBuildOptions.append(" -cl-std=CL1.1");
 
     Vector<CCDeviceID> ccDevices;
     for (size_t i = 0; i < devices.size(); i++)
         ccDevices.append(devices[i]->platformObject());
 
     pfnNotify callback = m_finishCallback ? &WebCLProgram::finishCallback : 0;
-    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, buildOptions, callback);
+    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, webclBuildOptions.toString(), callback);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
