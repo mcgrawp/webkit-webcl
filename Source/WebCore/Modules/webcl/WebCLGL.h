@@ -28,7 +28,7 @@
 #ifndef WebCLGL_h
 #define WebCLGL_h
 
-#if ENABLE(WEBCL)
+#if ENABLE(WEBCL) && ENABLE(WEBGL)
 
 #include "WebCL.h"
 #include "WebCLExtension.h"

@@ -2,10 +2,9 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Simple Template for WebCL</title>
+<title>Image Object Test</title>
 <script src="../resources/js-test-pre.js"></script>
 <script src="../resources/kernels.js"></script>
-<script src="../resources/logger.js"></script>
 <script src="../resources/webcl-test-utils.js"></script>
 
 <script>
@@ -33,18 +32,8 @@ var kResult;
 var data;
 var imgWidth = 2;
 var imgHeight = 2;
-var DATA_SIZE = imgWidth * imgHeight;
-
-function getById(id) {
-    var elem;
-
-    elem = document.getElementById(id);
-    if (!elem) {
-        throw (new Error("No id found!"));
-    }
-
-    return elem.innerHTML;
-}
+var imgPixelSizeBytes = 4;
+var DATA_SIZE = imgWidth * imgHeight * imgPixelSizeBytes;
 
 function initCL() {
     var randomVector;
@@ -54,7 +43,7 @@ function initCL() {
     var workGroupSize;
 
     randomVector = WebCLTestUtils.getRandomVector(DATA_SIZE, 15);
-    data = new Int32Array(randomVector);
+    data = new Uint8Array(randomVector);
 
     try {
         if (webcl === "undefined") {
@@ -66,14 +55,14 @@ function initCL() {
             throw (new Error("Failed to create webcl object"));
         }
 
-        var contextProperties = {deviceType: cl.DEVICE_TYPE_DEFAULT};
+        contextProperties = {deviceType: cl.DEVICE_TYPE_DEFAULT};
         context = cl.createContext(contextProperties);
         if (!context) {
             throw (new Error("It was not possible to create WebCLContext."));
         }
 
         devices = context.getInfo(cl.CONTEXT_DEVICES);
-        device = devices[0]
+        device = devices[0];
 
         imgDescriptor = {};
         imgDescriptor.width = imgWidth;
@@ -97,8 +86,8 @@ function initCL() {
 
         globalWorkSize = new Int32Array([imgWidth, imgHeight]);
         localWorkSize = new Int32Array([imgWidth, imgHeight]);
-        jsResult = new Int32Array(DATA_SIZE);
-        kResult = new Int32Array(DATA_SIZE);
+        jsResult = new Uint8Array(imgWidth * imgHeight * imgPixelSizeBytes);
+        kResult = new Uint8Array(imgWidth * imgHeight * imgPixelSizeBytes);
     } catch (e) {
         throw e;
     }
@@ -121,7 +110,7 @@ function runKernel() {
 
         for (i = 0; i < DATA_SIZE; i++) {
             if (kResult[i] !== jsResult[i]) {
-                throw (new Error("Test has failed running kernel: " +
+                throw (new Error("running kernel: " +
                                     kernel.getInfo(cl.KERNEL_FUNCTION_NAME)));
             }
         }
@@ -136,7 +125,7 @@ function runTest() {
         runKernel();
         testPassed("");
     } catch (e) {
-        testFailed("WebCL Template: has failed. Message: " + e.message);
+        testFailed("Test has failed. Message: " + e.message);
     }
 }
 </script>
@@ -146,7 +135,7 @@ function runTest() {
 <div id="description"></div>
 <div id="console"></div>
 <script>
-    description("Simple Template for WebCL");
+    description(document.title);
     runTest();
 </script>
 <script src="../resources/js-test-post.js"></script>

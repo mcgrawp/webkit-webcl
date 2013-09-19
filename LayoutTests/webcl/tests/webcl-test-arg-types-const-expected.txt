@@ -14,8 +14,8 @@ PASS WebCLKernelArgumentTypes.ULONG == 7 is true
 PASS WebCLKernelArgumentTypes.FLOAT == 8 is true
 PASS WebCLKernelArgumentTypes.HALF == 9 is true
 PASS WebCLKernelArgumentTypes.DOUBLE == 10 is true
-FAIL WebCLKernelArgumentTypes.VEC2 == 0x0200 should be true. Was false.
-FAIL WebCLKernelArgumentTypes.VEC3 == 0x0300 should be true. Was false.
+PASS WebCLKernelArgumentTypes.VEC2 == 0x0200 is true
+PASS WebCLKernelArgumentTypes.VEC3 == 0x0300 is true
 PASS WebCLKernelArgumentTypes.VEC4 == 0x0400 is true
 PASS WebCLKernelArgumentTypes.VEC8 == 0x0800 is true
 PASS WebCLKernelArgumentTypes.VEC16 == 0x1000 is true

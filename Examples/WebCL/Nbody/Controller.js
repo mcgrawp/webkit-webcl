@@ -91,6 +91,7 @@ function UserData() {
     this.fpsSampler     = null;         // FPS sampler
     this.simSampler     = null;         // Sim time sampler
     this.drawSampler    = null;         // Draw time sampler
+    this.gpu            = true;         // Use GPU as default device in CL context
 }
 
 var userData = null;
@@ -198,9 +199,11 @@ function SetSimMode(simMode) {
 
     if(simMode === JS_SIM_MODE) {
         div.firstChild.nodeValue = "JS";
+        document.getElementById("devices").style.visibility = "hidden";
     }
     else {
         div.firstChild.nodeValue = (userData.cl === null)? "NA" : "CL";
+        document.getElementById("devices").style.visibility = "visible";
     }
 
     userData.simMode = simMode;
@@ -243,4 +246,10 @@ function ToggleSimRunning()
 function Toggle3D()
 {
     userData.is3D = !userData.is3D;
+}
+
+function ToggleDevice(device)
+{
+    userData.gpu = (device === 'CPU') ? false : true;
+    InitCL();
 }

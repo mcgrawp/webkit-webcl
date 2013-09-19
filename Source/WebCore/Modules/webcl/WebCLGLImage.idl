@@ -29,7 +29,7 @@ typedef long GLint;
 typedef unsigned long CLenum;
 
 [
-    Conditional=WEBCL,
+    Conditional=WEBCL&WEBGL,
     JSGenerateToJSObject,
     JSGenerateToNativeObject
 ] interface WebCLGLImage : WebCLImage {

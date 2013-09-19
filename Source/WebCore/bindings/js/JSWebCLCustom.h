@@ -67,10 +67,12 @@ static inline void setDeviceType(WebCLContextProperties* properties, const unsig
     properties->setDeviceType(deviceType);
 }
 
+#if ENABLE(WEBGL)
 static inline void setSharedContext(WebCLContextProperties* properties, const RefPtr<WebGLRenderingContext>& context)
 {
     properties->setSharedContext(context);
 }
+#endif
 
 template <class T, class U, class V>
 inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObject* globalObject, T* jsCustomObject, bool clGLSharing)
@@ -111,6 +113,8 @@ inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObjec
         return throwSyntaxError(exec);
     if (!dictionary.tryGetProperty("deviceType", properties.get(), setDeviceType))
         return throwSyntaxError(exec);
+
+#if ENABLE(WEBGL)
     if (clGLSharing) {
         // We call it with a null GL context so that internally WebCLContextProperties
         // keeps its control up to date.
@@ -118,6 +122,9 @@ inline JSValue parsePropertiesAndCreateContext(ExecState* exec, JSDOMGlobalObjec
         if (!dictionary.tryGetProperty("sharedContext", properties.get(), setSharedContext))
             return throwSyntaxError(exec);
     }
+#else
+    ASSERT_UNUSED(clGLSharing, !clGLSharing);
+#endif
 
     webCLContext = jsCustomObject->impl()->createContext(properties.get(), ec);
     if (ec) {

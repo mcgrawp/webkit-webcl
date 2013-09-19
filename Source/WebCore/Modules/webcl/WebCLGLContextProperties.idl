@@ -26,7 +26,7 @@
  */
 
 [
-    Conditional=WEBCL,
+    Conditional=WEBCL&WEBGL,
     JSGenerateToJSObject,
 ] interface WebCLGLContextProperties : WebCLContextProperties {
     // FIXME: Default value is 'null'.

@@ -28,7 +28,7 @@
 #ifndef WebCLGLBuffer_h
 #define WebCLGLBuffer_h
 
-#if ENABLE(WEBCL)
+#if ENABLE(WEBCL) && ENABLE(WEBGL)
 
 #include "WebCLBuffer.h"
 #include "WebCLGLObjectInfo.h"

@@ -95,7 +95,13 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebCLExtension* e
         return jsNull();
     switch (extension->getName()) {
     case WebCLExtension::KhrGLSharingName:
+#if ENABLE(WEBGL)
         return toJS(exec, globalObject, static_cast<WebCLGL*>(extension));
+#else
+        UNUSED_PARAM(exec);
+        UNUSED_PARAM(globalObject);
+        break;
+#endif
     }
     ASSERT_NOT_REACHED();
     return jsNull();

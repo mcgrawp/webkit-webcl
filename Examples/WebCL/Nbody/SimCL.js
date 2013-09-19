@@ -42,7 +42,6 @@ var globalWorkSize = new Int32Array(1);
 var localWorkSize = new Int32Array(1);
 var workGroupSize = null;
 var bodyCountPerGroup;
-var gpu = true;
 
 function getKernel(id) {
   var kernelScript = document.getElementById(id);
@@ -54,6 +53,14 @@ function getKernel(id) {
 
 function InitCL() {
     var cl = null;
+
+    // Just disable CL-GL interop when CPU is being used
+    if (!userData.gpu) {
+        userData.isGLCLshared = false;
+    } else {
+        userData.isGLCLshared = true;
+    }
+
     try {
         if (typeof(webcl) === "undefined") {
             console.error("WebCL is yet to be defined");
@@ -72,7 +79,7 @@ function InitCL() {
         }
         var platform = platforms[0];
 
-        var devices = platform.getDevices(gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU);
+        var devices = platform.getDevices(userData.gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU);
         if (devices.length === 0) {
             console.error("No devices available");
             return null;
@@ -88,15 +95,15 @@ function InitCL() {
         }
 
         if(userData.isGLCLshared)
-            context = extension.createContext({platform:platform, devices:devices, deviceType: gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU, sharedContext:null});
+            context = extension.createContext({platform:platform, devices:devices, deviceType: userData.gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU, sharedContext:null});
         else
-            context = cl.createContext({platform:platform, devices:devices, deviceType: gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU});
+            context = cl.createContext({platform:platform, devices:devices, deviceType: userData.gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU});
         if(context === null) {
             console.error("createContext fails");
             return null;
         }
 
-        var kernelSource = gpu ? getKernel("nbody_kernel_GPU") : getKernel("nbody_kernel_CPU");
+        var kernelSource = userData.gpu ? getKernel("nbody_kernel_GPU") : getKernel("nbody_kernel_CPU");
         if (kernelSource === null) {
             console.error("No kernel named: " + "nbody_kernel");
             return null;
@@ -105,7 +112,7 @@ function InitCL() {
         queue = context.createCommandQueue(devices, null);
         program = context.createProgram(kernelSource);
         program.build([device]); //,"-cl-auto-vectorize-enable");
-        kernel = gpu ? program.createKernel("nbody_kernel_GPU") : program.createKernel("nbody_kernel_CPU");
+        kernel = userData.gpu ? program.createKernel("nbody_kernel_GPU") : program.createKernel("nbody_kernel_CPU");
 
         bufferSize = NBODY * POS_ATTRIB_SIZE * Float32Array.BYTES_PER_ELEMENT;
 
@@ -166,11 +173,11 @@ function InitCL() {
 
         queue.finish();
 
-        if (gpu) {
+        if (userData.gpu) {
             globalWorkSize[0] = NBODY;
         }
 
-        localWorkSize[0] = gpu ? Math.min(workGroupSize, NBODY) : 1;
+        localWorkSize[0] = userData.gpu ? Math.min(workGroupSize, NBODY) : 1;
         bodyCountPerGroup = NBODY / globalWorkSize[0];
 
         var nWorkGroups = Math.floor(NBODY/workGroupSize);
@@ -183,6 +190,7 @@ function InitCL() {
         console.log("localWorkSize[0]:  " + localWorkSize[0]);
         console.log("globalWorkSize[0]: " + globalWorkSize[0]);
         console.log("bodyCountPerGroup: " + bodyCountPerGroup);
+        console.log("kernel:            " + kernel.getInfo(cl.KERNEL_FUNCTION_NAME));
     } catch (e) {
         console.error("Nbody Demo Failed, Message: "+ e.message);
     }
@@ -190,7 +198,10 @@ function InitCL() {
 }
 
 function SimulateCL(cl) {
-    if(cl === null) return;
+    if (cl === null) {
+        return;
+    }
+
     try {
         if (userData.isGLCLshared) {
             queue.enqueueAcquireGLObjects([curPosBuffer]);
@@ -206,7 +217,7 @@ function SimulateCL(cl) {
         kernel.setArg(6, nxtPosBuffer);
         kernel.setArg(7, nxtVelBuffer);
 
-        if (gpu) {
+        if (userData.gpu) {
             var localMemSize = localWorkSize[0] * POS_ATTRIB_SIZE * Float32Array.BYTES_PER_ELEMENT;
             kernel.setArg(5, localMemSize, karg.LOCAL_MEMORY_SIZE);
             queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, null);
@@ -256,7 +267,7 @@ function GetWorkGroupSize() {
         }
         var platform = platforms[0];
 
-        var devices = platform.getDevices(gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU);
+        var devices = platform.getDevices(userData.gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU);
         if (devices.length === 0) {
             console.error("No devices available");
             return null;

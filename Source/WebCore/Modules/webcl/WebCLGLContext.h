@@ -28,7 +28,7 @@
 #ifndef WebCLGLContext_h
 #define WebCLGLContext_h
 
-#if ENABLE(WEBCL)
+#if ENABLE(WEBCL) && ENABLE(WEBGL)
 
 #include "WebCLContext.h"
 

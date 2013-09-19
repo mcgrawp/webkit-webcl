@@ -28,7 +28,7 @@ typedef unsigned long CLenum;
 typedef long CLint;
 
 [
-    Conditional=WEBCL,
+    Conditional=WEBCL&WEBGL,
     //OmitConstructor,
     DoNotCheckConstants,
     JSGenerateToJSObject,
