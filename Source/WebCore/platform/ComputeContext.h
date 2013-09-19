@@ -322,7 +322,6 @@ public:
     };
 
     ComputeContext(CCContextProperties*, const Vector<CCDeviceID>&, CCerror&);
-    ComputeContext(CCContextProperties*, unsigned int, CCerror&);
     ~ComputeContext();
 
     static CCerror getPlatformIDs(Vector<CCPlatformID>&);

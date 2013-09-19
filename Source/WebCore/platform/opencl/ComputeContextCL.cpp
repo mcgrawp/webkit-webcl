@@ -354,30 +354,6 @@ ComputeContext::ComputeContext(CCContextProperties* contextProperties, const Vec
     m_clContext = clCreateContext(contextProperties, devices.size(), devices.data(), 0, 0, &error);
 }
 
-ComputeContext::ComputeContext(CCContextProperties* contextProperties, unsigned deviceType, CCerror& error)
-{
-    switch (deviceType) {
-    case DEVICE_TYPE_GPU:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_GPU, 0, 0, &error);
-        break;
-    case DEVICE_TYPE_CPU:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_CPU, 0, 0, &error);
-        break;
-    case DEVICE_TYPE_ACCELERATOR:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_ACCELERATOR, 0, 0, &error);
-        break;
-    case DEVICE_TYPE_DEFAULT:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_DEFAULT, 0, 0, &error);
-        break;
-    case DEVICE_TYPE_ALL:
-        m_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_ALL, 0, 0, &error);
-        break;
-    default:
-        error = CL_INVALID_DEVICE_TYPE;
-        break;
-    }
-}
-
 ComputeContext::~ComputeContext()
 {
     clReleaseContext(m_clContext);
