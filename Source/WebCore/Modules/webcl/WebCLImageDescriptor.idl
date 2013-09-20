@@ -32,6 +32,7 @@ typedef unsigned long CLuint;
 [
     Conditional=WEBCL,
 ] interface WebCLImageDescriptor {
+    // FIXME: default value: 0x10B5, 0x10D2, 0, 0 and 0 respectively.
     readonly attribute CLenum channelOrder;
     readonly attribute CLenum channelType;
     readonly attribute CLuint width;

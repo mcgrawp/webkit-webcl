@@ -31,6 +31,6 @@ typedef unsigned long CLenum;
     Conditional=WEBCL&WEBGL,
     ImplementationLacksVTable,
 ] interface WebCLGLObjectInfo {
-    readonly attribute CLenum type; // Type of GL object attached to this memory object.
-    [CustomGetter] readonly attribute any glObject; // The GL object used to create this memory object.
+    readonly attribute CLenum type;
+    [CustomGetter] readonly attribute any glObject;
 };

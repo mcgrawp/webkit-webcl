@@ -83,14 +83,21 @@ typedef long CLint;
     const CLint INVALID_MIP_LEVEL                          = -62;
     const CLint INVALID_GLOBAL_WORK_SIZE                   = -63;
     const CLint INVALID_PROPERTY                           = -64;
+
+    const CLenum FALSE                                     = 0;
+    const CLenum TRUE                                      = 1;
+
     const CLenum PLATFORM_PROFILE                           = 0x0900;
     const CLenum PLATFORM_VERSION                           = 0x0901;
+
     const CLenum DEVICE_TYPE_DEFAULT                        = 0x1;
     const CLenum DEVICE_TYPE_CPU                            = 0x2;
     const CLenum DEVICE_TYPE_GPU                            = 0x4;
     const CLenum DEVICE_TYPE_ACCELERATOR                    = 0x8;
     const CLenum DEVICE_TYPE_ALL                            = 0xFFFFFFFF;
+
     const CLenum DEVICE_TYPE                                = 0x1000;
+    const CLenum DEVICE_MAX_COMPUTE_UNITS                   = 0x1002;
     const CLenum DEVICE_MAX_WORK_ITEM_DIMENSIONS            = 0x1003;
     const CLenum DEVICE_MAX_WORK_GROUP_SIZE                 = 0x1004;
     const CLenum DEVICE_MAX_WORK_ITEM_SIZES                 = 0x1005;
@@ -109,20 +116,29 @@ typedef long CLint;
     const CLenum DEVICE_IMAGE_SUPPORT                       = 0x1016;
     const CLenum DEVICE_MAX_PARAMETER_SIZE                  = 0x1017;
     const CLenum DEVICE_MAX_SAMPLERS                        = 0x1018;
+    const CLenum DEVICE_MEM_BASE_ADDR_ALIGN                 = 0x1019;
+    const CLenum DEVICE_SINGLE_FP_CONFIG                    = 0x101B;
+    const CLenum DEVICE_GLOBAL_MEM_CACHE_TYPE               = 0x101C;
+    const CLenum DEVICE_GLOBAL_MEM_CACHELINE_SIZE           = 0x101D;
+    const CLenum DEVICE_GLOBAL_MEM_CACHE_SIZE               = 0x101E;
+    const CLenum DEVICE_GLOBAL_MEM_SIZE                     = 0x101F;
     const CLenum DEVICE_MAX_CONSTANT_BUFFER_SIZE            = 0x1020;
     const CLenum DEVICE_MAX_CONSTANT_ARGS                   = 0x1021;
     const CLenum DEVICE_LOCAL_MEM_TYPE                      = 0x1022;
     const CLenum DEVICE_LOCAL_MEM_SIZE                      = 0x1023;
+    const CLenum DEVICE_ERROR_CORRECTION_SUPPORT            = 0x1024;
+    const CLenum DEVICE_PROFILING_TIMER_RESOLUTION          = 0x1025;
     const CLenum DEVICE_ENDIAN_LITTLE                       = 0x1026;
     const CLenum DEVICE_AVAILABLE                           = 0x1027;
+    const CLenum DEVICE_COMPILER_AVAILABLE                  = 0x1028;
+    const CLenum DEVICE_EXECUTION_CAPABILITIES              = 0x1029;
     const CLenum DEVICE_QUEUE_PROPERTIES                    = 0x102A;
     const CLenum DEVICE_PROFILE                             = 0x102E;
     const CLenum DEVICE_VERSION                             = 0x102F;
-    const CLenum DEVICE_EXTENSIONS                          = 0x1030;
     const CLenum DEVICE_PLATFORM                            = 0x1031;
-    const CLenum DEVICE_PREFERRED_VECTOR_WIDTH_HALF         = 0x1034;
     const CLenum DEVICE_HOST_UNIFIED_MEMORY                 = 0x1035;
     const CLenum DEVICE_OPENCL_C_VERSION                    = 0x103D;
+
     const CLenum FP_DENORM                                  = 0x1;
     const CLenum FP_INF_NAN                                 = 0x2;
     const CLenum FP_ROUND_TO_NEAREST                        = 0x4;
@@ -130,22 +146,29 @@ typedef long CLint;
     const CLenum FP_ROUND_TO_INF                            = 0x10;
     const CLenum FP_FMA                                     = 0x20;
     const CLenum FP_SOFT_FLOAT                              = 0x40;
+
     const CLenum NONE                                       = 0x0;
     const CLenum READ_ONLY_CACHE                            = 0x1;
     const CLenum READ_WRITE_CACHE                           = 0x2;
+
     const CLenum LOCAL                                      = 0x1;
     const CLenum GLOBAL                                     = 0x2;
+
     const CLenum EXEC_KERNEL                                = 0x1;
-    const CLenum EXEC_NATIVE_KERNEL                         = 0x2;
+
     const CLenum QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE        = 0x1;
     const CLenum QUEUE_PROFILING_ENABLE                     = 0x2;
+
     const CLenum CONTEXT_DEVICES                            = 0x1081;
     const CLenum CONTEXT_PROPERTIES                         = 0x1082;
     const CLenum CONTEXT_NUM_DEVICES                        = 0x1083;
+
     const CLenum CONTEXT_PLATFORM                           = 0x1084;
+
     const CLenum QUEUE_CONTEXT                              = 0x1090;
     const CLenum QUEUE_DEVICE                               = 0x1091;
     const CLenum QUEUE_PROPERTIES                           = 0x1093;
+
     const CLenum MEM_READ_WRITE                             = 0x1;
     const CLenum MEM_WRITE_ONLY                             = 0x2;
     const CLenum MEM_READ_ONLY                              = 0x4;
@@ -163,6 +186,7 @@ typedef long CLint;
     const CLenum Rx                                         = 0x10BA;
     const CLenum RGx                                        = 0x10BB;
     const CLenum RGBx                                       = 0x10BC;
+
     const CLenum SNORM_INT8                                 = 0x10D0;
     const CLenum SNORM_INT16                                = 0x10D1;
     const CLenum UNORM_INT8                                 = 0x10D2;
@@ -178,61 +202,73 @@ typedef long CLint;
     const CLenum UNSIGNED_INT32                             = 0x10DC;
     const CLenum HALF_FLOAT                                 = 0x10DD;
     const CLenum FLOAT                                      = 0x10DE;
+
     const CLenum MEM_OBJECT_BUFFER                          = 0x10F0;
     const CLenum MEM_OBJECT_IMAGE2D                         = 0x10F1;
+
     const CLenum MEM_TYPE                                   = 0x1100;
     const CLenum MEM_FLAGS                                  = 0x1101;
     const CLenum MEM_SIZE                                   = 0x1102;
-    const CLenum MEM_HOST_PTR                               = 0x1103;
-    const CLenum MEM_MAP_COUNT                              = 0x1104;
+
     const CLenum MEM_CONTEXT                                = 0x1106;
     const CLenum MEM_ASSOCIATED_MEMOBJECT                   = 0x1107;
     const CLenum MEM_OFFSET                                 = 0x1108;
+
     const CLenum IMAGE_FORMAT                               = 0x1110;
     const CLenum IMAGE_ELEMENT_SIZE                         = 0x1111;
     const CLenum IMAGE_ROW_PITCH                            = 0x1112;
     const CLenum IMAGE_WIDTH                                = 0x1114;
     const CLenum IMAGE_HEIGHT                               = 0x1115;
+
     const CLenum ADDRESS_NONE                               = 0x1130;
     const CLenum ADDRESS_CLAMP_TO_EDGE                      = 0x1131;
     const CLenum ADDRESS_CLAMP                              = 0x1132;
     const CLenum ADDRESS_REPEAT                             = 0x1133;
     const CLenum ADDRESS_MIRRORED_REPEAT                    = 0x1134;
+
     const CLenum FILTER_NEAREST                             = 0x1140;
     const CLenum FILTER_LINEAR                              = 0x1141;
+
     const CLenum SAMPLER_CONTEXT                            = 0x1151;
     const CLenum SAMPLER_NORMALIZED_COORDS                  = 0x1152;
     const CLenum SAMPLER_ADDRESSING_MODE                    = 0x1153;
     const CLenum SAMPLER_FILTER_MODE                        = 0x1154;
+
     const CLenum MAP_READ                                   = 0x1;
     const CLenum MAP_WRITE                                  = 0x2;
+
     const CLenum PROGRAM_CONTEXT                            = 0x1161;
     const CLenum PROGRAM_NUM_DEVICES                        = 0x1162;
     const CLenum PROGRAM_DEVICES                            = 0x1163;
     const CLenum PROGRAM_SOURCE                             = 0x1164;
+
     const CLenum PROGRAM_BUILD_STATUS                       = 0x1181;
     const CLenum PROGRAM_BUILD_OPTIONS                      = 0x1182;
     const CLenum PROGRAM_BUILD_LOG                          = 0x1183;
-    const CLenum BUILD_SUCCESS                              = 0;
+
+    const CLint BUILD_SUCCESS                               = 0;
     const CLint BUILD_NONE                                  = -1;
     const CLint BUILD_ERROR                                 = -2;
     const CLint BUILD_IN_PROGRESS                           = -3;
+
     const CLenum KERNEL_FUNCTION_NAME                       = 0x1190;
     const CLenum KERNEL_NUM_ARGS                            = 0x1191;
     const CLenum KERNEL_CONTEXT                             = 0x1193;
     const CLenum KERNEL_PROGRAM                             = 0x1194;
+
     const CLenum KERNEL_WORK_GROUP_SIZE                     = 0x11B0;
     const CLenum KERNEL_COMPILE_WORK_GROUP_SIZE             = 0x11B1;
     const CLenum KERNEL_LOCAL_MEM_SIZE                      = 0x11B2;
     const CLenum KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE  = 0x11B3;
     const CLenum KERNEL_PRIVATE_MEM_SIZE                    = 0x11B4;
+
     const CLenum EVENT_COMMAND_QUEUE                        = 0x11D0;
     const CLenum EVENT_COMMAND_TYPE                         = 0x11D1;
     const CLenum EVENT_COMMAND_EXECUTION_STATUS             = 0x11D3;
     const CLenum EVENT_CONTEXT                              = 0x11D4;
+
     const CLenum COMMAND_NDRANGE_KERNEL                     = 0x11F0;
     const CLenum COMMAND_TASK                               = 0x11F1;
-    const CLenum COMMAND_NATIVE_KERNEL                      = 0x11F2;
     const CLenum COMMAND_READ_BUFFER                        = 0x11F3;
     const CLenum COMMAND_WRITE_BUFFER                       = 0x11F4;
     const CLenum COMMAND_COPY_BUFFER                        = 0x11F5;
@@ -241,39 +277,29 @@ typedef long CLint;
     const CLenum COMMAND_COPY_IMAGE                         = 0x11F8;
     const CLenum COMMAND_COPY_IMAGE_TO_BUFFER               = 0x11F9;
     const CLenum COMMAND_COPY_BUFFER_TO_IMAGE               = 0x11FA;
-    const CLenum COMMAND_MAP_BUFFER                         = 0x11FB;
-    const CLenum COMMAND_MAP_IMAGE                          = 0x11FC;
-    const CLenum COMMAND_UNMAP_MEM_OBJECT                   = 0x11FD;
     const CLenum COMMAND_MARKER                             = 0x11FE;
-    const CLenum COMMAND_ACQUIRE_GL_OBJECTS                 = 0x11FF;
-    const CLenum COMMAND_RELEASE_GL_OBJECTS                 = 0x1200;
     const CLenum COMMAND_READ_BUFFER_RECT                   = 0x1201;
     const CLenum COMMAND_WRITE_BUFFER_RECT                  = 0x1202;
     const CLenum COMMAND_COPY_BUFFER_RECT                   = 0x1203;
     const CLenum COMMAND_USER                               = 0x1204;
+
     const CLenum COMPLETE                                   = 0x0;
     const CLenum RUNNING                                    = 0x1;
     const CLenum SUBMITTED                                  = 0x2;
     const CLenum QUEUED                                     = 0x3;
+
     const CLenum PROFILING_COMMAND_QUEUED                   = 0x1280;
     const CLenum PROFILING_COMMAND_SUBMIT                   = 0x1281;
     const CLenum PROFILING_COMMAND_START                    = 0x1282;
     const CLenum PROFILING_COMMAND_END                      = 0x1283;
-    const CLenum DEVICE_SINGLE_FP_CONFIG                    = 0x101B;
-    const CLenum DEVICE_MAX_COMPUTE_UNITS                   = 0x1002;
-    const CLenum DEVICE_GLOBAL_MEM_SIZE                     = 0x101F;
-    const CLenum DEVICE_MEM_BASE_ADDR_ALIGN                 = 0x1019;
-    const CLenum DEVICE_COMPILER_AVAILABLE                  = 0x1028;
 
     [RaisesException] sequence<WebCLPlatform> getPlatforms();
 
-    [RaisesException] void waitForEvents(sequence<WebCLEvent> events);
+    [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(optional WebCLContextProperties properties);
 
-    [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(optional WebCLContextProperties webclContextProperties);
-
-    // FIXME: wrong return type.
-    [StrictTypeChecking, Custom, RaisesException] void getSupportedExtensions();
-
-    // FIXME: It lacks RaisesException extended attribute?
+    [StrictTypeChecking, Custom] sequence<DOMString> getSupportedExtensions();
     [StrictTypeChecking, Custom] any getExtension(DOMString name);
+
+    // FIXME: Lacks the last optional WebCLCallback whenFinished parameter.
+    [RaisesException] void waitForEvents(sequence<WebCLEvent> events);
 };
