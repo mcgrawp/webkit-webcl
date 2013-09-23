@@ -62,7 +62,7 @@ WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
     CCerror err = 0;
     switch (paramName) {
     case ComputeContext::MEM_TYPE: {
-        CCMemoryObjectype memoryType = 0;
+        CCMemoryObjectType memoryType = 0;
         err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &memoryType);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(memoryType));

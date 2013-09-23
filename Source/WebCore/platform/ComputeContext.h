@@ -329,118 +329,129 @@ public:
     static CCerror getDeviceIDs(CCPlatformID, CCDeviceType, Vector<CCDeviceID>&);
     static CCerror waitForEvents(const Vector<CCEvent>&);
 
-    CCCommandQueue createCommandQueue(CCDeviceID deviceId, int properties, CCerror& error);
+    CCCommandQueue createCommandQueue(CCDeviceID, CCCommandQueueProperties, CCerror&);
     CCEvent createUserEvent(CCerror&);
 
-    CCProgram createProgram(const String& kernelSource, CCerror& error);
+    CCProgram createProgram(const String& kernelSource, CCerror&);
     CCerror buildProgram(CCProgram, const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction);
     static CCerror setKernelArg(CCKernel, CCuint argIndex, size_t argSize, const void* argValue);
 
-    PlatformComputeObject createBuffer(int type, size_t size, void* data, CCerror& error);
-    PlatformComputeObject createSubBuffer(PlatformComputeObject, int type, int bufferCreatetype, CCBufferRegion *bufferCreateInfo, CCerror&);
-    PlatformComputeObject createImage2D(int type, int width, int height, CCuint rowPitch, const CCImageFormat&, void* data, CCerror&);
-    PlatformComputeObject createFromGLBuffer(int type, int bufferId, CCerror& error);
-    PlatformComputeObject createFromGLRenderbuffer(int type, GC3Dint renderbufferId, CCerror& error);
-    CCSampler createSampler(bool normalizedCoords, int addressingMode, int filterMode, CCerror& error);
-    PlatformComputeObject createFromGLTexture2D(int type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror& error);
+    PlatformComputeObject createBuffer(CCMemoryFlags type, size_t, void* data, CCerror&);
+    PlatformComputeObject createSubBuffer(PlatformComputeObject, CCMemoryFlags type, CCBufferCreateType bufferCreatetype, CCBufferRegion *bufferCreateInfo, CCerror&);
+    PlatformComputeObject createImage2D(CCMemoryFlags type, size_t width, size_t height, CCuint rowPitch, const CCImageFormat&, void* data, CCerror&);
+    PlatformComputeObject createFromGLBuffer(CCMemoryFlags type, GLuint bufferId, CCerror&);
+    PlatformComputeObject createFromGLRenderbuffer(CCMemoryFlags type, GC3Dint renderbufferId, CCerror&);
+    CCSampler createSampler(CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
+    PlatformComputeObject createFromGLTexture2D(CCMemoryFlags type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror&);
 
-    CCKernel createKernel(CCProgram program, const String& kernelName, CCerror& error);
-    Vector<CCKernel> createKernelsInProgram(CCProgram, CCerror& error);
+    CCKernel createKernel(CCProgram, const String& kernelName, CCerror&);
+    Vector<CCKernel> createKernelsInProgram(CCProgram, CCerror&);
 
-    CCerror supportedImageFormats(int /*type*/, int /*imageType*/, Vector<CCImageFormat>&);
+    CCerror supportedImageFormats(CCMemoryFlags, CCMemoryObjectType, Vector<CCImageFormat>&);
 
     template <typename T>
-    static CCerror getDeviceInfo(CCDeviceID device, int infoType, T* data) {
+    static CCerror getDeviceInfo(CCDeviceID device, CCDeviceInfoType infoType, T* data)
+    {
         return getInfoHelper(ComputeContext::getDeviceInfoBase, device, infoType, data);
     }
     template <typename T>
-    static CCerror getPlatformInfo(CCPlatformID platform, int infoType, T* data) {
+    static CCerror getPlatformInfo(CCPlatformID platform, CCPlatformInfoType infoType, T* data)
+    {
         return getInfoHelper(ComputeContext::getPlatformInfoBase, platform, infoType, data);
     }
     template <typename T>
-    static CCerror getProgramInfo(CCProgram program, int infoType, T* data) {
+    static CCerror getProgramInfo(CCProgram program, CCProgramInfoType infoType, T* data)
+    {
         return getInfoHelper(ComputeContext::getProgramInfoBase, program, infoType, data);
     }
     template <typename T>
-    static CCerror getCommandQueueInfo(CCCommandQueue commandQueue, int infoType, T* data) {
+    static CCerror getCommandQueueInfo(CCCommandQueue commandQueue, CCCommandQueueInfoType infoType, T* data)
+    {
         return getInfoHelper(ComputeContext::getCommandQueueInfoBase, commandQueue, infoType, data);
     }
     template <typename T>
-    static CCerror getEventInfo(CCEvent event, int infoType, T* data) {
+    static CCerror getEventInfo(CCEvent event, CCEventInfoType infoType, T* data)
+    {
         return getInfoHelper(ComputeContext::getEventInfoBase, event, infoType, data);
     }
     template <typename T>
-    static CCerror getEventProfilingInfo(CCEvent event, int infoType, T* data) {
+    static CCerror getEventProfilingInfo(CCEvent event, CCEventProfilingInfoType infoType, T* data)
+    {
         return getInfoHelper(ComputeContext::getEventProfilingInfoBase, event, infoType, data);
     }
     template <typename T>
-    static CCerror getImageInfo(PlatformComputeObject image, int infoType, T* data) {
+    static CCerror getImageInfo(PlatformComputeObject image, CCImageInfoType infoType, T* data)
+    {
         return getInfoHelper(ComputeContext::getImageInfoBase, image, infoType, data);
     }
     template <typename T>
-    static CCerror getGLTextureInfo(PlatformComputeObject image, int textureInfoType, T* data) {
+    static CCerror getGLTextureInfo(PlatformComputeObject image, CCImageTextureInfoType textureInfoType, T* data)
+    {
         return getInfoHelper(ComputeContext::getGLTextureInfoBase, image, textureInfoType, data);
     }
     template <typename T>
-    static CCerror getKernelInfo(CCKernel kernel, int infoType, T* data) {
+    static CCerror getKernelInfo(CCKernel kernel, CCKernelInfoType infoType, T* data)
+    {
         return getInfoHelper(ComputeContext::getKernelInfoBase, kernel, infoType, data);
     }
     template <typename T>
-        static CCerror getSamplerInfo(CCSampler sampler, int infoType, T* data) {
+    static CCerror getSamplerInfo(CCSampler sampler, CCSamplerInfoType infoType, T* data)
+    {
         return getInfoHelper(ComputeContext::getSamplerInfoBase, sampler, infoType, data);
     }
     template <typename T>
-    static CCerror getMemoryObjectInfo(PlatformComputeObject computeObject, int infoType, T* data) {
+    static CCerror getMemoryObjectInfo(PlatformComputeObject computeObject, CCMemInfoType infoType, T* data)
+    {
         return getInfoHelper(ComputeContext::getMemoryObjectInfoBase, computeObject, infoType, data);
     }
 
     template <typename T>
-    static CCerror getWorkGroupInfo(CCKernel kernel, CCDeviceID device, int infoType, T* data)
+    static CCerror getWorkGroupInfo(CCKernel kernel, CCDeviceID device, CCKernelWorkGroupInfoType infoType, T* data)
     {
         return getInfoHelper(ComputeContext::getWorkGroupInfoBase, kernel, device, infoType, data);
     }
 
     template <typename T>
-    static CCerror getBuildInfo(CCProgram program, CCDeviceID device, int infoType, T* data)
+    static CCerror getBuildInfo(CCProgram program, CCDeviceID device, CCProgramBuildInfoType infoType, T* data)
     {
         return getInfoHelper(ComputeContext::getBuildInfoBase, program, device, infoType, data);
     }
 
-    CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, int globalWorkItemDimensions,
-    size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, int eventWaitListLength, CCEvent* eventWaitList, CCEvent* event);
+    CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, CCuint globalWorkItemDimensions,
+        size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, CCuint eventsWaitListLength, CCEvent*WaitList, CCEvent*);
     CCerror enqueueBarrier(CCCommandQueue);
-    CCerror enqueueMarker(CCCommandQueue, CCEvent* event);
-    CCerror enqueueTask(CCCommandQueue, CCKernel, int eventWaitListLength, CCEvent* eventsWaitList, CCEvent* event);
-    // FIXME: bufferSize and offset are to be unsigned/size_t.
-    CCerror enqueueWriteBuffer(CCCommandQueue, PlatformComputeObject buffer, bool blockingWrite, int offset, int bufferSize,
-        void* baseAddress, unsigned eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
-    CCerror enqueueWriteBufferRect(CCCommandQueue, PlatformComputeObject, bool blockingWrite, size_t* bufferOriginArray,
-        size_t* hostOriginArray, size_t* regionArray, int bufferRowPitch, int bufferSlicePitch, int hostRowPitch, int hostSlicePitch,
-        void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
-    CCerror enqueueReadBuffer(CCCommandQueue, PlatformComputeObject buffer, bool blockingRead, int offset, int bufferSize,
-        void* baseAddress, unsigned eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
-    CCerror enqueueReadBufferRect(CCCommandQueue, PlatformComputeObject buffer, bool blockingRead, size_t* bufferOriginArray,
-        size_t* hostOriginArray, size_t* regionArray, int bufferRowPitch, int bufferSlicePitch, int hostRowPitch, int hostSlicePitch,
-        void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
-    CCerror enqueueReadImage(CCCommandQueue, PlatformComputeObject image, bool blockingRead, size_t* originArray, size_t* regionArray,
-        int rowPitch, int slicePitch, void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
-    CCerror enqueueWriteImage(CCCommandQueue, PlatformComputeObject image, bool blockingWrite, size_t* originArray, size_t* regionArray,
-        int rowPitch, int slicePitch, void* baseAddress, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
-    CCerror enqueueAcquireGLObjects(CCCommandQueue, const Vector<PlatformComputeObject>&, unsigned eventsLength,
-        CCEvent* eventsWaitList, CCEvent* event);
-    CCerror enqueueReleaseGLObjects(CCCommandQueue, const Vector<PlatformComputeObject>&, unsigned eventsLength,
-        CCEvent* eventsWaitList, CCEvent* event);
+    CCerror enqueueMarker(CCCommandQueue, CCEvent*);
+    CCerror enqueueTask(CCCommandQueue, CCKernel, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+
+    CCerror enqueueWriteBuffer(CCCommandQueue, PlatformComputeObject buffer, CCbool blockingWrite, size_t offset, size_t bufferSize,
+        void* baseAddress, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+    CCerror enqueueWriteBufferRect(CCCommandQueue, PlatformComputeObject, CCbool blockingWrite, size_t* bufferOriginArray,
+        size_t* hostOriginArray, size_t* regionArray, size_t bufferRowPitch, size_t bufferSlicePitch, size_t hostRowPitch, size_t hostSlicePitch,
+        void* baseAddress, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+    CCerror enqueueReadBuffer(CCCommandQueue, PlatformComputeObject buffer, CCbool blockingRead, size_t offset, size_t bufferSize,
+        void* baseAddress, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+    CCerror enqueueReadBufferRect(CCCommandQueue, PlatformComputeObject buffer, CCbool blockingRead, size_t* bufferOriginArray,
+        size_t* hostOriginArray, size_t* regionArray, size_t bufferRowPitch, size_t bufferSlicePitch, size_t hostRowPitch, size_t hostSlicePitch,
+        void* baseAddress, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+    CCerror enqueueReadImage(CCCommandQueue, PlatformComputeObject image, CCbool blockingRead, size_t* originArray, size_t* regionArray,
+        size_t rowPitch, size_t slicePitch, void* baseAddress, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+    CCerror enqueueWriteImage(CCCommandQueue, PlatformComputeObject image, CCbool blockingWrite, size_t* originArray, size_t* regionArray,
+        size_t rowPitch, size_t slicePitch, void* baseAddress, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+    CCerror enqueueAcquireGLObjects(CCCommandQueue, const Vector<PlatformComputeObject>&, CCuint eventsWaitListLength,
+        CCEvent* eventsWaitList, CCEvent*);
+    CCerror enqueueReleaseGLObjects(CCCommandQueue, const Vector<PlatformComputeObject>&, CCuint eventsWaitListLength,
+        CCEvent* eventsWaitList, CCEvent*);
     CCerror enqueueCopyImage(CCCommandQueue, PlatformComputeObject originImage, PlatformComputeObject targetImage, size_t* sourceOriginArray,
-        size_t* targetOriginArray, size_t* regionArray, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
+        size_t* targetOriginArray, size_t* regionArray, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
     CCerror enqueueCopyImageToBuffer(CCCommandQueue, PlatformComputeObject sourceImage, PlatformComputeObject targetBuffer,
-        size_t* sourceOriginArray, size_t* regionArray, int targetOffset, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
-    CCerror enqueueCopyBufferToImage(CCCommandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetImage, int srcOffset,
-        size_t* targetOriginArray, size_t* regionArray, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
+        size_t* sourceOriginArray, size_t* regionArray, size_t targetOffset, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+    CCerror enqueueCopyBufferToImage(CCCommandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetImage, size_t srcOffset,
+        size_t* targetOriginArray, size_t* regionArray, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
     CCerror enqueueCopyBuffer(CCCommandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
-        size_t sourceOffset, size_t targetOffset, size_t sizeInBytes, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
+        size_t sourceOffset, size_t targetOffset, size_t sizeInBytes, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
     CCerror enqueueCopyBufferRect(CCCommandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
-        size_t* sourceOriginArray, size_t* targetOriginArray, size_t* regionArray, int sourceRowPitch, int sourceSlicePitch,
-        int targetRowPitch, int targetSlicePitch, unsigned eventsLength, CCEvent* eventsWaitList, CCEvent* event);
+        size_t* sourceOriginArray, size_t* targetOriginArray, size_t* regionArray, size_t sourceRowPitch, size_t sourceSlicePitch,
+        size_t targetRowPitch, size_t targetSlicePitch, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
 
     CCerror releaseCommandQueue(CCCommandQueue);
     CCerror releaseEvent(CCEvent);
@@ -453,7 +464,7 @@ public:
 
     // temporary method, just useful because we are refactoring the code
     // just ComputeContext should know about the opencl internals.
-    cl_context context() const
+    CCContext context() const
     {
         return m_clContext;
     }
@@ -462,21 +473,21 @@ public:
 
     // XXX: Create a Pimpl implementation
 private:
-    static CCerror getDeviceInfoBase(CCDeviceID device, int infoType, size_t size, void *data, size_t* retSize);
-    static CCerror getPlatformInfoBase(CCPlatformID platform, int infoType, size_t size, void *data, size_t* retSize);
-    static CCerror getProgramInfoBase(CCProgram program, int infoType, size_t size, void *data, size_t* retSize);
-    static CCerror getCommandQueueInfoBase(CCCommandQueue commandQueue, int infoType, size_t size, void *data, size_t* retSize);
-    static CCerror getEventInfoBase(CCEvent event, int infoType, size_t size, void *data, size_t* retSize);
-    static CCerror getEventProfilingInfoBase(CCEvent device, int infoType, size_t size, void *data, size_t* retSize);
-    static CCerror getImageInfoBase(PlatformComputeObject computeObject, int infoType, size_t size, void *data, size_t* retSize);
-    static CCerror getGLTextureInfoBase(PlatformComputeObject computeObject, int infoType, size_t size, void *data, size_t* retSize);
-    static CCerror getKernelInfoBase(CCKernel kernel, int infoType, size_t size, void *data, size_t* retSize);
-    static CCerror getSamplerInfoBase(CCSampler sampler, int infoType, size_t size, void *data, size_t* retSize);
-    static CCerror getMemoryObjectInfoBase(PlatformComputeObject computeObject, int infoType, size_t size, void *data, size_t* retSize);
-    static CCerror getBuildInfoBase(CCProgram, CCDeviceID, int infoType, size_t size, void *data, size_t* retSize);
-    static CCerror getWorkGroupInfoBase(CCKernel, CCDeviceID, int infoType, size_t size, void *data, size_t* retSize);
+    static CCerror getDeviceInfoBase(CCDeviceID, CCDeviceInfoType, size_t, void *data, size_t* actualSize);
+    static CCerror getPlatformInfoBase(CCPlatformID, CCPlatformInfoType, size_t, void *data, size_t* actualSize);
+    static CCerror getProgramInfoBase(CCProgram, CCProgramInfoType, size_t, void *data, size_t* actualSize);
+    static CCerror getCommandQueueInfoBase(CCCommandQueue, CCCommandQueueInfoType, size_t, void *data, size_t* actualSize);
+    static CCerror getEventInfoBase(CCEvent, CCEventInfoType, size_t, void *data, size_t* actualSize);
+    static CCerror getEventProfilingInfoBase(CCEvent, CCEventProfilingInfoType, size_t, void *data, size_t* actualSize);
+    static CCerror getImageInfoBase(PlatformComputeObject, CCImageInfoType, size_t, void *data, size_t* actualSize);
+    static CCerror getGLTextureInfoBase(PlatformComputeObject, CCImageTextureInfoType, size_t, void *data, size_t* actualSize);
+    static CCerror getKernelInfoBase(CCKernel, CCKernelInfoType, size_t, void *data, size_t* actualSize);
+    static CCerror getSamplerInfoBase(CCSampler, CCSamplerInfoType, size_t, void *data, size_t* actualSize);
+    static CCerror getMemoryObjectInfoBase(PlatformComputeObject, CCMemInfoType, size_t, void *data, size_t* actualSize);
+    static CCerror getBuildInfoBase(CCProgram, CCDeviceID, CCProgramBuildInfoType, size_t, void *data, size_t* actualSize);
+    static CCerror getWorkGroupInfoBase(CCKernel, CCDeviceID, CCKernelWorkGroupInfoType, size_t, void *data, size_t* actualSize);
 
-    cl_context m_clContext;
+    CCContext m_clContext;
 };
 
 }
