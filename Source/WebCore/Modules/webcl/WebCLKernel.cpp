@@ -66,7 +66,7 @@ Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* c
 
     Vector<char> functionName;
     for (size_t i = 0 ; i < computeContextKernels.size(); i++) {
-        error = ComputeContext::getKernelInfo(computeContextKernels[i], ComputeContext::KERNEL_FUNCTION_NAME, functionName.data());
+        error = ComputeContext::getKernelInfo(computeContextKernels[i], ComputeContext::KERNEL_FUNCTION_NAME, &functionName);
         if (error != ComputeContext::SUCCESS) {
             ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
             kernels.clear();
