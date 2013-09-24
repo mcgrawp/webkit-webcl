@@ -491,23 +491,22 @@ PlatformComputeObject ComputeContext::createSubBuffer(PlatformComputeObject buff
 }
 
 // FIXME: ComputeContext::createImage
-PlatformComputeObject ComputeContext::createImage2D(int memoryFlags, int width, int height, const CCImageFormat& imageFormat, void* data, CCerror& error)
+PlatformComputeObject ComputeContext::createImage2D(int memoryFlags, int width, int height, CCuint rowPitch, const CCImageFormat& imageFormat,
+    void* data, CCerror& error)
 {
     cl_mem clMemoryImage = 0;
     cl_int clMemoryFlags = memoryFlags;
 
 #if defined(CL_VERSION_1_2)
-    cl_image_desc clImageDescriptor = {CL_MEM_OBJECT_IMAGE2D, static_cast<size_t>(width), static_cast<size_t>(height), 0 /*imageDepth*/, 0 /*arraySize*/, 0 /*rowPitch*/, 0 /*slicePitch*/, 0 /*numMipLevels*/, 0 /*numSamples*/, 0 /*buffer*/};
+    cl_image_desc clImageDescriptor = {CL_MEM_OBJECT_IMAGE2D, static_cast<size_t>(width), static_cast<size_t>(height), 0 /*imageDepth*/, 0 /*arraySize*/,
+        static_cast<size_t>(rowPitch), 0 /*slicePitch*/, 0 /*numMipLevels*/, 0 /*numSamples*/, 0 /*buffer*/};
     clImageDescriptor.image_width = width;
     clImageDescriptor.image_height = height;
+    clImageDescriptor.image_row_pitch = rowPitch;
 
-    // FIXME: we are hardcoding the image stride (i.e. row_pitch) as 0.
-    // This is either a bug on the spec, or a bug in our implementation.
-    clImageDescriptor.image_row_pitch = 0;
-    clMemoryImage = clCreateImage(m_clContext, clMemoryFlags, &imageFormat, &clImageDescriptor,
-        data, &error);
+    clMemoryImage = clCreateImage(m_clContext, clMemoryFlags, &imageFormat, &clImageDescriptor, data, &error);
 #else
-    clMemoryImage = clCreateImage2D(m_clContext, clMemoryFlags, &imageFormat, width, height, 0,
+    clMemoryImage = clCreateImage2D(m_clContext, clMemoryFlags, &imageFormat, width, height, rowPitch,
         data, &error);
 #endif
 

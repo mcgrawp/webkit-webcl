@@ -39,10 +39,10 @@ WebCLImage::~WebCLImage()
 {
 }
 
-PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, int flags, int width, int height, const CCImageFormat& format, void* data, ExceptionCode& ec)
+PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat& format, void* data, ExceptionCode& ec)
 {
     CCerror createImage2DError;
-    PlatformComputeObject ccMemoryImage = context->computeContext()->createImage2D(flags, width, height, format, data, createImage2DError);
+    PlatformComputeObject ccMemoryImage = context->computeContext()->createImage2D(flags, width, height, rowPitch, format, data, createImage2DError);
     if (createImage2DError != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(createImage2DError);
         return 0;
@@ -51,7 +51,7 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, int flags, int 
     return adoptRef(new WebCLImage(context, ccMemoryImage, width, height, format));
 }
 
-WebCLImage::WebCLImage(WebCLContext* context, PlatformComputeObject image, int width, int height, const CCImageFormat& format)
+WebCLImage::WebCLImage(WebCLContext* context, PlatformComputeObject image, CCuint width, CCuint height, const CCImageFormat& format)
     : WebCLMemoryObject(context, image)
     , m_width(width)
     , m_height(height)

@@ -76,11 +76,11 @@ public:
     virtual ~WebCLContext();
     static PassRefPtr<WebCLContext> create(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
 
-    PassRefPtr<WebCLBuffer> createBuffer(int memFlags, int sizeInBytes, ArrayBuffer*, ExceptionCode&);
+    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlags, CCuint sizeInBytes, ArrayBuffer*, ExceptionCode&);
 
     PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, int commandQueueProperty, ExceptionCode&);
 
-    PassRefPtr<WebCLImage> createImage(int flag, WebCLImageDescriptor*, ArrayBuffer*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage(CCenum flag, WebCLImageDescriptor*, ArrayBuffer*, ExceptionCode&);
 
     PassRefPtr<WebCLProgram> createProgram(const String& programSource, ExceptionCode&);
 
@@ -93,12 +93,12 @@ public:
     Vector<RefPtr<WebCLImageDescriptor> > getSupportedImageFormats(int memFlag, ExceptionCode&);
 
     // Strawman proposal
-    PassRefPtr<WebCLBuffer> createBuffer(int memFlag, ImageData*, ExceptionCode&);
-    PassRefPtr<WebCLBuffer> createBuffer(int memFlag, HTMLCanvasElement*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createImage(int memFlag, ImageData*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createImage(int memFlag, HTMLCanvasElement*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createImage(int memFlag, HTMLImageElement*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createImage(int memFlag, HTMLVideoElement*, ExceptionCode&);
+    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlag, ImageData*, ExceptionCode&);
+    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlag, HTMLCanvasElement*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage(CCenum memFlag, ImageData*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage(CCenum memFlag, HTMLCanvasElement*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage(CCenum memFlag, HTMLImageElement*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage(CCenum memFlag, HTMLVideoElement*, ExceptionCode&);
 
     class LRUImageBufferCache {
     public:
@@ -125,7 +125,7 @@ protected:
     void createCommandQueueBase(WebCLDevice*, int queueProperties, ExceptionCode&, RefPtr<T>& out);
 
 private:
-    PassRefPtr<WebCLImage> createImage2DBase(int flags, int width, int height, const CCImageFormat&, void*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat&, void*, ExceptionCode&);
 
     void releasePlatformObjectImpl();
 

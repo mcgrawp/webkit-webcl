@@ -42,15 +42,15 @@ namespace WebCore {
 class WebCLImage : public WebCLMemoryObject {
 public:
     ~WebCLImage();
-    static PassRefPtr<WebCLImage> create(WebCLContext*, int flags, int width, int height, const CCImageFormat&, void*, ExceptionCode&);
+    static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat&, void*, ExceptionCode&);
 
     PassRefPtr<WebCLImageDescriptor> getInfo(ExceptionCode&);
 
 protected:
-    WebCLImage(WebCLContext*, PlatformComputeObject image, int width, int height, const CCImageFormat& format);
+    WebCLImage(WebCLContext*, PlatformComputeObject image, CCuint width, CCuint height, const CCImageFormat&);
 
-    int m_width;
-    int m_height;
+    CCuint m_width;
+    CCuint m_height;
     CCImageFormat m_format;
 };
 

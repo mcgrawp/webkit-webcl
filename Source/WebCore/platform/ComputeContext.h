@@ -338,7 +338,7 @@ public:
 
     PlatformComputeObject createBuffer(int type, size_t size, void* data, CCerror& error);
     PlatformComputeObject createSubBuffer(PlatformComputeObject, int type, int bufferCreatetype, CCBufferRegion *bufferCreateInfo, CCerror&);
-    PlatformComputeObject createImage2D(int type, int width, int height, const CCImageFormat& imageFormat, void* data, CCerror& error);
+    PlatformComputeObject createImage2D(int type, int width, int height, CCuint rowPitch, const CCImageFormat&, void* data, CCerror&);
     PlatformComputeObject createFromGLBuffer(int type, int bufferId, CCerror& error);
     PlatformComputeObject createFromGLRenderbuffer(int type, GC3Dint renderbufferId, CCerror& error);
     CCSampler createSampler(bool normalizedCoords, int addressingMode, int filterMode, CCerror& error);
