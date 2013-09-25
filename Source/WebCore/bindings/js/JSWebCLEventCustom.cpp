@@ -31,21 +31,13 @@
 
 #include "JSWebCLEvent.h"
 
-#include "DOMWindow.h"
-#include "JSDOMBinding.h"
-#include "JSDOMGlobalObject.h"
-#include "JSDOMWindow.h"
-#include "JSImageData.h"
-#include "JSOESStandardDerivatives.h"
-#include "JSOESTextureFloat.h"
 #include "JSWebCLCustom.h"
-#include "JSWebCLFinishCallback.h"
-#include "NotImplemented.h"
-#include "WebCLGetInfo.h"
 
 using namespace JSC;
 
 namespace WebCore {
+
+class WebCLGetInfo;
 
 static PassRefPtr<WebCLFinishCallback> createFinishCallback(ExecState* exec, JSDOMGlobalObject* /*globalObject*/, JSValue value)
 {

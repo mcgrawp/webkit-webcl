@@ -1,17 +1,17 @@
 /*
  * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
  * are met:
- * 
+ *
  * 1.  Redistributions of source code must retain the above copyright
  *     notice, this list of conditions and the following disclaimer.
- * 
+ *
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
  * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
  * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -32,21 +32,18 @@
 
 #include "JSDictionary.h"
 #include "JSWebCLContext.h"
-#include "JSWebCLDevice.h"
-#include "JSWebCLPlatform.h"
 #include "JSWebCLGLContext.h"
-#include "JSWebGLRenderingContext.h"
-
-#include "WebCLContextProperties.h"
+#include "JSWebCLImage.h"
 #include "WebCLGLContextProperties.h"
 
-#include <runtime/JSFunction.h>
-
 using namespace JSC;
+
 
 namespace WebCore {
 
 class WebCLExtension;
+class WebCLGetInfo;
+class DOMGlobalObject;
 
 JSValue toJS(ExecState*, JSDOMGlobalObject*, const WebCLGetInfo&);
 JSValue toJS(ExecState*, JSDOMGlobalObject*, WebCLExtension*);

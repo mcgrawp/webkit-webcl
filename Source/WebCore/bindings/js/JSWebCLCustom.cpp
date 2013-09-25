@@ -1,17 +1,17 @@
 /*
  * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
  * are met:
- * 
+ *
  * 1.  Redistributions of source code must retain the above copyright
  *     notice, this list of conditions and the following disclaimer.
- * 
+ *
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
  * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
  * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -29,29 +29,26 @@
 
 #if ENABLE(WEBCL)
 
-#include "JSWebCL.h"
 #include "JSWebCLCustom.h"
 
 #include "JSFloat32Array.h"
 #include "JSInt32Array.h"
 #include "JSUint8Array.h"
-
+#include "JSWebCL.h"
 #include "JSWebCLCommandQueue.h"
-#include "JSWebCLContextProperties.h"
 #include "JSWebCLDevice.h"
 #include "JSWebCLGL.h"
-#include "JSWebCLImage.h"
+#include "JSWebCLGLContextProperties.h"
 #include "JSWebCLImageDescriptor.h"
-#include "JSWebCLMemoryObject.h"
 #include "JSWebCLPlatform.h"
 #include "JSWebCLProgram.h"
-#include "JSWebCLGLContextProperties.h"
-#include "WebCLExtension.h"
-#include "WebCLGL.h"
 
 using namespace JSC;
 
 namespace WebCore {
+
+class WebCLGetInfo;
+class WebCLExtension;
 
 JSValue JSWebCL::createContext(ExecState* exec)
 {

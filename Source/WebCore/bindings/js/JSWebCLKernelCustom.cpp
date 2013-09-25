@@ -31,21 +31,17 @@
 
 #include "JSWebCLKernel.h"
 
-#include "JSWebCLContext.h"
 #include "JSWebCLCustom.h"
 #include "JSWebCLDevice.h"
-#include "JSWebCLMemoryObject.h"
-#include "NotImplemented.h"
-#include "WebCLDevice.h"
-#include "WebCLGetInfo.h"
-#include "WebCLKernel.h"
 
 using namespace JSC;
 using namespace std;
 
 namespace WebCore {
 
-
+class WebCLDevice;
+class WebCLGetInfo;
+class WebCLKernel;
 
 JSValue JSWebCLKernel::getInfo(JSC::ExecState* exec)
 {

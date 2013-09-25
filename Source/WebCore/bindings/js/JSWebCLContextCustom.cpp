@@ -32,22 +32,18 @@
 #include "JSWebCLContext.h"
 
 #include "JSArrayBuffer.h"
-#include "JSImageData.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
 #include "JSHTMLVideoElement.h"
-#include "JSWebCLImage.h"
+#include "JSImageData.h"
 #include "JSWebCLCustom.h"
-#include "NotImplemented.h"
-#include "WebCLBuffer.h"
-#include "WebCLContext.h"
-#include "WebCLGetInfo.h"
-#include "WebCLImageDescriptor.h"
 
 using namespace JSC;
 using namespace std;
 
 namespace WebCore {
+
+class WebCLGetInfo;
 
 JSValue JSWebCLContext::getInfo(JSC::ExecState* exec)
 {

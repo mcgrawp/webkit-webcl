@@ -34,7 +34,6 @@
 #include "ScriptObject.h"
 #include "ScriptState.h"
 #include "WebCLKernelArgumentTypes.h"
-#include <wtf/MathExtras.h>
 
 using namespace JSC;
 using namespace WebCore;

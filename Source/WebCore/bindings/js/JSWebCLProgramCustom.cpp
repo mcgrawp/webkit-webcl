@@ -31,14 +31,8 @@
 
 #include "JSWebCLProgram.h"
 
-#include "JSWebCLContext.h"
 #include "JSWebCLCustom.h"
 #include "JSWebCLDevice.h"
-#include "JSWebCLFinishCallback.h"
-#include "NotImplemented.h"
-#include "WebCLDevice.h"
-#include "WebCLGetInfo.h"
-#include "WebCLProgram.h"
 
 using namespace JSC;
 using namespace std;

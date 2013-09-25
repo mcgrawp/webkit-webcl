@@ -36,14 +36,14 @@
 #include "JSWebGLBuffer.h"
 #include "JSWebGLRenderbuffer.h"
 #include "JSWebGLTexture.h"
-#include "WebCLGLObjectInfo.h"
-#include "WebGLBuffer.h"
-#include "WebGLRenderbuffer.h"
-#include "WebGLTexture.h"
 
 using namespace JSC;
 
 namespace WebCore {
+
+class WebGLBuffer;
+class WebGLRenderbuffer;
+class WebGLTexture;
 
 JSValue JSWebCLGLObjectInfo::glObject(ExecState* exec) const
 {

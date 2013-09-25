@@ -1,17 +1,17 @@
 /*
  * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
  * are met:
- * 
+ *
  * 1.  Redistributions of source code must retain the above copyright
  *     notice, this list of conditions and the following disclaimer.
- * 
+ *
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
  * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
  * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -29,48 +29,33 @@
 
 #if ENABLE(WEBCL)
 
-#include "JSDOMGlobalObject.h"
-#include "DOMWindow.h"
-#include "JSDOMWindow.h"
-#include "JSDOMBinding.h"
-#include "JSImageData.h"
-#include "JSOESStandardDerivatives.h"
-#include "JSOESTextureFloat.h"
-#include "NotImplemented.h"
-#include <runtime/Error.h>
-#include <runtime/JSArray.h>
-#include <wtf/FastMalloc.h>
-#include <runtime/JSFunction.h>
-#include "WebCLGetInfo.h"
 #include "JSWebCLMemoryObject.h"
+
 #include "JSWebCLCustom.h"
-#include <stdio.h>
 
 using namespace JSC;
 using namespace std;
 
-namespace WebCore { 
-
-
+namespace WebCore {
 
 JSValue JSWebCLMemoryObject::getInfo(JSC::ExecState* exec)
 {
-	if (exec->argumentCount() != 1)
-		return throwSyntaxError(exec);
+    if (exec->argumentCount() != 1)
+        return throwSyntaxError(exec);
 
-	ExceptionCode ec = 0;
-	WebCLMemoryObject* memObj = static_cast<WebCLMemoryObject*>(impl());	
-	if (exec->hadException())
-		return jsUndefined();
-	unsigned mem_info  = exec->argument(0).toInt32(exec);
-	if (exec->hadException())
-		return jsUndefined();
-	WebCLGetInfo info = memObj->getInfo(mem_info, ec);
-	if (ec) {
-		setDOMException(exec, ec);
-		return jsUndefined();
-	}
-	return toJS(exec, globalObject(), info);
+    ExceptionCode ec = 0;
+    WebCLMemoryObject* memObj = static_cast<WebCLMemoryObject*>(impl());
+    if (exec->hadException())
+        return jsUndefined();
+    unsigned mem_info  = exec->argument(0).toInt32(exec);
+    if (exec->hadException())
+        return jsUndefined();
+    WebCLGetInfo info = memObj->getInfo(mem_info, ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+    return toJS(exec, globalObject(), info);
 }
 } // namespace WebCore
 

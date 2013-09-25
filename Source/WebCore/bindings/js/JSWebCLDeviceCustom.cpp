@@ -29,27 +29,16 @@
 
 #if ENABLE(WEBCL)
 
-#include "JSDOMGlobalObject.h"
-#include "DOMWindow.h"
-#include "JSDOMWindow.h"
-#include "JSDOMBinding.h"
-#include "JSImageData.h"
-#include "JSOESStandardDerivatives.h"
-#include "JSOESTextureFloat.h"
-#include "NotImplemented.h"
-#include <runtime/Error.h>
-#include <runtime/JSArray.h>
-#include <wtf/FastMalloc.h>
-#include <runtime/JSFunction.h>
-#include "WebCLGetInfo.h"
 #include "JSWebCLDevice.h"
+
 #include "JSWebCLCustom.h"
-#include <stdio.h>
 
 using namespace JSC;
 using namespace std;
 
-namespace WebCore { 
+namespace WebCore {
+
+class WebCLGetInfo;
 
 JSValue JSWebCLDevice::getInfo(JSC::ExecState* exec)
 {

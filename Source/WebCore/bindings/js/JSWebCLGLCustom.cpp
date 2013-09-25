@@ -29,11 +29,14 @@
 
 #if ENABLE(WEBCL) && ENABLE(WEBGL)
 
-#include "JSWebCLCustom.h"
 #include "JSWebCLGL.h"
-#include "WebCLGLContextProperties.h"
+
+#include "JSWebCLCustom.h"
 
 using namespace JSC;
+
+class WebCLGLContext;
+class WebCLGLContextProperties;
 
 namespace WebCore {
 
