@@ -2,7 +2,7 @@ Test all devices available in one platform using a single context
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-FAIL WebCL: test all devices using a single context has failed. ; Message: INVALID_VALUE: DOM WebCL Exception -30
+PASS 
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -2,7 +2,7 @@ Testing WebCL resource management
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-FAIL Test WebCL resource management has failed; Message: INVALID_VALUE: DOM WebCL Exception -30
+FAIL Failed to create WebCLUserEvent 1.
 PASS successfullyParsed is true
 
 TEST COMPLETE
