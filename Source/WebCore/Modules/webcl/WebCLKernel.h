@@ -30,7 +30,8 @@
 
 #if ENABLE(WEBCL)
 
-#include "JSWebCLKernelCustom.h"
+#include "ExceptionCode.h"
+#include "WebCLGetInfo.h"
 #include "WebCLInputChecker.h"
 #include "WebCLMemoryObject.h"
 #include "WebCLObject.h"
@@ -60,22 +61,9 @@ public:
     void setArg(unsigned index, WebCLSampler*, ExceptionCode&);
     void setArg(unsigned index, ArrayBufferView*, ExceptionCode&);
 
-    void setArg(ScriptState*, unsigned index, const ScriptValue&, unsigned type, ExceptionCode&);
-    // FIXME:: Issue with default value. When user doesnt send argType using [Default=undefined] in IDL sends 0 as argType.
-    // Need to set default value as KERNEL_NULL_TYPE, since 0 also represents WebCLKernelArgumentTypes.CHAR as per specification.
-    void setArg(ScriptState* state, unsigned index, const ScriptValue& value, ExceptionCode& ec)
-    {
-        setArg(state, index, value, WebCLKernelArgumentTypes::KERNEL_NULL_TYPE, ec);
-    }
-
     void setDevice(PassRefPtr<WebCLDevice>);
 private:
     WebCLKernel(WebCLContext*, WebCLProgram*, CCKernel, const String&);
-
-    template <class T>
-    void setArgHelper(unsigned argIndex, ScriptState*, const ScriptValue& jsArgValue, unsigned vectorSize, ExceptionCode&);
-    void setArgHelper(unsigned argIndex, ScriptState*, const ScriptValue& jsArgValue, ExceptionCode&);
-    void setMemoryArgHelper(unsigned argIndex, ScriptState*, const ScriptValue& jsArgValue, ExceptionCode&);
 
     void releasePlatformObjectImpl();
 
@@ -84,55 +72,6 @@ private:
     String m_kernelName;
     RefPtr<WebCLDevice> m_deviceID;
 };
-
-template<typename T>
-inline void WebCLKernel::setArgHelper(unsigned argIndex, ScriptState* state, const ScriptValue& jsArgValue, unsigned vectorSize, ExceptionCode& ec)
-{
-    Vector<T> argValue;
-    if (jsDecodeKernelArgValue(state, jsArgValue.jsValue(), vectorSize, argValue)) {
-        ec = WebCLException::INVALID_KERNEL_ARGS;
-        return;
-    }
-    size_t argSize = sizeof(T) * (vectorSize ? vectorSize : 1);
-    CCerror err = ComputeContext::setKernelArg(platformObject(), argIndex, argSize, argValue.data());
-    ASSERT(err != ComputeContext::SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-}
-
-// Helper for __local kernel variables.
-inline void WebCLKernel::setArgHelper(unsigned argIndex, ScriptState* state, const ScriptValue& jsArgValue, ExceptionCode& ec)
-{
-    Vector<size_t> argValue;
-    unsigned vectorSize = 0;
-    if (jsDecodeKernelArgValue(state, jsArgValue.jsValue(), vectorSize, argValue)) {
-        ec = WebCLException::INVALID_KERNEL_ARGS;
-        return;
-    }
-    if (argValue.size() < 1) {
-        ec = WebCLException::INVALID_ARG_VALUE;
-        return;
-    }
-
-    CCerror err = ComputeContext::setKernelArg(platformObject(), argIndex, argValue[0], 0 /* __local kernel variables must not be initialised. */);
-    ASSERT(err != ComputeContext::SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-}
-
-inline void WebCLKernel::setMemoryArgHelper(unsigned argIndex, ScriptState* state, const ScriptValue& jsArgValue, ExceptionCode& ec)
-{
-    RefPtr<WebCLMemoryObject> argValue = jsDecodeKernelArgValue(state, jsArgValue.jsValue());
-    if (!argValue) {
-        ec = WebCLException::INVALID_KERNEL_ARGS;
-        return;
-    }
-    if (!WebCLInputChecker::validateWebCLObject(argValue.get())) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
-        return;
-    }
-    PlatformComputeObject ccMemoryObject = argValue->platformObject();
-    CCerror err = ComputeContext::setKernelArg(platformObject(), argIndex, sizeof(PlatformComputeObject), &ccMemoryObject);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
-}
 
 } // namespace WebCore
 

@@ -35,13 +35,7 @@ typedef unsigned long CLtype;
     [StrictTypeChecking, Custom, RaisesException] void getInfo (CLenum kernelInfo);
     [StrictTypeChecking, Custom, RaisesException] void getWorkGroupInfo(WebCLDevice device, CLenum paramName);
 
-    [CallWith=ScriptState, RaisesException] void setArg(
-        CLuint index,
-        any value,
-        optional CLtype type);
-
     [RaisesException] void setArg(CLuint index, WebCLMemoryObject value);
     [RaisesException] void setArg(CLuint index, WebCLSampler value);
     [RaisesException] void setArg(CLuint index, ArrayBufferView value);
-
 };
