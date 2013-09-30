@@ -42,61 +42,24 @@ class WebCLGetInfo;
 
 JSValue JSWebCLCommandQueue::getInfo(JSC::ExecState* exec)
 {
-	if (exec->argumentCount() != 1)
-		return throwSyntaxError(exec);
+    if (exec->argumentCount() != 1)
+        return throwSyntaxError(exec);
 
-	ExceptionCode ec = 0;
-	WebCLCommandQueue*  queue = static_cast<WebCLCommandQueue*>(impl());
-	if (exec->hadException())
-		return jsUndefined();
-	unsigned queue_info  = exec->argument(0).toInt32(exec);
-	if (exec->hadException())
-		return jsUndefined();
-	WebCLGetInfo info = queue->getInfo(queue_info, ec);
-	if (ec) {
-		setDOMException(exec, ec);
-		return jsUndefined();
-	}
-	return toJS(exec, globalObject(), info);
+    ExceptionCode ec = 0;
+    WebCLCommandQueue* queue = static_cast<WebCLCommandQueue*>(impl());
+    if (exec->hadException())
+        return jsUndefined();
+    unsigned queueInfo = exec->argument(0).toInt32(exec);
+    if (exec->hadException())
+        return jsUndefined();
+    WebCLGetInfo info = queue->getInfo(queueInfo, ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+    return toJS(exec, globalObject(), info);
 }
 
-JSValue JSWebCLCommandQueue::finish(ExecState* exec)
-{
-	/*
-	if (exec->argumentCount() != 2)
-		return throwSyntaxError(exec);
-
-	//WebCLCommandQueue* queue  = toWebCLCommandQueue(exec->argument(0));
-	if (exec->hadException())
-		return jsUndefined();
-
-	ExceptionCode ec = 0;
-	RefPtr<WebCLFinishCallback> finishCallback = createFinishCallback(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(0));
-	if (exec->hadException())
-		return jsUndefined();
-	ASSERT(finishCallback);
-
-	unsigned userParam  = exec->argument(1).toInt32(exec);
-	if (exec->hadException())
-		return jsUndefined();
-
-	//m_impl->finish(queue ,finishCallback.release(), userParam);
-	m_impl->finish(finishCallback.release(), userParam, ec);
-	if (ec) {
-		setDOMException(exec, ec);
-		return jsUndefined();
-	}
-	return jsUndefined();
-	*/
-	ExceptionCode ec = 0;
-	WebCLCommandQueue*  queue = static_cast<WebCLCommandQueue*>(impl());
-	queue->finish(ec);
-	if (ec) {
-		setDOMException(exec, ec);
-		return jsUndefined();
-	}
-	return jsUndefined();
-}
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

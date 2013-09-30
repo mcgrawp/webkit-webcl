@@ -163,7 +163,7 @@ typedef unsigned long CLuint;
 
     [RaisesException] void enqueueMarker(WebCLEvent event);
 
-    [Custom, RaisesException] void finish();
+    [RaisesException] void finish();
 
     [RaisesException] void flush();
 };
