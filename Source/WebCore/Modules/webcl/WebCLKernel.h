@@ -35,13 +35,18 @@
 #include "WebCLMemoryObject.h"
 #include "WebCLObject.h"
 
+namespace WTF {
+class ArrayBufferView;
+}
+
 namespace WebCore {
 
 class WebCLGetInfo;
 class WebCLContext;
 class WebCLDevice;
 class WebCLProgram;
-class WebCLKernelArgumentTypes;
+class WebCLMemoryObject;
+class WebCLSampler;
 
 class WebCLKernel : public WebCLObject<CCKernel> {
 public:
@@ -50,6 +55,10 @@ public:
     static Vector<RefPtr<WebCLKernel> > createKernelsInProgram(WebCLContext*, WebCLProgram*, ExceptionCode&);
     WebCLGetInfo getInfo(int, ExceptionCode&);
     WebCLGetInfo getWorkGroupInfo(WebCLDevice*, int, ExceptionCode&);
+
+    void setArg(unsigned index, WebCLMemoryObject*, ExceptionCode&);
+    void setArg(unsigned index, WebCLSampler*, ExceptionCode&);
+    void setArg(unsigned index, ArrayBufferView*, ExceptionCode&);
 
     void setArg(ScriptState*, unsigned index, const ScriptValue&, unsigned type, ExceptionCode&);
     // FIXME:: Issue with default value. When user doesnt send argType using [Default=undefined] in IDL sends 0 as argType.

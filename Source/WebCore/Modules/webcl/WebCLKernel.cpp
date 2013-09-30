@@ -1,29 +1,29 @@
 /*
-* Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided the following conditions
-* are met:
-*
-* 1.  Redistributions of source code must retain the above copyright
-*     notice, this list of conditions and the following disclaimer.
-*
-* 2.  Redistributions in binary form must reproduce the above copyright
-*     notice, this list of conditions and the following disclaimer in the
-*     documentation and/or other materials provided with the distribution.
-*
-* THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
-* CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
-* BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-* FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL SAMSUNG
-* ELECTRONICS CORPORATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING
-* BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-* DATA, OR PROFITS, OR BUSINESS INTERRUPTION), HOWEVER CAUSED AND ON ANY THEORY
-* OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING
-* NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-* EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
+ * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL SAMSUNG
+ * ELECTRONICS CORPORATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS, OR BUSINESS INTERRUPTION), HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING
+ * NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #include "config.h"
 
@@ -36,6 +36,18 @@
 #include "WebCLGetInfo.h"
 #include "WebCLImageDescriptor.h"
 #include "WebCLProgram.h"
+#include "WebCLException.h"
+#include "WebCLMemoryObject.h"
+#include "WebCLSampler.h"
+
+#include <wtf/ArrayBufferView.h>
+#include <wtf/Float32Array.h>
+#include <wtf/Int16Array.h>
+#include <wtf/Int32Array.h>
+#include <wtf/Int8Array.h>
+#include <wtf/Uint16Array.h>
+#include <wtf/Uint32Array.h>
+#include <wtf/Uint8Array.h>
 
 namespace WebCore {
 
@@ -184,6 +196,90 @@ void WebCLKernel::releasePlatformObjectImpl()
 {
     CCerror computeContextErrorCode = m_context->computeContext()->releaseKernel(platformObject());
     ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+}
+
+void WebCLKernel::setArg(unsigned index, WebCLMemoryObject* memoryObject, ExceptionCode& ec)
+{
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_KERNEL;
+        return;
+    }
+
+    if (!WebCLInputChecker::validateWebCLObject(memoryObject)) {
+        ec = WebCLException::INVALID_MEM_OBJECT;
+        return;
+    }
+
+    PlatformComputeObject ccMemoryObject = memoryObject->platformObject();
+    CCerror err = ComputeContext::setKernelArg(platformObject(), index, sizeof(PlatformComputeObject), &ccMemoryObject);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+}
+
+void WebCLKernel::setArg(unsigned index, WebCLSampler* sampler, ExceptionCode& ec)
+{
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_KERNEL;
+        return;
+    }
+
+    if (!WebCLInputChecker::validateWebCLObject(sampler)) {
+        ec = WebCLException::INVALID_SAMPLER;
+        return;
+    }
+
+    CCSampler ccSampler = sampler->platformObject();
+    CCerror err = ComputeContext::setKernelArg(platformObject(), index, sizeof(CCSampler), &ccSampler);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+}
+
+void WebCLKernel::setArg(unsigned index, ArrayBufferView* bufferView, ExceptionCode& ec)
+{
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_KERNEL;
+        return;
+    }
+
+    if (!bufferView) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
+    void* bufferData = 0;
+
+    // FIXME: Add support for LONG, ULONG, HALF and DOUBLE types.
+    // These need Int/Uint64Array, as well as Float16Array.
+    // FIXME2: add support for LOCAL.
+    switch(bufferView->getType()) {
+    case (ArrayBufferView::TypeFloat32): // FLOAT
+        bufferData = static_cast<Float32Array*>(bufferView)->data();
+        break;
+    case (ArrayBufferView::TypeUint32): // UINT
+        bufferData = static_cast<Uint32Array*>(bufferView)->data();
+        break;
+    case (ArrayBufferView::TypeInt32):  // INT
+        bufferData = static_cast<Int32Array*>(bufferView)->data();
+        break;
+    case (ArrayBufferView::TypeUint16): // USHORT
+        bufferData = static_cast<Uint16Array*>(bufferView)->data();
+        break;
+    case (ArrayBufferView::TypeInt16): // SHORT
+        bufferData = static_cast<Int16Array*>(bufferView)->data();
+        break;
+    case (ArrayBufferView::TypeUint8): // UCHAR
+        bufferData = static_cast<Uint8Array*>(bufferView)->data();
+        break;
+    case (ArrayBufferView::TypeInt8): // CHAR
+        bufferData = static_cast<Int8Array*>(bufferView)->data();
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
+    size_t bufferDataSize = bufferView->byteLength();
+    CCerror err = ComputeContext::setKernelArg(platformObject(), index, bufferDataSize, bufferData);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
 void WebCLKernel::setArg(ScriptState* state, unsigned argIndex, const ScriptValue& value, unsigned argType, ExceptionCode& ec)
