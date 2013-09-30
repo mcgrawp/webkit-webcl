@@ -452,16 +452,14 @@ function executeKernel() {
     var localWorkSize = new Int32Array(1);
     localWorkSize[0] = wgSize;
 
-    var types = WebCLKernelArgumentTypes;
-
     clKernel.setArg(0, colorBuffer);
     clKernel.setArg(1, seedBuffer);
     clKernel.setArg(2, sphereBuffer);
     clKernel.setArg(3, cameraBuffer);
-    clKernel.setArg(4, sphereCount, types.UINT);
-    clKernel.setArg(5, canvas.width, types.INT);
-    clKernel.setArg(6, canvas.height, types.INT);
-    clKernel.setArg(7, currentSample, types.INT);
+    clKernel.setArg(4, new Uint32Array([sphereCount]));
+    clKernel.setArg(5, new Int32Array([canvas.width]));
+    clKernel.setArg(6, new Int32Array([canvas.height]));
+    clKernel.setArg(7, new Int32Array([currentSample]));
     clKernel.setArg(8, pixelBuffer);
 
     try {

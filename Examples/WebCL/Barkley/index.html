@@ -13,7 +13,6 @@ var n = 512, n2 = n - 2, kBarkley, kShow, b0, b1, ev,
     data, bufPix, outBuffer, bufSize = 2 * n * n, bufPixelSize = 4 * n * n,
     delay = 0, frames = 0, time, frTimer, animation,
     a = 0.8, b = 0.01, dt = 0.05, eps = 0.02, h = 0.5;
-var types = WebCLKernelArgumentTypes;
 var ctx, program, cmdQueue, platform, kernelSrc;
 var useGPU = true;
 
@@ -55,11 +54,11 @@ function initWebCL() {
         b1 = ctx.createBuffer(webcl.MEM_READ_WRITE, 4 * bufSize);
 
         kBarkley = program.createKernel("kBarkley");
-        kBarkley.setArg(2, 1 / a, types.FLOAT);
-        kBarkley.setArg(3, b / a, types.FLOAT);
-        kBarkley.setArg(4, dt, types.FLOAT);
-        kBarkley.setArg(5, dt / eps, types.FLOAT);
-        kBarkley.setArg(6, dt / (h * h), types.FLOAT);
+        kBarkley.setArg(2, new Float32Array([1 / a]));
+        kBarkley.setArg(3, new Float32Array([b / a]));
+        kBarkley.setArg(4, new Float32Array([dt]));
+        kBarkley.setArg(5, new Float32Array([dt / eps]));
+        kBarkley.setArg(6, new Float32Array([dt / (h * h)]));
 
         bufPix = ctx.createBuffer(webcl.MEM_WRITE_ONLY, bufPixelSize);
         kShow = program.createKernel("kShow");
@@ -172,9 +171,9 @@ function setK(v) {
 function setDt(v) {
     var dth2 = v.valueOf();
     var t = 16 + 4 / (dth2 * dth2);
-    kRelax.setArg(3, 4 / t, types.FLOAT);
-    kRelax.setArg(4, 2 / (dth2 * t), types.FLOAT);
-    kRelax2.setArg(2, -2 / dth2, types.FLOAT);
+    kRelax.setArg(3, new Float32Array([4 / t]));
+    kRelax.setArg(4, new Float32Array([2 / (dth2 * t)]));
+    kRelax2.setArg(2, new Float32Array([-2 / dth2]));
 }
 
 function setDelay(val) {

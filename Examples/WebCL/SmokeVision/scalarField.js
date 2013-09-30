@@ -103,13 +103,13 @@ ScalarField.prototype.draw = function (viewer) {
 
     volumeRayMarchingKernel.setArg(0, pixelBuffer);
     volumeRayMarchingKernel.setArg(1, scalarBuffer);
-    volumeRayMarchingKernel.setArg(2, canvas.width, WebCLKernelArgumentTypes.UINT);
-    volumeRayMarchingKernel.setArg(3, canvas.height, WebCLKernelArgumentTypes.UINT);
-    volumeRayMarchingKernel.setArg(4, (canvas.height / 2) / Math.tan(Math.PI / 8), WebCLKernelArgumentTypes.FLOAT);
-    volumeRayMarchingKernel.setArg(5, -cubePos, WebCLKernelArgumentTypes.FLOAT);
-    volumeRayMarchingKernel.setArg(6, 2.0, WebCLKernelArgumentTypes.FLOAT); // TODO: magic number.
-    volumeRayMarchingKernel.setArg(7, this.dim, WebCLKernelArgumentTypes.UINT);
-    volumeRayMarchingKernel.setArg(8, ds, WebCLKernelArgumentTypes.FLOAT);
+    volumeRayMarchingKernel.setArg(2, new Uint32Array([canvas.width]);
+    volumeRayMarchingKernel.setArg(3, new Uint32Array([canvas.height]);
+    volumeRayMarchingKernel.setArg(4, new Float32Array([((canvas.height / 2) / Math.tan(Math.PI / 8))]);
+    volumeRayMarchingKernel.setArg(5, new Float32Array([-cubePos]);
+    volumeRayMarchingKernel.setArg(6, new Float32Array[(2.0]);
+    volumeRayMarchingKernel.setArg(7, new Uint32Array([this.dim]);
+    volumeRayMarchingKernel.setArg(8, new Float32Array([ds]);
 
     try {
         var globalWS = new Int32Array(2);
@@ -158,8 +158,8 @@ ScalarField.prototype.addField = function (source) {
     try {
         scalarAddKernel.setArg(0, scalarBuffer);
         scalarAddKernel.setArg(1, scalarSourceBuffer);
-        scalarAddKernel.setArg(2, this.dim, WebCLKernelArgumentTypes.UINT);
-        scalarAddKernel.setArg(3, this.dt, WebCLKernelArgumentTypes.FLOAT);
+        scalarAddKernel.setArg(2, new Uint32Array([this.dim]);
+        scalarAddKernel.setArg(3, new Float32Array([this.dt]);
 
         var start = Date.now();
         clQueue.enqueueNDRangeKernel(scalarAddKernel, null, globalWS, null);
@@ -178,7 +178,7 @@ ScalarField.prototype.diffusion = function () {
     try {
         scalarCopyKernel.setArg(0, scalarBuffer);
         scalarCopyKernel.setArg(1, scalarTempBuffer);
-        scalarCopyKernel.setArg(2, this.dim, WebCLKernelArgumentTypes.UINT);
+        scalarCopyKernel.setArg(2, new Uint32Array([this.dim]);
 
         var start = Date.now();
         clQueue.enqueueNDRangeKernel(scalarCopyKernel, null, globalWS, null);
@@ -187,9 +187,9 @@ ScalarField.prototype.diffusion = function () {
         for (i = 0; i < 20; i++) {
             scalarDiffusionKernel.setArg(0, scalarBuffer);
             scalarDiffusionKernel.setArg(1, scalarTempBuffer);
-            scalarDiffusionKernel.setArg(2, this.dim, WebCLKernelArgumentTypes.UINT);
-            scalarDiffusionKernel.setArg(3, this.dt, WebCLKernelArgumentTypes.FLOAT);
-            scalarDiffusionKernel.setArg(4, this.viscosity, WebCLKernelArgumentTypes.FLOAT);
+            scalarDiffusionKernel.setArg(2, new Uint32Array([this.dim]);
+            scalarDiffusionKernel.setArg(3, new Float32Array([this.dt]);
+            scalarDiffusionKernel.setArg(4, new Float32Array([this.viscosity]);
 
             start = Date.now();
             clQueue.enqueueNDRangeKernel(scalarDiffusionKernel, null, globalWS, null);
@@ -209,7 +209,7 @@ ScalarField.prototype.advection = function () {
     try {
         scalarCopyKernel.setArg(0, scalarBuffer);
         scalarCopyKernel.setArg(1, scalarTempBuffer);
-        scalarCopyKernel.setArg(2, this.dim, WebCLKernelArgumentTypes.UINT);
+        scalarCopyKernel.setArg(2, new Uint32Array([this.dim]);
 
         var start = Date.now();
         clQueue.enqueueNDRangeKernel(scalarCopyKernel, null, globalWS, null);
@@ -219,8 +219,8 @@ ScalarField.prototype.advection = function () {
         scalarAdvectionKernel.setArg(0, scalarBuffer);
         scalarAdvectionKernel.setArg(1, scalarTempBuffer);
         scalarAdvectionKernel.setArg(2, vectorBuffer);
-        scalarAdvectionKernel.setArg(3, this.dim, WebCLKernelArgumentTypes.UINT);
-        scalarAdvectionKernel.setArg(4, this.dt, WebCLKernelArgumentTypes.FLOAT);
+        scalarAdvectionKernel.setArg(3, new Uint32Array([this.dim]);
+        scalarAdvectionKernel.setArg(4, new Float32Array([this.dt]);
 
         start = Date.now();
         clQueue.enqueueNDRangeKernel(scalarAdvectionKernel, null, globalWS, null);
@@ -238,7 +238,7 @@ ScalarField.prototype.setBoundaryDensities = function () {
 
     try {
         scalarBoundariesKernel.setArg(0, scalarBuffer);
-        scalarBoundariesKernel.setArg(1, this.dim, WebCLKernelArgumentTypes.UINT);
+        scalarBoundariesKernel.setArg(1, Uint32Array([this.dim]);
 
         var start = Date.now();
         clQueue.enqueueNDRangeKernel(scalarBoundariesKernel, null, globalWS, null);

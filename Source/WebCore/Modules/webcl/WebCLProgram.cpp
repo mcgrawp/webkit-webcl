@@ -38,6 +38,8 @@
 #include "WebCLInputChecker.h"
 #include "WebCLKernel.h"
 
+#include <wtf/text/StringBuilder.h>
+
 namespace WebCore {
 
 WebCLProgram::~WebCLProgram()

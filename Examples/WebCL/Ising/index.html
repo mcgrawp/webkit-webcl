@@ -15,7 +15,6 @@ var ctx_c, n = 512, it = 100, bufSize = 4 * n * n, bufW, ev,
     frames = 0, animation = "animate", time, delay = 0, frTimer;
 var kSpin, kPix, cmdQueue, iSpin, iSpin1, bufRand, bufW,
     bufWSize = 4 * 5, bufPix, outBuffer;
-var types = WebCLKernelArgumentTypes;
 var useGPU = true;
 var globalWorkSize = new Int32Array([n, n]);
 var localWorkSize = new Int32Array(2);
@@ -105,13 +104,13 @@ function draw() {
     for (i = 0; i < it;  i++) {
         kSpin.setArg(0, iSpin);
         kSpin.setArg(2, iSpin1);
-        kSpin.setArg(3, 0, types.INT);
+        kSpin.setArg(3, new Int32Array([0]));
         cmdQueue.enqueueNDRangeKernel(kSpin, 0, globalWorkSize, localWorkSize);
         cmdQueue.flush();
 
         kSpin.setArg(0, iSpin1);
         kSpin.setArg(2, iSpin);
-        kSpin.setArg(3, 1, types.INT);
+        kSpin.setArg(3, new Int32Array([1]));
         cmdQueue.enqueueNDRangeKernel(kSpin, 0, globalWorkSize, localWorkSize);
         cmdQueue.flush();
     }

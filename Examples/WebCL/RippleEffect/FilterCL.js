@@ -110,15 +110,14 @@ function runFilterCL(t, cx, cy, diag) {
 function runRippleCL(t, cx, cy, diag) {
     // Set the arguments to our compute kernel
     //
-    var type = WebCLKernelArgumentTypes;
     filterKernel.setArg(0, inputBuffer);
     filterKernel.setArg(1, outputBuffer);
-    filterKernel.setArg(2, width,  type.INT);
-    filterKernel.setArg(3, height, type.INT);
-    filterKernel.setArg(4, diag, type.FLOAT);
-    filterKernel.setArg(5, t,  type.INT);
-    filterKernel.setArg(6, cx, type.INT);
-    filterKernel.setArg(7, cy, type.INT);
+    filterKernel.setArg(2, new Int32Array([width]));
+    filterKernel.setArg(3, new Int32Array([height]));
+    filterKernel.setArg(4, new Float32Array([diag]));
+    filterKernel.setArg(5, new Int32Array([t]));
+    filterKernel.setArg(6, new Int32Array([cx]));
+    filterKernel.setArg(7, new Int32Array([cy]));
 
     globalThreads[0] = width;
     globalThreads[1] = height;

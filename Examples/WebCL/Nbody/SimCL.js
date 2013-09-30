@@ -207,22 +207,21 @@ function SimulateCL(cl) {
             queue.enqueueAcquireGLObjects([curPosBuffer]);
             queue.enqueueAcquireGLObjects([curVelBuffer]);
         }
-        var karg = WebCLKernelArgumentTypes;
         kernel.setArg(0, curPosBuffer);
         kernel.setArg(1, curVelBuffer);
-        kernel.setArg(2, NBODY, karg.INT);
-        kernel.setArg(3, DT, karg.FLOAT);
-        kernel.setArg(4, EPSSQR, karg.INT);
+        kernel.setArg(2, new Int32Array([NBODY]));
+        kernel.setArg(3, new Float32Array([DT]));
+        kernel.setArg(4, new Int32Array([EPSSQR]));
         //5 set below, depends on CPU or GPU
         kernel.setArg(6, nxtPosBuffer);
         kernel.setArg(7, nxtVelBuffer);
 
         if (userData.gpu) {
             var localMemSize = localWorkSize[0] * POS_ATTRIB_SIZE * Float32Array.BYTES_PER_ELEMENT;
-            kernel.setArg(5, localMemSize, karg.LOCAL_MEMORY_SIZE);
+            //kernel.setArg(5, localMemSize, karg.LOCAL_MEMORY_SIZE);
             queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, null);
         } else {
-            kernel.setArg(5, bodyCountPerGroup, karg.INT);
+            kernel.setArg(5, new Int32Array([bodyCountPerGroup]));
             queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
         }
 

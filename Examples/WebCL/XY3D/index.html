@@ -71,7 +71,7 @@ function randCL() {
         kSpin = program.createKernel("kSpin");
         kSpin.setArg(0, bSpin);
         kSpin.setArg(1, bufRand);
-        kSpin.setArg(3, 1 / T, WebCLKernelArgumentTypes.FLOAT);
+        kSpin.setArg(3, new Float32Array([1 / T]));
         kPix = program.createKernel("kPix");
         kPix.setArg(0, bSpin);
         kPix.setArg(1, bufPix);
@@ -112,11 +112,11 @@ function initSpinBuffer() {
 function step() {
     var i;
     for (i = 0; i < it; i++) {
-        kSpin.setArg(2, 0, WebCLKernelArgumentTypes.INT);
+        kSpin.setArg(2, new Int32Array([0]));
         cmdQueue.enqueueNDRangeKernel(kSpin, 0, GLOBAL_WORK_SIZE, LOCAL_WORK_SIZE);
         cmdQueue.flush();
 
-        kSpin.setArg(2, 1, WebCLKernelArgumentTypes.INT);
+        kSpin.setArg(2, new Int32Array([1]));
         cmdQueue.enqueueNDRangeKernel(kSpin, 0, GLOBAL_WORK_SIZE, LOCAL_WORK_SIZE);
         cmdQueue.flush();
     }
@@ -188,7 +188,7 @@ function fr() {
 
 function setT(v) {
     var T = v.valueOf();
-    kSpin.setArg(3, 1 / T, WebCLKernelArgumentTypes.FLOAT);
+    kSpin.setArg(3, new Float32Array([1 / T]));
 }
 
 function setPsize(v) {

@@ -19,8 +19,6 @@ var outputData = null;                      // Float32Array
 
 var globalWorkSize = null;
 var localWorkSize = null;
-var types = WebCLKernelArgumentTypes;
-
 
 function initCL(useGpu) {
     try {
@@ -96,8 +94,8 @@ function sobelCL(cl, inputCanvas, outputCanvas, inputContext, outputContext) {
         //
         kernel.setArg(0, inputBuffer);
         kernel.setArg(1, outputBuffer);
-        kernel.setArg(2, w, types.UINT);
-        kernel.setArg(3, h, types.UINT);
+        kernel.setArg(2, new Uint32Array([w]));
+        kernel.setArg(3, new Uint32Array([h]));
 
         if (globalWorkSize === null || localWorkSize === null) {
             // Get the maximum work group size for executing the kernel on the device

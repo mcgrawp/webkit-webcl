@@ -96,9 +96,9 @@ function draw() {
     scale /= zoom;
     dR /= zoom2;
     dI /= zoom2;
-    kernel.setArg(1, scale, WebCLKernelArgumentTypes.FLOAT);
-    kernel.setArg(2, Ro + dR, WebCLKernelArgumentTypes.FLOAT);
-    kernel.setArg(3, Io + dI, WebCLKernelArgumentTypes.FLOAT);
+    kernel.setArg(1, new Float32Array([scale]));
+    kernel.setArg(2, new Float32Array([Ro + dR]));
+    kernel.setArg(3, new Float32Array([Io + dI]));
     cmdQueue.enqueueNDRangeKernel(kernel, null, globalWS, localWorkSize);
     cmdQueue.enqueueReadBuffer(bufCol, true, 0, bufSize, outBuffer);
     cmdQueue.finish();

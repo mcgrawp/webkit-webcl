@@ -59,7 +59,6 @@ var ctx_c, n = 1024, it = 10, ev,
 var program, kernelSrc, frTimer;
 var kPath, kPix, kPixXY, kPixXT, kPixYT, cmdQueue, iPath, iPath1,
     bufPix, outBuffer, bufRand, context = null;
-var types = WebCLKernelArgumentTypes;
 var bufferSize = 4 * 4 * n;
 var interop = false;
 var globalWorkSize = new Int32Array([4, n]);
@@ -131,8 +130,8 @@ function prepareKernel() {
         // FIXME: According to WebCL spec from May-14,2013 the WebCLImageDescriptor
         // dictionary has channelType as second parameter instead of channelDataType,
         // but if we use it we got INVALID_IMAGE_FORMAT_DESCRIPTOR error.
-
-        var descriptor = {channelOrder: WebCL.RGBA, channelDataType: types.FLOAT,
+        // This is ignored by the implementation: channelDataType: types.FLOAT
+        var descriptor = {channelOrder: WebCL.RGBA,
                         width: 4, height: n, rowPitch: 0};
         iPath  = context.createImage(WebCL.MEM_READ_WRITE, descriptor);
         iPath1 = context.createImage(WebCL.MEM_READ_WRITE, descriptor);
@@ -144,7 +143,7 @@ function prepareKernel() {
 
         kPath = program.createKernel("kPath");
         kPath.setArg(1, bufRand);
-        kPath.setArg(4, 0.01, types.FLOAT);
+        kPath.setArg(4, new Float32Array([0.01]));
         kPixXY = program.createKernel("kPixXY");
         kPixXY.setArg(0, iPath);
         kPixXY.setArg(1, iPath1);
@@ -249,13 +248,13 @@ function draw() {
     for (i = 0; i < it;  i++) {
         kPath.setArg(0, iPath);
         kPath.setArg(2, iPath1);
-        kPath.setArg(3, 0, types.INT);
+        kPath.setArg(3, new Int32Array([0]));
 
         ev = cmdQueue.enqueueNDRangeKernel(kPath, [], globalWorkSize, localWorkSize2);
         cmdQueue.flush();
         kPath.setArg(0, iPath1);
         kPath.setArg(2, iPath);
-        kPath.setArg(3, 1, types.INT);
+        kPath.setArg(3, new Int32Array([1]));
         ev = cmdQueue.enqueueNDRangeKernel(kPath, [], globalWorkSize, localWorkSize2);
         cmdQueue.flush();
     }
@@ -318,7 +317,7 @@ function fr() {
 
 function setGa(v) {
     var g = v.valueOf();
-    kPath.setKernelArg(4, g, types.FLOAT);
+    kPath.setKernelArg(4, new Float32Array([g]));
 }
 
 function setIt(val) {

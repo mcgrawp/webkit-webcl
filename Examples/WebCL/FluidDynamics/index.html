@@ -13,7 +13,6 @@ var n = 512, kAdvec, kForce, kP, kG, kDiv, kShow, cmdQueue,
     U, U1, D, D1, P, P1, G, frTimer,
     bufPix, outPix, bufferSize = 4 * n * n, useGpu = true, currentDevice,
     bu = 10, it = 20, delay = 0, frames = 0, time, animation;
-var types = WebCLKernelArgumentTypes;
 var globalWorkSize = new Int32Array([n, n]);
 var localWorkSize = new Int32Array(2);
 
@@ -52,7 +51,7 @@ function startCL() {
         kShow.setArg(1, bufPix);
         kAdvec = program.createKernel("kAdvec");
         kForce = program.createKernel("kForce");
-        kForce.setArg(3, 0.001 * 0.5 * bu, types.FLOAT);
+        kForce.setArg(3, new Float32Array([0.001 * 0.5 * bu]));
         kG = program.createKernel("kG");
         kG.setArg(1, G);
         kP = program.createKernel("kP");
@@ -240,7 +239,7 @@ function setIt(val) {
 
 function setBu(v) {
     bu = v.valueOf();
-    kForce.setArg(3, 0.001 * 0.5 * bu, types.FLOAT);
+    kForce.setArg(3, new Float32Array([0.001 * 0.5 * bu]));
 }
 
 function resetCL() {

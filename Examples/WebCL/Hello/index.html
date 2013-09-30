@@ -136,7 +136,7 @@ function InitCL()
         // Set the arguments to our compute kernel
         kernel.setArg(0, input);
         kernel.setArg(1, output);
-        kernel.setArg(2, count, WebCLKernelArgumentTypes.UINT);
+        kernel.setArg(2, new Uint32Array([count]));
 
         // Get the maximum work group size for executing the kernel on the device
         var workGroupSize = kernel.getWorkGroupInfo(device, cl.KERNEL_WORK_GROUP_SIZE);

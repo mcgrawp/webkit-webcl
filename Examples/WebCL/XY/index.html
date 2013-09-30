@@ -162,11 +162,11 @@ function initWebCL() {
 
         kSpinB = program.createKernel("kSpinB");
         kSpinB.setArg(3, bufRand);
-        kSpinB.setArg(4, 1 / T, WebCLKernelArgumentTypes.FLOAT);
+        kSpinB.setArg(4, new Float32Array([1 / T]));
 
         kSpinW = program.createKernel("kSpinW");
         kSpinW.setArg(3, bufRand);
-        kSpinW.setArg(4, 1 / T, WebCLKernelArgumentTypes.FLOAT);
+        kSpinW.setArg(4, new Float32Array([1 / T]));
 
         kPix = program.createKernel("kPix");
         kPix.setArg(2, bufPix);

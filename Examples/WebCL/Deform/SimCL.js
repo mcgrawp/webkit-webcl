@@ -204,18 +204,17 @@ function SimulateCL(cl)
       queue.enqueueAcquireGLObjects([curNorBuffer]);
     }
 
-    var kernelArgType = WebCLKernelArgumentTypes;
     kernel.setArg(0, initPosBuffer);
     kernel.setArg(1, curNorBuffer);
     kernel.setArg(2, curPosBuffer);
-    kernel.setArg(3, userData.frequency, kernelArgType.FLOAT);
-    kernel.setArg(4, userData.amplitude, kernelArgType.FLOAT);
-    kernel.setArg(5, userData.phase, kernelArgType.FLOAT);
-    kernel.setArg(6, userData.lacunarity, kernelArgType.FLOAT);
-    kernel.setArg(7, userData.increment, kernelArgType.FLOAT);
-    kernel.setArg(8, userData.octaves, kernelArgType.FLOAT);
-    kernel.setArg(9, userData.roughness, kernelArgType.FLOAT);
-    kernel.setArg(10, userData.nVertices, kernelArgType.UINT);
+    kernel.setArg(3, new Float32Array([userData.frequency]));
+    kernel.setArg(4, new Float32Array([userData.amplitude]));
+    kernel.setArg(5, new Float32Array([userData.phase]));
+    kernel.setArg(6, new Float32Array([userData.lacunarity]));
+    kernel.setArg(7, new Float32Array([userData.increment]));
+    kernel.setArg(8, new Float32Array([userData.octaves]));
+    kernel.setArg(9, new Float32Array([userData.roughness]));
+    kernel.setArg(10, new Uint32Array([userData.nVertices]));
 
     queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
     queue.finish();
