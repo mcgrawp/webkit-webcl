@@ -128,7 +128,7 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, bool blockin
         event->setAssociatedCommandQueue(this);
     }
 
-    CCerror error = m_context->computeContext()->enqueueWriteBuffer(platformObject(), ccBuffer, blockingWrite, offset, bufferSize, data, events.size(), ccEvents.data(), ccEvent);
+    CCerror error = m_context->computeContext()->enqueueWriteBuffer(platformObject(), ccBuffer, blockingWrite, offset, bufferSize, data, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
 }
 
@@ -214,9 +214,8 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, bool blockin
         event->setAssociatedCommandQueue(this);
     }
 
-    CCerror err = m_context->computeContext()->enqueueWriteBufferRect(platformObject(), ccBuffer, blockingWrite,
-        bufferOriginData.data(), hostOriginData.data(), regionData.data(), bufferRowPitch, bufferSlicePitch,
-        hostRowPitch, hostSlicePitch, ptr->baseAddress(), ccEvents.size(), ccEvents.data(), ccEvent);
+    CCerror err = m_context->computeContext()->enqueueWriteBufferRect(platformObject(), ccBuffer, blockingWrite, bufferOriginData,
+        hostOriginData, regionData, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr->baseAddress(), ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -235,7 +234,7 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead
 
     PlatformComputeObject ccBuffer = buffer->platformObject();
 
-    unsigned char* bufferArray;
+    unsigned char* bufferArray = nullptr;
     if (ptr && ptr->data() && ptr->data()->data()) {
         bufferArray = ptr->data()->data();
         bufferSize =  ptr->data()->length();
@@ -260,7 +259,7 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead
     }
 
     CCerror err = m_context->computeContext()->enqueueReadBuffer(platformObject(), ccBuffer, blockingRead, offset,
-        bufferSize, bufferArray, ccEvents.size(), ccEvents.data(), ccEvent);
+        bufferSize, bufferArray, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -315,8 +314,8 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, bool blockingRead, I
         event->setAssociatedCommandQueue(this);
     }
 
-    CCerror err = m_context->computeContext()->enqueueReadImage(platformObject(), ccImage, blockingRead, originData.data(),
-        regionData.data(), rowPitch, 0, ptr->baseAddress(), ccEvents.size(), ccEvents.data(), ccEvent);
+    CCerror err = m_context->computeContext()->enqueueReadImage(platformObject(), ccImage, blockingRead, originData,
+        regionData, rowPitch, 0, ptr->baseAddress(), ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -356,7 +355,7 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* sourceBuffer, bool blocki
     }
 
     CCerror err = m_context->computeContext()->enqueueReadBuffer(platformObject(), ccBuffer, blockingRead, offset,
-        bufferSize, ptr->baseAddress(), ccEvents.size(), ccEvents.data(), ccEvent);
+        bufferSize, ptr->baseAddress(), ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -410,9 +409,8 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, bool blocking
         event->setAssociatedCommandQueue(this);
     }
 
-    CCerror err = m_context->computeContext()->enqueueReadBufferRect(platformObject(), ccBuffer, blockingRead,
-        bufferOriginData.data(), hostOriginData.data(), regionData.data(), bufferRowPitch, bufferSlicePitch,
-        hostRowPitch, hostSlicePitch, ptr->baseAddress(), ccEvents.size(), ccEvents.data(), ccEvent);
+    CCerror err = m_context->computeContext()->enqueueReadBufferRect(platformObject(), ccBuffer, blockingRead, bufferOriginData, hostOriginData,
+        regionData, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, ptr->baseAddress(), ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -466,8 +464,8 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, Int32Array* gl
         event->setAssociatedCommandQueue(this);
     }
     CCerror computeContextError = m_context->computeContext()->enqueueNDRangeKernel(platformObject(), ccKernel,
-        workItemDimensions, globalWorkOffsetCopy.data(), globalWorkSizeCopy.data(), localWorkSizeCopy.data(),
-        ccEvents.size(), ccEvents.data(), ccEvent);
+        workItemDimensions, globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy,
+        ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
@@ -546,8 +544,7 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, bool blockingWrite,
     }
 
     CCerror err = m_context->computeContext()->enqueueWriteImage(platformObject(), ccImage, blockingWrite,
-        originData.data(), regionData.data(), inputRowPitch, 0, ptr->baseAddress(), ccEvents.size(),
-        ccEvents.data(), ccEvent);
+        originData, regionData, inputRowPitch, 0, ptr->baseAddress(), ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -596,7 +593,7 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
     }
 
     CCerror err = m_context->computeContext()->enqueueCopyImage(platformObject(), ccSourceImage, ccTargetImage,
-        sourceOriginData.data(), targetOriginData.data(), regionData.data(), ccEvents.size(), ccEvents.data(), ccEvent);
+        sourceOriginData, targetOriginData, regionData, ccEvents, ccEvent);
     if (err != ComputeContext::SUCCESS)
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
@@ -645,7 +642,7 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *sourceImage, WebCLB
     }
 
     CCerror err = m_context->computeContext()->enqueueCopyImageToBuffer(platformObject(), ccSourceImage, ccTargetBuffer,
-        sourceOriginData.data(), regionData.data(), targetOffset, ccEvents.size(), ccEvents.data(), ccEvent);
+        sourceOriginData, regionData, targetOffset, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -692,7 +689,7 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *sourceBuffer, WebC
     }
 
     CCerror err = m_context->computeContext()->enqueueCopyBufferToImage(platformObject(), ccSourceBuffer, ccTargetImage,
-        sourceOffset, targetOriginData.data(), regionData.data(), ccEvents.size(), ccEvents.data(), ccEvent);
+        sourceOffset, targetOriginData, regionData, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -729,7 +726,7 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer
     }
 
     CCerror err = m_context->computeContext()->enqueueCopyBuffer(platformObject(), ccSourceBuffer, ccTargetBuffer,
-        sourceOffset, targetOffset, sizeInBytes, ccEvents.size(), ccEvents.data(), ccEvent);
+        sourceOffset, targetOffset, sizeInBytes, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -780,8 +777,8 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
     }
 
     CCerror err = m_context->computeContext()->enqueueCopyBufferRect(platformObject(), ccSourceBuffer, ccTargetBuffer,
-        sourceOriginData.data(), targetOriginData.data(), regionData.data(), sourceRowPitch, sourceSlicePitch,
-        targetRowPitch, targetSlicePitch, ccEvents.size(), ccEvents.data(), ccEvent);
+        sourceOriginData, targetOriginData, regionData, sourceRowPitch, sourceSlicePitch,
+        targetRowPitch, targetSlicePitch, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 

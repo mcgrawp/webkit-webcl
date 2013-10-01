@@ -337,7 +337,7 @@ public:
     static CCerror setKernelArg(CCKernel, CCuint argIndex, size_t argSize, const void* argValue);
 
     PlatformComputeObject createBuffer(CCMemoryFlags type, size_t, void* data, CCerror&);
-    PlatformComputeObject createSubBuffer(PlatformComputeObject, CCMemoryFlags type, CCBufferCreateType bufferCreatetype, CCBufferRegion *bufferCreateInfo, CCerror&);
+    PlatformComputeObject createSubBuffer(PlatformComputeObject, CCMemoryFlags type, CCBufferCreateType bufferCreatetype, CCBufferRegion* bufferCreateInfo, CCerror&);
     PlatformComputeObject createImage2D(CCMemoryFlags type, size_t width, size_t height, CCuint rowPitch, const CCImageFormat&, void* data, CCerror&);
     PlatformComputeObject createFromGLBuffer(CCMemoryFlags type, GLuint bufferId, CCerror&);
     PlatformComputeObject createFromGLRenderbuffer(CCMemoryFlags type, GC3Dint renderbufferId, CCerror&);
@@ -417,41 +417,42 @@ public:
         return getInfoHelper(ComputeContext::getBuildInfoBase, program, device, infoType, data);
     }
 
-    CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, CCuint globalWorkItemDimensions,
-        size_t* globalWorkOffset, size_t* globalWorkSize, size_t* localWorkSize, CCuint eventsWaitListLength, CCEvent*WaitList, CCEvent*);
+    CCerror enqueueNDRangeKernel(CCCommandQueue, CCKernel, CCuint globalWorkItemDimensions, const Vector<size_t>& globalWorkOffset,
+        const Vector<size_t>& globalWorkSize, const Vector<size_t>& localWorkSize, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+
     CCerror enqueueBarrier(CCCommandQueue);
     CCerror enqueueMarker(CCCommandQueue, CCEvent*);
-    CCerror enqueueTask(CCCommandQueue, CCKernel, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+    CCerror enqueueTask(CCCommandQueue, CCKernel, const Vector<CCEvent>& eventsWaitList, CCEvent*);
 
     CCerror enqueueWriteBuffer(CCCommandQueue, PlatformComputeObject buffer, CCbool blockingWrite, size_t offset, size_t bufferSize,
-        void* baseAddress, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
-    CCerror enqueueWriteBufferRect(CCCommandQueue, PlatformComputeObject, CCbool blockingWrite, size_t* bufferOriginArray,
-        size_t* hostOriginArray, size_t* regionArray, size_t bufferRowPitch, size_t bufferSlicePitch, size_t hostRowPitch, size_t hostSlicePitch,
-        void* baseAddress, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+        void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+    CCerror enqueueWriteBufferRect(CCCommandQueue, PlatformComputeObject, CCbool blockingWrite, const Vector<size_t>& bufferOriginArray,
+        const Vector<size_t>& hostOriginArray, const Vector<size_t>& regionArray, size_t bufferRowPitch, size_t bufferSlicePitch, size_t hostRowPitch,
+        size_t hostSlicePitch, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent*);
     CCerror enqueueReadBuffer(CCCommandQueue, PlatformComputeObject buffer, CCbool blockingRead, size_t offset, size_t bufferSize,
-        void* baseAddress, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
-    CCerror enqueueReadBufferRect(CCCommandQueue, PlatformComputeObject buffer, CCbool blockingRead, size_t* bufferOriginArray,
-        size_t* hostOriginArray, size_t* regionArray, size_t bufferRowPitch, size_t bufferSlicePitch, size_t hostRowPitch, size_t hostSlicePitch,
-        void* baseAddress, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
-    CCerror enqueueReadImage(CCCommandQueue, PlatformComputeObject image, CCbool blockingRead, size_t* originArray, size_t* regionArray,
-        size_t rowPitch, size_t slicePitch, void* baseAddress, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
-    CCerror enqueueWriteImage(CCCommandQueue, PlatformComputeObject image, CCbool blockingWrite, size_t* originArray, size_t* regionArray,
-        size_t rowPitch, size_t slicePitch, void* baseAddress, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
-    CCerror enqueueAcquireGLObjects(CCCommandQueue, const Vector<PlatformComputeObject>&, CCuint eventsWaitListLength,
-        CCEvent* eventsWaitList, CCEvent*);
-    CCerror enqueueReleaseGLObjects(CCCommandQueue, const Vector<PlatformComputeObject>&, CCuint eventsWaitListLength,
-        CCEvent* eventsWaitList, CCEvent*);
-    CCerror enqueueCopyImage(CCCommandQueue, PlatformComputeObject originImage, PlatformComputeObject targetImage, size_t* sourceOriginArray,
-        size_t* targetOriginArray, size_t* regionArray, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+        void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+    CCerror enqueueReadBufferRect(CCCommandQueue, PlatformComputeObject buffer, CCbool blockingRead, const Vector<size_t>& bufferOriginArray,
+        const Vector<size_t>& hostOriginArray, const Vector<size_t>& regionArray, size_t bufferRowPitch, size_t bufferSlicePitch, size_t hostRowPitch,
+        size_t hostSlicePitch, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+    CCerror enqueueReadImage(CCCommandQueue, PlatformComputeObject image, CCbool blockingRead, const Vector<size_t>& originArray, const Vector<size_t>& regionArray,
+        size_t rowPitch, size_t slicePitch, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+    CCerror enqueueWriteImage(CCCommandQueue, PlatformComputeObject image, CCbool blockingWrite, const Vector<size_t>& originArray, const Vector<size_t>& regionArray,
+        size_t rowPitch, size_t slicePitch, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+    CCerror enqueueAcquireGLObjects(CCCommandQueue, const Vector<PlatformComputeObject>&,
+        const Vector<CCEvent>& eventsWaitList, CCEvent*);
+    CCerror enqueueReleaseGLObjects(CCCommandQueue, const Vector<PlatformComputeObject>&,
+        const Vector<CCEvent>& eventsWaitList, CCEvent*);
+    CCerror enqueueCopyImage(CCCommandQueue, PlatformComputeObject originImage, PlatformComputeObject targetImage, const Vector<size_t>& sourceOriginArray,
+        const Vector<size_t>& targetOriginArray, const Vector<size_t>& regionArray, const Vector<CCEvent>& eventsWaitList, CCEvent*);
     CCerror enqueueCopyImageToBuffer(CCCommandQueue, PlatformComputeObject sourceImage, PlatformComputeObject targetBuffer,
-        size_t* sourceOriginArray, size_t* regionArray, size_t targetOffset, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+        const Vector<size_t>& sourceOriginArray, const Vector<size_t>& regionArray, size_t targetOffset, const Vector<CCEvent>& eventsWaitList, CCEvent*);
     CCerror enqueueCopyBufferToImage(CCCommandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetImage, size_t srcOffset,
-        size_t* targetOriginArray, size_t* regionArray, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+        const Vector<size_t>& targetOriginArray, const Vector<size_t>& regionArray, const Vector<CCEvent>& eventsWaitList, CCEvent*);
     CCerror enqueueCopyBuffer(CCCommandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
-        size_t sourceOffset, size_t targetOffset, size_t sizeInBytes, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+        size_t sourceOffset, size_t targetOffset, size_t sizeInBytes, const Vector<CCEvent>& eventsWaitList, CCEvent*);
     CCerror enqueueCopyBufferRect(CCCommandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
-        size_t* sourceOriginArray, size_t* targetOriginArray, size_t* regionArray, size_t sourceRowPitch, size_t sourceSlicePitch,
-        size_t targetRowPitch, size_t targetSlicePitch, CCuint eventsWaitListLength, CCEvent* eventsWaitList, CCEvent*);
+        const Vector<size_t>& sourceOriginArray, const Vector<size_t>& targetOriginArray, const Vector<size_t>& regionArray, size_t sourceRowPitch, size_t sourceSlicePitch,
+        size_t targetRowPitch, size_t targetSlicePitch, const Vector<CCEvent>& eventsWaitList, CCEvent*);
 
     CCerror releaseCommandQueue(CCCommandQueue);
     CCerror releaseEvent(CCEvent);

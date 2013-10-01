@@ -70,8 +70,7 @@ void WebCLGLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemor
     if (event)
         *ccEvent = event->platformObject();
 
-    CCerror err = m_context->computeContext()->enqueueAcquireGLObjects(platformObject(), ccMemoryObjectIDs,
-        ccEvents.size(), ccEvents.data(), ccEvent);
+    CCerror err = m_context->computeContext()->enqueueAcquireGLObjects(platformObject(), ccMemoryObjectIDs, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -100,8 +99,7 @@ void WebCLGLCommandQueue::enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemor
     if (event)
         *ccEvent = event->platformObject();
 
-    CCerror err = m_context->computeContext()->enqueueReleaseGLObjects(platformObject(), ccMemoryObjectIDs,
-        ccEvents.size(), ccEvents.data(), ccEvent);
+    CCerror err = m_context->computeContext()->enqueueReleaseGLObjects(platformObject(), ccMemoryObjectIDs, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
