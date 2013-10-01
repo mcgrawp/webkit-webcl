@@ -99,7 +99,7 @@ function draw() {
     kernel.setArg(1, new Float32Array([scale]));
     kernel.setArg(2, new Float32Array([Ro + dR]));
     kernel.setArg(3, new Float32Array([Io + dI]));
-    cmdQueue.enqueueNDRangeKernel(kernel, globalWS.length, null, globalWS, localWorkSize);
+    cmdQueue.enqueueNDRangeKernel(kernel, globalWS.length, [], globalWS, localWorkSize);
     cmdQueue.enqueueReadBuffer(bufCol, true, 0, bufSize, outBuffer);
     cmdQueue.finish();
     draw_gl(nx, ny, outBuffer);

@@ -183,8 +183,8 @@ function initPaths(queue, pathA, pathB) {
             path[j + 1 + 8 * i] = y0;
         }
     }
-    var origin = new Int32Array([0, 0, 0]);
-    var region = new Int32Array([4, n, 1]);
+    var origin = new Int32Array([0, 0]);
+    var region = new Int32Array([4, n]);
     var hostRowPitch = new Uint32Array([0]);
 
     try {
@@ -213,10 +213,10 @@ function drawPix() {
             cmdQueue.enqueueAcquireGLObjects([bufPix]);
         }
 
-        cmdQueue.enqueueNDRangeKernel(kPix, globalWorkSize.length, null, globalWorkSize, localWorkSize);
+        cmdQueue.enqueueNDRangeKernel(kPix, globalWorkSize.length, [], globalWorkSize, localWorkSize);
 
         if (!interop) {
-            cmdQueue.enqueueReadBuffer(bufPix, true, 0, bufferSize * 2, outBuffer);
+            cmdQueue.enqueueReadBuffer(bufPix, true, [], bufferSize * 2, outBuffer);
         } else {
             cmdQueue.enqueueReleaseGLObjects([bufPix]);
             cmdQueue.finish();
@@ -250,12 +250,12 @@ function draw() {
         kPath.setArg(2, iPath1);
         kPath.setArg(3, new Int32Array([0]));
 
-        ev = cmdQueue.enqueueNDRangeKernel(kPath, globalWorkSize.length, null, globalWorkSize, localWorkSize2);
+        ev = cmdQueue.enqueueNDRangeKernel(kPath, globalWorkSize.length, [], globalWorkSize, localWorkSize2);
         cmdQueue.flush();
         kPath.setArg(0, iPath1);
         kPath.setArg(2, iPath);
         kPath.setArg(3, new Int32Array([1]));
-        ev = cmdQueue.enqueueNDRangeKernel(kPath, globalWorkSize.length, null, globalWorkSize, localWorkSize2);
+        ev = cmdQueue.enqueueNDRangeKernel(kPath, globalWorkSize.length, [], globalWorkSize, localWorkSize2);
         cmdQueue.flush();
     }
     drawPix();

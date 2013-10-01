@@ -125,7 +125,7 @@ function runRippleCL(t, cx, cy, diag) {
     localThreads[1] = blockSizeY;
 
     tStart = new Date().valueOf();
-    queue.enqueueNDRangeKernel(filterKernel, globalThreads.length, 0, globalThreads, null);
+    queue.enqueueNDRangeKernel(filterKernel, globalThreads.length, [], globalThreads, []);
 
     // Wait for the command queue to get serviced before reading back results
     //

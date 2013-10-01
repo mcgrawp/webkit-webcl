@@ -28,6 +28,8 @@ typedef unsigned long CLenum;
 typedef boolean CLboolean;
 typedef unsigned long CLuint;
 
+typedef unsigned long CLuint;
+
 [
     Conditional=WEBCL,
 ] interface WebCLCommandQueue {
@@ -51,9 +53,9 @@ typedef unsigned long CLuint;
 
     [RaisesException] void enqueueWriteBufferRect(WebCLBuffer bufferId,
             CLboolean blockingWrite,
-            Int32Array sourceOrigin,
-            Int32Array targetOrigin,
-            Int32Array region,
+            sequence<CLuint> sourceOrigin,
+            sequence<CLuint> targetOrigin,
+            sequence<CLuint> region,
             CLuint sourceRowPitch,
             CLuint sourceSlicePitch,
             CLuint targetRowPitch,
@@ -79,9 +81,9 @@ typedef unsigned long CLuint;
 
     [RaisesException] void enqueueReadBufferRect(WebCLBuffer bufferId,
             CLboolean blockingRead,
-            Int32Array sourceOrigin,
-            Int32Array targetOrigin,
-            Int32Array region,
+            sequence<CLuint> sourceOrigin,
+            sequence<CLuint> targetOrigin,
+            sequence<CLuint> region,
             CLuint sourceRowPitch,
             CLuint sourceSlicePitch,
             CLuint targetRowPitch,
@@ -91,14 +93,17 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueNDRangeKernel(WebCLKernel kernel,
-            [StrictTypeChecking, EnforceRange] CLuint workDim, Int32Array offsets, Int32Array globalWorkSize,
-            Int32Array localWorkSize, [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            [StrictTypeChecking, EnforceRange] CLuint workDim,
+            [Default=Undefined] sequence<CLuint> offsets,
+            sequence<CLuint> globalWorkSize,
+            [Default=Undefined] sequence<CLuint> localWorkSize,
+            [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueWriteImage(WebCLImage image,
             CLboolean blockingWrite,
-            Int32Array origin,
-            Int32Array region,
+            sequence<CLuint> origin,
+            sequence<CLuint> region,
             CLuint inputRowPitch,
             ArrayBufferView ptr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
@@ -106,8 +111,8 @@ typedef unsigned long CLuint;
 
     [RaisesException] void enqueueReadImage(WebCLImage image,
             CLboolean blockingRead,
-            Int32Array origin,
-            Int32Array region,
+            sequence<CLuint> origin,
+            sequence<CLuint> region,
             CLuint rowPitch,
             ArrayBufferView ptr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
@@ -123,9 +128,9 @@ typedef unsigned long CLuint;
 
     [RaisesException] void enqueueCopyBufferRect(WebCLBuffer sourceBuffer,
             WebCLBuffer targetBuffer,
-            Int32Array sourceOrigin,
-            Int32Array targetOrigin,
-            Int32Array region,
+            sequence<CLuint> sourceOrigin,
+            sequence<CLuint> targetOrigin,
+            sequence<CLuint> region,
             CLuint sourceRowPitch,
             CLuint sourceSlicePitch,
             CLuint targetRowPitch,
@@ -135,16 +140,16 @@ typedef unsigned long CLuint;
 
     [RaisesException] void enqueueCopyImage(WebCLImage sourceImage,
             WebCLImage targetImage,
-            Int32Array sourceOrigin,
-            Int32Array targetOrigin,
-            Int32Array region,
+            sequence<CLuint> sourceOrigin,
+            sequence<CLuint> targetOrigin,
+            sequence<CLuint> region,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueCopyImageToBuffer(WebCLImage sourceImage,
             WebCLBuffer targetBuffer,
-            Int32Array sourceOrigin,
-            Int32Array region,
+            sequence<CLuint> sourceOrigin,
+            sequence<CLuint> region,
             CLuint targetOffset,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
@@ -152,8 +157,8 @@ typedef unsigned long CLuint;
     [RaisesException] void enqueueCopyBufferToImage(WebCLBuffer sourceBuffer,
             WebCLImage targetImage,
             CLuint sourceOffset,
-            Int32Array targetOrigin,
-            Int32Array region,
+            sequence<CLuint> targetOrigin,
+            sequence<CLuint> region,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 

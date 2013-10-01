@@ -31,8 +31,8 @@ var iSpin1;
 var kSpin;
 var kPix;
 var outBuffer      = new Uint8Array(bufSize);
-var origin         = new Int32Array([0, 0, 0]);
-var region         = new Int32Array([n, n, 1]);
+var origin         = new Int32Array([0, 0]);
+var region         = new Int32Array([n, n]);
 var globalWorkSize = new Int32Array([n, n]);
 var localWorkSize;
 
@@ -95,7 +95,7 @@ function runCL() {
         iSpin   = ctx.createImage(webcl.MEM_READ_WRITE, descriptor);
         iSpin1  = ctx.createImage(webcl.MEM_READ_WRITE, descriptor);
 
-        cmdQueue.enqueueWriteBuffer(bufRand, true, 0, bufSize, UIrand);
+        cmdQueue.enqueueWriteBuffer(bufRand, true, [], bufSize, UIrand);
         cmdQueue.enqueueWriteImage(iSpin, true, origin, region, 0, spin);
 
         kSpin = program.createKernel("kSpin");
@@ -129,17 +129,17 @@ function draw() {
             kSpin.setArg(2, iSpin1);
             kSpin.setArg(3, new Int32Array([0]));
 
-            cmdQueue.enqueueNDRangeKernel(kSpin, globalWorkSize.length, null, globalWorkSize, localWorkSize);
+            cmdQueue.enqueueNDRangeKernel(kSpin, globalWorkSize.length, [], globalWorkSize, localWorkSize);
             cmdQueue.flush();
 
             kSpin.setArg(0, iSpin1);
             kSpin.setArg(2, iSpin);
             kSpin.setArg(3, new Int32Array([1]));
 
-            cmdQueue.enqueueNDRangeKernel(kSpin, globalWorkSize.length, null, globalWorkSize, localWorkSize);
+            cmdQueue.enqueueNDRangeKernel(kSpin, globalWorkSize.length, [], globalWorkSize, localWorkSize);
             cmdQueue.flush();
         }
-        cmdQueue.enqueueNDRangeKernel(kPix, globalWorkSize.length, null, globalWorkSize, localWorkSize);
+        cmdQueue.enqueueNDRangeKernel(kPix, globalWorkSize.length, [], globalWorkSize, localWorkSize);
         cmdQueue.enqueueReadBuffer(bufPix, true, 0, bufSize, outBuffer);
     } catch (e) {
         console.error(e.message);

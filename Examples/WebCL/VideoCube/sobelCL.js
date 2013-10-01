@@ -120,7 +120,7 @@ function sobelCL(cl, inputCanvas, outputCanvas, inputContext, outputContext) {
             localWorkSize = new Int32Array([blockSizeX, blockSizeY]);
         }
 
-        queue.enqueueNDRangeKernel(kernel, globalWorkSize.length, 0, globalWorkSize, localWorkSize);
+        queue.enqueueNDRangeKernel(kernel, globalWorkSize.length, [], globalWorkSize, localWorkSize);
 
         // Wait for the command queue to get serviced before reading back results
         //

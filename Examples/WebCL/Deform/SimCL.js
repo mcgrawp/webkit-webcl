@@ -211,7 +211,7 @@ function SimulateCL(cl)
     kernel.setArg(9, new Float32Array([userData.roughness]));
     kernel.setArg(10, new Uint32Array([userData.nVertices]));
 
-    queue.enqueueNDRangeKernel(kernel, globalWorkSize.length, null, globalWorkSize, localWorkSize);
+    queue.enqueueNDRangeKernel(kernel, globalWorkSize.length, [], globalWorkSize, localWorkSize);
     queue.finish();
 
     if (GLCL_SHARE_MODE) {

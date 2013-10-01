@@ -113,14 +113,14 @@ function step() {
     var i;
     for (i = 0; i < it; i++) {
         kSpin.setArg(2, new Int32Array([0]));
-        cmdQueue.enqueueNDRangeKernel(kSpin, GLOBAL_WORK_SIZE.length, 0, GLOBAL_WORK_SIZE, LOCAL_WORK_SIZE);
+        cmdQueue.enqueueNDRangeKernel(kSpin, GLOBAL_WORK_SIZE.length, [], GLOBAL_WORK_SIZE, LOCAL_WORK_SIZE);
         cmdQueue.flush();
 
         kSpin.setArg(2, new Int32Array([1]));
-        cmdQueue.enqueueNDRangeKernel(kSpin, GLOBAL_WORK_SIZE.length, 0, GLOBAL_WORK_SIZE, LOCAL_WORK_SIZE);
+        cmdQueue.enqueueNDRangeKernel(kSpin, GLOBAL_WORK_SIZE.length, [], GLOBAL_WORK_SIZE, LOCAL_WORK_SIZE);
         cmdQueue.flush();
     }
-    cmdQueue.enqueueNDRangeKernel(kPix, GLOBAL_WORK_SIZE.length, 0, GLOBAL_WORK_SIZE, LOCAL_WORK_SIZE);
+    cmdQueue.enqueueNDRangeKernel(kPix, GLOBAL_WORK_SIZE.length, [], GLOBAL_WORK_SIZE, LOCAL_WORK_SIZE);
     cmdQueue.enqueueReadBuffer(bufPix, true, 0, bufSize, outBuffer);
     cmdQueue.finish();
     gl.bindTexture(gl.TEXTURE_2D, tex_gl);

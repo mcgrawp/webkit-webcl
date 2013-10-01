@@ -464,7 +464,7 @@ function executeKernel() {
 
     try {
         var start = Date.now();
-        clQueue.enqueueNDRangeKernel(clKernel, globalWorkSize.length, 0, globalWorkSize, localWorkSize);
+        clQueue.enqueueNDRangeKernel(clKernel, globalWorkSize.length, [], globalWorkSize, localWorkSize);
         clQueue.finish();
         clTime += Date.now() - start;
     } catch (e) {

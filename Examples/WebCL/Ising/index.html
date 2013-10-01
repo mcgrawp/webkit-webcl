@@ -91,8 +91,8 @@ function initImageSpin() {
         spin[i] = Math.floor(Math.random() * 1.999999);
     }
 
-    var origin = new Int32Array([0, 0, 0]);
-    var region = new Int32Array([n, n, 1]);
+    var origin = new Int32Array([0, 0]);
+    var region = new Int32Array([n, n]);
 
     cmdQueue.enqueueWriteImage(iSpin, true, origin, region, 0, spin);
     cmdQueue.enqueueWriteImage(iSpin1, true, origin, region, 0, spin);
@@ -105,16 +105,16 @@ function draw() {
         kSpin.setArg(0, iSpin);
         kSpin.setArg(2, iSpin1);
         kSpin.setArg(3, new Int32Array([0]));
-        cmdQueue.enqueueNDRangeKernel(kSpin, globalWorkSize.length, 0, globalWorkSize, localWorkSize);
+        cmdQueue.enqueueNDRangeKernel(kSpin, globalWorkSize.length, [], globalWorkSize, localWorkSize);
         cmdQueue.flush();
 
         kSpin.setArg(0, iSpin1);
         kSpin.setArg(2, iSpin);
         kSpin.setArg(3, new Int32Array([1]));
-        cmdQueue.enqueueNDRangeKernel(kSpin, globalWorkSize.length, 0, globalWorkSize, localWorkSize);
+        cmdQueue.enqueueNDRangeKernel(kSpin, globalWorkSize.length, [], globalWorkSize, localWorkSize);
         cmdQueue.flush();
     }
-    cmdQueue.enqueueNDRangeKernel(kPix, globalWorkSize.length, 0, globalWorkSize, localWorkSize);
+    cmdQueue.enqueueNDRangeKernel(kPix, globalWorkSize.length, [], globalWorkSize, localWorkSize);
     cmdQueue.enqueueReadBuffer(bufPix, true, 0, bufSize, outBuffer);
     cmdQueue.finish();
     draw_gl(n, n, outBuffer);
