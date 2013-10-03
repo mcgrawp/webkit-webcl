@@ -57,14 +57,18 @@ function runTest() {
     shouldBeTrue("webcl.INVALID_MIP_LEVEL == -62");
     shouldBeTrue("webcl.INVALID_GLOBAL_WORK_SIZE == -63");
     shouldBeTrue("webcl.INVALID_PROPERTY == -64");
+
     shouldBeTrue("webcl.PLATFORM_PROFILE == 0x0900");
     shouldBeTrue("webcl.PLATFORM_VERSION == 0x0901");
+
     shouldBeTrue("webcl.DEVICE_TYPE_DEFAULT == 0x1");
     shouldBeTrue("webcl.DEVICE_TYPE_CPU == 0x2");
     shouldBeTrue("webcl.DEVICE_TYPE_GPU == 0x4");
     shouldBeTrue("webcl.DEVICE_TYPE_ACCELERATOR == 0x8");
     shouldBeTrue("webcl.DEVICE_TYPE_ALL == 0xFFFFFFFF");
+
     shouldBeTrue("webcl.DEVICE_TYPE == 0x1000");
+    shouldBeTrue("webcl.DEVICE_MAX_COMPUTE_UNITS == 0x1002");
     shouldBeTrue("webcl.DEVICE_MAX_WORK_ITEM_DIMENSIONS == 0x1003");
     shouldBeTrue("webcl.DEVICE_MAX_WORK_GROUP_SIZE == 0x1004");
     shouldBeTrue("webcl.DEVICE_MAX_WORK_ITEM_SIZES == 0x1005");
@@ -83,20 +87,29 @@ function runTest() {
     shouldBeTrue("webcl.DEVICE_IMAGE_SUPPORT == 0x1016");
     shouldBeTrue("webcl.DEVICE_MAX_PARAMETER_SIZE == 0x1017");
     shouldBeTrue("webcl.DEVICE_MAX_SAMPLERS == 0x1018");
+    shouldBeTrue("webcl.DEVICE_MEM_BASE_ADDR_ALIGN == 0x1019");
+    shouldBeTrue("webcl.DEVICE_SINGLE_FP_CONFIG == 0x101B");
+    shouldBeTrue("webcl.DEVICE_GLOBAL_MEM_CACHE_TYPE == 0x101C");
+    shouldBeTrue("webcl.DEVICE_GLOBAL_MEM_CACHELINE_SIZE == 0x101D");
+    shouldBeTrue("webcl.DEVICE_GLOBAL_MEM_CACHE_SIZE == 0x101E");
+    shouldBeTrue("webcl.DEVICE_GLOBAL_MEM_SIZE == 0x101F");
     shouldBeTrue("webcl.DEVICE_MAX_CONSTANT_BUFFER_SIZE == 0x1020");
     shouldBeTrue("webcl.DEVICE_MAX_CONSTANT_ARGS == 0x1021");
     shouldBeTrue("webcl.DEVICE_LOCAL_MEM_TYPE == 0x1022");
     shouldBeTrue("webcl.DEVICE_LOCAL_MEM_SIZE == 0x1023");
+    shouldBeTrue("webcl.DEVICE_ERROR_CORRECTION_SUPPORT == 0x1024");
+    shouldBeTrue("webcl.DEVICE_PROFILING_TIMER_RESOLUTION == 0x1025");
     shouldBeTrue("webcl.DEVICE_ENDIAN_LITTLE == 0x1026");
     shouldBeTrue("webcl.DEVICE_AVAILABLE == 0x1027");
+    shouldBeTrue("webcl.DEVICE_COMPILER_AVAILABLE == 0x1028");
+    shouldBeTrue("webcl.DEVICE_EXECUTION_CAPABILITIES == 0x1029");
     shouldBeTrue("webcl.DEVICE_QUEUE_PROPERTIES == 0x102A");
     shouldBeTrue("webcl.DEVICE_PROFILE == 0x102E");
     shouldBeTrue("webcl.DEVICE_VERSION == 0x102F");
-    shouldBeTrue("webcl.DEVICE_EXTENSIONS == 0x1030");
     shouldBeTrue("webcl.DEVICE_PLATFORM == 0x1031");
-    shouldBeTrue("webcl.DEVICE_PREFERRED_VECTOR_WIDTH_HALF == 0x1034");
     shouldBeTrue("webcl.DEVICE_HOST_UNIFIED_MEMORY == 0x1035");
     shouldBeTrue("webcl.DEVICE_OPENCL_C_VERSION == 0x103D");
+
     shouldBeTrue("webcl.FP_DENORM == 0x1");
     shouldBeTrue("webcl.FP_INF_NAN == 0x2");
     shouldBeTrue("webcl.FP_ROUND_TO_NEAREST == 0x4");
@@ -104,25 +117,33 @@ function runTest() {
     shouldBeTrue("webcl.FP_ROUND_TO_INF == 0x10");
     shouldBeTrue("webcl.FP_FMA == 0x20");
     shouldBeTrue("webcl.FP_SOFT_FLOAT == 0x40");
+
     shouldBeTrue("webcl.NONE == 0x0");
     shouldBeTrue("webcl.READ_ONLY_CACHE == 0x1");
     shouldBeTrue("webcl.READ_WRITE_CACHE == 0x2");
+
     shouldBeTrue("webcl.LOCAL == 0x1");
     shouldBeTrue("webcl.GLOBAL == 0x2");
+
     shouldBeTrue("webcl.EXEC_KERNEL == 0x1");
-    shouldBeTrue("webcl.EXEC_NATIVE_KERNEL == 0x2");
+
     shouldBeTrue("webcl.QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE == 0x1");
     shouldBeTrue("webcl.QUEUE_PROFILING_ENABLE == 0x2");
+
     shouldBeTrue("webcl.CONTEXT_DEVICES == 0x1081");
     shouldBeTrue("webcl.CONTEXT_PROPERTIES == 0x1082");
     shouldBeTrue("webcl.CONTEXT_NUM_DEVICES == 0x1083");
+
     shouldBeTrue("webcl.CONTEXT_PLATFORM == 0x1084");
+
     shouldBeTrue("webcl.QUEUE_CONTEXT == 0x1090");
     shouldBeTrue("webcl.QUEUE_DEVICE == 0x1091");
     shouldBeTrue("webcl.QUEUE_PROPERTIES == 0x1093");
+
     shouldBeTrue("webcl.MEM_READ_WRITE == 0x1");
     shouldBeTrue("webcl.MEM_WRITE_ONLY == 0x2");
     shouldBeTrue("webcl.MEM_READ_ONLY == 0x4");
+
     shouldBeTrue("webcl.R == 0x10B0");
     shouldBeTrue("webcl.A == 0x10B1");
     shouldBeTrue("webcl.RG == 0x10B2");
@@ -133,6 +154,10 @@ function runTest() {
     shouldBeTrue("webcl.ARGB == 0x10B7");
     shouldBeTrue("webcl.INTENSITY == 0x10B8");
     shouldBeTrue("webcl.LUMINANCE == 0x10B9");
+    shouldBeTrue("webcl.Rx == 0x10BA");
+    shouldBeTrue("webcl.RGx == 0x10BB");
+    shouldBeTrue("webcl.RGBx == 0x10BC");
+
     shouldBeTrue("webcl.SNORM_INT8 == 0x10D0");
     shouldBeTrue("webcl.SNORM_INT16 == 0x10D1");
     shouldBeTrue("webcl.UNORM_INT8 == 0x10D2");
@@ -148,61 +173,73 @@ function runTest() {
     shouldBeTrue("webcl.UNSIGNED_INT32 == 0x10DC");
     shouldBeTrue("webcl.HALF_FLOAT == 0x10DD");
     shouldBeTrue("webcl.FLOAT == 0x10DE");
+
     shouldBeTrue("webcl.MEM_OBJECT_BUFFER == 0x10F0");
     shouldBeTrue("webcl.MEM_OBJECT_IMAGE2D == 0x10F1");
+
     shouldBeTrue("webcl.MEM_TYPE == 0x1100");
     shouldBeTrue("webcl.MEM_FLAGS == 0x1101");
     shouldBeTrue("webcl.MEM_SIZE == 0x1102");
-    shouldBeTrue("webcl.MEM_HOST_PTR == 0x1103");
-    shouldBeTrue("webcl.MEM_MAP_COUNT == 0x1104");
+
     shouldBeTrue("webcl.MEM_CONTEXT == 0x1106");
     shouldBeTrue("webcl.MEM_ASSOCIATED_MEMOBJECT == 0x1107");
     shouldBeTrue("webcl.MEM_OFFSET == 0x1108");
+
     shouldBeTrue("webcl.IMAGE_FORMAT == 0x1110");
     shouldBeTrue("webcl.IMAGE_ELEMENT_SIZE == 0x1111");
     shouldBeTrue("webcl.IMAGE_ROW_PITCH == 0x1112");
     shouldBeTrue("webcl.IMAGE_WIDTH == 0x1114");
     shouldBeTrue("webcl.IMAGE_HEIGHT == 0x1115");
+
     shouldBeTrue("webcl.ADDRESS_NONE == 0x1130");
     shouldBeTrue("webcl.ADDRESS_CLAMP_TO_EDGE == 0x1131");
     shouldBeTrue("webcl.ADDRESS_CLAMP == 0x1132");
     shouldBeTrue("webcl.ADDRESS_REPEAT == 0x1133");
     shouldBeTrue("webcl.ADDRESS_MIRRORED_REPEAT == 0x1134");
+
     shouldBeTrue("webcl.FILTER_NEAREST == 0x1140");
     shouldBeTrue("webcl.FILTER_LINEAR == 0x1141");
+
     shouldBeTrue("webcl.SAMPLER_CONTEXT == 0x1151");
     shouldBeTrue("webcl.SAMPLER_NORMALIZED_COORDS == 0x1152");
     shouldBeTrue("webcl.SAMPLER_ADDRESSING_MODE == 0x1153");
     shouldBeTrue("webcl.SAMPLER_FILTER_MODE == 0x1154");
+
     shouldBeTrue("webcl.MAP_READ == 0x1");
     shouldBeTrue("webcl.MAP_WRITE == 0x2");
+
     shouldBeTrue("webcl.PROGRAM_CONTEXT == 0x1161");
     shouldBeTrue("webcl.PROGRAM_NUM_DEVICES == 0x1162");
     shouldBeTrue("webcl.PROGRAM_DEVICES == 0x1163");
     shouldBeTrue("webcl.PROGRAM_SOURCE == 0x1164");
+
     shouldBeTrue("webcl.PROGRAM_BUILD_STATUS == 0x1181");
     shouldBeTrue("webcl.PROGRAM_BUILD_OPTIONS == 0x1182");
     shouldBeTrue("webcl.PROGRAM_BUILD_LOG == 0x1183");
+
     shouldBeTrue("webcl.BUILD_SUCCESS == 0");
     shouldBeTrue("webcl.BUILD_NONE == -1");
     shouldBeTrue("webcl.BUILD_ERROR == -2");
     shouldBeTrue("webcl.BUILD_IN_PROGRESS == -3");
+
     shouldBeTrue("webcl.KERNEL_FUNCTION_NAME == 0x1190");
     shouldBeTrue("webcl.KERNEL_NUM_ARGS == 0x1191");
     shouldBeTrue("webcl.KERNEL_CONTEXT == 0x1193");
     shouldBeTrue("webcl.KERNEL_PROGRAM == 0x1194");
+
     shouldBeTrue("webcl.KERNEL_WORK_GROUP_SIZE == 0x11B0");
     shouldBeTrue("webcl.KERNEL_COMPILE_WORK_GROUP_SIZE == 0x11B1");
     shouldBeTrue("webcl.KERNEL_LOCAL_MEM_SIZE == 0x11B2");
     shouldBeTrue("webcl.KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE == 0x11B3");
     shouldBeTrue("webcl.KERNEL_PRIVATE_MEM_SIZE == 0x11B4");
+
     shouldBeTrue("webcl.EVENT_COMMAND_QUEUE == 0x11D0");
     shouldBeTrue("webcl.EVENT_COMMAND_TYPE == 0x11D1");
     shouldBeTrue("webcl.EVENT_COMMAND_EXECUTION_STATUS == 0x11D3");
     shouldBeTrue("webcl.EVENT_CONTEXT == 0x11D4");
+
     shouldBeTrue("webcl.COMMAND_NDRANGE_KERNEL == 0x11F0");
     shouldBeTrue("webcl.COMMAND_TASK == 0x11F1");
-    shouldBeTrue("webcl.COMMAND_NATIVE_KERNEL == 0x11F2");
     shouldBeTrue("webcl.COMMAND_READ_BUFFER == 0x11F3");
     shouldBeTrue("webcl.COMMAND_WRITE_BUFFER == 0x11F4");
     shouldBeTrue("webcl.COMMAND_COPY_BUFFER == 0x11F5");
@@ -211,29 +248,31 @@ function runTest() {
     shouldBeTrue("webcl.COMMAND_COPY_IMAGE == 0x11F8");
     shouldBeTrue("webcl.COMMAND_COPY_IMAGE_TO_BUFFER == 0x11F9");
     shouldBeTrue("webcl.COMMAND_COPY_BUFFER_TO_IMAGE == 0x11FA");
-    shouldBeTrue("webcl.COMMAND_MAP_BUFFER == 0x11FB");
-    shouldBeTrue("webcl.COMMAND_MAP_IMAGE == 0x11FC");
-    shouldBeTrue("webcl.COMMAND_UNMAP_MEM_OBJECT == 0x11FD");
     shouldBeTrue("webcl.COMMAND_MARKER == 0x11FE");
-    shouldBeTrue("webcl.COMMAND_ACQUIRE_GL_OBJECTS == 0x11FF");
-    shouldBeTrue("webcl.COMMAND_RELEASE_GL_OBJECTS == 0x1200");
     shouldBeTrue("webcl.COMMAND_READ_BUFFER_RECT == 0x1201");
     shouldBeTrue("webcl.COMMAND_WRITE_BUFFER_RECT == 0x1202");
     shouldBeTrue("webcl.COMMAND_COPY_BUFFER_RECT == 0x1203");
     shouldBeTrue("webcl.COMMAND_USER == 0x1204");
+
     shouldBeTrue("webcl.COMPLETE == 0x0");
     shouldBeTrue("webcl.RUNNING == 0x1");
     shouldBeTrue("webcl.SUBMITTED == 0x2");
     shouldBeTrue("webcl.QUEUED == 0x3");
+
     shouldBeTrue("webcl.PROFILING_COMMAND_QUEUED == 0x1280");
     shouldBeTrue("webcl.PROFILING_COMMAND_SUBMIT == 0x1281");
     shouldBeTrue("webcl.PROFILING_COMMAND_START == 0x1282");
     shouldBeTrue("webcl.PROFILING_COMMAND_END == 0x1283");
+
     shouldBeTrue("WebCLGL.GL_OBJECT_BUFFER == 0x2000");
     shouldBeTrue("WebCLGL.GL_OBJECT_TEXTURE2D == 0x2001");
     shouldBeTrue("WebCLGL.GL_OBJECT_RENDERBUFFER == 0x2003");
     shouldBeTrue("WebCLGL.GL_TEXTURE_TARGET == 0x2004");
     shouldBeTrue("WebCLGL.GL_MIPMAP_LEVEL == 0x2005");
+    shouldBeTrue("WebCLGL.INVALID_GL_OBJECT == -60");
+    shouldBeTrue("WebCLGL.INVALID_MIP_LEVEL == -62");
+    shouldBeTrue("WebCLGL.COMMAND_ACQUIRE_GL_OBJECTS == 0x11FF");
+    shouldBeTrue("WebCLGL.COMMAND_RELEASE_GL_OBJECTS == 0x1200");
 
 }
 </script>
