@@ -30,14 +30,8 @@
 
 #if ENABLE(WEBCL) && ENABLE(WEBGL)
 
-#include "WebCLDevice.h"
-#include "WebCLException.h"
-#include "WebCLPlatform.h"
-
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -31,9 +31,6 @@
 
 #include "WebCLGLContextProperties.h"
 
-#include "ComputeContext.h"
-#include "WebCLDevice.h"
-
 namespace WebCore {
 
 PassRefPtr<WebCLGLContextProperties> WebCLGLContextProperties::create()

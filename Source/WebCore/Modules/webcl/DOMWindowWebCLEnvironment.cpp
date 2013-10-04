@@ -28,12 +28,11 @@
 #include "config.h"
 
 #if ENABLE(WEBCL)
+
 #include "DOMWindowWebCLEnvironment.h"
 
 #include "DOMWindow.h"
-#include "DOMWindowQuota.h"
 #include "WebCL.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

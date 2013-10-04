@@ -30,6 +30,7 @@
 #if ENABLE(WEBCL)
 
 #include "WebCLExtensionsAccessor.h"
+
 #include "WebCLGL.h"
 
 namespace WebCore {

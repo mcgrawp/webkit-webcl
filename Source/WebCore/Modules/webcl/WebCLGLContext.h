@@ -32,12 +32,12 @@
 
 #include "WebCLContext.h"
 
-#include "WebCLGLBuffer.h"
-#include "WebCLGLCommandQueue.h"
-#include "WebCLGLImage.h"
-
 namespace WebCore {
 
+class WebCLGLBuffer;
+class WebCLGLCommandQueue;
+class WebCLGLImage;
+class WebGLRenderbuffer;
 class WebGLTexture;
 
 class WebCLGLContext : public WebCLContext {

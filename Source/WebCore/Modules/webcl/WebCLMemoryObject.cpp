@@ -31,7 +31,10 @@
 
 #include "WebCLMemoryObject.h"
 
+#include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
+#include "WebCLImageDescriptor.h"
+#include "WebCLProgram.h"
 
 namespace WebCore {
 

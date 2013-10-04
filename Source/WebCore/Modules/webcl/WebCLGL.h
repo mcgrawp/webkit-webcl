@@ -32,7 +32,6 @@
 
 #include "WebCL.h"
 #include "WebCLExtension.h"
-#include "WebCLGLContext.h"
 
 namespace WebCore {
 

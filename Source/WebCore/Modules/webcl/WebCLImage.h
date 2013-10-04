@@ -30,14 +30,11 @@
 
 #if ENABLE(WEBCL)
 
-#include "WebCLException.h"
-#include "WebCLImageDescriptor.h"
 #include "WebCLMemoryObject.h"
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
+
+class WebCLImageDescriptor;
 
 class WebCLImage : public WebCLMemoryObject {
 public:

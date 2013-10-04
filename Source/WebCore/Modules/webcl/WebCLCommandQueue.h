@@ -30,26 +30,18 @@
 
 #if ENABLE(WEBCL)
 
-#include "HTMLCanvasElement.h"
-#include "ImageData.h"
-#include "WebCLBuffer.h"
-#include "WebCLContext.h"
-#include "WebCLEvent.h"
-#include "WebCLFinishCallback.h"
-#include "WebCLGetInfo.h"
-#include "WebCLImage.h"
-#include "WebCLProgram.h"
-
-#include <wtf/ArrayBufferView.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Uint8ClampedArray.h>
-#include <wtf/Vector.h>
+#include "WebCLObject.h"
 
 namespace WebCore {
 
-class WebCLContext;
 class WebCLKernel;
+class WebCLGetInfo;
+class WebCLImage;
+class WebCLContext;
+class WebCLBuffer;
+class WebCLDevice;
+class WebCLEvent;
+class ImageData;
 
 class WebCLCommandQueue : public WebCLObject<CCCommandQueue> {
 public:

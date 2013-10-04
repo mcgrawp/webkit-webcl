@@ -30,21 +30,19 @@
 #if ENABLE(WEBCL)
 
 #include "WebCLContext.h"
-#include "WebCLContextProperties.h"
 
 #include "CachedImage.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
+#include "ImageData.h"
+#include "SharedBuffer.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLEvent.h"
+#include "WebCLGLBuffer.h"
 #include "WebCLImage.h"
-#include "WebCLInputChecker.h"
-#include "WebCLKernel.h"
-#include "WebCLMemoryObject.h"
+#include "WebCLImageDescriptor.h"
 #include "WebCLProgram.h"
 #include "WebCLSampler.h"
-#include "WebGLBuffer.h"
-#include "WebGLRenderbuffer.h"
 
 namespace WebCore {
 

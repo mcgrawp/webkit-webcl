@@ -32,6 +32,7 @@
 #include "WebCLImage.h"
 
 #include "WebCLContext.h"
+#include "WebCLImageDescriptor.h"
 
 namespace WebCore {
 

@@ -43,18 +43,18 @@ PassRefPtr<WebCLGLObjectInfo> WebCLGLObjectInfo::create(int glObjectType, WebGLO
 WebCLGLObjectInfo::WebCLGLObjectInfo(int glObjectType, WebGLObject* glObject)
     : m_type(glObjectType)
     , m_glObject(glObject)
-{ 
+{
 }
 
 int WebCLGLObjectInfo::type() const
 {
     return m_type;
-}            
+}
 
 WebGLObject* WebCLGLObjectInfo::glObject() const
 {
     return m_glObject;
-}      
+}
 
 }
 #endif // ENABLE(WEBCL)

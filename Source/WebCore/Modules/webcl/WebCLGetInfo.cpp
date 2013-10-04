@@ -1,17 +1,17 @@
 /*
 * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
 * are met:
-* 
+*
 * 1.  Redistributions of source code must retain the above copyright
 *     notice, this list of conditions and the following disclaimer.
-* 
+*
 * 2.  Redistributions in binary form must reproduce the above copyright
 *     notice, this list of conditions and the following disclaimer in the
 *     documentation and/or other materials provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
 * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -33,15 +33,12 @@
 
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
-#include "WebCLDevice.h"
-#include "WebCLProgram.h"
-#include "WebCLPlatform.h"
 #include "WebCLContextProperties.h"
-
-#include <wtf/Float32Array.h>
-#include <wtf/Int32Array.h>
-#include <wtf/Uint32Array.h>
-#include <wtf/Uint8Array.h>
+#include "WebCLDevice.h"
+#include "WebCLImageDescriptor.h"
+#include "WebCLMemoryObject.h"
+#include "WebCLPlatform.h"
+#include "WebCLProgram.h"
 
 namespace WebCore {
 

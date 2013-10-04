@@ -31,6 +31,8 @@
 
 #include "WebCLGL.h"
 
+#include "WebCLGLContext.h"
+
 namespace WebCore {
 
 #if 0

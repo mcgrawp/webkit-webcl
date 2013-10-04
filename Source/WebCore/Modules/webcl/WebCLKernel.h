@@ -30,21 +30,18 @@
 
 #if ENABLE(WEBCL)
 
-#include "ExceptionCode.h"
 #include "JSWebCLKernelCustom.h"
-#include "WebCLGetInfo.h"
 #include "WebCLInputChecker.h"
+#include "WebCLMemoryObject.h"
 #include "WebCLObject.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebCL;
-class WebCLContext;
 class WebCLGetInfo;
+class WebCLContext;
 class WebCLDevice;
-class WebCLMemoryObject;
+class WebCLProgram;
+class WebCLKernelArgumentTypes;
 
 class WebCLKernel : public WebCLObject<CCKernel> {
 public:
@@ -64,7 +61,7 @@ public:
 
     void setDevice(PassRefPtr<WebCLDevice>);
 private:
-    WebCLKernel(WebCLContext*, WebCLProgram*, CCKernel, const String&); 
+    WebCLKernel(WebCLContext*, WebCLProgram*, CCKernel, const String&);
 
     template <class T>
     void setArgHelper(unsigned argIndex, ScriptState*, const ScriptValue& jsArgValue, unsigned vectorSize, ExceptionCode&);

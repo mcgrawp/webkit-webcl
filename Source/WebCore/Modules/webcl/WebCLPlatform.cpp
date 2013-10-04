@@ -32,10 +32,13 @@
 
 #include "WebCLPlatform.h"
 
-#include "ComputeExtensions.h"
-#include "WebCL.h"
-#include "WebCLException.h"
+#include "WebCLCommandQueue.h"
+#include "WebCLContext.h"
+#include "WebCLGetInfo.h"
+#include "WebCLImageDescriptor.h"
 #include "WebCLInputChecker.h"
+#include "WebCLMemoryObject.h"
+#include "WebCLProgram.h"
 
 namespace WebCore {
 

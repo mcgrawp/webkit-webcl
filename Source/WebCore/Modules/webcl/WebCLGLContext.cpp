@@ -30,6 +30,12 @@
 #if ENABLE(WEBCL) && ENABLE(WEBGL)
 
 #include "WebCLGLContext.h"
+
+#include "WebCLGLBuffer.h"
+#include "WebCLGLCommandQueue.h"
+#include "WebCLGLImage.h"
+#include "WebCLImageDescriptor.h"
+#include "WebCLProgram.h"
 #include "WebGLBuffer.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLTexture.h"

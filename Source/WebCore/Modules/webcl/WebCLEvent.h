@@ -30,13 +30,13 @@
 
 #if ENABLE(WEBCL)
 
-#include "ExceptionCode.h"
-#include "WebCLFinishCallback.h"
-#include "WebCLGetInfo.h"
+#include "WebCLObject.h"
 
 namespace WebCore {
 
-class WebCLContext;
+class WebCLGetInfo;
+class WebCLCommandQueue;
+class WebCLFinishCallback;
 
 class WebCLEvent : public WebCLObject<CCEvent> {
 public:

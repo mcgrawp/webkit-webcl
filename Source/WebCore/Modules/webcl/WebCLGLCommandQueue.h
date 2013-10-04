@@ -32,9 +32,10 @@
 
 #include "WebCLCommandQueue.h"
 
-#include "WebCLContext.h"
-
 namespace WebCore {
+
+class WebCLContext;
+class WebCLMemoryObject;
 
 class WebCLGLCommandQueue : public WebCLCommandQueue {
 public:

@@ -31,9 +31,6 @@
 
 #include "WebCLContextProperties.h"
 
-#include "ComputeContext.h"
-#include "WebCLDevice.h"
-
 namespace WebCore {
 
 PassRefPtr<WebCLContextProperties> WebCLContextProperties::create()

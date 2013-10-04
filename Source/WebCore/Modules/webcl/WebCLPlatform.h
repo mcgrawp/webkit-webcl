@@ -32,13 +32,12 @@
 
 #include "WebCLDevice.h"
 #include "WebCLExtensionsAccessor.h"
-#include "WebCLGetInfo.h"
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#include "WebCLObject.h"
 
 namespace WebCore {
+
+class WebCLDevice;
+class WebCLGetInfo;
 
 class WebCLPlatform : public WebCLObject<CCPlatformID> , public WebCLExtensionsAccessor<CCPlatformID> {
 public:

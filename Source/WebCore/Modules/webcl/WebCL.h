@@ -30,15 +30,17 @@
 
 #if ENABLE(WEBCL)
 
-#include "WebCLContext.h"
-#include "WebCLEvent.h"
+#include "WebCLContextProperties.h"
+#include "WebCLException.h"
 #include "WebCLExtension.h"
+#include "WebCLInputChecker.h"
 #include "WebCLPlatform.h"
 
 namespace WebCore {
 
 class WebCLContextProperties;
 class WebCLContext;
+class WebCLEvent;
 
 class WebCL : public RefCounted<WebCL> , public WebCLExtensionsAccessor<> {
 public:

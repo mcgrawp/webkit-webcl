@@ -28,14 +28,12 @@
 #include "config.h"
 
 #if ENABLE(WEBCL)
+
 #include "WebCL.h"
 
-#include "ComputeContext.h"
-#include "ComputeExtensions.h"
-#include "WebCLContextProperties.h"
-#include "WebCLException.h"
-#include "WebCLExtension.h"
-#include <wtf/PassRefPtr.h>
+#include "WebCLContext.h"
+#include "WebCLDevice.h"
+#include "WebCLEvent.h"
 
 using namespace JSC;
 

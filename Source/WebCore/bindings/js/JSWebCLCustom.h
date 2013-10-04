@@ -34,7 +34,11 @@
 #include "JSWebCLContext.h"
 #include "JSWebCLGLContext.h"
 #include "JSWebCLImage.h"
+#include "WebCLCommandQueue.h"
+#include "WebCLFinishCallback.h"
 #include "WebCLGLContextProperties.h"
+#include "WebCLImageDescriptor.h"
+#include "WebCLProgram.h"
 
 using namespace JSC;
 

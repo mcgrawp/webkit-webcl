@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class WebCLContext;
+
 class WebCLBuffer : public WebCLMemoryObject {
 public:
     ~WebCLBuffer();

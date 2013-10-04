@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class WebCLGLContext;
+class WebCLGLObjectInfo;
 class WebGLObject;
 class WebGLRenderbuffer;
 class WebGLTexture;

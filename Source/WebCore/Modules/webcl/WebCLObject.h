@@ -30,6 +30,9 @@
 
 #if ENABLE(WEBCL)
 
+#include "ComputeContext.h"
+#include "ExceptionCode.h"
+#include "WebCLException.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

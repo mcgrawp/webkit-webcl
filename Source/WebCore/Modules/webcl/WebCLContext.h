@@ -30,41 +30,27 @@
 
 #if ENABLE(WEBCL)
 
-#include "ComputeContext.h"
-#include "GraphicsContext3D.h"
-#include "ImageBuffer.h"
-#include "ImageData.h"
-#include "ScriptObject.h"
-#include "ScriptState.h"
-#include "SharedBuffer.h"
-#include "WebCLBuffer.h"
-#include "WebCLCommandQueue.h"
 #include "WebCLContextProperties.h"
 #include "WebCLDevice.h"
-#include "WebCLException.h"
 #include "WebCLGetInfo.h"
 #include "WebCLInputChecker.h"
+#include "WebCLObject.h"
 
 namespace WebCore {
 
-class ImageData;
-class ImageBuffer;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
-class WebCL;
-class WebCLProgram;
-class WebCLMemoryObject;
-class WebCLImage;
-class WebCLSampler;
-class WebCLEvent;
-class WebCLContextProperties;
-class WebCLImageDescriptor;
-class WebGLRenderbuffer;
-class WebGLBuffer;
-class WebCLDevice;
-class WebCLGetInfo;
+class ImageBuffer;
+class ImageData;
+class WebCLBuffer;
 class WebCLCommandQueue;
+class WebCLDevice;
+class WebCLEvent;
+class WebCLImage;
+class WebCLImageDescriptor;
+class WebCLProgram;
+class WebCLSampler;
 
 // NOTE: WebCLObject used by WebCLContext is a bit different, because the
 // other WebCL classes have as platformObject() a native opencl type. However

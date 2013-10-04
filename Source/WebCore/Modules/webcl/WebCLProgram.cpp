@@ -30,9 +30,11 @@
 #if ENABLE(WEBCL)
 #include "WebCLProgram.h"
 
+#include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
-#include "WebCLException.h"
+#include "WebCLFinishCallback.h"
 #include "WebCLGetInfo.h"
+#include "WebCLImageDescriptor.h"
 #include "WebCLInputChecker.h"
 #include "WebCLKernel.h"
 

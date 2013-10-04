@@ -31,11 +31,16 @@
 
 #include "WebCLCommandQueue.h"
 
-#include "WebCLException.h"
+#include "ImageData.h"
+#include "WebCLBuffer.h"
+#include "WebCLContext.h"
+#include "WebCLEvent.h"
+#include "WebCLGetInfo.h"
+#include "WebCLImage.h"
+#include "WebCLImageDescriptor.h"
 #include "WebCLInputChecker.h"
 #include "WebCLKernel.h"
-#include <wtf/ArrayBuffer.h>
-#include <wtf/Uint8ClampedArray.h>
+#include "WebCLProgram.h"
 
 namespace WebCore {
 

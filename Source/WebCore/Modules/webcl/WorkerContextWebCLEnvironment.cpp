@@ -30,8 +30,9 @@
 #if ENABLE(WORKERS) && ENABLE(WEBCL)
 
 #include "WorkerContextWebCLEnvironment.h"
-#include "WorkerGlobalScope.h"
+
 #include "WebCL.h"
+#include "WorkerGlobalScope.h"
 
 namespace WebCore {
 

@@ -30,21 +30,13 @@
 
 #if ENABLE(WEBCL)
 
-#include "ComputeTypes.h"
-#include "ExceptionCode.h"
 #include "WebCLExtensionsAccessor.h"
 #include "WebCLObject.h"
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
-class WebCLContext;
-class WebCLPlatform;
 class WebCLGetInfo;
+class WebCLPlatform;
 
 class WebCLDevice : public WebCLObject<CCDeviceID> , public WebCLExtensionsAccessor<CCDeviceID> {
 public:

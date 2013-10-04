@@ -31,8 +31,6 @@
 
 #include "WebCLInputChecker.h"
 
-#include "ComputeContext.h"
-
 namespace WebCore {
 namespace WebCLInputChecker {
 

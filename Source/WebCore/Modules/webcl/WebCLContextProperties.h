@@ -33,14 +33,13 @@
 #include "ComputeTypes.h"
 #include "WebCLPlatform.h"
 #include "WebGLRenderingContext.h"
-
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class WebCLDevice;
+class WebCLPlatform;
 
 class WebCLContextProperties : public RefCounted<WebCLContextProperties>
 {

@@ -31,7 +31,12 @@
 
 #include "WebCLGLCommandQueue.h"
 
+#include "WebCLContext.h"
+#include "WebCLEvent.h"
+#include "WebCLMemoryObject.h"
+
 namespace WebCore {
+
 
 PassRefPtr<WebCLGLCommandQueue> WebCLGLCommandQueue::create(WebCLContext* context, int queueProperties, const RefPtr<WebCLDevice>& webCLDevice, ExceptionCode& ec)
 {

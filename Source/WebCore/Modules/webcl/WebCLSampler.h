@@ -30,15 +30,11 @@
 
 #if ENABLE(WEBCL)
 
-#include "WebCLException.h"
-#include "WebCLGetInfo.h"
 #include "WebCLObject.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class WebCLGetInfo;
 class WebCLContext;
 
 class WebCLSampler : public WebCLObject<CCSampler> {

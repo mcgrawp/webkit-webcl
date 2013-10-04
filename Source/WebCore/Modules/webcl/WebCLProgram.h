@@ -30,21 +30,15 @@
 
 #if ENABLE(WEBCL)
 
-#include "ComputeContext.h"
-#include "ExceptionCode.h"
-#include "WebCLFinishCallback.h"
 #include "WebCLObject.h"
-
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class WebCL;
 class WebCLContext;
+class WebCLDevice;
+class WebCLFinishCallback;
 class WebCLGetInfo;
 class WebCLKernel;
-class WebCLDevice;
 
 class WebCLProgram : public WebCLObject<CCProgram> {
 public:

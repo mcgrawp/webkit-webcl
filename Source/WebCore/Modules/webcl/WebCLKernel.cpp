@@ -31,8 +31,11 @@
 
 #include "WebCLKernel.h"
 
+#include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
-#include "WebCLException.h"
+#include "WebCLGetInfo.h"
+#include "WebCLImageDescriptor.h"
+#include "WebCLProgram.h"
 
 namespace WebCore {
 

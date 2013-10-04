@@ -32,6 +32,7 @@
 #include "WebCLGLBuffer.h"
 
 #include "WebCLContext.h"
+#include "WebCLGLObjectInfo.h"
 #include "WebGLBuffer.h"
 
 namespace WebCore {

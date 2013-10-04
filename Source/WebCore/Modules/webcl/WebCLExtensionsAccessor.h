@@ -32,13 +32,11 @@
 
 #include "ComputeExtensions.h"
 #include "ExceptionCode.h"
-#include "WebCLExtension.h"
-
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class WebCLGL;
+class WebCLExtension;
 
 // FIXME: When WebCore switches on support for C++11,
 // replace NullTypePtr by C++11's nullptr_t.

@@ -30,7 +30,6 @@
 
 #if ENABLE(WEBCL)
 
-#include "ComputeTypes.h"
 #include "WebCLObject.h"
 
 namespace WebCore {

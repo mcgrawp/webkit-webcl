@@ -30,15 +30,11 @@
 
 #if ENABLE(WEBCL)
 
-#include "ComputeContext.h"
-#include "WebCLException.h"
 #include "WebCLObject.h"
 
 namespace WebCore {
 
 class WebCLContext;
-class WebCLException;
-class WebCLGLObjectInfo;
 class WebCLGetInfo;
 
 class WebCLMemoryObject : public WebCLObject<PlatformComputeObject> {

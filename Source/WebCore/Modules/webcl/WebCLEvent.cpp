@@ -31,8 +31,13 @@
 
 #include "WebCLEvent.h"
 
+#include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
-#include "WebCLException.h"
+#include "WebCLFinishCallback.h"
+#include "WebCLGetInfo.h"
+#include "WebCLImageDescriptor.h"
+#include "WebCLMemoryObject.h"
+#include "WebCLProgram.h"
 
 namespace WebCore {
 WebCLEvent::~WebCLEvent()
