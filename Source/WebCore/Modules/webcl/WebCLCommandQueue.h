@@ -51,15 +51,13 @@ public:
 
     void enqueueWriteBuffer(WebCLBuffer*, bool blockingWrite, int bufferOffset, int numBytes, ArrayBufferView*,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
-    void enqueueWriteBuffer(WebCLBuffer*, bool blockingWrite, int bufferOffset, int numBytes, ImageData*,
-        const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueWriteBuffer(WebCLBuffer*, bool blockingWrite, int bufferOffset, ImageData*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void enqueueWriteBufferRect(WebCLBuffer*, bool blockingWrite, Int32Array* bufferOrigin, Int32Array* hostOrigin,
         Int32Array* region, int bufferRowPitch, int bufferSlicePitch, int hostRowPitch, int hostSlicePitch,
         ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
-    void enqueueReadBuffer(WebCLBuffer*, bool blockingWrite, int bufferOffset, int numBytes, ImageData*,
-        const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueReadBuffer(WebCLBuffer*, bool blockingWrite, int bufferOffset, ImageData*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
     void enqueueReadBuffer(WebCLBuffer*, bool blockingWrite, int bufferOffset, int numBytes, ArrayBufferView*,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 

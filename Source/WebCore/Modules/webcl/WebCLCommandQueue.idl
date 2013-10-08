@@ -45,7 +45,6 @@ typedef unsigned long CLuint;
     [RaisesException] void enqueueWriteBuffer(WebCLBuffer bufferId,
             CLboolean blockingWrite,
             CLuint offset,
-            CLuint bufferSize,
             ImageData ptr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
@@ -74,7 +73,6 @@ typedef unsigned long CLuint;
     [RaisesException] void enqueueReadBuffer(WebCLBuffer bufferId,
             CLboolean blockingRead,
             CLuint offset,
-            CLuint bufferSize,
             ImageData ptr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);

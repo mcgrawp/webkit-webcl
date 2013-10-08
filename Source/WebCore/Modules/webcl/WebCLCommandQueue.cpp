@@ -137,15 +137,16 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blockingWri
     enqueueWriteBufferBase(buffer, blockingWrite, offset, bufferSize, ptr ? ptr->baseAddress() : 0, events, event, ec);
 }
 
-void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blockingWrite, int offset, int bufferSize, ImageData* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, bool blockingWrite, int offset, ImageData* imageData, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!ptr && !ptr->data() && !ptr->data()->data()) {
+    if (!imageData && !imageData->data() && !imageData->data()->data()) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
+    unsigned byteLength = imageData->data()->length();
+    unsigned char* bufferArray = imageData->data()->data();
 
-    unsigned char* bufferArray = ptr->data()->data();
-    enqueueWriteBufferBase(buffer, blockingWrite, offset, bufferSize, static_cast<void*>(bufferArray), events, event, ec);
+    enqueueWriteBufferBase(buffer, blockingWrite, offset, byteLength, static_cast<void*>(bufferArray), events, event, ec);
 }
 
 static bool toVector(Int32Array* array, Vector<size_t>& result, int sizeCheck = 0)
@@ -219,8 +220,7 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, bool blockin
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead, int offset, int bufferSize,
-    ImageData* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead, int offset, ImageData* imageData, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
@@ -232,16 +232,14 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, bool blockingRead
         return;
     }
 
-    PlatformComputeObject ccBuffer = buffer->platformObject();
-
-    unsigned char* bufferArray = nullptr;
-    if (ptr && ptr->data() && ptr->data()->data()) {
-        bufferArray = ptr->data()->data();
-        bufferSize =  ptr->data()->length();
-    } else {
+    if (!imageData && !imageData->data() && !imageData->data()->data()) {
         ec = ComputeContext::INVALID_VALUE;
         return;
     }
+
+    PlatformComputeObject ccBuffer = buffer->platformObject();
+    unsigned char* bufferArray = imageData->data()->data();
+    unsigned bufferSize = imageData->data()->length();
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
