@@ -62,8 +62,6 @@ public:
     virtual ~WebCLContext();
     static PassRefPtr<WebCLContext> create(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
 
-    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlags, CCuint sizeInBytes, ArrayBufferView*, ExceptionCode&);
-
     PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, int commandQueueProperty, ExceptionCode&);
 
     PassRefPtr<WebCLImage> createImage(CCenum flag, WebCLImageDescriptor*, ArrayBufferView*, ExceptionCode&);
@@ -78,9 +76,11 @@ public:
 
     Vector<RefPtr<WebCLImageDescriptor> > getSupportedImageFormats(int memFlag, ExceptionCode&);
 
-    // Strawman proposal
+    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlags, CCuint sizeInBytes, ArrayBufferView*, ExceptionCode&);
     PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlag, ImageData*, ExceptionCode&);
     PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlag, HTMLCanvasElement*, ExceptionCode&);
+    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlag, HTMLImageElement*, ExceptionCode&);
+
     PassRefPtr<WebCLImage> createImage(CCenum memFlag, ImageData*, ExceptionCode&);
     PassRefPtr<WebCLImage> createImage(CCenum memFlag, HTMLCanvasElement*, ExceptionCode&);
     PassRefPtr<WebCLImage> createImage(CCenum memFlag, HTMLImageElement*, ExceptionCode&);
@@ -110,8 +110,10 @@ protected:
     template <class T>
     void createCommandQueueBase(WebCLDevice*, int queueProperties, ExceptionCode&, RefPtr<T>& out);
 
+
 private:
     PassRefPtr<WebCLImage> createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat&, void*, ExceptionCode&);
+    PassRefPtr<WebCLBuffer> createBufferBase(CCenum memoryFlags, CCuint size, void* data, ExceptionCode&);
 
     void releasePlatformObjectImpl();
 

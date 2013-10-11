@@ -108,7 +108,7 @@ PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource,
     return WebCLProgram::create(this, kernelSource, ec);
 }
 
-PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint size, ArrayBufferView* hostPtr, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLContext::createBufferBase(CCenum memoryFlags, CCuint size, void* hostPtr, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
@@ -119,76 +119,94 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint si
         return 0;
     }
 
-    void* data = 0;
-    if (hostPtr) {
-        if (hostPtr->byteLength() < size) {
+    if (hostPtr)
+        memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
+
+    return WebCLBuffer::create(this, memoryFlags, size, hostPtr, ec);
+}
+
+PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint size, ArrayBufferView* data, ExceptionCode& ec)
+{
+    void* hostPtr = nullptr;
+    if (data) {
+        if (data->byteLength() < size) {
             ec = WebCLException::INVALID_HOST_PTR;
             return 0;
         }
-        memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
-        data = hostPtr->baseAddress();
+
+        if (!data->buffer()) {
+            ec = WebCLException::INVALID_HOST_PTR;
+            return 0;
+        }
+        hostPtr = data->buffer()->data();
     }
 
-    return WebCLBuffer::create(this, memoryFlags, size, data, ec);
+    return createBufferBase(memoryFlags, size, hostPtr, ec);
 }
 
-PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, ImageData *ptr, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, ImageData* srcPixels, ExceptionCode& ec)
 {
-    if (!platformObject()) {
-        ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-
-    if (!ptr || !ptr->data() || !ptr->data()->data()) {
+    if (!srcPixels || !srcPixels->data() || !srcPixels->data()->data()) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
 
-    void* buffer = ptr->data()->data();
-    int bufferSize = ptr->data()->length();
-    memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
+    void* hostPtr = srcPixels->data()->data();
+    CCuint bufferSize = srcPixels->data()->length();
 
-   return WebCLBuffer::create(this, memoryFlags, bufferSize, buffer, ec);
+    return createBufferBase(memoryFlags, bufferSize, hostPtr, ec);
 }
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
+{
+    if (!srcCanvas || !srcCanvas->buffer()) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
+
+    RefPtr<ImageData> imageData = srcCanvas->getImageData();
+    if (!imageData || !imageData->data()) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
+
+    void* hostPtr = imageData->data()->data();
+    CCuint bufferSize = imageData->data()->length();
+
+    return createBufferBase(memoryFlags, bufferSize, hostPtr, ec);
+}
+
+PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLImageElement* srcImage, ExceptionCode& ec)
+{
+    if (!srcImage && !srcImage->cachedImage()) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
+
+    CachedImage* cachedImage = srcImage->cachedImage();
+    if (!cachedImage || !cachedImage->image() || !cachedImage->image()->data()) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
+
+    void* hostPtr = (void*) cachedImage->image()->data()->data();
+    unsigned bufferSize = srcImage->width() * srcImage->height() * 4 /* source pixel format is treated as 32-bit(4 byte) RGBA regardless of the source. */;
+    if (!hostPtr) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
+
+    return createBufferBase(memoryFlags, bufferSize, hostPtr, ec);
+}
+
+PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat& imageFormat,
+    void* data, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
 
-    if (!srcCanvas || !srcCanvas->buffer()) {
-        ec = ComputeContext::INVALID_HOST_PTR;
-        return 0;
-    }
-
-    CCuint width = srcCanvas->width();
-    CCuint height = srcCanvas->height();
-
-    ImageBuffer* imageBuffer = srcCanvas->buffer();
-    RefPtr<Uint8ClampedArray> byteArray = imageBuffer->getUnmultipliedImageData(IntRect(0, 0, width, height));
-
-    if (!byteArray) {
-        ec = ComputeContext::INVALID_HOST_PTR;
-        return 0;
-    }
-
-    void* imageData = byteArray->data();
-    int bufferSize = byteArray->length();
-    if (!imageData || !bufferSize) {
-        ec = ComputeContext::INVALID_HOST_PTR;
-        return 0;
-    }
-    memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
-
-    return WebCLBuffer::create(this, memoryFlags, bufferSize, imageData, ec);
-}
-
-
-PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat& imageFormat,
-    void* data, ExceptionCode& ec)
-{
     if (!width || !height) {
         ec = WebCLException::INVALID_IMAGE_SIZE;
         return 0;
@@ -211,77 +229,51 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint widt
     return imageObject.release();
 }
 
-PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement* canvasElement, ExceptionCode& ec)
+PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
 {
-    if (!platformObject()) {
-        ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-
-    if (!canvasElement || !canvasElement->buffer()) {
-        ec = ComputeContext::INVALID_HOST_PTR;
-        return 0;
-    }
-
-    CCuint width = canvasElement->width();
-    CCuint height = canvasElement->height();
-
-    ImageBuffer* imageBuffer = canvasElement->buffer();
-    RefPtr<Uint8ClampedArray> byteArray = imageBuffer->getUnmultipliedImageData(IntRect(0, 0, width, height));
-
-    if (!byteArray) {
-        ec = ComputeContext::INVALID_HOST_PTR;
-        return 0;
-    }
-
-    void* imageData = byteArray->data();
-    size_t bufferSize = byteArray->length();
-
-    if (!imageData || !bufferSize) {
+    if (!srcCanvas || !srcCanvas->getImageData()) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
+    RefPtr<ImageData> imageData = srcCanvas->getImageData();
+
+    if (!imageData && !imageData->data() && !imageData->data()->data()) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
+
+    void* hostPtr = imageData->data()->data();
+    CCuint width = srcCanvas->width();
+    CCuint height = srcCanvas->height();
+
     CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, imageData, ec);
+    return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, hostPtr, ec);
 }
 
-PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLImageElement* image, ExceptionCode& ec)
+PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLImageElement* srcImage, ExceptionCode& ec)
 {
-    if (!platformObject()) {
-        ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-
-    if (!image || !image->cachedImage()) {
-        ec = WebCLException::INVALID_HOST_PTR;
-        return 0;
-    }
-    CCuint width = image->width();
-    CCuint height = image->height();
-    CachedImage* cachedImage = image->cachedImage();
-
-    IntRect rect(0, 0, width, height);
-    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(rect.size());
-    buffer->context()->drawImage(cachedImage->image(), ColorSpaceDeviceRGB, rect);
-
-    RefPtr<Uint8ClampedArray> byteArray =  buffer->getUnmultipliedImageData(rect);
-    if (!byteArray) {
-        ec = WebCLException::INVALID_HOST_PTR;
-        return 0;
-    }
-#if 0
-            // FIXME: Is this useful?
-            data = (void*) cachedImage->image()->data()->data();
-#else
-    void* data = byteArray->data();
-#endif
-    if (!data) {
+    if (!srcImage || !srcImage->cachedImage()) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
 
-    CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, data, ec);
+    CachedImage* cachedImage = srcImage->cachedImage();
+    if (!cachedImage || !cachedImage->image() || !cachedImage->image()->data()) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
+
+    void* hostPtr = (void*) cachedImage->image()->data()->data();
+    if (!hostPtr) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
+
+    CCuint width = srcImage->width();
+    CCuint height = srcImage->height();
+
+    CCImageFormat srcImageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
+    return createImage2DBase(flags, width, height, 0 /* rowPitch */, srcImageFormat, hostPtr, ec);
 }
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLVideoElement* video, ExceptionCode& ec)
@@ -314,19 +306,15 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLVideoElement*
     return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, imageData, ec);
 }
 
-PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, ImageData* data, ExceptionCode& ec)
+PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, ImageData* srcPixels, ExceptionCode& ec)
 {
-    if (!platformObject()) {
-        ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-    if (!data || !data->data() || !data->data()->data()) {
+    if (!srcPixels || !srcPixels->data() || !srcPixels->data()->data()) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
-    CCuint width = data->width();
-    CCuint height = data->height();
-    Uint8ClampedArray* byteArray = data->data();
+    CCuint width = srcPixels->width();
+    CCuint height = srcPixels->height();
+    Uint8ClampedArray* byteArray = srcPixels->data();
 
     CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
     return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, (void*) byteArray->data(), ec);
@@ -334,11 +322,6 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, ImageData* data, 
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescriptor* descriptor, ArrayBufferView* hostPtr, ExceptionCode& ec)
 {
-    if (!platformObject()) {
-        ec = WebCLException::INVALID_CONTEXT;
-        return 0;
-    }
-
     if (!descriptor) {
         ec = WebCLException::INVALID_IMAGE_FORMAT_DESCRIPTOR;
         return 0;
