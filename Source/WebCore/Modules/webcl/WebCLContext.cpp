@@ -108,7 +108,7 @@ PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource,
     return WebCLProgram::create(this, kernelSource, ec);
 }
 
-PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint size, ArrayBuffer* data, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint size, ArrayBufferView* hostPtr, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
@@ -119,17 +119,17 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint si
         return 0;
     }
 
-    void* hostPtr = 0;
-    if (data) {
-        if (data->byteLength() < size) {
+    void* data = 0;
+    if (hostPtr) {
+        if (hostPtr->byteLength() < size) {
             ec = WebCLException::INVALID_HOST_PTR;
             return 0;
         }
         memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
-        hostPtr = data->data();
+        data = hostPtr->baseAddress();
     }
 
-    return WebCLBuffer::create(this, memoryFlags, size, hostPtr, ec);
+    return WebCLBuffer::create(this, memoryFlags, size, data, ec);
 }
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, ImageData *ptr, ExceptionCode& ec)

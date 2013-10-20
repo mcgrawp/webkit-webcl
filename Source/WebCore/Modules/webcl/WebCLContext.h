@@ -62,7 +62,7 @@ public:
     virtual ~WebCLContext();
     static PassRefPtr<WebCLContext> create(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
 
-    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlags, CCuint sizeInBytes, ArrayBuffer*, ExceptionCode&);
+    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlags, CCuint sizeInBytes, ArrayBufferView*, ExceptionCode&);
 
     PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, int commandQueueProperty, ExceptionCode&);
 
