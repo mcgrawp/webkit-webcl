@@ -53,5 +53,5 @@ typedef boolean CLboolean;
     [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(CLenum flags, ImageData data);
     [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(CLenum flags, HTMLVideoElement videoElement);
     [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(CLenum flags, HTMLImageElement imageElement);
-    [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(CLenum flags, WebCLImageDescriptor descriptor, [Default=Undefined] optional ArrayBuffer srcBuffer);
+    [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(CLenum flags, WebCLImageDescriptor descriptor, [Default=Undefined] optional ArrayBufferView hostPtr);
 };

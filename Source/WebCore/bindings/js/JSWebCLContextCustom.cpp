@@ -32,6 +32,7 @@
 #include "JSWebCLContext.h"
 
 #include "JSArrayBuffer.h"
+#include "JSArrayBufferView.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
 #include "JSHTMLVideoElement.h"
@@ -136,13 +137,13 @@ JSValue JSWebCLContext::createImage(JSC::ExecState* exec)
         if (!dictionary.tryGetProperty("rowPitch", webCLImageDescriptor.get(), setRowPitch))
             return throwSyntaxError(exec);
 
-        RefPtr<ArrayBuffer> buffer;
+        RefPtr<ArrayBufferView> buffer;
         // FIXME: Spec has changed to ArrayBufferView - Issue #243.
         if (exec->argumentCount() == 3) {
-            if (!exec->argument(2).inherits(&JSArrayBuffer::s_info))
+            if (!exec->argument(2).inherits(&JSArrayBufferView::s_info))
                 return throwSyntaxError(exec);
 
-            buffer = toArrayBuffer(exec->argument(2));
+            buffer = toArrayBufferView(exec->argument(2));
         }
 
         webCLImage = m_impl->createImage(flags, webCLImageDescriptor.get(), buffer.get(), ec);

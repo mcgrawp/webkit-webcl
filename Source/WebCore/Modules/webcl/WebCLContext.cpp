@@ -327,7 +327,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, ImageData* data, 
     return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, (void*) byteArray->data(), ec);
 }
 
-PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescriptor* descriptor, ArrayBuffer* data, ExceptionCode& ec)
+PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescriptor* descriptor, ArrayBufferView* hostPtr, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
@@ -343,7 +343,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescrip
     CCuint height = descriptor->height();
     CCuint rowPitch = descriptor->rowPitch();
 
-    if (data && data->byteLength() < (rowPitch * height)) {
+    if (hostPtr && hostPtr->byteLength() < (rowPitch * height)) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
@@ -356,7 +356,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescrip
     }
 
     CCImageFormat imageFormat = {channelOrder, channelType};
-    return createImage2DBase(flags, width, height, rowPitch, imageFormat, data ? data->data() : 0, ec);
+    return createImage2DBase(flags, width, height, rowPitch, imageFormat, hostPtr ? hostPtr->baseAddress() : 0, ec);
 }
 
 PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCoords, int addressingMode, int filterMode, ExceptionCode& ec)
