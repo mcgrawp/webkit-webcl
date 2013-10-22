@@ -100,6 +100,11 @@ PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource,
         return 0;
     }
 
+    if (!kernelSource.length()) {
+        ec = WebCLException::INVALID_VALUE;
+        return 0;
+    }
+
     return WebCLProgram::create(this, kernelSource, ec);
 }
 
@@ -372,6 +377,11 @@ PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCoords, int addres
     }
 
     if (!WebCLInputChecker::isValidFilterMode(filterMode)) {
+        ec = WebCLException::INVALID_VALUE;
+        return 0;
+    }
+
+    if (!normCoords && (addressingMode == ComputeContext::ADDRESS_REPEAT || addressingMode == ComputeContext::ADDRESS_MIRRORED_REPEAT)) {
         ec = WebCLException::INVALID_VALUE;
         return 0;
     }

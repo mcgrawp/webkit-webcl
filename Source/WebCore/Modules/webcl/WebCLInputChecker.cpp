@@ -114,7 +114,6 @@ bool isValidMemoryObjectFlag(unsigned long memoryObjectFlag)
 bool isValidAddressingMode(unsigned long value)
 {
     switch(value) {
-    case ComputeContext::ADDRESS_NONE:
     case ComputeContext::ADDRESS_CLAMP_TO_EDGE:
     case ComputeContext::ADDRESS_CLAMP:
     case ComputeContext::ADDRESS_REPEAT:
