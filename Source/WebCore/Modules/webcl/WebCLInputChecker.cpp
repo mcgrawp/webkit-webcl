@@ -96,6 +96,11 @@ bool isValidDeviceInfoType(unsigned long infoType)
     case ComputeContext::DEVICE_SINGLE_FP_CONFIG:
     case ComputeContext::DEVICE_COMPILER_AVAILABLE:
     case ComputeContext::DEVICE_EXECUTION_CAPABILITIES:
+    case ComputeContext::DEVICE_ERROR_CORRECTION_SUPPORT:
+    case ComputeContext::DEVICE_GLOBAL_MEM_CACHELINE_SIZE:
+    case ComputeContext::DEVICE_GLOBAL_MEM_CACHE_TYPE:
+    case ComputeContext::DEVICE_PROFILING_TIMER_RESOLUTION:
+    case ComputeContext::DEVICE_GLOBAL_MEM_CACHE_SIZE:
         return true;
     }
     return false;

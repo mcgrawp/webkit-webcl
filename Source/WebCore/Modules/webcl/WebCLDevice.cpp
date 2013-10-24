@@ -97,7 +97,10 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE:
     case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_HALF: 
     case ComputeContext::DEVICE_MEM_BASE_ADDR_ALIGN: 
-    case ComputeContext::DEVICE_MAX_COMPUTE_UNITS: {
+    case ComputeContext::DEVICE_MAX_COMPUTE_UNITS: 
+    case ComputeContext::DEVICE_GLOBAL_MEM_CACHELINE_SIZE:
+    case ComputeContext::DEVICE_GLOBAL_MEM_CACHE_SIZE:
+    case ComputeContext::DEVICE_GLOBAL_MEM_CACHE_TYPE: {
         CCuint infoValue = 0;
         err = ComputeContext::getDeviceInfo(platformObject(), infoType, &infoValue);
         if (err == ComputeContext::SUCCESS)
@@ -108,6 +111,7 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_IMAGE2D_MAX_WIDTH:
     case ComputeContext::DEVICE_MAX_PARAMETER_SIZE:
     case ComputeContext::DEVICE_MAX_WORK_GROUP_SIZE:
+    case ComputeContext::DEVICE_PROFILING_TIMER_RESOLUTION:
     case ComputeContext::DEVICE_MAX_WORK_ITEM_DIMENSIONS: { // unsigned int
         size_t infoValue = 0;
         err = ComputeContext::getDeviceInfo(platformObject(), infoType, &infoValue);
@@ -139,7 +143,8 @@ WebCLGetInfo WebCLDevice::getInfo(int infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_AVAILABLE:
     case ComputeContext::DEVICE_ENDIAN_LITTLE:
     case ComputeContext::DEVICE_HOST_UNIFIED_MEMORY: 
-    case ComputeContext::DEVICE_COMPILER_AVAILABLE: {
+    case ComputeContext::DEVICE_COMPILER_AVAILABLE:
+    case ComputeContext::DEVICE_ERROR_CORRECTION_SUPPORT: {
         CCbool infoValue = 0;
         err = ComputeContext::getDeviceInfo(platformObject(), infoType, &infoValue);
         if (err == ComputeContext::SUCCESS)
