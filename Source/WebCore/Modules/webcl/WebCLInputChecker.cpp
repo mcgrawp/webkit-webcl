@@ -95,6 +95,7 @@ bool isValidDeviceInfoType(unsigned long infoType)
     case ComputeContext::DEVICE_MEM_BASE_ADDR_ALIGN:
     case ComputeContext::DEVICE_SINGLE_FP_CONFIG:
     case ComputeContext::DEVICE_COMPILER_AVAILABLE:
+    case ComputeContext::DEVICE_EXECUTION_CAPABILITIES:
         return true;
     }
     return false;
