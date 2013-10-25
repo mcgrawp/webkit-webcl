@@ -99,6 +99,7 @@ WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, CCKernel 
     , m_context(context)
     , m_program(program)
     , m_kernelName(kernelName)
+    , m_argumentList(this)
 {
 }
 
@@ -192,6 +193,11 @@ void WebCLKernel::setDevice(PassRefPtr<WebCLDevice> deviceID)
     m_deviceID = deviceID;
 }
 
+const WebCLKernel::Argument& WebCLKernel::argument(unsigned index)
+{
+    return m_argumentList.it()[index];
+}
+
 void WebCLKernel::releasePlatformObjectImpl()
 {
     CCerror computeContextErrorCode = m_context->computeContext()->releaseKernel(platformObject());
@@ -244,11 +250,29 @@ void WebCLKernel::setArg(unsigned index, ArrayBufferView* bufferView, ExceptionC
         return;
     }
 
+    bool hasLocalQualifier = argument(index).hasQualifier(Argument::Local);
+    if (hasLocalQualifier) {
+        if (bufferView->getType() != ArrayBufferView::TypeUint32) {
+            ec = WebCLException::INVALID_VALUE;
+            return;
+        }
+
+        Uint32Array* typedArray = static_cast<Uint32Array*>(bufferView);
+        if (typedArray->length() != 1) {
+            ec = WebCLException::INVALID_VALUE;
+            return;
+        }
+
+        unsigned* value = static_cast<Uint32Array*>(bufferView)->data();
+        CCerror err = ComputeContext::setKernelArg(platformObject(), index, static_cast<size_t>(value[0]), 0 /* __local required null'ed data */);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+        return;
+    }
+
     void* bufferData = 0;
 
     // FIXME: Add support for LONG, ULONG, HALF and DOUBLE types.
     // These need Int/Uint64Array, as well as Float16Array.
-    // FIXME2: add support for LOCAL.
     switch(bufferView->getType()) {
     case (ArrayBufferView::TypeFloat32): // FLOAT
         bufferData = static_cast<Float32Array*>(bufferView)->data();
@@ -282,6 +306,64 @@ void WebCLKernel::setArg(unsigned index, ArrayBufferView* bufferView, ExceptionC
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
+static bool isASCIILineBreak(UChar c)
+{
+    return c == '\r' || c == '\n';
+}
+
+
+WebCLKernel::ArgumentList::ArgumentList(WebCLKernel* kernel)
+    : m_kernel(kernel)
+{
+}
+
+const Vector<WebCLKernel::Argument>& WebCLKernel::ArgumentList::it()
+{
+    ensureArgumentData();
+    return m_argumentData;
+}
+
+void WebCLKernel::ArgumentList::ensureArgumentData()
+{
+    if (m_argumentData.size())
+        return;
+
+    const String& source = m_kernel->m_program->source();
+
+    size_t start = source.find(m_kernel->m_kernelName, 0);
+    size_t open = source.find("(", start);
+    size_t close = source.find(")", open);
+    String argumentListStr = source.substring(open + 1, close - open - 1);
+
+    Vector<String> argumentStrVector;
+    argumentListStr.split(",", argumentStrVector);
+    for (size_t i = 0; i < argumentStrVector.size(); ++i) {
+        argumentStrVector[i] = argumentStrVector[i].removeCharacters(isASCIILineBreak);
+        m_argumentData.append(Argument(argumentStrVector[i]));
+    }
+}
+
+WebCLKernel::Argument::Argument(const String& argumentDeclaration)
+    : m_hasLocalQualifier(argumentDeclaration.contains("__local"))
+    , m_hasGlobalQualifier(argumentDeclaration.contains("__global"))
+    , m_hasConstQualifier(argumentDeclaration.contains("const"))
+{
+}
+
+bool WebCLKernel::Argument::hasQualifier(enum Qualifier qualifier) const
+{
+    switch (qualifier) {
+    case Local:
+        return m_hasLocalQualifier;
+    case Global:
+        return m_hasGlobalQualifier;
+    case Const:
+        return m_hasConstQualifier;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

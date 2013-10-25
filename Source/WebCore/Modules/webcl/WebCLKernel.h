@@ -51,6 +51,34 @@ class WebCLSampler;
 
 class WebCLKernel : public WebCLObject<CCKernel> {
 public:
+    class Argument {
+    public:
+        Argument(const String& argumentDeclaration);
+
+        enum Qualifier {
+            Local,
+            Global,
+            Const
+        };
+        bool hasQualifier(enum Qualifier qualifier) const;
+    private:
+        bool m_hasLocalQualifier;
+        bool m_hasGlobalQualifier;
+        bool m_hasConstQualifier;
+    };
+
+    class ArgumentList {
+    public:
+        ArgumentList(WebCLKernel*);
+
+        const Vector<Argument>& it();
+    private:
+        void ensureArgumentData();
+
+        WebCLKernel* m_kernel;
+        Vector<Argument> m_argumentData;
+    };
+
     virtual ~WebCLKernel();
     static PassRefPtr<WebCLKernel> create(WebCLContext*, WebCLProgram*, const String&, ExceptionCode&);
     static Vector<RefPtr<WebCLKernel> > createKernelsInProgram(WebCLContext*, WebCLProgram*, ExceptionCode&);
@@ -65,12 +93,15 @@ public:
 private:
     WebCLKernel(WebCLContext*, WebCLProgram*, CCKernel, const String&);
 
+    const Argument& argument(unsigned index);
+
     void releasePlatformObjectImpl();
 
     WebCLContext* m_context;
     WebCLProgram* m_program;
     String m_kernelName;
     RefPtr<WebCLDevice> m_deviceID;
+    ArgumentList m_argumentList;
 };
 
 } // namespace WebCore

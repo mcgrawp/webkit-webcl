@@ -54,6 +54,8 @@ public:
 
     Vector<RefPtr<WebCLKernel> > createKernelsInProgram(ExceptionCode&);
 
+    const String& source() const;
+
     void release();
 
 private:
@@ -63,7 +65,7 @@ private:
 
     static WebCLProgram* thisPointer;
     WebCLContext* m_context;
-    String m_kernelSource;
+    String m_programSource;
     RefPtr<WebCLFinishCallback> m_finishCallback;
 };
 

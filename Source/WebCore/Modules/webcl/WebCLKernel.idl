@@ -26,7 +26,6 @@
  */
 typedef unsigned long CLenum;
 typedef unsigned long CLuint;
-typedef unsigned long CLtype;
 
 [
     Conditional=WEBCL,

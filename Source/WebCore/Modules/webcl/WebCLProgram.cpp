@@ -47,25 +47,24 @@ WebCLProgram::~WebCLProgram()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const String& kernelSource, ExceptionCode& ec)
+PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const String& programSource, ExceptionCode& ec)
 {
     CCerror error = 0;
-    CCProgram clProgram = context->computeContext()->createProgram(kernelSource, error);
+    CCProgram clProgram = context->computeContext()->createProgram(programSource, error);
     if (!clProgram) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
 
-    return adoptRef(new WebCLProgram(context, clProgram, kernelSource));
+    return adoptRef(new WebCLProgram(context, clProgram, programSource));
 }
 
-WebCLProgram::WebCLProgram(WebCLContext* context, CCProgram program, const String& kernelSource)
+WebCLProgram::WebCLProgram(WebCLContext*context, CCProgram program, const String& programSource)
     : WebCLObject(program)
     , m_context(context)
-    , m_kernelSource(kernelSource)
+    , m_programSource(programSource)
 {
-
 }
 
 WebCLGetInfo WebCLProgram::getInfo(int infoType, ExceptionCode& ec)
@@ -79,7 +78,7 @@ WebCLGetInfo WebCLProgram::getInfo(int infoType, ExceptionCode& ec)
     case ComputeContext::PROGRAM_NUM_DEVICES:
         return m_context->getInfo(ComputeContext::CONTEXT_NUM_DEVICES, ec);
     case ComputeContext::PROGRAM_SOURCE:
-        return WebCLGetInfo(m_kernelSource);
+        return WebCLGetInfo(m_programSource);
     case ComputeContext::PROGRAM_CONTEXT:
         return WebCLGetInfo(m_context);
     case ComputeContext::PROGRAM_DEVICES:
@@ -91,7 +90,6 @@ WebCLGetInfo WebCLProgram::getInfo(int infoType, ExceptionCode& ec)
 
     ASSERT_NOT_REACHED();
 }
-
 
 WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int infoType, ExceptionCode& ec)
 {
@@ -145,7 +143,6 @@ PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, Exc
 
 Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode& ec)
 {
-
     if (!platformObject()) {
         ec = WebCLException::INVALID_PROGRAM;
         return Vector<RefPtr<WebCLKernel> >();
@@ -227,6 +224,11 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
+const String& WebCLProgram::source() const
+{
+    return m_programSource;
+}
+
 void WebCLProgram::release()
 {
     releasePlatformObject();
@@ -237,7 +239,6 @@ void WebCLProgram::releasePlatformObjectImpl()
     CCerror computeContextErrorCode = m_context->computeContext()->releaseProgram(platformObject());
     ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
 }
-
 
 } // namespace WebCore
 
