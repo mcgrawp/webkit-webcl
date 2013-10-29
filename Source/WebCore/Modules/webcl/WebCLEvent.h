@@ -42,9 +42,9 @@ class WebCLEvent : public WebCLObject<CCEvent> {
 public:
     virtual ~WebCLEvent();
     static PassRefPtr<WebCLEvent> create();
-    WebCLGetInfo getInfo(int, ExceptionCode&);
-    WebCLGetInfo getProfilingInfo(int, ExceptionCode&);
-    void setCallback(int, PassRefPtr<WebCLFinishCallback>, ExceptionCode&);
+    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
+    WebCLGetInfo getProfilingInfo(CCenum, ExceptionCode&);
+    void setCallback(CCenum, PassRefPtr<WebCLFinishCallback>, ExceptionCode&);
 
     void setAssociatedCommandQueue(WebCLCommandQueue* commandQueue);
     RefPtr<WebCLFinishCallback> m_finishCallback;

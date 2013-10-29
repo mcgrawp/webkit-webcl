@@ -39,9 +39,9 @@ class WebCLContext;
 class WebCLBuffer : public WebCLMemoryObject {
 public:
     ~WebCLBuffer();
-    static PassRefPtr<WebCLBuffer> create(WebCLContext*, CCenum, unsigned long, void*, ExceptionCode&);
+    static PassRefPtr<WebCLBuffer> create(WebCLContext*, CCenum, CCuint, void*, ExceptionCode&);
 
-    PassRefPtr<WebCLBuffer> createSubBuffer(long memFlags, unsigned long origin, unsigned long sizeInBytes, ExceptionCode&);
+    PassRefPtr<WebCLBuffer> createSubBuffer(CCenum memFlags, CCuint origin, CCuint sizeInBytes, ExceptionCode&);
 
 protected:
     WebCLBuffer(WebCLContext*, PlatformComputeObject, WebCLBuffer* parentBuffer = 0);

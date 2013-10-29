@@ -52,30 +52,30 @@ public:
         DEFAULT_ROW_PITCH     = 0,
     };
 
-    void setChannelOrder(long);
-    long channelOrder() const;
+    void setChannelOrder(CCenum);
+    CCenum channelOrder() const;
 
-    void setChannelType(long);
-    long channelType() const;
+    void setChannelType(CCenum);
+    CCenum channelType() const;
 
-    void setWidth(unsigned long);
-    unsigned long width() const;
+    void setWidth(CCuint);
+    CCuint width() const;
 
-    void setHeight(unsigned long);
-    unsigned long height() const;
+    void setHeight(CCuint);
+    CCuint height() const;
 
-    void setRowPitch(unsigned long);
-    unsigned long rowPitch() const;
+    void setRowPitch(CCuint);
+    CCuint rowPitch() const;
 
 private:
     WebCLImageDescriptor();
     WebCLImageDescriptor(const CCImageFormat&);
 
-    long m_channelOrder;
-    long m_channelType;
-    unsigned long m_width;
-    unsigned long m_height;
-    unsigned long m_rowPitch;
+    CCenum m_channelOrder;
+    CCenum m_channelType;
+    CCuint m_width;
+    CCuint m_height;
+    CCuint m_rowPitch;
 };
 
 } // namespace WebCore

@@ -41,7 +41,7 @@ class WebCLGLCommandQueue : public WebCLCommandQueue {
 public:
     ~WebCLGLCommandQueue() { }
 
-    static PassRefPtr<WebCLGLCommandQueue> create(WebCLContext*, int queueProperties, const RefPtr<WebCLDevice>&, ExceptionCode&);
+    static PassRefPtr<WebCLGLCommandQueue> create(WebCLContext*, CCenum queueProperties, const RefPtr<WebCLDevice>&, ExceptionCode&);
 
     void enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryObject> >&, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
     void enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryObject> >&, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);

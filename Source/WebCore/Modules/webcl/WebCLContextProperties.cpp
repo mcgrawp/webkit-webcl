@@ -38,7 +38,7 @@ PassRefPtr<WebCLContextProperties> WebCLContextProperties::create()
     return adoptRef(new WebCLContextProperties());
 }
 
-PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, unsigned long deviceType)
+PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, CCenum deviceType)
 {
     return adoptRef(new WebCLContextProperties(platform, devices, deviceType));
 }
@@ -49,7 +49,7 @@ WebCLContextProperties::WebCLContextProperties()
 {
 }
 
-WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, unsigned long deviceType)
+WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, CCenum deviceType)
     : m_platform(platform)
     , m_devices(devices)
     , m_deviceType(deviceType)
@@ -79,12 +79,12 @@ void WebCLContextProperties::setDevices(Vector<RefPtr<WebCLDevice> > devices)
     m_ccProperties.clear();
 }
 
-unsigned long WebCLContextProperties::deviceType() const
+CCenum WebCLContextProperties::deviceType() const
 {
     return m_deviceType;
 }
 
-void WebCLContextProperties::setDeviceType(unsigned long type)
+void WebCLContextProperties::setDeviceType(CCenum type)
 {
     m_deviceType = type;
     m_ccProperties.clear();

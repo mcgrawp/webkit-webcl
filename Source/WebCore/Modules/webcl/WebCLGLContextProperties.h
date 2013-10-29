@@ -38,7 +38,7 @@ class WebCLGLContextProperties : public WebCLContextProperties
 {
 public:
     static PassRefPtr<WebCLGLContextProperties> create();
-    static PassRefPtr<WebCLGLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, unsigned long deviceType,
+    static PassRefPtr<WebCLGLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, CCenum deviceType,
         SharedContextResolutionPolicy = GetCurrentGLContext, PassRefPtr<WebGLRenderingContext> = 0);
 
     virtual ~WebCLGLContextProperties() { }
@@ -51,7 +51,7 @@ public:
 private:
 
     WebCLGLContextProperties();
-    WebCLGLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, unsigned long deviceType,
+    WebCLGLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, CCenum deviceType,
         SharedContextResolutionPolicy = GetCurrentGLContext, PassRefPtr<WebGLRenderingContext> = 0);
 
     virtual void computeContextPropertiesInternal();

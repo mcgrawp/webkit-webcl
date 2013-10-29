@@ -65,7 +65,7 @@ WebCLContext::WebCLContext(ComputeContext* computeContext, PassRefPtr<WebCLConte
 {
 }
 
-WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
+WebCLGetInfo WebCLContext::getInfo(CCenum paramName, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
@@ -86,7 +86,7 @@ WebCLGetInfo WebCLContext::getInfo(int paramName, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* device, int commandQueueProperty, ExceptionCode& ec)
+PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* device, CCenum commandQueueProperty, ExceptionCode& ec)
 {
     RefPtr<WebCLCommandQueue> queue;
     createCommandQueueBase(device, commandQueueProperty, ec, queue);
@@ -347,7 +347,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescrip
     return createImage2DBase(flags, width, height, rowPitch, imageFormat, hostPtr ? hostPtr->baseAddress() : 0, ec);
 }
 
-PassRefPtr<WebCLSampler> WebCLContext::createSampler(bool normCoords, int addressingMode, int filterMode, ExceptionCode& ec)
+PassRefPtr<WebCLSampler> WebCLContext::createSampler(CCbool normCoords, CCenum addressingMode, CCenum filterMode, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
@@ -439,7 +439,7 @@ void WebCLContext::LRUImageBufferCache::bubbleToFront(int idx)
         m_buffers[i].swap(m_buffers[i-1]);
 }
 
-Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(int memoryFlags, ExceptionCode &ec)
+Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(CCenum memoryFlags, ExceptionCode &ec)
 {
     Vector<RefPtr<WebCLImageDescriptor> > imageDescriptors;
     if (!platformObject()) {

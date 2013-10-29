@@ -45,8 +45,8 @@ public:
     virtual ~WebCLProgram();
     static PassRefPtr<WebCLProgram> create(WebCLContext*, const String& programSource, ExceptionCode&);
 
-    WebCLGetInfo getInfo(int flag, ExceptionCode&);
-    WebCLGetInfo getBuildInfo(WebCLDevice*, int flag, ExceptionCode&);
+    WebCLGetInfo getInfo(CCenum flag, ExceptionCode&);
+    WebCLGetInfo getBuildInfo(WebCLDevice*, CCenum flag, ExceptionCode&);
 
     void build(const Vector<RefPtr<WebCLDevice> >&, const String& buildOptions, PassRefPtr<WebCLFinishCallback>, ExceptionCode&);
 

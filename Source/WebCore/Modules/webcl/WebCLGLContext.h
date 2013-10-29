@@ -45,10 +45,10 @@ public:
     virtual ~WebCLGLContext() { }
     static PassRefPtr<WebCLGLContext> create(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
 
-    PassRefPtr<WebCLGLCommandQueue> createCommandQueue(WebCLDevice*, int, ExceptionCode&);
-    PassRefPtr<WebCLGLBuffer> createFromGLBuffer(int, WebGLBuffer*, ExceptionCode&);
-    PassRefPtr<WebCLGLImage> createFromGLRenderbuffer(int, WebGLRenderbuffer*, ExceptionCode&);
-    PassRefPtr<WebCLGLImage> createFromGLTexture(int memoryFlags, int textureTarget, GC3Dint miplevel, WebGLTexture*, ExceptionCode&);
+    PassRefPtr<WebCLGLCommandQueue> createCommandQueue(WebCLDevice*, CCenum, ExceptionCode&);
+    PassRefPtr<WebCLGLBuffer> createFromGLBuffer(CCenum, WebGLBuffer*, ExceptionCode&);
+    PassRefPtr<WebCLGLImage> createFromGLRenderbuffer(CCenum, WebGLRenderbuffer*, ExceptionCode&);
+    PassRefPtr<WebCLGLImage> createFromGLTexture(CCenum memoryFlags, CCenum textureTarget, GC3Dint miplevel, WebGLTexture*, ExceptionCode&);
 
 private:
     WebCLGLContext(ComputeContext*, PassRefPtr<WebCLContextProperties>);

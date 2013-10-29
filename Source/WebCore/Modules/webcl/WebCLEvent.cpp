@@ -56,7 +56,7 @@ WebCLEvent::WebCLEvent()
 {
 }
 
-WebCLGetInfo WebCLEvent::getInfo(int paramName, ExceptionCode& ec)
+WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_EVENT;
@@ -101,7 +101,7 @@ WebCLGetInfo WebCLEvent::getInfo(int paramName, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-WebCLGetInfo WebCLEvent::getProfilingInfo(int paramName, ExceptionCode& ec)
+WebCLGetInfo WebCLEvent::getProfilingInfo(CCenum paramName, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_EVENT;
@@ -135,7 +135,7 @@ void WebCLEvent::setAssociatedCommandQueue(WebCLCommandQueue* commandQueue)
 
 WebCLEvent* WebCLEvent::thisPointer = 0;
 
-void WebCLEvent::setCallback(int executionStatus, PassRefPtr<WebCLFinishCallback> notify, ExceptionCode& ec)
+void WebCLEvent::setCallback(CCenum executionStatus, PassRefPtr<WebCLFinishCallback> notify, ExceptionCode& ec)
 {
     UNUSED_PARAM(executionStatus);
     UNUSED_PARAM(notify);

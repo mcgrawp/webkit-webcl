@@ -51,7 +51,7 @@ public:
     };
 
     static PassRefPtr<WebCLContextProperties> create();
-    static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, unsigned long deviceType);
+    static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, CCenum deviceType);
 
     virtual ~WebCLContextProperties() { }
 
@@ -61,8 +61,8 @@ public:
     RefPtr<WebCLPlatform>& platform();
     void setPlatform(PassRefPtr<WebCLPlatform>);
 
-    unsigned long deviceType() const;
-    void setDeviceType(unsigned long type);
+    CCenum deviceType() const;
+    void setDeviceType(CCenum type);
 
     virtual RefPtr<WebGLRenderingContext>& sharedContext();
     virtual void setSharedContext(PassRefPtr<WebGLRenderingContext>);
@@ -73,13 +73,13 @@ public:
 
 protected:
     WebCLContextProperties();
-    WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, unsigned long deviceType);
+    WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, CCenum deviceType);
 
     virtual void computeContextPropertiesInternal();
 
     RefPtr<WebCLPlatform> m_platform;
     Vector<RefPtr<WebCLDevice> > m_devices;
-    unsigned long m_deviceType;
+    CCenum m_deviceType;
     Vector<CCContextProperties> m_ccProperties;
 
     enum SharedContextResolutionPolicy m_contextPolicy;

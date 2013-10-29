@@ -38,7 +38,7 @@ PassRefPtr<WebCLGLContextProperties> WebCLGLContextProperties::create()
     return adoptRef(new WebCLGLContextProperties());
 }
 
-PassRefPtr<WebCLGLContextProperties> WebCLGLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, unsigned long deviceType, SharedContextResolutionPolicy contextPolicy, PassRefPtr<WebGLRenderingContext> webGLRenderingContext)
+PassRefPtr<WebCLGLContextProperties> WebCLGLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, CCenum deviceType, SharedContextResolutionPolicy contextPolicy, PassRefPtr<WebGLRenderingContext> webGLRenderingContext)
 {
     if (contextPolicy == UseGLContextProvided)
         ASSERT(webGLRenderingContext);
@@ -53,7 +53,7 @@ WebCLGLContextProperties::WebCLGLContextProperties()
     m_contextPolicy = NoSharedGLContext;
 }
 
-WebCLGLContextProperties::WebCLGLContextProperties(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, unsigned long deviceType, SharedContextResolutionPolicy contextPolicy, PassRefPtr<WebGLRenderingContext> webGLRenderingContext)
+WebCLGLContextProperties::WebCLGLContextProperties(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, CCenum deviceType, SharedContextResolutionPolicy contextPolicy, PassRefPtr<WebGLRenderingContext> webGLRenderingContext)
     : WebCLContextProperties(platform, devices, deviceType)
 {
     m_contextPolicy = contextPolicy;

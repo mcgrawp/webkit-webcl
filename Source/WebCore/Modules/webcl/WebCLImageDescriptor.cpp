@@ -65,52 +65,52 @@ WebCLImageDescriptor::WebCLImageDescriptor(const CCImageFormat& imageFormat)
     m_rowPitch = DEFAULT_ROW_PITCH;
 }
 
-void WebCLImageDescriptor::setChannelOrder(long channelOrder)
+void WebCLImageDescriptor::setChannelOrder(CCenum channelOrder)
 {
     m_channelOrder = channelOrder;
 }
 
-long WebCLImageDescriptor::channelOrder() const
+CCenum WebCLImageDescriptor::channelOrder() const
 {
     return m_channelOrder;
 }
 
-void WebCLImageDescriptor::setChannelType(long channelType)
+void WebCLImageDescriptor::setChannelType(CCenum channelType)
 {
     m_channelType = channelType;
 }
 
-long WebCLImageDescriptor::channelType() const
+CCenum WebCLImageDescriptor::channelType() const
 {
     return m_channelType;
 }
 
-void WebCLImageDescriptor::setWidth(unsigned long width)
+void WebCLImageDescriptor::setWidth(CCuint width)
 {
     m_width = width;
 }
 
-unsigned long WebCLImageDescriptor::width() const
+CCuint WebCLImageDescriptor::width() const
 {
     return m_width;
 }
 
-void WebCLImageDescriptor::setHeight(unsigned long height)
+void WebCLImageDescriptor::setHeight(CCuint height)
 {
     m_height = height;
 }
 
-unsigned long WebCLImageDescriptor::height() const
+CCuint WebCLImageDescriptor::height() const
 {
     return m_height;
 }
 
-void WebCLImageDescriptor::setRowPitch(unsigned long rowPitch)
+void WebCLImageDescriptor::setRowPitch(CCuint rowPitch)
 {
     m_rowPitch = rowPitch;
 }
 
-unsigned long WebCLImageDescriptor::rowPitch() const
+CCuint WebCLImageDescriptor::rowPitch() const
 {
     return m_rowPitch;
 }

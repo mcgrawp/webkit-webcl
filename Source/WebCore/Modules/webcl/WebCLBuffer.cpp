@@ -40,7 +40,7 @@ WebCLBuffer::~WebCLBuffer()
 {
 }
 
-PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, unsigned long size, void* data, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, CCuint size, void* data, ExceptionCode& ec)
 {
     CCerror error = ComputeContext::SUCCESS;
     PlatformComputeObject buffer = context->computeContext()->createBuffer(memoryFlags, size, data, error);
@@ -58,7 +58,7 @@ WebCLBuffer::WebCLBuffer(WebCLContext* context, PlatformComputeObject clBuffer, 
 {
 }
 
-PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(long memoryFlags, unsigned long origin, unsigned long size, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(CCenum memoryFlags, CCuint origin, CCuint size, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_MEM_OBJECT;

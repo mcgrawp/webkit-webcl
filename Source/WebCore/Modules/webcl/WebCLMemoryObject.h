@@ -43,7 +43,7 @@ public:
     static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PlatformComputeObject);
 
     virtual bool isShared() const { return false; }
-    WebCLGetInfo getInfo(int, ExceptionCode&);
+    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
 
 protected:
     WebCLMemoryObject(WebCLContext*, PlatformComputeObject, WebCLMemoryObject* = 0);

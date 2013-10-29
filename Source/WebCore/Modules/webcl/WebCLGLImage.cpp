@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-PassRefPtr<WebCLGLImage> WebCLGLImage::create(WebCLGLContext* context, int flags, WebGLRenderbuffer* webGLRenderbuffer, ExceptionCode& ec)
+PassRefPtr<WebCLGLImage> WebCLGLImage::create(WebCLGLContext* context, CCenum flags, WebGLRenderbuffer* webGLRenderbuffer, ExceptionCode& ec)
 {
     ASSERT(webGLRenderbuffer);
 
@@ -67,7 +67,7 @@ PassRefPtr<WebCLGLImage> WebCLGLImage::create(WebCLGLContext* context, int flags
     return imageObject.release();
 }
 
-PassRefPtr<WebCLGLImage> WebCLGLImage::create(WebCLGLContext* context, int flags, int textureTarget, int miplevel,
+PassRefPtr<WebCLGLImage> WebCLGLImage::create(WebCLGLContext* context, CCenum flags, CCenum textureTarget, CCenum miplevel,
                                               WebGLTexture* webGLTexture, ExceptionCode& ec)
 {
     ASSERT(webGLTexture);
@@ -95,12 +95,12 @@ PassRefPtr<WebCLGLImage> WebCLGLImage::create(WebCLGLContext* context, int flags
     return imageObject.release();
 }
 
-WebCLGLImage::WebCLGLImage(WebCLGLContext* context, PlatformComputeObject image, int width, int height, const CCImageFormat& format)
+WebCLGLImage::WebCLGLImage(WebCLGLContext* context, PlatformComputeObject image, CCuint width, CCuint height, const CCImageFormat& format)
     : WebCLImage(context, image, width, height, format)
 {
 }
 
-int WebCLGLImage::getGLTextureInfo(int textureInfoType, ExceptionCode& ec)
+int WebCLGLImage::getGLTextureInfo(CCenum textureInfoType, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_MEM_OBJECT;
@@ -133,7 +133,7 @@ int WebCLGLImage::getGLTextureInfo(int textureInfoType, ExceptionCode& ec)
     return 0;
 }
 
-void WebCLGLImage::cacheGLObjectInfo(int type, WebGLObject* glObject)
+void WebCLGLImage::cacheGLObjectInfo(CCenum type, WebGLObject* glObject)
 {
     m_objectInfo = WebCLGLObjectInfo::create(type, glObject);
 }

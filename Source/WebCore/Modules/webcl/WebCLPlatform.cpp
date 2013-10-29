@@ -58,7 +58,7 @@ WebCLPlatform::WebCLPlatform(CCPlatformID platformID)
 {
 }
 
-WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
+WebCLGetInfo WebCLPlatform::getInfo(CCenum platform_info, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_PLATFORM;
@@ -79,7 +79,7 @@ WebCLGetInfo WebCLPlatform::getInfo(int platform_info, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(unsigned long deviceType, ExceptionCode& ec)
+Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(CCenum deviceType, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_PLATFORM;

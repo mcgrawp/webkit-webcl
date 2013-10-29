@@ -104,7 +104,7 @@ WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, CCKernel 
 {
 }
 
-WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
+WebCLGetInfo WebCLKernel::getInfo(CCenum kernelInfo, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_KERNEL;
@@ -139,7 +139,7 @@ WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, int paramName, ExceptionCode& ec)
+WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_KERNEL;
@@ -208,7 +208,7 @@ void WebCLKernel::releasePlatformObjectImpl()
     ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
 }
 
-void WebCLKernel::setArg(unsigned index, WebCLMemoryObject* memoryObject, ExceptionCode& ec)
+void WebCLKernel::setArg(CCuint index, WebCLMemoryObject* memoryObject, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_KERNEL;
@@ -230,7 +230,7 @@ void WebCLKernel::setArg(unsigned index, WebCLMemoryObject* memoryObject, Except
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-void WebCLKernel::setArg(unsigned index, WebCLSampler* sampler, ExceptionCode& ec)
+void WebCLKernel::setArg(CCuint index, WebCLSampler* sampler, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_KERNEL;
@@ -252,7 +252,7 @@ void WebCLKernel::setArg(unsigned index, WebCLSampler* sampler, ExceptionCode& e
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-void WebCLKernel::setArg(unsigned index, ArrayBufferView* bufferView, ExceptionCode& ec)
+void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_KERNEL;

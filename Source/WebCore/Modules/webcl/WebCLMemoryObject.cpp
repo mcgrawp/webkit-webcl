@@ -55,7 +55,7 @@ WebCLMemoryObject::WebCLMemoryObject(WebCLContext* context, PlatformComputeObjec
 {
 }
 
-WebCLGetInfo WebCLMemoryObject::getInfo(int paramName, ExceptionCode& ec)
+WebCLGetInfo WebCLMemoryObject::getInfo(CCenum paramName, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_MEM_OBJECT;

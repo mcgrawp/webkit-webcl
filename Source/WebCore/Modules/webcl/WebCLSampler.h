@@ -40,15 +40,15 @@ class WebCLContext;
 class WebCLSampler : public WebCLObject<CCSampler> {
 public:
     virtual ~WebCLSampler();
-    static PassRefPtr<WebCLSampler> create(WebCLContext*, bool, int, int, ExceptionCode&);
-    WebCLGetInfo getInfo(int, ExceptionCode&);
+    static PassRefPtr<WebCLSampler> create(WebCLContext*, CCbool, CCenum, CCenum, ExceptionCode&);
+    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
 private:
-    WebCLSampler(WebCLContext*, CCSampler, bool, int, int);
+    WebCLSampler(WebCLContext*, CCSampler, CCbool, CCenum, CCenum);
     void releasePlatformObjectImpl();
 
-    bool m_normCoords;
-    int m_addressingMode;
-    int m_filterMode;
+    CCbool m_normCoords;
+    CCenum m_addressingMode;
+    CCenum m_filterMode;
     WebCLContext* m_context;
 };
 

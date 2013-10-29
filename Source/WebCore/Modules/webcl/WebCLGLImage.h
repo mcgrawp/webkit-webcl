@@ -44,16 +44,16 @@ class WebCLGLImage : public WebCLImage {
 public:
     virtual ~WebCLGLImage() { }
 
-    static PassRefPtr<WebCLGLImage> create(WebCLGLContext*, int flags, WebGLRenderbuffer* webGLRenderbuffer, ExceptionCode&);
-    static PassRefPtr<WebCLGLImage> create(WebCLGLContext*, int flags, int textureTarget, int miplevel, WebGLTexture*, ExceptionCode&);
+    static PassRefPtr<WebCLGLImage> create(WebCLGLContext*, CCenum flags, WebGLRenderbuffer* webGLRenderbuffer, ExceptionCode&);
+    static PassRefPtr<WebCLGLImage> create(WebCLGLContext*, CCenum flags, CCenum textureTarget, CCenum miplevel, WebGLTexture*, ExceptionCode&);
 
     WebCLGLObjectInfo* getGLObjectInfo(ExceptionCode&);
-    int getGLTextureInfo(int paramName, ExceptionCode&);
+    int getGLTextureInfo(CCenum paramName, ExceptionCode&);
     virtual bool isShared() const { return true; }
 
 private:
-    WebCLGLImage(WebCLGLContext*, PlatformComputeObject image, int width, int height, const CCImageFormat&);
-    void cacheGLObjectInfo(int type, WebGLObject*);
+    WebCLGLImage(WebCLGLContext*, PlatformComputeObject image, CCuint width, CCuint height, const CCImageFormat&);
+    void cacheGLObjectInfo(CCenum type, WebGLObject*);
     RefPtr<WebCLGLObjectInfo> m_objectInfo;
 };
 

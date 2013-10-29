@@ -62,19 +62,19 @@ public:
     virtual ~WebCLContext();
     static PassRefPtr<WebCLContext> create(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
 
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, int commandQueueProperty, ExceptionCode&);
+    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, CCenum commandQueueProperty, ExceptionCode&);
 
     PassRefPtr<WebCLImage> createImage(CCenum flag, WebCLImageDescriptor*, ArrayBufferView*, ExceptionCode&);
 
     PassRefPtr<WebCLProgram> createProgram(const String& programSource, ExceptionCode&);
 
-    PassRefPtr<WebCLSampler> createSampler(bool normalizedCoords, int addressingMode, int filterMode, ExceptionCode&);
+    PassRefPtr<WebCLSampler> createSampler(CCbool normalizedCoords, CCenum addressingMode, CCenum filterMode, ExceptionCode&);
 
     PassRefPtr<WebCLEvent> createUserEvent(ExceptionCode&);
 
-    WebCLGetInfo getInfo(int flag, ExceptionCode&);
+    WebCLGetInfo getInfo(CCenum flag, ExceptionCode&);
 
-    Vector<RefPtr<WebCLImageDescriptor> > getSupportedImageFormats(int memFlag, ExceptionCode&);
+    Vector<RefPtr<WebCLImageDescriptor> > getSupportedImageFormats(CCenum memFlag, ExceptionCode&);
 
     PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlags, CCuint sizeInBytes, ArrayBufferView*, ExceptionCode&);
     PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlag, ImageData*, ExceptionCode&);
@@ -108,7 +108,7 @@ protected:
     static void createBase(PassRefPtr<WebCLContextProperties>, ExceptionCode&, RefPtr<T>& out);
 
     template <class T>
-    void createCommandQueueBase(WebCLDevice*, int queueProperties, ExceptionCode&, RefPtr<T>& out);
+    void createCommandQueueBase(WebCLDevice*, CCenum queueProperties, ExceptionCode&, RefPtr<T>& out);
 
 
 private:
@@ -144,7 +144,7 @@ inline void WebCLContext::createBase(PassRefPtr<WebCLContextProperties> properti
 }
 
 template <class T>
-inline void WebCLContext::createCommandQueueBase(WebCLDevice* device, int queueProperties, ExceptionCode& ec, RefPtr<T>& out)
+inline void WebCLContext::createCommandQueueBase(WebCLDevice* device, CCenum queueProperties, ExceptionCode& ec, RefPtr<T>& out)
 {
     out = 0;
     if (!platformObject()) {

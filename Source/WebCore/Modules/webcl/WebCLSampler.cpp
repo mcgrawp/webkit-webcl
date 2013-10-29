@@ -44,7 +44,7 @@ WebCLSampler::~WebCLSampler()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLSampler> WebCLSampler::create(WebCLContext* context, bool normCoords, int addressingMode, int filterMode, ExceptionCode& ec)
+PassRefPtr<WebCLSampler> WebCLSampler::create(WebCLContext* context, CCbool normCoords, CCenum addressingMode, CCenum filterMode, ExceptionCode& ec)
 {
     CCerror error;
     CCSampler ccSampler = context->computeContext()->createSampler(normCoords, addressingMode, filterMode, error);
@@ -57,7 +57,7 @@ PassRefPtr<WebCLSampler> WebCLSampler::create(WebCLContext* context, bool normCo
     return adoptRef(new WebCLSampler(context, ccSampler, normCoords, addressingMode, filterMode));
 }
 
-WebCLSampler::WebCLSampler(WebCLContext* context, CCSampler sampler, bool normCoords, int addressingMode, int filterMode)
+WebCLSampler::WebCLSampler(WebCLContext* context, CCSampler sampler, CCbool normCoords, CCenum addressingMode, CCenum filterMode)
     : WebCLObject(sampler)
     , m_normCoords(normCoords)
     , m_addressingMode(addressingMode)
@@ -66,7 +66,7 @@ WebCLSampler::WebCLSampler(WebCLContext* context, CCSampler sampler, bool normCo
 {
 }
 
-WebCLGetInfo WebCLSampler::getInfo(int infoType, ExceptionCode& ec)
+WebCLGetInfo WebCLSampler::getInfo(CCenum infoType, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_SAMPLER;
@@ -75,7 +75,7 @@ WebCLGetInfo WebCLSampler::getInfo(int infoType, ExceptionCode& ec)
 
     switch (infoType) {
     case ComputeContext::SAMPLER_NORMALIZED_COORDS:
-        return WebCLGetInfo(m_normCoords);
+        return WebCLGetInfo(static_cast<bool>(m_normCoords));
     case ComputeContext::SAMPLER_CONTEXT:
         return WebCLGetInfo(m_context);
     case ComputeContext::SAMPLER_ADDRESSING_MODE:

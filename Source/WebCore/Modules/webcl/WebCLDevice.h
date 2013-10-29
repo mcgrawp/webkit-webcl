@@ -42,7 +42,7 @@ class WebCLDevice : public WebCLObject<CCDeviceID> , public WebCLExtensionsAcces
 public:
     virtual ~WebCLDevice();
     static PassRefPtr<WebCLDevice> create(CCDeviceID, const WebCLPlatform*);
-    WebCLGetInfo getInfo(int, ExceptionCode&);
+    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
     const WebCLPlatform* platform();
 
 private:

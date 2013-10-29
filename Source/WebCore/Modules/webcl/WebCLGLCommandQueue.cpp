@@ -38,7 +38,7 @@
 namespace WebCore {
 
 
-PassRefPtr<WebCLGLCommandQueue> WebCLGLCommandQueue::create(WebCLContext* context, int queueProperties, const RefPtr<WebCLDevice>& webCLDevice, ExceptionCode& ec)
+PassRefPtr<WebCLGLCommandQueue> WebCLGLCommandQueue::create(WebCLContext* context, CCenum queueProperties, const RefPtr<WebCLDevice>& webCLDevice, ExceptionCode& ec)
 {
     RefPtr<WebCLGLCommandQueue> queue;
     createBase(context, queueProperties, webCLDevice, ec, queue);

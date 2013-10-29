@@ -82,12 +82,12 @@ public:
     virtual ~WebCLKernel();
     static PassRefPtr<WebCLKernel> create(WebCLContext*, WebCLProgram*, const String&, ExceptionCode&);
     static Vector<RefPtr<WebCLKernel> > createKernelsInProgram(WebCLContext*, WebCLProgram*, ExceptionCode&);
-    WebCLGetInfo getInfo(int, ExceptionCode&);
-    WebCLGetInfo getWorkGroupInfo(WebCLDevice*, int, ExceptionCode&);
+    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
+    WebCLGetInfo getWorkGroupInfo(WebCLDevice*, CCenum, ExceptionCode&);
 
-    void setArg(unsigned index, WebCLMemoryObject*, ExceptionCode&);
-    void setArg(unsigned index, WebCLSampler*, ExceptionCode&);
-    void setArg(unsigned index, ArrayBufferView*, ExceptionCode&);
+    void setArg(CCuint index, WebCLMemoryObject*, ExceptionCode&);
+    void setArg(CCuint index, WebCLSampler*, ExceptionCode&);
+    void setArg(CCuint index, ArrayBufferView*, ExceptionCode&);
 
     void setDevice(PassRefPtr<WebCLDevice>);
 

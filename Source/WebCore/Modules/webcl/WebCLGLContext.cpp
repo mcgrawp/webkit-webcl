@@ -54,14 +54,14 @@ WebCLGLContext::WebCLGLContext(ComputeContext* computeContext, PassRefPtr<WebCLC
 {
 }
 
-PassRefPtr<WebCLGLCommandQueue> WebCLGLContext::createCommandQueue(WebCLDevice* device, int commandQueueProperty, ExceptionCode& ec)
+PassRefPtr<WebCLGLCommandQueue> WebCLGLContext::createCommandQueue(WebCLDevice* device, CCenum commandQueueProperty, ExceptionCode& ec)
 {
     RefPtr<WebCLGLCommandQueue> queue;
     createCommandQueueBase(device, commandQueueProperty, ec, queue);
     return queue.release();
 }
 
-PassRefPtr<WebCLGLBuffer> WebCLGLContext::createFromGLBuffer(int flags, WebGLBuffer* webGLBuffer, ExceptionCode& ec)
+PassRefPtr<WebCLGLBuffer> WebCLGLContext::createFromGLBuffer(CCenum flags, WebGLBuffer* webGLBuffer, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
@@ -76,7 +76,7 @@ PassRefPtr<WebCLGLBuffer> WebCLGLContext::createFromGLBuffer(int flags, WebGLBuf
     return WebCLGLBuffer::create(this, flags, webGLBuffer, ec);
 }
 
-PassRefPtr<WebCLGLImage> WebCLGLContext::createFromGLRenderbuffer(int flags, WebGLRenderbuffer* renderbuffer, ExceptionCode& ec)
+PassRefPtr<WebCLGLImage> WebCLGLContext::createFromGLRenderbuffer(CCenum flags, WebGLRenderbuffer* renderbuffer, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
@@ -91,7 +91,7 @@ PassRefPtr<WebCLGLImage> WebCLGLContext::createFromGLRenderbuffer(int flags, Web
     return WebCLGLImage::create(this, flags, renderbuffer, ec);
 }
 
-PassRefPtr<WebCLGLImage> WebCLGLContext::createFromGLTexture(int flags, int textureTarget, GC3Dint miplevel, WebGLTexture* texture, ExceptionCode& ec)
+PassRefPtr<WebCLGLImage> WebCLGLContext::createFromGLTexture(CCenum flags, CCenum textureTarget, GC3Dint miplevel, WebGLTexture* texture, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;

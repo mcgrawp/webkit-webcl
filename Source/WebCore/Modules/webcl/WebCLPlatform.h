@@ -44,15 +44,15 @@ public:
     virtual ~WebCLPlatform();
     static PassRefPtr<WebCLPlatform> create(CCPlatformID);
 
-    WebCLGetInfo getInfo (int, ExceptionCode&);
-    Vector<RefPtr<WebCLDevice> > getDevices(unsigned long, ExceptionCode&);
+    WebCLGetInfo getInfo (CCenum, ExceptionCode&);
+    Vector<RefPtr<WebCLDevice> > getDevices(CCenum, ExceptionCode&);
 
 private:
     WebCLPlatform(CCPlatformID);
 
     friend CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);
     Vector<RefPtr<WebCLDevice> > m_webCLDevices;
-    unsigned long m_cachedDeviceType;
+    CCenum m_cachedDeviceType;
 };
 
 CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);

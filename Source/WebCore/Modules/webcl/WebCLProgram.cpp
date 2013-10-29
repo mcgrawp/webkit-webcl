@@ -67,7 +67,7 @@ WebCLProgram::WebCLProgram(WebCLContext*context, CCProgram program, const String
 {
 }
 
-WebCLGetInfo WebCLProgram::getInfo(int infoType, ExceptionCode& ec)
+WebCLGetInfo WebCLProgram::getInfo(CCenum infoType, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_PROGRAM;
@@ -91,7 +91,7 @@ WebCLGetInfo WebCLProgram::getInfo(int infoType, ExceptionCode& ec)
     ASSERT_NOT_REACHED();
 }
 
-WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, int infoType, ExceptionCode& ec)
+WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, CCenum infoType, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_PROGRAM;
