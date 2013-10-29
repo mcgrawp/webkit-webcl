@@ -46,23 +46,22 @@ class ImageData;
 class WebCLCommandQueue : public WebCLObject<CCCommandQueue> {
 public:
     ~WebCLCommandQueue();
-    static PassRefPtr<WebCLCommandQueue> create(WebCLContext*, int queueProperties, const RefPtr<WebCLDevice>&, ExceptionCode&);
-    WebCLGetInfo getInfo(int, ExceptionCode&);
+    static PassRefPtr<WebCLCommandQueue> create(WebCLContext*, CCenum queueProperties, const RefPtr<WebCLDevice>&, ExceptionCode&);
+    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
 
-    void enqueueWriteBuffer(WebCLBuffer*, bool blockingWrite, int bufferOffset, int numBytes, ArrayBufferView*,
+    void enqueueWriteBuffer(WebCLBuffer*, CCbool blockingWrite, CCuint bufferOffset, CCuint numBytes, ArrayBufferView*,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
-    void enqueueWriteBuffer(WebCLBuffer*, bool blockingWrite, int bufferOffset, ImageData*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
-
-    void enqueueWriteBufferRect(WebCLBuffer*, bool blockingWrite, Int32Array* bufferOrigin, Int32Array* hostOrigin,
-        Int32Array* region, int bufferRowPitch, int bufferSlicePitch, int hostRowPitch, int hostSlicePitch,
+    void enqueueWriteBuffer(WebCLBuffer*, CCbool blockingWrite, CCuint bufferOffset, ImageData*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueWriteBufferRect(WebCLBuffer*, CCbool blockingWrite, Int32Array* bufferOrigin, Int32Array* hostOrigin,
+        Int32Array* region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
         ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
-    void enqueueReadBuffer(WebCLBuffer*, bool blockingWrite, int bufferOffset, ImageData*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
-    void enqueueReadBuffer(WebCLBuffer*, bool blockingWrite, int bufferOffset, int numBytes, ArrayBufferView*,
+    void enqueueReadBuffer(WebCLBuffer*, CCbool blockingWrite, CCuint bufferOffset, ImageData*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueReadBuffer(WebCLBuffer*, CCbool blockingWrite, CCuint bufferOffset, CCuint numBytes, ArrayBufferView*,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
-    void enqueueReadBufferRect(WebCLBuffer*, bool blockingWrite, Int32Array* bufferOrigin, Int32Array* hostOrigin,
-        Int32Array* region, int bufferRowPitch, int bufferSlicePitch, int hostRowPitch, int hostSlicePitch,
+    void enqueueReadBufferRect(WebCLBuffer*, CCbool blockingWrite, Int32Array* bufferOrigin, Int32Array* hostOrigin,
+        Int32Array* region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
         ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void enqueueNDRangeKernel(WebCLKernel*, Int32Array* globalWorkOffsets, Int32Array* globalWorkSize,
@@ -71,26 +70,26 @@ public:
     void finish(ExceptionCode&);
     void flush(ExceptionCode&);
 
-    void enqueueWriteImage(WebCLImage*, bool blockingWrite,  Int32Array* origin, Int32Array* region, int inputRowPitch,
+    void enqueueWriteImage(WebCLImage*, CCbool blockingWrite,  Int32Array* origin, Int32Array* region, CCuint inputRowPitch,
         ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
-    void enqueueReadImage(WebCLImage*, bool blockingWrite,  Int32Array* origin, Int32Array* region, int rowPitch,
+    void enqueueReadImage(WebCLImage*, CCbool blockingWrite,  Int32Array* origin, Int32Array* region, CCuint rowPitch,
         ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
-    void enqueueCopyBuffer(WebCLBuffer*, WebCLBuffer*, int sourceOffset, int targetOffset, int sizeInBytes,
+    void enqueueCopyBuffer(WebCLBuffer*, WebCLBuffer*, CCuint sourceOffset, CCuint targetOffset, CCuint sizeInBytes,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void enqueueCopyBufferRect(WebCLBuffer*, WebCLBuffer*, Int32Array* sourceOrigin, Int32Array* targetOrigin,
-        Int32Array* region, int sourceRowPitch, int sourceSlicePitch, int targetRowPitch, int targetSlicePitch,
+        Int32Array* region, CCuint sourceRowPitch, CCuint sourceSlicePitch, CCuint targetRowPitch, CCuint targetSlicePitch,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void enqueueCopyImage(WebCLImage*, WebCLImage*, Int32Array* sourceOrigin, Int32Array* targetOrigin,
         Int32Array* region, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void enqueueCopyImageToBuffer(WebCLImage*, WebCLBuffer*, Int32Array* sourceOrigin, Int32Array* region,
-        int targetOffset, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+        CCuint targetOffset, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
-    void enqueueCopyBufferToImage(WebCLBuffer*, WebCLImage*, int sourceOffset, Int32Array* sourceOrigin, Int32Array* region,
+    void enqueueCopyBufferToImage(WebCLBuffer*, WebCLImage*, CCuint sourceOffset, Int32Array* sourceOrigin, Int32Array* region,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void enqueueBarrier(ExceptionCode&);
@@ -101,15 +100,15 @@ protected:
     WebCLCommandQueue(WebCLContext*, const RefPtr<WebCLDevice>&, CCCommandQueue);
 
     template <class T>
-    static void createBase(WebCLContext*, int commandQueueProperty, const RefPtr<WebCLDevice>&, ExceptionCode&, RefPtr<T>& out);
+    static void createBase(WebCLContext*, CCenum commandQueueProperty, const RefPtr<WebCLDevice>&, ExceptionCode&, RefPtr<T>& out);
 
     WebCLContext* m_context;
 
 private:
     friend class WebCLEvent;
-    static CCCommandQueue createBaseInternal(WebCLContext*, int commandQueueProperty, const RefPtr<WebCLDevice>&, CCerror&);
+    static CCCommandQueue createBaseInternal(WebCLContext*, CCenum commandQueueProperty, const RefPtr<WebCLDevice>&, CCerror&);
 
-    void enqueueWriteBufferBase(WebCLBuffer*, bool blockingWrite, int, int, void*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueWriteBufferBase(WebCLBuffer*, CCbool blockingWrite, CCuint, CCuint, void*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void releasePlatformObjectImpl();
 
@@ -117,7 +116,7 @@ private:
 };
 
 template <class T>
-inline void WebCLCommandQueue::createBase(WebCLContext* context, int commandQueueProperty, const RefPtr<WebCLDevice>& webCLDevice, ExceptionCode& ec, RefPtr<T>& out)
+inline void WebCLCommandQueue::createBase(WebCLContext* context, CCenum commandQueueProperty, const RefPtr<WebCLDevice>& webCLDevice, ExceptionCode& ec, RefPtr<T>& out)
 {
     out = 0;
 
