@@ -90,6 +90,9 @@ public:
     void setArg(unsigned index, ArrayBufferView*, ExceptionCode&);
 
     void setDevice(PassRefPtr<WebCLDevice>);
+
+    unsigned numberOfArguments();
+
 private:
     WebCLKernel(WebCLContext*, WebCLProgram*, CCKernel, const String&);
 

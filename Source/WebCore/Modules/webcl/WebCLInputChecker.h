@@ -33,6 +33,9 @@
 #include "WebCLObject.h"
 
 namespace WebCore {
+
+class WebCLKernel;
+
 namespace WebCLInputChecker {
 
 bool isValidDeviceType(unsigned long);
@@ -44,6 +47,7 @@ bool isValidChannelType(unsigned long);
 bool isValidChannelOrder(unsigned long);
 bool isValidCommandQueueProperty(unsigned long);
 bool isValidGLTextureInfo(unsigned long);
+bool isValidKernelArgIndex(WebCLKernel*, unsigned index);
 
 template<class T>
 bool validateWebCLObject(WebCLObject<T>* object)

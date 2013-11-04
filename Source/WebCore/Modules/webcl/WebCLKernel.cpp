@@ -216,6 +216,11 @@ void WebCLKernel::setArg(unsigned index, WebCLMemoryObject* memoryObject, Except
         return;
     }
 
+    if (!WebCLInputChecker::isValidKernelArgIndex(this, index)) {
+        ec = WebCLException::INVALID_ARG_INDEX;
+        return;
+    }
+
     PlatformComputeObject ccMemoryObject = memoryObject->platformObject();
     CCerror err = ComputeContext::setKernelArg(platformObject(), index, sizeof(PlatformComputeObject), &ccMemoryObject);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
@@ -233,6 +238,11 @@ void WebCLKernel::setArg(unsigned index, WebCLSampler* sampler, ExceptionCode& e
         return;
     }
 
+    if (!WebCLInputChecker::isValidKernelArgIndex(this, index)) {
+        ec = WebCLException::INVALID_ARG_INDEX;
+        return;
+    }
+
     CCSampler ccSampler = sampler->platformObject();
     CCerror err = ComputeContext::setKernelArg(platformObject(), index, sizeof(CCSampler), &ccSampler);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
@@ -247,6 +257,11 @@ void WebCLKernel::setArg(unsigned index, ArrayBufferView* bufferView, ExceptionC
 
     if (!bufferView) {
         ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
+    if (!WebCLInputChecker::isValidKernelArgIndex(this, index)) {
+        ec = WebCLException::INVALID_ARG_INDEX;
         return;
     }
 
@@ -306,11 +321,15 @@ void WebCLKernel::setArg(unsigned index, ArrayBufferView* bufferView, ExceptionC
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
+unsigned WebCLKernel::numberOfArguments()
+{
+    return m_argumentList.it().size();
+}
+
 static bool isASCIILineBreak(UChar c)
 {
     return c == '\r' || c == '\n';
 }
-
 
 WebCLKernel::ArgumentList::ArgumentList(WebCLKernel* kernel)
     : m_kernel(kernel)

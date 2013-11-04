@@ -30,6 +30,7 @@
 #if ENABLE(WEBCL)
 
 #include "WebCLInputChecker.h"
+#include "WebCLKernel.h"
 
 namespace WebCore {
 namespace WebCLInputChecker {
@@ -201,6 +202,12 @@ bool isValidGLTextureInfo(unsigned long value)
         return true;
     }
     return false;
+}
+
+bool isValidKernelArgIndex(WebCLKernel* kernel, unsigned index)
+{
+    ASSERT(kernel);
+    return index < kernel->numberOfArguments();
 }
 
 }
