@@ -88,5 +88,5 @@ typedef long CLint;
     const unsigned short INVALID_MIP_LEVEL                        = 62;
     const unsigned short INVALID_GLOBAL_WORK_SIZE                 = 63;
     const unsigned short INVALID_PROPERTY                         = 64;
-    const unsigned short FAILURE                                  = 65;
+    const unsigned short WEBCL_IMPLEMENTATION_FAILURE             = 65;
 };

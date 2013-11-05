@@ -97,7 +97,7 @@ public:
         INVALID_MIP_LEVEL                        =  WebCLExceptionOffset + 47,
         INVALID_GLOBAL_WORK_SIZE                 =  WebCLExceptionOffset + 48,
         INVALID_PROPERTY                         =  WebCLExceptionOffset + 49,
-        FAILURE                                  =  WebCLExceptionOffset + 50,
+        WEBCL_IMPLEMENTATION_FAILURE             =  WebCLExceptionOffset + 50,
     };
 
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);

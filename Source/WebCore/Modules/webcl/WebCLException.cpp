@@ -87,7 +87,7 @@ static const char* const exceptionNames[] = {
     "INVALID_MIP_LEVEL",
     "INVALID_GLOBAL_WORK_SIZE",
     "INVALID_PROPERTY",
-    "FAILURE",
+    "WEBCL_IMPLEMENTATION_FAILURE",
 };
 // Messages are not proper
 static const char* const exceptionDescriptions[] = {
@@ -141,7 +141,7 @@ static const char* const exceptionDescriptions[] = {
     "WEBCL_IMPL_INVALID_MIP_LEVEL",
     "WEBCL_IMPL_INVALID_GLOBAL_WORK_SIZE",
     "WEBCL_IMPL_INVALID_PROPERTY",
-    "WEBCL_IMPL_FAILURE",
+    "WEBCL_IMPLEMENTATION_FAILURE",
 };
 
 COMPILE_ASSERT(WTF_ARRAY_LENGTH(exceptionNames) == WTF_ARRAY_LENGTH(exceptionDescriptions), WebCLExceptionTablesMustMatch);
@@ -273,8 +273,7 @@ WebCLException::WebCLExceptionCode WebCLException::computeContextErrorToWebCLExc
     case ComputeContext::INVALID_PROPERTY:
         return WebCLException::INVALID_PROPERTY;
     default:
-        ASSERT_NOT_REACHED();
-        return WebCLException::FAILURE;
+        return WebCLException::WEBCL_IMPLEMENTATION_FAILURE;
     }
 }
 
