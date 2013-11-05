@@ -37,7 +37,7 @@ typedef boolean CLboolean;
 
     [RaisesException] sequence<WebCLImageDescriptor> getSupportedImageFormats(CLenum memFlags);
 
-    [RaisesException] WebCLCommandQueue createCommandQueue([Default=Undefined] optional WebCLDevice device, [Default=Undefined] optional CLenum prop);
+    [StrictTypeChecking, RaisesException] WebCLCommandQueue createCommandQueue([Default=Undefined] optional WebCLDevice device, [Default=Undefined] optional CLenum prop);
 
     [RaisesException] WebCLProgram createProgram(DOMString kernelSource);
 
