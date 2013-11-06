@@ -103,8 +103,15 @@ private:
     WebCLContext* m_context;
     WebCLProgram* m_program;
     String m_kernelName;
+    // FIXME: Kernels keep their own copies of the program source
+    // instead of querying it from the m_program backpointer. This
+    // happens because the object ownership is yet not well defined,
+    // and it is possible that a program gets garbage collected (and deleted).
+    String m_programSource;
     RefPtr<WebCLDevice> m_deviceID;
     ArgumentList m_argumentList;
+
+    friend class ArgumentList;
 };
 
 } // namespace WebCore

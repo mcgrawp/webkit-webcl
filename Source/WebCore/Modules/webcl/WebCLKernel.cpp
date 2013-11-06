@@ -99,6 +99,7 @@ WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, CCKernel 
     , m_context(context)
     , m_program(program)
     , m_kernelName(kernelName)
+    , m_programSource(m_program->source())
     , m_argumentList(this)
 {
 }
@@ -121,6 +122,9 @@ WebCLGetInfo WebCLKernel::getInfo(int kernelInfo, ExceptionCode& ec)
             return WebCLGetInfo(static_cast<unsigned>(numberOfArgs));
         break;
     }
+
+    // FIXME: This backpointer to m_program can be dangling in
+    // case it gets deleted (JS gc'ed), etc.
     case ComputeContext::KERNEL_PROGRAM:
         return WebCLGetInfo(m_program);
     case ComputeContext::KERNEL_CONTEXT:
@@ -348,7 +352,7 @@ void WebCLKernel::ArgumentList::ensureArgumentData()
     if (m_argumentData.size())
         return;
 
-    const String& source = m_kernel->m_program->source();
+    const String& source = m_kernel->m_programSource;
 
     // FIXME: Commentted out lines might mess up with the parser logic.
     // 1) find "__kernel" string.
