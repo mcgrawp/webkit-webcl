@@ -195,14 +195,21 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
         Vector<String> webCLBuildOptionsVector;
         buildOptions.split(" ", false /* allowEmptyEntries */, webCLBuildOptionsVector);
         for (size_t i = 0; i < webCLBuildOptionsVector.size(); i++) {
+            // Every build option must start with a hyphen.
+            if (!webCLBuildOptionsVector[i].startsWith("-")) {
+                ec = WebCLException::INVALID_BUILD_OPTIONS;
+                return;
+            }
             if (webCLSupportedBuildOptions.contains(webCLBuildOptionsVector[i]))
                 continue;
-            if (buildOptionDashD == webCLBuildOptionsVector[i]) {
-                i++;
-                if (i >= webCLBuildOptionsVector.size()) {
-                    ec = WebCLException::INVALID_BUILD_OPTIONS;
-                    return;
-                }
+            /* If the token begins with "-D" it can be one of "-D NAME" or "-D name=definition".
+               Currently OpenCL specification does not state any restriction adding spaces in between.
+               So on encounter of a token starting with "-D" we skip validation till we reach next build option.
+               Pushing the validation of "-D" options to underlying OpenCL. */
+            if (webCLBuildOptionsVector[i].startsWith(buildOptionDashD)) {
+                size_t j;
+                for (j = ++i; j < webCLBuildOptionsVector.size() && !webCLBuildOptionsVector[j].startsWith("-"); ++j) { }
+                i = --j;
                 continue;
             }
             ec = WebCLException::INVALID_BUILD_OPTIONS;
