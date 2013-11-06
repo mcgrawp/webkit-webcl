@@ -342,6 +342,7 @@ const Vector<WebCLKernel::Argument>& WebCLKernel::ArgumentList::it()
     return m_argumentData;
 }
 
+// FIXME: This method has to return an error code.
 void WebCLKernel::ArgumentList::ensureArgumentData()
 {
     if (m_argumentData.size())
@@ -349,10 +350,33 @@ void WebCLKernel::ArgumentList::ensureArgumentData()
 
     const String& source = m_kernel->m_program->source();
 
-    size_t start = source.find(m_kernel->m_kernelName, 0);
-    size_t open = source.find("(", start);
-    size_t close = source.find(")", open);
-    String argumentListStr = source.substring(open + 1, close - open - 1);
+    // FIXME: Commentted out lines might mess up with the parser logic.
+    // 1) find "__kernel" string.
+    // 2) find the first open braces past __kernel.
+    // 3) reverseFind the given kernel name string.
+    // 4) if not found go back to (1)
+    // 5) if found, parse its argument list.
+    size_t startIndex = 0;
+    size_t kernelNameIndex = 0;
+    while (1) {
+        size_t kernelDeclarationIndex = source.find("__kernel", startIndex);
+        if (kernelDeclarationIndex == WTF::notFound)
+            return;
+
+        size_t openBrace = source.find("{", kernelDeclarationIndex + 8);
+        kernelNameIndex = source.reverseFind(m_kernel->m_kernelName, openBrace);
+
+        ASSERT(kernelNameIndex > kernelDeclarationIndex);
+        if (kernelNameIndex != WTF::notFound)
+            break;
+
+        startIndex = kernelDeclarationIndex + 8;
+    }
+
+    ASSERT(kernelNameIndex);
+    size_t openBraket = source.find("(", kernelNameIndex);
+    size_t closeBraket = source.find(")", openBraket);
+    String argumentListStr = source.substring(openBraket + 1, closeBraket - openBraket - 1);
 
     Vector<String> argumentStrVector;
     argumentListStr.split(",", argumentStrVector);
@@ -362,6 +386,8 @@ void WebCLKernel::ArgumentList::ensureArgumentData()
     }
 }
 
+// FIXME: A better wat to fix this would be splitting out tokens by space,
+// and handle each token.
 WebCLKernel::Argument::Argument(const String& argumentDeclaration)
     : m_hasLocalQualifier(argumentDeclaration.contains("__local"))
     , m_hasGlobalQualifier(argumentDeclaration.contains("__global"))

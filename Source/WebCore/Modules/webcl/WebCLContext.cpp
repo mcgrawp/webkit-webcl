@@ -93,19 +93,19 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
     return queue.release();
 }
 
-PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& kernelSource, ExceptionCode& ec)
+PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& programSource, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
 
-    if (!kernelSource.length()) {
+    if (!programSource.length()) {
         ec = WebCLException::INVALID_VALUE;
         return 0;
     }
 
-    return WebCLProgram::create(this, kernelSource, ec);
+    return WebCLProgram::create(this, programSource, ec);
 }
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBufferBase(CCenum memoryFlags, CCuint size, void* hostPtr, ExceptionCode& ec)
