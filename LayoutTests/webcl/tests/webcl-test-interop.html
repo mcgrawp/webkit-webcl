@@ -154,9 +154,9 @@
 
             seq = (seq + 1) % canvas.width;
             kernel.setWCLKernelArgs(0, vboBufferCL);
-            kernel.setWCLKernelArgs(1, canvas.width, proxy.kernelArgumentTypes.INT);
-            kernel.setWCLKernelArgs(2, canvas.height, proxy.kernelArgumentTypes.INT);
-            kernel.setWCLKernelArgs(3, seq, proxy.kernelArgumentTypes.INT);
+            kernel.setWCLKernelArgs(1, new Int32Array([canvas.width]));
+            kernel.setWCLKernelArgs(2, new Int32Array([canvas.height]));
+            kernel.setWCLKernelArgs(3, new Int32Array([seq]));
 
             // interoperability
             gl.finish();

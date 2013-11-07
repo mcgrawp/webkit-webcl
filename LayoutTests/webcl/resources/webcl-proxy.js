@@ -98,7 +98,6 @@
                 API[constants] = nativeWebCL[constants];
             }
         }
-        API.kernelArgumentTypes = WebCLKernelArgumentTypes;
 
         console.info("WebCLProxy", API);
         console.timeEnd("Init");
@@ -1061,14 +1060,14 @@
              * @param {arg} WCLBuffer or any value
              * @param {type} WebCL.ENUM, required when arg is not a WCLBuffer
              */
-            setWCLKernelArgs : function (index, arg, type) {
+            setWCLKernelArgs : function (index, arg) {
                 var i, wclBuffers = [], wclKernelGroup, nativeKernel;
                 var argType = isWCLType(arg, "WCLBuffer") ?  "buffer" : "scalar";
 
                 console.group("WCLKernel::setWCLKernelArgs");
                 console.time("WCLKernel::setWCLKernelArgs");
 
-                console.info("index: ", index, "arg: ", arg, "type: ", type);
+                console.info("index: ", index, "arg: ", arg);
 
                 wclKernelGroup = this.getKernelGroup();
 
@@ -1078,14 +1077,14 @@
 
                     nativeKernel = wclKernelGroup[i].nativeKernel;
 
-                    console.info("nativeKernel: ", nativeKernel, "argType: ", argType);
+                    console.info("nativeKernel: ", nativeKernel);
 
                     try {
                         if (argType === "buffer") {
                             wclBuffers = arg.getBufferGroup();
                             nativeKernel.setArg(index, wclBuffers[i].nativeBuffer);
                         } else {
-                            nativeKernel.setArg(index, arg, type);
+                            nativeKernel.setArg(index, arg);
                         }
                     } catch (e) {
                         console.error("Error setWCLKernelArgs", e);

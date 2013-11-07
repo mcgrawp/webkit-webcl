@@ -54,7 +54,7 @@ function runTest() {
         webclEvent = context.createUserEvent();
         shouldBeTrue('webclEvent instanceof WebCLEvent');
 
-        webclSampler = context.createSampler(cl.FALSE, cl.ADDRESS_NONE, cl.FILTER_LINEAR);
+        webclSampler = context.createSampler(cl.TRUE, cl.ADDRESS_CLAMP, cl.FILTER_LINEAR);
         shouldBeTrue('webclSampler instanceof WebCLSampler');
 
         program = context.createProgram(kernelSrc);

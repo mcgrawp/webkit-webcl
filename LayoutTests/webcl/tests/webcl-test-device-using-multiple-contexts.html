@@ -10,7 +10,6 @@
 <script>
 
 var DATA_SIZE = 1024;
-var types = WebCLKernelArgumentTypes;
 
 var data;
 
@@ -120,12 +119,12 @@ function runTest() {
         kernelSum.setArg(0, inputSum_A);
         kernelSum.setArg(1, inputSum_B);
         kernelSum.setArg(2, outputSum);
-        kernelSum.setArg(3, DATA_SIZE, types.UINT);
+        kernelSum.setArg(3, new Uint32Array([DATA_SIZE]));
 
         kernelMult.setArg(0, inputMult_A);
         kernelMult.setArg(1, inputMult_B);
         kernelMult.setArg(2, outputMult);
-        kernelMult.setArg(3, DATA_SIZE, types.UINT);
+        kernelMult.setArg(3, new Uint32Array([DATA_SIZE]));
 
         globalWorkSize[0] = DATA_SIZE;
 

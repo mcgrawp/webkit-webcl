@@ -103,9 +103,8 @@ function runTest() {
             queues[i].enqueueWriteBuffer(input, true, 0, Int32Array.BYTES_PER_ELEMENT * count, data);
         }
 
-        var types = WebCLKernelArgumentTypes;
         kernel.setArg(0, input);
-        kernel.setArg(2, count, types.UINT);
+        kernel.setArg(2, new Uint32Array([count]));
 
         var workGroupSize = [numDevices];
         for (i = 0; i < numDevices; i++) {

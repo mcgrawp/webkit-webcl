@@ -99,7 +99,7 @@ function runTest() {
             testFailed("Failed to create WebCLImage 1.");
             return;
         }
-        sampler1 = context1.createSampler(cl.FALSE, cl.ADDRESS_NONE, cl.FILTER_LINEAR);
+        sampler1 = context1.createSampler(cl.TRUE, cl.ADDRESS_CLAMP, cl.FILTER_LINEAR);
         if (!sampler1) {
             testFailed("Failed to create WebCLSampler 1.");
             return;

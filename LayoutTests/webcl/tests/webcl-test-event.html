@@ -64,7 +64,7 @@ function runTest() {
         globalWorkSize[0] = 1;
         localWorkSize[0]  = 1;
 
-        kernel.setWCLKernelArgs(0, output, null);
+        kernel.setWCLKernelArgs(0, output);
 
         var events = [];
         var testEvent;
