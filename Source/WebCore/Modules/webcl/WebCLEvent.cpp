@@ -31,9 +31,9 @@
 
 #include "WebCLEvent.h"
 
+#include "WebCLCallback.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
-#include "WebCLFinishCallback.h"
 #include "WebCLGetInfo.h"
 #include "WebCLImageDescriptor.h"
 #include "WebCLMemoryObject.h"
@@ -136,7 +136,7 @@ void WebCLEvent::setAssociatedCommandQueue(WebCLCommandQueue* commandQueue)
 
 WebCLEvent* WebCLEvent::thisPointer = 0;
 
-void WebCLEvent::setCallback(CCenum executionStatus, PassRefPtr<WebCLFinishCallback> notify, ExceptionCode& ec)
+void WebCLEvent::setCallback(CCenum executionStatus, PassRefPtr<WebCLCallback> notify, ExceptionCode& ec)
 {
     UNUSED_PARAM(executionStatus);
     UNUSED_PARAM(notify);

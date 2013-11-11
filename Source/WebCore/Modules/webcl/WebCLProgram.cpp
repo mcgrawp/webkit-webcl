@@ -32,12 +32,10 @@
 
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
-#include "WebCLFinishCallback.h"
 #include "WebCLGetInfo.h"
 #include "WebCLImageDescriptor.h"
 #include "WebCLInputChecker.h"
 #include "WebCLKernel.h"
-
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -153,30 +151,32 @@ Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode&
     return WebCLKernel::createKernelsInProgram(m_context.get(), this, ec);
 }
 
-void WebCLProgram::finishCallback(CCProgram program, void* userData)
+Vector<WeakPtr<WebCLProgram> >* WebCLProgram::s_thisPointers =  nullptr;
+
+/*  Static function to be sent as callback to OpenCL clBuildProgram.
+    Must be static and must map a (CCProgram,userData) to corresponding WebCLProgram.
+    Here we use the userData as a index to a static Vector. On each call to build with callback,
+    append a copy of this pointer to this Vector and send index as userData. On return this static
+    member will be used to retrive the WebCLProgram.
+    */
+
+void WebCLProgram::callbackProxy(CCProgram program, void* userData)
 {
 	UNUSED_PARAM(program);
-	UNUSED_PARAM(userData);
+    size_t index = *((int*)userData);
+    ASSERT(index < s_thisPointers->size());
 
-    WebCLProgram* self = static_cast<WebCLProgram*>(WebCLProgram::thisPointer);
-    if (self)
-        self->m_finishCallback.get()->handleEvent(17);
-    else
-        printf(" ERROR:: static_cast to WebCLProgram failed\n");
-    printf(" Just Finished finishCallback() call back");
+    WeakPtr<WebCLProgram> webCLProgram = WebCLProgram::s_thisPointers->at(index - 1);
+    if (webCLProgram.get())
+        webCLProgram.get()->callEvent();
 }
 
-WebCLProgram* WebCLProgram::thisPointer = 0;
-
-void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const String& buildOptions, PassRefPtr<WebCLFinishCallback> finishCallback, ExceptionCode& ec)
+void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const String& buildOptions, PassRefPtr<WebCLCallback> callback, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_PROGRAM;
         return;
     }
-    WebCLProgram::thisPointer = static_cast<WebCLProgram*>(this);
-
-    m_finishCallback = finishCallback;
 
     if (buildOptions.length() > 0) {
         DEFINE_STATIC_LOCAL(AtomicString, buildOptionDashD, ("-D", AtomicString::ConstructFromLiteral));
@@ -227,9 +227,17 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
     Vector<CCDeviceID> ccDevices;
     for (size_t i = 0; i < devices.size(); i++)
         ccDevices.append(devices[i]->platformObject());
+    pfnNotify callbackProxyPtr = 0;
+    WeakPtrFactory<WebCLProgram> programWeakPointer(const_cast<WebCLProgram*>(this));
+    if (callback) {
+        m_callback = callback;
+        if (!s_thisPointers)
+            s_thisPointers = new Vector<WeakPtr<WebCLProgram> >();
+        s_thisPointers->append(programWeakPointer.createWeakPtr());
+        callbackProxyPtr = &callbackProxy;
+    }
 
-    pfnNotify callback = m_finishCallback ? &WebCLProgram::finishCallback : 0;
-    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, webclBuildOptions.toString(), callback);
+    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, webclBuildOptions.toString(), callbackProxyPtr, s_thisPointers ? s_thisPointers->size() : 0);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 

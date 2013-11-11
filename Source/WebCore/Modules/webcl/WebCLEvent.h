@@ -36,7 +36,7 @@ namespace WebCore {
 
 class WebCLGetInfo;
 class WebCLCommandQueue;
-class WebCLFinishCallback;
+class WebCLCallback;
 
 class WebCLEvent : public WebCLObjectImpl<CCEvent> {
 public:
@@ -44,13 +44,13 @@ public:
     static PassRefPtr<WebCLEvent> create();
     WebCLGetInfo getInfo(CCenum, ExceptionCode&);
     WebCLGetInfo getProfilingInfo(CCenum, ExceptionCode&);
-    void setCallback(CCenum, PassRefPtr<WebCLFinishCallback>, ExceptionCode&);
+    void setCallback(CCenum, PassRefPtr<WebCLCallback>, ExceptionCode&);
 
     void setAssociatedCommandQueue(WebCLCommandQueue* commandQueue);
-    RefPtr<WebCLFinishCallback> m_finishCallback;
 protected:
     WebCLEvent(CCEvent);
     virtual void releasePlatformObjectImpl();
+    RefPtr<WebCLCallback> m_callback;
 private:
     static WebCLEvent* thisPointer;
     RefPtr<WebCLCommandQueue> m_commandQueue;

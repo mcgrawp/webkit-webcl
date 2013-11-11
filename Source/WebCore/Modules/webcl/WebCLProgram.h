@@ -30,13 +30,14 @@
 
 #if ENABLE(WEBCL)
 
+#include "WebCLCallback.h"
 #include "WebCLObject.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class WebCLContext;
 class WebCLDevice;
-class WebCLFinishCallback;
 class WebCLGetInfo;
 class WebCLKernel;
 
@@ -48,7 +49,7 @@ public:
     WebCLGetInfo getInfo(CCenum flag, ExceptionCode&);
     WebCLGetInfo getBuildInfo(WebCLDevice*, CCenum flag, ExceptionCode&);
 
-    void build(const Vector<RefPtr<WebCLDevice> >&, const String& buildOptions, PassRefPtr<WebCLFinishCallback>, ExceptionCode&);
+    void build(const Vector<RefPtr<WebCLDevice> >&, const String& buildOptions, PassRefPtr<WebCLCallback>, ExceptionCode&);
 
     PassRefPtr<WebCLKernel> createKernel(const String& kernelName, ExceptionCode&);
     Vector<RefPtr<WebCLKernel> > createKernelsInProgram(ExceptionCode&);
@@ -57,13 +58,18 @@ public:
 
 private:
     WebCLProgram(WebCLContext*, CCProgram, const String&);
-    static void finishCallback(CCProgram, void*);
-
     void releasePlatformObjectImpl();
 
-    static WebCLProgram* thisPointer;
-    RefPtr<WebCLFinishCallback> m_finishCallback;
+    static void callbackProxy(CCProgram, void*);
+    void callEvent()
+    {
+        ASSERT(m_callback);
+        m_callback->handleEvent();
+    };
 
+    static Vector<WeakPtr<WebCLProgram> >* s_thisPointers;
+    RefPtr<WebCLCallback> m_callback;
+    
     RefPtr<WebCLContext> m_context;
     String m_programSource;
     String m_programSourceWithCommentsStripped;

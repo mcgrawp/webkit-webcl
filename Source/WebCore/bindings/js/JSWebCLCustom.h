@@ -33,8 +33,8 @@
 #include "JSDictionary.h"
 #include "JSWebCLContext.h"
 #include "JSWebCLImage.h"
+#include "WebCLCallback.h"
 #include "WebCLCommandQueue.h"
-#include "WebCLFinishCallback.h"
 #include "WebCLImageDescriptor.h"
 #include "WebCLProgram.h"
 
