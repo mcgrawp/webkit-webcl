@@ -32,12 +32,10 @@
 
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
-#include "WebCLFinishCallback.h"
 #include "WebCLGetInfo.h"
 #include "WebCLImageDescriptor.h"
 #include "WebCLInputChecker.h"
 #include "WebCLKernel.h"
-
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -151,30 +149,27 @@ Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode&
     return WebCLKernel::createKernelsInProgram(m_context, this, ec);
 }
 
-void WebCLProgram::finishCallback(CCProgram program, void* userData)
+Vector<WebCLProgram*>* WebCLProgram::s_thisPointers =  nullptr;
+
+/*  Static function to be sent as callback to OpenCL clBuildProgram.
+    Must be static and must map a (CCProgram,userData) to corresponding WebCLProgram. */
+
+void WebCLProgram::callbackProxy(CCProgram program, void* userData)
 {
 	UNUSED_PARAM(program);
-	UNUSED_PARAM(userData);
+    size_t index = *((int*)userData);
+    ASSERT(index > s_thisPointers->size());
 
-    WebCLProgram* self = static_cast<WebCLProgram*>(WebCLProgram::thisPointer);
-    if (self)
-        self->m_finishCallback.get()->handleEvent(17);
-    else
-        printf(" ERROR:: static_cast to WebCLProgram failed\n");
-    printf(" Just Finished finishCallback() call back");
+    WebCLProgram* webCLProgram = WebCLProgram::s_thisPointers->at(index-1);
+    webCLProgram->callEvent();
 }
 
-WebCLProgram* WebCLProgram::thisPointer = 0;
-
-void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const String& buildOptions, PassRefPtr<WebCLFinishCallback> finishCallback, ExceptionCode& ec)
+void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const String& buildOptions, PassRefPtr<WebCLCallback> callBack, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_PROGRAM;
         return;
     }
-    WebCLProgram::thisPointer = static_cast<WebCLProgram*>(this);
-
-    m_finishCallback = finishCallback;
 
     if (buildOptions.length() > 0) {
         DEFINE_STATIC_LOCAL(AtomicString, buildOptionDashD, ("-D", AtomicString::ConstructFromLiteral));
@@ -218,9 +213,17 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
     Vector<CCDeviceID> ccDevices;
     for (size_t i = 0; i < devices.size(); i++)
         ccDevices.append(devices[i]->platformObject());
+    pfnNotify callbackProxyPtr;
+    if (callBack) {
+        m_callback = callBack;
+        if (!s_thisPointers)
+            s_thisPointers = new Vector<WebCLProgram*>();
+        s_thisPointers->append(static_cast<WebCLProgram*>(this));
+        callbackProxyPtr = &callbackProxy;
+    } else
+        callbackProxyPtr = 0;
 
-    pfnNotify callback = m_finishCallback ? &WebCLProgram::finishCallback : 0;
-    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, webclBuildOptions.toString(), callback);
+    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, webclBuildOptions.toString(), callbackProxyPtr, s_thisPointers ? s_thisPointers->size() : 0);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 

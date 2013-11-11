@@ -31,6 +31,7 @@
 
 #include "JSWebCLEvent.h"
 
+#include "JSWebCLCallback.h"
 #include "JSWebCLCustom.h"
 
 using namespace JSC;
@@ -39,14 +40,14 @@ namespace WebCore {
 
 class WebCLGetInfo;
 
-static PassRefPtr<WebCLFinishCallback> createFinishCallback(ExecState* exec, JSDOMGlobalObject* /*globalObject*/, JSValue value)
+static PassRefPtr<WebCLCallback> createCallback(ExecState* exec, JSDOMGlobalObject* /* globalObject */, JSValue value)
 {
     if (value.isUndefinedOrNull()) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return 0;
     }
-    //JSObject* object = asObject(value);
-    return 0;//JSWebCLFinishCallback::create(object, globalObject);
+    // JSObject* object = asObject(value);
+    return 0; // JSWebCLCallback::create(object, globalObject);
 }
 
 JSValue JSWebCLEvent::getInfo(JSC::ExecState* exec)
@@ -103,16 +104,16 @@ JSValue JSWebCLEvent::setCallback(JSC::ExecState* exec)
         return jsUndefined();
 
     ExceptionCode ec = 0;
-    RefPtr<WebCLFinishCallback> callback;
+    RefPtr<WebCLCallback> callback;
     if (!exec->argument(1).isUndefinedOrNull()) {
         JSObject* object = exec->argument(1).getObject();
         if (!object) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }
-        callback = 0;//JSWebCLFinishCallback::create(object, static_cast<JSDOMGlobalObject*>(globalObject()));
+        callback = 0; // JSWebCLCallback::create(object, static_cast<JSDOMGlobalObject*>(globalObject()));
     }
-    RefPtr<WebCLFinishCallback> finishCallback = createFinishCallback(exec,
+    RefPtr<WebCLCallback> finishCallback = createCallback(exec,
         static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(1));
     if (exec->hadException())
         return jsUndefined();

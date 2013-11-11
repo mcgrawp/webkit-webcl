@@ -412,11 +412,11 @@ CCProgram ComputeContext::createProgram(const String& kernelSource, CCerror& err
     return clCreateProgramWithSource(m_clContext, 1, &kernelSourcePtr, 0, &error);
 }
 
-CCerror ComputeContext::buildProgram(CCProgram program, const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction)
+CCerror ComputeContext::buildProgram(CCProgram program, const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, int userData)
 {
     const CString& optionsCString = options.utf8();
     const char* optionsPtr = optionsCString.data();
-    return clBuildProgram(program, devices.size(), devices.data(), optionsPtr, notifyFunction, 0 /*userData*/);
+    return clBuildProgram(program, devices.size(), devices.data(), optionsPtr, notifyFunction, &userData);
 }
 
 CCerror ComputeContext::setKernelArg(CCKernel kernel, CCuint argIndex, size_t argSize, const void* argValue)

@@ -31,6 +31,7 @@
 
 #include "JSWebCLProgram.h"
 
+#include "JSWebCLCallback.h"
 #include "JSWebCLCustom.h"
 #include "JSWebCLDevice.h"
 
@@ -80,15 +81,15 @@ JSValue JSWebCLProgram::getBuildInfo(JSC::ExecState* exec)
     return toJS(exec, globalObject(), info);
 }
 
-static PassRefPtr<WebCLFinishCallback> createFinishCallback(ExecState* exec, JSDOMGlobalObject* /*globalObject*/,
+static PassRefPtr<WebCLCallback> createCallback(ExecState* exec, JSDOMGlobalObject* globalObject,
     JSValue value)
 {
     if (value.isUndefinedOrNull()) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return 0;
     }
-    //JSObject* object = asObject(value);
-    return 0; //JSWebCLFinishCallback::create(object, globalObject);
+    JSObject* object = asObject(value);
+    return JSWebCLCallback::create(object, globalObject);
 }
 
 JSValue JSWebCLProgram::build(JSC::ExecState* exec)
@@ -112,9 +113,8 @@ JSValue JSWebCLProgram::build(JSC::ExecState* exec)
         return jsUndefined();
 
     ExceptionCode ec = 0;
-    RefPtr<WebCLFinishCallback> callback;
     if (!exec->argument(2).getObject())
-        m_impl->build(devices, options, 0 /*WebCLFinishCallback*/, ec);
+        m_impl->build(devices, options, 0 /*WebCLCallback*/, ec);
     else {
         if (!exec->argument(2).isUndefinedOrNull()) {
             JSObject* object = exec->argument(2).getObject();
@@ -122,13 +122,11 @@ JSValue JSWebCLProgram::build(JSC::ExecState* exec)
                 setDOMException(exec, TYPE_MISMATCH_ERR);
                 return jsUndefined();
             }
-            callback = 0; //JSWebCLFinishCallback::create(object, static_cast<JSDOMGlobalObject*>(globalObject()));
         }
-        RefPtr<WebCLFinishCallback> finishCallback = createFinishCallback(exec,
-            static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(2));
+        RefPtr<WebCLCallback> callBack = createCallback(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(2));
         if (exec->hadException())
             return jsUndefined();
-        m_impl->build(devices, options, callback.release(), ec);
+        m_impl->build(devices, options, callBack.release(), ec);
     }
     if (ec) {
         setDOMException(exec, ec);

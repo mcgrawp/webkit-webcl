@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -25,8 +25,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCLFinishCallback_h
-#define WebCLFinishCallback_h
+#ifndef WebCLCallback_h
+#define WebCLCallback_h
 
 #if ENABLE(WEBCL)
 
@@ -34,13 +34,15 @@
 
 namespace WebCore {
 
-class WebCLFinishCallback : public ThreadSafeRefCounted<WebCLFinishCallback> {
+class WebCLEvent;
+
+class WebCLCallback : public ThreadSafeRefCounted<WebCLCallback> {
 public:
-    virtual ~WebCLFinishCallback();
-    virtual bool handleEvent(int);
+    virtual ~WebCLCallback() { };
+    virtual bool handleEvent() = 0;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)
-#endif // WebCLFinishCallback_H
+#endif // WebCLCallback_H

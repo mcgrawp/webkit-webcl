@@ -30,13 +30,13 @@
 
 #if ENABLE(WEBCL)
 
+#include "WebCLCallback.h"
 #include "WebCLObject.h"
 
 namespace WebCore {
 
 class WebCLContext;
 class WebCLDevice;
-class WebCLFinishCallback;
 class WebCLGetInfo;
 class WebCLKernel;
 
@@ -48,7 +48,7 @@ public:
     WebCLGetInfo getInfo(CCenum flag, ExceptionCode&);
     WebCLGetInfo getBuildInfo(WebCLDevice*, CCenum flag, ExceptionCode&);
 
-    void build(const Vector<RefPtr<WebCLDevice> >&, const String& buildOptions, PassRefPtr<WebCLFinishCallback>, ExceptionCode&);
+    void build(const Vector<RefPtr<WebCLDevice> >&, const String& buildOptions, PassRefPtr<WebCLCallback>, ExceptionCode&);
 
     PassRefPtr<WebCLKernel> createKernel(const String& kernelName, ExceptionCode&);
 
@@ -60,13 +60,19 @@ public:
 
 private:
     WebCLProgram(WebCLContext*, CCProgram, const String&);
-    static void finishCallback(CCProgram, void*);
     void releasePlatformObjectImpl();
 
-    static WebCLProgram* thisPointer;
+    static void callbackProxy(CCProgram, void*);
+    void callEvent()
+    {
+        ASSERT(m_callback);
+        m_callback->handleEvent();
+    };
+
+    static Vector<WebCLProgram*>* s_thisPointers;
     WebCLContext* m_context;
     String m_programSource;
-    RefPtr<WebCLFinishCallback> m_finishCallback;
+    RefPtr<WebCLCallback> m_callback;
 };
 
 } // namespace WebCore

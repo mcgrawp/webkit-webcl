@@ -177,7 +177,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webcl/WebCLEvent.idl \
     $(WebCore)/Modules/webcl/WebCLException.idl \
     $(WebCore)/Modules/webcl/WebCLMemoryObject.idl \
-    $(WebCore)/Modules/webcl/WebCLFinishCallback.idl \
+    $(WebCore)/Modules/webcl/WebCLCallback.idl \
     $(WebCore)/Modules/webcl/WebCLPlatform.idl \
     $(WebCore)/Modules/webcl/WebCLGL.idl \
     $(WebCore)/Modules/webcl/WebCLProgram.idl \

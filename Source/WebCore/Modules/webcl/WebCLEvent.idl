@@ -34,5 +34,5 @@ typedef unsigned long CLenum;
     [StrictTypeChecking, Custom, RaisesException] void getInfo(CLenum paramName);
     [StrictTypeChecking, Custom, RaisesException] void getInfo(CLenum paramName);
     [StrictTypeChecking, Custom, RaisesException] void getProfilingInfo(CLenum paramName);
-    [StrictTypeChecking, Custom, RaisesException] void setCallback(CLenum execStatus,  WebCLFinishCallback notifyCallback);
+    [StrictTypeChecking, Custom, RaisesException] void setCallback(CLenum execStatus,  WebCLCallback notifyCallback);
 };
