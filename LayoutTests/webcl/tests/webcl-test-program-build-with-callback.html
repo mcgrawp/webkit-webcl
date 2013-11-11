@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test WebCLProgram build with optional WebCLCallback</title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/kernels.js"></script>
+<script src="../resources/webcl-test-utils.js"></script>
+
+<script>
+var DATA_SIZE = 1024;
+
+var data;
+var results = new Int32Array(DATA_SIZE);
+var count;
+
+var cl;
+var platforms;
+var platform;
+var devices;
+var numDevices;
+var context;
+var queue;
+var program;
+var kernel;
+
+var input;
+var output;
+
+var globalWorkSize = new Int32Array(1);
+var localWorkSize = new Int32Array(1);
+
+function clCallback() {
+    if (program.getBuildInfo(devices[0], cl.PROGRAM_BUILD_STATUS) === 0) {
+        kernel = program.createKernel("square");
+    }
+};
+
+function clCallback1() {
+    if (program.getBuildInfo(devices[0], cl.PROGRAM_BUILD_STATUS) === 0) {
+        testPassed("Callback is working fine.");
+    }
+}
+
+function clCallback2() {
+    if (program.getBuildInfo(devices[0], cl.PROGRAM_BUILD_STATUS) === 0) {
+        testFailed("This callback should not be performed.");
+    }
+}
+
+function setAndRunCallback(kernelSource) {
+    var program = context.createProgram(kernelSource);
+    // This WebCL resource will be released and the WebCLCallback won't be invoked.
+    program.build([], "", clCallback2);
+}
+
+function runTest() {
+
+    count = DATA_SIZE;
+    // Generate a random vector with random values between 1 - 100
+    var randomVector = WebCLTestUtils.getRandomVector(count, 100);
+    data = new Int32Array(randomVector);
+
+    try {
+
+        if (webcl === "undefined") {
+            testFailed("webcl is yet to be undefined");
+            return null;
+        }
+
+        cl = webcl;
+
+        if (cl === null) {
+            testFailed("Failed to create webcl object");
+            return;
+        }
+
+        platforms = cl.getPlatforms();
+        if (platforms.length === 0) {
+            testFailed("No platforms available");
+            return;
+        }
+        platform = platforms[0];
+        devices = platform.getDevices(cl.DEVICE_TYPE_DEFAULT);
+        numDevices = devices.length;
+        if (numDevices === 0) {
+            testFailed("No devices available");
+            return;
+        }
+
+        var contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_DEFAULT};
+        context = cl.createContext(contextProperties);
+
+        queue = context.createCommandQueue(devices[0], null);
+
+        var kernelSource = Kernels.square;
+        if (kernelSource === null) {
+            testFailed("No kernel named: " + "square");
+            return;
+        }
+        program = context.createProgram(kernelSource);
+        var program1 = context.createProgram(kernelSource);
+
+        setAndRunCallback(kernelSource);
+
+        program.build(devices, "", clCallback);
+        program1.build([], "", clCallback1);
+
+        input = context.createBuffer(cl.MEM_READ_ONLY,  Int32Array.BYTES_PER_ELEMENT * count);
+        if (input === null) {
+            testFailed("Failed to alocate device memory for input data");
+            return;
+        }
+
+        var output = context.createBuffer(cl.MEM_WRITE_ONLY, Int32Array.BYTES_PER_ELEMENT * count);
+        if (output === null) {
+            testFailed("Failed to allocate device memory for output data");
+            return;
+        }
+
+        queue.enqueueWriteBuffer(input, true, 0, Int32Array.BYTES_PER_ELEMENT * count, data);
+
+        kernel.setArg(0, input);
+        kernel.setArg(2, new Uint32Array([count]));
+
+        var workGroupSize = kernel.getWorkGroupInfo(devices[0], cl.KERNEL_WORK_GROUP_SIZE);
+
+        globalWorkSize[0] = count;
+
+        localWorkSize[0] = workGroupSize;
+        kernel.setArg(1, output);
+        queue.enqueueNDRangeKernel(kernel, null, globalWorkSize, localWorkSize);
+
+        queue.finish();
+
+        queue.enqueueReadBuffer(output, true, 0, Int32Array.BYTES_PER_ELEMENT * count, results);
+        var r = 0;
+        var j;
+        for (j = 0; j < count; j++) {
+            r = data[j] * data[j];
+            if (results[j] !== r) {
+                testFailed("Test failed. Position: " + j + " value should be: " + r + " and it is: " + results[j]);
+                break;
+            }
+        }
+
+    } catch (e) {
+        testFailed("WebCL: test WebCLProgram build with optional WebCLCallback ; Message: " + e.message);
+    }
+}
+</script>
+
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("This test aims to verify if the WebCLCallback is working fine when " +
+        "it is used as argument in WebCLProgram::build. It creates two WebCLProgram objects " +
+        "and each one calls a different WebCLCallback. All callbacks should be invoked except the callback " +
+        "which is associated with a WebCL object that will be released.");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+This test aims to verify if the WebCLCallback is working fine when it is used as argument in WebCLProgram::build. It creates two WebCLProgram objects and each one calls a different WebCLCallback. All callbacks should be invoked except the callback which is associated with a WebCL object that will be released.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Callback is working fine.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
