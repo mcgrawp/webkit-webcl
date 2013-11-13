@@ -99,7 +99,7 @@ WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, CCKernel 
     , m_context(context)
     , m_program(program)
     , m_kernelName(kernelName)
-    , m_programSource(m_program->source())
+    , m_programSource(m_program->sourceWithCommentsStripped())
     , m_argumentList(this)
 {
 }

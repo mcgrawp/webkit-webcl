@@ -224,9 +224,59 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-const String& WebCLProgram::source() const
+// FIXME: Guard this change under !VALIDATOR_INTEGRATION.
+static void removeComments(const String& inSource, String& outSource)
 {
-    return m_programSource;
+    enum Mode { DEFAULT, BLOCK_COMMENT, LINE_COMMENT };
+    Mode currentMode = DEFAULT;
+
+    ASSERT(!inSource.isNull());
+    ASSERT(!inSource.isEmpty());
+
+    outSource = inSource;
+
+    for (unsigned i = 0; i < outSource.length(); ++i) {
+        if (currentMode == BLOCK_COMMENT) {
+            if (outSource[i] == '*' && outSource[i + 1] == '/') {
+                outSource.replace(i++, 2, "  ");
+                currentMode = DEFAULT;
+                continue;
+            }
+            outSource.replace(i, 1, " ");
+            continue;
+        }
+
+        if (currentMode == LINE_COMMENT) {
+            if (outSource[i] == '\n' || outSource[i] == '\r') {
+                currentMode = DEFAULT;
+                continue;
+            }
+            outSource.replace(i, 1, " ");
+            continue;
+        }
+
+        if(outSource[i] == '/') {
+            if(outSource[i + 1] == '*') {
+                outSource.replace(i++, 2, "  ");
+                currentMode = BLOCK_COMMENT;
+                continue;
+            }
+
+            if(outSource[i + 1] == '/'){
+                outSource.replace(i++, 2, "  ");
+                currentMode = LINE_COMMENT;
+                continue;
+            }
+        }
+    }
+}
+
+const String& WebCLProgram::sourceWithCommentsStripped()
+{
+    if (m_programSourceWithCommentsStripped.isNull())
+        removeComments(m_programSource, m_programSourceWithCommentsStripped);
+
+    return m_programSourceWithCommentsStripped;
 }
 
 void WebCLProgram::release()

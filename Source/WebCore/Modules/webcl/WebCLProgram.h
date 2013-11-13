@@ -54,19 +54,23 @@ public:
 
     Vector<RefPtr<WebCLKernel> > createKernelsInProgram(ExceptionCode&);
 
-    const String& source() const;
-
     void release();
 
 private:
     WebCLProgram(WebCLContext*, CCProgram, const String&);
     static void finishCallback(CCProgram, void*);
+
+    const String& sourceWithCommentsStripped();
+    friend class WebCLKernel;
+
     void releasePlatformObjectImpl();
 
     static WebCLProgram* thisPointer;
+    RefPtr<WebCLFinishCallback> m_finishCallback;
+
     WebCLContext* m_context;
     String m_programSource;
-    RefPtr<WebCLFinishCallback> m_finishCallback;
+    String m_programSourceWithCommentsStripped;
 };
 
 } // namespace WebCore
