@@ -64,10 +64,10 @@ VectorField.prototype.step = function (source) {
 
 VectorField.prototype.addField = function (source) {
 
-    vectorAddKernel.setArg2(0, vectorBuffer);
-    vectorAddKernel.setArg2(1, vectorSourceBuffer);
-    vectorAddKernel.setArg2(2, new Uint32Array([this.dim]));
-    vectorAddKernel.setArg2(3, new Float32Array([this.dt]));
+    vectorAddKernel.setArg(0, vectorBuffer);
+    vectorAddKernel.setArg(1, vectorSourceBuffer);
+    vectorAddKernel.setArg(2, new Uint32Array([this.dim]));
+    vectorAddKernel.setArg(3, new Float32Array([this.dt]));
 
     try {
         var globalWS = new Int32Array(3);
@@ -88,19 +88,19 @@ VectorField.prototype.diffusion = function () {
     globalWS[0] = globalWS[1] = globalWS[2] = localThreads;
 
     try {
-        vectorCopyKernel.setArg2(0, vectorBuffer);
-        vectorCopyKernel.setArg2(1, vectorTempBuffer);
-        vectorCopyKernel.setArg2(2, new Uint32Array([this.dim]));
+        vectorCopyKernel.setArg(0, vectorBuffer);
+        vectorCopyKernel.setArg(1, vectorTempBuffer);
+        vectorCopyKernel.setArg(2, new Uint32Array([this.dim]));
 
         var start = Date.now();
         clQueue.enqueueNDRangeKernel(vectorCopyKernel, null, globalWS, null);
         clTime += Date.now() - start;
 
-        vectorDiffusionKernel.setArg2(0, vectorBuffer);
-        vectorDiffusionKernel.setArg2(1, vectorTempBuffer);
-        vectorDiffusionKernel.setArg2(2, new Uint32Array([this.dim]));
-        vectorDiffusionKernel.setArg2(3, new Float32Array([this.dt]));
-        vectorDiffusionKernel.setArg2(4, new Float32Array([this.viscosity]));
+        vectorDiffusionKernel.setArg(0, vectorBuffer);
+        vectorDiffusionKernel.setArg(1, vectorTempBuffer);
+        vectorDiffusionKernel.setArg(2, new Uint32Array([this.dim]));
+        vectorDiffusionKernel.setArg(3, new Float32Array([this.dt]));
+        vectorDiffusionKernel.setArg(4, new Float32Array([this.viscosity]));
 
         start = Date.now();
         clQueue.enqueueNDRangeKernel(vectorDiffusionKernel, null, globalWS, null);
@@ -118,25 +118,25 @@ VectorField.prototype.projection = function () {
     globalWS[0] = globalWS[1] = globalWS[2] = localThreads;
 
     try {
-        vectorInitFieldKernel.setArg2(0, scalarTempBuffer);
-        vectorInitFieldKernel.setArg2(1, new Uint32Array([this.dim]));
+        vectorInitFieldKernel.setArg(0, scalarTempBuffer);
+        vectorInitFieldKernel.setArg(1, new Uint32Array([this.dim]));
 
         var start = Date.now();
         clQueue.enqueueNDRangeKernel(vectorInitFieldKernel, null, globalWS, null);
         clTime += Date.now() - start;
 
-        vectorInitFieldKernel.setArg2(0, scalarSecondTempBuffer);
-        vectorInitFieldKernel.setArg2(1, new Uint32Array([this.dim]));
+        vectorInitFieldKernel.setArg(0, scalarSecondTempBuffer);
+        vectorInitFieldKernel.setArg(1, new Uint32Array([this.dim]));
 
         start = Date.now();
         clQueue.enqueueNDRangeKernel(vectorInitFieldKernel, null, globalWS, null);
         clTime += Date.now() - start;
 
-        vectorProjectionFirst.setArg2(0, vectorBuffer);
-        vectorProjectionFirst.setArg2(1, scalarTempBuffer);
-        vectorProjectionFirst.setArg2(2, scalarSecondTempBuffer);
-        vectorProjectionFirst.setArg2(3, new Uint32Array([this.dim]));
-        vectorProjectionFirst.setArg2(4, new Float32Array([1 / this.dim]));
+        vectorProjectionFirst.setArg(0, vectorBuffer);
+        vectorProjectionFirst.setArg(1, scalarTempBuffer);
+        vectorProjectionFirst.setArg(2, scalarSecondTempBuffer);
+        vectorProjectionFirst.setArg(3, new Uint32Array([this.dim]));
+        vectorProjectionFirst.setArg(4, new Float32Array([1 / this.dim]));
 
         start = Date.now();
         clQueue.enqueueNDRangeKernel(vectorProjectionFirst, null, globalWS, null);
@@ -146,11 +146,11 @@ VectorField.prototype.projection = function () {
         this.setScalarFieldDensities(scalarSecondTempBuffer);
 
         for (i = 0; i < 20; i++) {
-            vectorProjectionSecond.setArg2(0, vectorBuffer);
-            vectorProjectionSecond.setArg2(1, scalarTempBuffer);
-            vectorProjectionSecond.setArg2(2, scalarSecondTempBuffer);
-            vectorProjectionSecond.setArg2(3, new Uint32Array([this.dim]));
-            vectorProjectionSecond.setArg2(4, new Float32Array([1 / this.dim]));
+            vectorProjectionSecond.setArg(0, vectorBuffer);
+            vectorProjectionSecond.setArg(1, scalarTempBuffer);
+            vectorProjectionSecond.setArg(2, scalarSecondTempBuffer);
+            vectorProjectionSecond.setArg(3, new Uint32Array([this.dim]));
+            vectorProjectionSecond.setArg(4, new Float32Array([1 / this.dim]));
 
             start = Date.now();
             clQueue.enqueueNDRangeKernel(vectorProjectionSecond, null, globalWS, null);
@@ -159,11 +159,11 @@ VectorField.prototype.projection = function () {
             this.setScalarFieldDensities(scalarTempBuffer);
         }
 
-        vectorProjectionThird.setArg2(0, vectorBuffer);
-        vectorProjectionThird.setArg2(1, scalarTempBuffer);
-        vectorProjectionThird.setArg2(2, scalarSecondTempBuffer);
-        vectorProjectionThird.setArg2(3, new Uint32Array([this.dim]));
-        vectorProjectionThird.setArg2(4, new Float32Array([1 / this.dim]));
+        vectorProjectionThird.setArg(0, vectorBuffer);
+        vectorProjectionThird.setArg(1, scalarTempBuffer);
+        vectorProjectionThird.setArg(2, scalarSecondTempBuffer);
+        vectorProjectionThird.setArg(3, new Uint32Array([this.dim]));
+        vectorProjectionThird.setArg(4, new Float32Array([1 / this.dim]));
 
         start = Date.now();
         clQueue.enqueueNDRangeKernel(vectorProjectionThird, null, globalWS, null);
@@ -180,18 +180,18 @@ VectorField.prototype.advection = function () {
     globalWS[0] = globalWS[1] = globalWS[2] = localThreads;
 
     try {
-        vectorCopyKernel.setArg2(0, vectorBuffer);
-        vectorCopyKernel.setArg2(1, vectorTempBuffer);
-        vectorCopyKernel.setArg2(2, new Uint32Array([this.dim]));
+        vectorCopyKernel.setArg(0, vectorBuffer);
+        vectorCopyKernel.setArg(1, vectorTempBuffer);
+        vectorCopyKernel.setArg(2, new Uint32Array([this.dim]));
 
         var start = Date.now();
         clQueue.enqueueNDRangeKernel(vectorCopyKernel, null, globalWS, null);
         clTime += Date.now() - start;
 
-        vectorAdvectionKernel.setArg2(0, vectorBuffer);
-        vectorAdvectionKernel.setArg2(1, vectorTempBuffer);
-        vectorAdvectionKernel.setArg2(2, new Uint32Array([this.dim]));
-        vectorAdvectionKernel.setArg2(3, new Float32Array([this.dt]));
+        vectorAdvectionKernel.setArg(0, vectorBuffer);
+        vectorAdvectionKernel.setArg(1, vectorTempBuffer);
+        vectorAdvectionKernel.setArg(2, new Uint32Array([this.dim]));
+        vectorAdvectionKernel.setArg(3, new Float32Array([this.dt]));
 
         start = Date.now();
         clQueue.enqueueNDRangeKernel(vectorAdvectionKernel, null, globalWS, null);
@@ -209,29 +209,29 @@ VectorField.prototype.vorticityConfinement = function () {
     globalWS[0] = globalWS[1] = globalWS[2] = localThreads;
 
     try {
-        vectorCopyKernel.setArg2(0, vectorBuffer);
-        vectorCopyKernel.setArg2(1, vectorTempBuffer);
-        vectorCopyKernel.setArg2(2, new Uint32Array([this.dim]));
+        vectorCopyKernel.setArg(0, vectorBuffer);
+        vectorCopyKernel.setArg(1, vectorTempBuffer);
+        vectorCopyKernel.setArg(2, new Uint32Array([this.dim]));
 
         var start = Date.now();
         clQueue.enqueueNDRangeKernel(vectorCopyKernel, null, globalWS, null);
         clTime += Date.now() - start;
 
-        vectorVorticityFirstKernel.setArg2(0, vectorBuffer);
-        vectorVorticityFirstKernel.setArg2(1, vectorTempBuffer);
-        vectorVorticityFirstKernel.setArg2(2, scalarTempBuffer);
-        vectorVorticityFirstKernel.setArg2(3, new Uint32Array([this.dim]));
-        vectorVorticityFirstKernel.setArg2(4, new Float32Array([this.dt * this.vorticityScale]));
+        vectorVorticityFirstKernel.setArg(0, vectorBuffer);
+        vectorVorticityFirstKernel.setArg(1, vectorTempBuffer);
+        vectorVorticityFirstKernel.setArg(2, scalarTempBuffer);
+        vectorVorticityFirstKernel.setArg(3, new Uint32Array([this.dim]));
+        vectorVorticityFirstKernel.setArg(4, new Float32Array([this.dt * this.vorticityScale]));
 
         start = Date.now();
         clQueue.enqueueNDRangeKernel(vectorVorticityFirstKernel, null, globalWS, null);
         clTime += Date.now() - start;
 
-        vectorVorticitySecondKernel.setArg2(0, vectorBuffer);
-        vectorVorticitySecondKernel.setArg2(1, vectorTempBuffer);
-        vectorVorticitySecondKernel.setArg2(2, scalarTempBuffer);
-        vectorVorticitySecondKernel.setArg2(3, new Uint32Array([this.dim]));
-        vectorVorticitySecondKernel.setArg2(4, new Float32Array([this.dt * this.vorticityScale]));
+        vectorVorticitySecondKernel.setArg(0, vectorBuffer);
+        vectorVorticitySecondKernel.setArg(1, vectorTempBuffer);
+        vectorVorticitySecondKernel.setArg(2, scalarTempBuffer);
+        vectorVorticitySecondKernel.setArg(3, new Uint32Array([this.dim]));
+        vectorVorticitySecondKernel.setArg(4, new Float32Array([this.dt * this.vorticityScale]));
 
         start = Date.now();
         clQueue.enqueueNDRangeKernel(vectorVorticitySecondKernel, null, globalWS, null);
@@ -246,8 +246,8 @@ VectorField.prototype.setBoundaryVelocities = function () {
     globalWS[0] = globalWS[1] = globalWS[2] = localThreads;
 
     try {
-        vectorBoundariesKernel.setArg2(0, vectorBuffer);
-        vectorBoundariesKernel.setArg2(1, new Uint32Array([this.dim]));
+        vectorBoundariesKernel.setArg(0, vectorBuffer);
+        vectorBoundariesKernel.setArg(1, new Uint32Array([this.dim]));
 
         var start = Date.now();
         clQueue.enqueueNDRangeKernel(vectorBoundariesKernel, null, globalWS, null);
@@ -262,8 +262,8 @@ VectorField.prototype.setScalarFieldDensities = function (field) {
     globalWS[0] = globalWS[1] = globalWS[2] = localThreads;
 
     try {
-        scalarBoundariesKernel.setArg2(0, field);
-        scalarBoundariesKernel.setArg2(1, new Uint32Array([this.dim]));
+        scalarBoundariesKernel.setArg(0, field);
+        scalarBoundariesKernel.setArg(1, new Uint32Array([this.dim]));
 
         var start = Date.now();
         clQueue.enqueueNDRangeKernel(scalarBoundariesKernel, null, globalWS, null);

@@ -79,7 +79,7 @@ float sampleLight(global float *field, float xx, float yy, float zz, const int d
 }
 
 
-kernel void volumeRayMarching(global unsigned int *pixels, global float *field, const int width, const int height, const float len, const float cubePos, const float cubeWidth, const int dim, const float ds) {
+__kernel void volumeRayMarching(global unsigned int *pixels, global float *field, const int width, const int height, const float len, const float cubePos, const float cubeWidth, const int dim, const float ds) {
     int x = get_global_id(0);
     int y = get_global_id(1);
 
@@ -124,7 +124,7 @@ kernel void volumeRayMarching(global unsigned int *pixels, global float *field, 
     }
 }
 
-kernel void scalarAddField(global float *field, global float *srcField, const unsigned int dim, const float dt) {
+__kernel void scalarAddField(global float *field, global float *srcField, const unsigned int dim, const float dt) {
     unsigned int z = get_global_id(0);
     unsigned int y = get_global_id(1);
     unsigned int x = get_global_id(2);
@@ -137,7 +137,7 @@ kernel void scalarAddField(global float *field, global float *srcField, const un
     }
 }
 
-kernel void scalarCopy(global float *field, global float *tempField, const unsigned int dim) {
+__kernel void scalarCopy(global float *field, global float *tempField, const unsigned int dim) {
     unsigned int z = get_global_id(0);
     unsigned int y = get_global_id(1);
     unsigned int x = get_global_id(2);
@@ -151,7 +151,7 @@ kernel void scalarCopy(global float *field, global float *tempField, const unsig
     }
 }
 
-kernel void scalarBoundaryDensities(global float *field, const unsigned int dim) {
+__kernel void scalarBoundaryDensities(global float *field, const unsigned int dim) {
     unsigned int i = get_global_id(0);
     unsigned int j = get_global_id(1);
 
@@ -179,7 +179,7 @@ kernel void scalarBoundaryDensities(global float *field, const unsigned int dim)
     }
 }
 
-kernel void scalarDiffusion(global float *field, global float *tempField, const unsigned int dim, const float dt, const float viscosity) {
+__kernel void scalarDiffusion(global float *field, global float *tempField, const unsigned int dim, const float dt, const float viscosity) {
     unsigned int z = get_global_id(0);
     unsigned int y = get_global_id(1);
     unsigned int x = get_global_id(2);
@@ -350,7 +350,7 @@ void clipPath(int x, int y, int z, float *xx, float *yy, float *zz, int dim) {
     }
 }
 
-kernel void scalarAdvection(global float *field, global float *tempField, global float *velocityField, const unsigned int dim, const float dt) {
+__kernel void scalarAdvection(global float *field, global float *tempField, global float *velocityField, const unsigned int dim, const float dt) {
     unsigned int x = get_global_id(0);
     unsigned int y = get_global_id(1);
     unsigned int z = get_global_id(2);

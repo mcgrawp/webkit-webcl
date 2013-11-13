@@ -562,7 +562,7 @@ void GenerateCameraRay(OCL_CONSTANT_BUFFER Camera *camera,
     rinit(*ray, rorig, rdir);
 }
 
-kernel void RadianceGPU(global Vec *colors,
+__kernel void RadianceGPU(global Vec *colors,
                         global unsigned int *seedsInput,
                         OCL_CONSTANT_BUFFER Sphere *sphere,
                         OCL_CONSTANT_BUFFER Camera *camera,

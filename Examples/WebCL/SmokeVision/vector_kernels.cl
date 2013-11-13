@@ -7,7 +7,7 @@ unsigned int vidx(unsigned int x, unsigned int y, unsigned int z, unsigned int d
 }
 
 // Initializes the scalar temp fields
-kernel void vectorInitField(global float *field, const unsigned int dim) {
+__kernel void vectorInitField(global float *field, const unsigned int dim) {
     unsigned int z = get_global_id(0);
     unsigned int y = get_global_id(1);
     unsigned int x = get_global_id(2);
@@ -20,7 +20,7 @@ kernel void vectorInitField(global float *field, const unsigned int dim) {
     }
 }
 
-kernel void vectorAddField(global float *field, global float *srcField, const unsigned int dim, const float dt) {
+__kernel void vectorAddField(global float *field, global float *srcField, const unsigned int dim, const float dt) {
     unsigned int z = get_global_id(0);
     unsigned int y = get_global_id(1);
     unsigned int x = get_global_id(2);
@@ -37,7 +37,7 @@ kernel void vectorAddField(global float *field, global float *srcField, const un
     }
 }
 
-kernel void vectorCopy(global float *field, global float *tempField, const unsigned int dim) {
+__kernel void vectorCopy(global float *field, global float *tempField, const unsigned int dim) {
     unsigned int z = get_global_id(0);
     unsigned int y = get_global_id(1);
     unsigned int x = get_global_id(2);
@@ -56,7 +56,7 @@ kernel void vectorCopy(global float *field, global float *tempField, const unsig
 }
 
 //TODO: this is slip only - implement noslip
-kernel void vectorBoundaries(global float *field, const unsigned int dim) {
+__kernel void vectorBoundaries(global float *field, const unsigned int dim) {
     unsigned int i = get_global_id(0);
     unsigned int j = get_global_id(1);
 
@@ -86,7 +86,7 @@ kernel void vectorBoundaries(global float *field, const unsigned int dim) {
     }
 }
 
-kernel void vectorVorticityConfinementFirst(global float *field, global float *tempVec, global float *tempField, const unsigned int dim, const float dt0) {
+__kernel void vectorVorticityConfinementFirst(global float *field, global float *tempVec, global float *tempField, const unsigned int dim, const float dt0) {
     unsigned int z = get_global_id(2);
     unsigned int y = get_global_id(1);
     unsigned int x = get_global_id(0);
@@ -104,7 +104,7 @@ kernel void vectorVorticityConfinementFirst(global float *field, global float *t
     }
 }
 
-kernel void vectorVorticityConfinementSecond(global float *field, global float *tempVec, global float *tempField, const unsigned int dim, const float dt0) {
+__kernel void vectorVorticityConfinementSecond(global float *field, global float *tempVec, global float *tempField, const unsigned int dim, const float dt0) {
     unsigned int z = get_global_id(0);
     unsigned int y = get_global_id(1);
     unsigned int x = get_global_id(2);
@@ -127,7 +127,7 @@ kernel void vectorVorticityConfinementSecond(global float *field, global float *
     }
 }
 
-kernel void vectorProjectionFirst(global float *field, global float *tempField, global float *tempSecondField, const unsigned int dim, const float h) {
+__kernel void vectorProjectionFirst(global float *field, global float *tempField, global float *tempSecondField, const unsigned int dim, const float h) {
     unsigned int z = get_global_id(2);
     unsigned int y = get_global_id(1);
     unsigned int x = get_global_id(0);
@@ -143,7 +143,7 @@ kernel void vectorProjectionFirst(global float *field, global float *tempField, 
     }
 }
 
-kernel void vectorProjectionSecond(global float *field, global float *tempField, global float *tempSecondField, const unsigned int dim, const float h) {
+__kernel void vectorProjectionSecond(global float *field, global float *tempField, global float *tempSecondField, const unsigned int dim, const float h) {
     unsigned int z = get_global_id(0);
     unsigned int y = get_global_id(1);
     unsigned int x = get_global_id(2);
@@ -158,7 +158,7 @@ kernel void vectorProjectionSecond(global float *field, global float *tempField,
     }
 }
 
-kernel void vectorProjectionThird(global float *field, global float *tempField, global float *tempSecondField, const unsigned int dim, const float h) {
+__kernel void vectorProjectionThird(global float *field, global float *tempField, global float *tempSecondField, const unsigned int dim, const float h) {
     unsigned int z = get_global_id(0);
     unsigned int y = get_global_id(1);
     unsigned int x = get_global_id(2);
@@ -172,7 +172,7 @@ kernel void vectorProjectionThird(global float *field, global float *tempField, 
     }
 }
 
-kernel void vectorDiffusion(global float *field, global float *tempField, const unsigned int dim, const float dt, const float viscosity) {
+__kernel void vectorDiffusion(global float *field, global float *tempField, const unsigned int dim, const float dt, const float viscosity) {
     unsigned int z = get_global_id(0);
     unsigned int y = get_global_id(1);
     unsigned int x = get_global_id(2);
@@ -345,7 +345,7 @@ void clipPath(int x, int y, int z, float *xx, float *yy, float *zz, int dim) {
     }
 }
 
-kernel void vectorAdvection(global float *field, global float *tempField, const unsigned int dim, const float dt) {
+__kernel void vectorAdvection(global float *field, global float *tempField, const unsigned int dim, const float dt) {
     unsigned int x = get_global_id(0);
     unsigned int y = get_global_id(1);
     unsigned int z = get_global_id(2);
