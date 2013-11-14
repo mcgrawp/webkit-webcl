@@ -77,7 +77,7 @@ WebCLGetInfo WebCLSampler::getInfo(CCenum infoType, ExceptionCode& ec)
     case ComputeContext::SAMPLER_NORMALIZED_COORDS:
         return WebCLGetInfo(static_cast<bool>(m_normCoords));
     case ComputeContext::SAMPLER_CONTEXT:
-        return WebCLGetInfo(m_context);
+        return WebCLGetInfo(m_context.get());
     case ComputeContext::SAMPLER_ADDRESSING_MODE:
         return WebCLGetInfo(m_addressingMode);
     case ComputeContext::SAMPLER_FILTER_MODE:

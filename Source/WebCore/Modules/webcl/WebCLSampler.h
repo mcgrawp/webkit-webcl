@@ -49,7 +49,7 @@ private:
     CCbool m_normCoords;
     CCenum m_addressingMode;
     CCenum m_filterMode;
-    WebCLContext* m_context;
+    RefPtr<WebCLContext> m_context;
 };
 
 } // namespace WebCore

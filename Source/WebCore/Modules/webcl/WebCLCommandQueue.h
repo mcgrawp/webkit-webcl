@@ -102,7 +102,7 @@ protected:
     template <class T>
     static void createBase(WebCLContext*, CCenum commandQueueProperty, const RefPtr<WebCLDevice>&, ExceptionCode&, RefPtr<T>& out);
 
-    WebCLContext* m_context;
+    RefPtr<WebCLContext> m_context;
 
 private:
     friend class WebCLEvent;

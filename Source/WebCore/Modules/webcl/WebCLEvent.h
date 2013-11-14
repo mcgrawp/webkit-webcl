@@ -53,7 +53,7 @@ private:
 
     void releasePlatformObjectImpl();
     static WebCLEvent* thisPointer;
-    WebCLCommandQueue* m_commandQueue;
+    RefPtr<WebCLCommandQueue> m_commandQueue;
 };
 
 } // namespace WebCore

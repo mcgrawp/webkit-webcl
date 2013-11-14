@@ -80,7 +80,7 @@ WebCLGetInfo WebCLProgram::getInfo(CCenum infoType, ExceptionCode& ec)
     case ComputeContext::PROGRAM_SOURCE:
         return WebCLGetInfo(m_programSource);
     case ComputeContext::PROGRAM_CONTEXT:
-        return WebCLGetInfo(m_context);
+        return WebCLGetInfo(m_context.get());
     case ComputeContext::PROGRAM_DEVICES:
         return m_context->getInfo(ComputeContext::CONTEXT_DEVICES, ec);
     default:
@@ -138,7 +138,7 @@ PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, Exc
         return 0;
     }
 
-    return WebCLKernel::create(m_context, this, kernelName, ec);
+    return WebCLKernel::create(m_context.get(), this, kernelName, ec);
 }
 
 Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode& ec)
@@ -148,7 +148,7 @@ Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode&
         return Vector<RefPtr<WebCLKernel> >();
     }
 
-    return WebCLKernel::createKernelsInProgram(m_context, this, ec);
+    return WebCLKernel::createKernelsInProgram(m_context.get(), this, ec);
 }
 
 void WebCLProgram::finishCallback(CCProgram program, void* userData)

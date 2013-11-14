@@ -100,8 +100,8 @@ private:
 
     void releasePlatformObjectImpl();
 
-    WebCLContext* m_context;
-    WebCLProgram* m_program;
+    RefPtr<WebCLContext> m_context;
+    RefPtr<WebCLProgram> m_program;
     String m_kernelName;
     // FIXME: Kernels keep their own copies of the program source
     // instead of querying it from the m_program backpointer. This

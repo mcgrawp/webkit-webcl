@@ -74,7 +74,7 @@ WebCLGetInfo WebCLCommandQueue::getInfo(CCenum paramName, ExceptionCode& ec)
 
     switch (paramName) {
     case ComputeContext::QUEUE_CONTEXT:
-        return WebCLGetInfo(m_context);
+        return WebCLGetInfo(m_context.get());
     case ComputeContext::QUEUE_DEVICE:
         return WebCLGetInfo(m_device.get());
     case ComputeContext::QUEUE_PROPERTIES: {

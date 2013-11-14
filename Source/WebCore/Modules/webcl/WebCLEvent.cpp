@@ -83,13 +83,13 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionCode& ec)
             return WebCLGetInfo();
 
         ASSERT(m_commandQueue->m_context);
-        return WebCLGetInfo(m_commandQueue->m_context);
+        return WebCLGetInfo(m_commandQueue->m_context.get());
     }
     case ComputeContext::EVENT_COMMAND_QUEUE: {
         if (!m_commandQueue)
             return WebCLGetInfo();
 
-        return WebCLGetInfo(m_commandQueue);
+        return WebCLGetInfo(m_commandQueue.get());
     }
     default:
         ec = WebCLException::INVALID_VALUE;

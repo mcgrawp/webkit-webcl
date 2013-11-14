@@ -86,7 +86,7 @@ WebCLGetInfo WebCLMemoryObject::getInfo(CCenum paramName, ExceptionCode& ec)
         break;
         }
     case ComputeContext::MEM_CONTEXT:
-        return WebCLGetInfo(m_context);
+        return WebCLGetInfo(m_context.get());
     case ComputeContext::MEM_ASSOCIATED_MEMOBJECT:
         return WebCLGetInfo(m_parentMemObject);
     case ComputeContext::MEM_OFFSET: {

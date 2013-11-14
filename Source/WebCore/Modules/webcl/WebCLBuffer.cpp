@@ -84,7 +84,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(CCenum memoryFlags, CCuint 
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-    RefPtr<WebCLBuffer> subBuffer = adoptRef(new WebCLBuffer(m_context, ccSubBuffer, this));
+    RefPtr<WebCLBuffer> subBuffer = adoptRef(new WebCLBuffer(m_context.get(), ccSubBuffer, this));
     return subBuffer.release();
 }
 

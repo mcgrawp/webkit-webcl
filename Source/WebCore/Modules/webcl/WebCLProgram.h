@@ -68,7 +68,7 @@ private:
     static WebCLProgram* thisPointer;
     RefPtr<WebCLFinishCallback> m_finishCallback;
 
-    WebCLContext* m_context;
+    RefPtr<WebCLContext> m_context;
     String m_programSource;
     String m_programSourceWithCommentsStripped;
 };
