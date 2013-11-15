@@ -109,7 +109,7 @@ function InitCL() {
             return null;
         }
 
-        queue = context.createCommandQueue(devices, null);
+        queue = context.createCommandQueue(device, null);
         program = context.createProgram(kernelSource);
         program.build([device]); //,"-cl-auto-vectorize-enable");
         kernel = userData.gpu ? program.createKernel("nbody_kernel_GPU") : program.createKernel("nbody_kernel_CPU");
