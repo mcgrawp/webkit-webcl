@@ -99,7 +99,6 @@ WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, CCKernel 
     , m_context(context)
     , m_program(program)
     , m_kernelName(kernelName)
-    , m_programSource(m_program->sourceWithCommentsStripped())
     , m_argumentList(this)
 {
 }
@@ -352,9 +351,8 @@ void WebCLKernel::ArgumentList::ensureArgumentData()
     if (m_argumentData.size())
         return;
 
-    const String& source = m_kernel->m_programSource;
+    const String& source = m_kernel->m_program->sourceWithCommentsStripped();
 
-    // FIXME: Commentted out lines might mess up with the parser logic.
     // 1) find "__kernel" string.
     // 2) find the first open braces past __kernel.
     // 3) reverseFind the given kernel name string.

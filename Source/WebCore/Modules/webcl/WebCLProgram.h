@@ -51,17 +51,15 @@ public:
     void build(const Vector<RefPtr<WebCLDevice> >&, const String& buildOptions, PassRefPtr<WebCLFinishCallback>, ExceptionCode&);
 
     PassRefPtr<WebCLKernel> createKernel(const String& kernelName, ExceptionCode&);
-
     Vector<RefPtr<WebCLKernel> > createKernelsInProgram(ExceptionCode&);
+
+    const String& sourceWithCommentsStripped();
 
     void release();
 
 private:
     WebCLProgram(WebCLContext*, CCProgram, const String&);
     static void finishCallback(CCProgram, void*);
-
-    const String& sourceWithCommentsStripped();
-    friend class WebCLKernel;
 
     void releasePlatformObjectImpl();
 
