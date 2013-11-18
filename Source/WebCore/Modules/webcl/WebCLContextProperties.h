@@ -31,6 +31,7 @@
 #if ENABLE(WEBCL)
 
 #include "ComputeTypes.h"
+#include "WebCLDevice.h"
 #include "WebCLPlatform.h"
 #include "WebGLRenderingContext.h"
 #include <wtf/PassRefPtr.h>
@@ -44,14 +45,9 @@ class WebCLPlatform;
 class WebCLContextProperties : public RefCounted<WebCLContextProperties>
 {
 public:
-    enum SharedContextResolutionPolicy {
-        NoSharedGLContext = 0,
-        GetCurrentGLContext,
-        UseGLContextProvided
-    };
-
     static PassRefPtr<WebCLContextProperties> create();
-    static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, CCenum deviceType);
+    static PassRefPtr<WebCLContextProperties> create(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, CCenum deviceType,
+        PassRefPtr<WebGLRenderingContext> = 0);
 
     virtual ~WebCLContextProperties() { }
 
@@ -64,25 +60,24 @@ public:
     CCenum deviceType() const;
     void setDeviceType(CCenum type);
 
-    virtual RefPtr<WebGLRenderingContext>& sharedContext();
-    virtual void setSharedContext(PassRefPtr<WebGLRenderingContext>);
+    RefPtr<WebGLRenderingContext>& glContext();
+    void setGLContext(PassRefPtr<WebGLRenderingContext>);
 
-    virtual Vector<CCContextProperties>& computeContextProperties();
+    Vector<CCContextProperties>& computeContextProperties();
 
-    virtual bool isGLCapable() const { return false; }
+    bool isGLCapable() const { return !!m_webGLRenderingContext.get(); }
 
 protected:
     WebCLContextProperties();
-    WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, CCenum deviceType);
 
-    virtual void computeContextPropertiesInternal();
+    WebCLContextProperties(PassRefPtr<WebCLPlatform>, const Vector<RefPtr<WebCLDevice> >&, CCenum deviceType,
+        PassRefPtr<WebGLRenderingContext> = 0);
 
     RefPtr<WebCLPlatform> m_platform;
     Vector<RefPtr<WebCLDevice> > m_devices;
     CCenum m_deviceType;
     Vector<CCContextProperties> m_ccProperties;
 
-    enum SharedContextResolutionPolicy m_contextPolicy;
     RefPtr<WebGLRenderingContext> m_webGLRenderingContext;
 };
 

@@ -164,4 +164,14 @@ typedef unsigned long CLuint;
     [RaisesException] void finish();
 
     [RaisesException] void flush();
+
+#if defined(ENABLE_WEBGL) && ENABLE_WEBGL
+    [RaisesException] void enqueueAcquireGLObjects(sequence<WebCLMemoryObject> memObjects,
+        [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+        [Default=Undefined] optional WebCLEvent event);
+
+    [RaisesException] void enqueueReleaseGLObjects(sequence<WebCLMemoryObject> memObjects,
+        [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+        [Default=Undefined] optional WebCLEvent event);
+#endif
 };

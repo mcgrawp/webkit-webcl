@@ -27,6 +27,7 @@
 typedef unsigned long CLuint;
 typedef unsigned long CLenum;
 typedef boolean CLboolean;
+typedef long GLint;
 
 [
     Conditional=WEBCL,
@@ -55,4 +56,10 @@ typedef boolean CLboolean;
     [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(CLenum flags, HTMLVideoElement videoElement);
     [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(CLenum flags, HTMLImageElement imageElement);
     [StrictTypeChecking, Custom, RaisesException] WebCLImage createImage(CLenum flags, WebCLImageDescriptor descriptor, [Default=Undefined] optional ArrayBufferView hostPtr);
+
+#if defined(ENABLE_WEBGL) && ENABLE_WEBGL
+    [RaisesException] WebCLBuffer createFromGLBuffer(CLenum memFlags, WebGLBuffer buffer);
+    [RaisesException] WebCLImage createFromGLRenderbuffer(CLenum memFlags, WebGLRenderbuffer renderbuffer);
+    [RaisesException] WebCLImage createFromGLTexture(CLenum memFlags, CLenum textureTarget, GLint miplevel, WebGLTexture texture);
+#endif
 };

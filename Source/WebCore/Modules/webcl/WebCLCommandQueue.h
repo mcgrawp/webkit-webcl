@@ -34,14 +34,15 @@
 
 namespace WebCore {
 
-class WebCLKernel;
-class WebCLGetInfo;
-class WebCLImage;
-class WebCLContext;
+class ImageData;
 class WebCLBuffer;
+class WebCLContext;
 class WebCLDevice;
 class WebCLEvent;
-class ImageData;
+class WebCLGetInfo;
+class WebCLImage;
+class WebCLKernel;
+class WebCLMemoryObject;
 
 class WebCLCommandQueue : public WebCLObject<CCCommandQueue> {
 public:
@@ -96,40 +97,23 @@ public:
 
     void enqueueMarker(WebCLEvent*, ExceptionCode&);
 
-protected:
-    WebCLCommandQueue(WebCLContext*, const RefPtr<WebCLDevice>&, CCCommandQueue);
-
-    template <class T>
-    static void createBase(WebCLContext*, CCenum commandQueueProperty, const RefPtr<WebCLDevice>&, ExceptionCode&, RefPtr<T>& out);
-
-    RefPtr<WebCLContext> m_context;
+#if ENABLE(WEBGL)
+    void enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryObject> >&, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryObject> >&, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+#endif
 
 private:
+    WebCLCommandQueue(WebCLContext*, const RefPtr<WebCLDevice>&, CCCommandQueue);
+
     friend class WebCLEvent;
-    static CCCommandQueue createBaseInternal(WebCLContext*, CCenum commandQueueProperty, const RefPtr<WebCLDevice>&, CCerror&);
 
     void enqueueWriteBufferBase(WebCLBuffer*, CCbool blockingWrite, CCuint, CCuint, void*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void releasePlatformObjectImpl();
 
+    RefPtr<WebCLContext> m_context;
     const RefPtr<WebCLDevice> m_device;
 };
-
-template <class T>
-inline void WebCLCommandQueue::createBase(WebCLContext* context, CCenum commandQueueProperty, const RefPtr<WebCLDevice>& webCLDevice, ExceptionCode& ec, RefPtr<T>& out)
-{
-    out = 0;
-
-    CCerror error = ComputeContext::SUCCESS;
-    CCCommandQueue clCommandQueue = createBaseInternal(context, commandQueueProperty, webCLDevice, error);
-    if (!clCommandQueue) {
-        ASSERT(error != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return;
-    }
-
-    out = adoptRef(new T(context, webCLDevice, clCommandQueue));
-}
 
 } // namespace WebCore
 

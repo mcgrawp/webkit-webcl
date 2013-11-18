@@ -36,13 +36,18 @@
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
 #include "SharedBuffer.h"
+#include "WebCLBuffer.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLEvent.h"
-#include "WebCLGLBuffer.h"
 #include "WebCLImage.h"
 #include "WebCLImageDescriptor.h"
 #include "WebCLProgram.h"
 #include "WebCLSampler.h"
+#if ENABLE(WEBGL)
+#include "WebGLBuffer.h"
+#include "WebGLRenderbuffer.h"
+#include "WebGLTexture.h"
+#endif
 
 namespace WebCore {
 
@@ -53,8 +58,21 @@ WebCLContext::~WebCLContext()
 
 PassRefPtr<WebCLContext> WebCLContext::create(PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec)
 {
-    RefPtr<WebCLContext> context;
-    createBase(properties, ec, context);
+    ASSERT(properties);
+
+    Vector<CCDeviceID> ccDevices;
+    for (size_t i = 0; i < properties->devices().size(); ++i)
+        ccDevices.append(properties->devices()[i]->platformObject());
+
+    CCerror error = ComputeContext::SUCCESS;
+    ComputeContext* computeContext = new ComputeContext(properties->computeContextProperties().data(), ccDevices, error);
+    if (error != ComputeContext::SUCCESS) {
+        delete computeContext;
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return 0;
+    }
+
+    RefPtr<WebCLContext> context = adoptRef(new WebCLContext(computeContext, properties));
     return context.release();
 }
 
@@ -86,11 +104,40 @@ WebCLGetInfo WebCLContext::getInfo(CCenum paramName, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* device, CCenum commandQueueProperty, ExceptionCode& ec)
+PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* device, CCenum properties, ExceptionCode& ec)
 {
-    RefPtr<WebCLCommandQueue> queue;
-    createCommandQueueBase(device, commandQueueProperty, ec, queue);
-    return queue.release();
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return 0;
+    }
+
+    if (!WebCLInputChecker::isValidCommandQueueProperty(properties)) {
+        ec = WebCLException::INVALID_VALUE;
+        return 0;
+    }
+
+    RefPtr<WebCLDevice> webCLDevice;
+    if (!device) {
+        Vector<RefPtr<WebCLDevice> > webCLDevices = m_contextProperties->devices();
+        // NOTE: This can be slow, depending the number of 'devices' available.
+        for (size_t i = 0; i < webCLDevices.size(); ++i) {
+            WebCLGetInfo info = webCLDevices[i]->getInfo(ComputeContext::DEVICE_QUEUE_PROPERTIES, ec);
+            if (ec == WebCLException::SUCCESS
+                && (info.getUnsignedInt() == static_cast<unsigned>(properties) || !properties)) {
+                webCLDevice = webCLDevices[i];
+                break;
+            } else {
+                ec = WebCLException::INVALID_QUEUE_PROPERTIES;
+                return 0;
+            }
+        }
+        //FIXME: Spec needs to say what we need to do here
+        ASSERT(webCLDevice);
+    } else
+        webCLDevice = device;
+
+    RefPtr<WebCLCommandQueue> webCLCommandQueue = WebCLCommandQueue::create(this, properties, webCLDevice, ec);
+    return webCLCommandQueue.release();
 }
 
 PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& programSource, ExceptionCode& ec)
@@ -470,6 +517,53 @@ void WebCLContext::releasePlatformObjectImpl()
 {
     delete platformObject();
 }
+
+#if ENABLE(WEBGL)
+PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(CCenum flags, WebGLBuffer* webGLBuffer, ExceptionCode& ec)
+{
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return 0;
+    }
+
+    if (!webGLBuffer || !webGLBuffer->object()) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
+
+    return WebCLBuffer::create(this, flags, webGLBuffer, ec);
+}
+
+PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderbuffer(CCenum flags, WebGLRenderbuffer* renderbuffer, ExceptionCode& ec)
+{
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return 0;
+    }
+
+    if (!renderbuffer) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
+
+    return WebCLImage::create(this, flags, renderbuffer, ec);
+}
+
+PassRefPtr<WebCLImage> WebCLContext::createFromGLTexture(CCenum flags, CCenum textureTarget, GC3Dint miplevel, WebGLTexture* texture, ExceptionCode& ec)
+{
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return 0;
+    }
+
+    if (!texture) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
+
+    return WebCLImage::create(this, flags, textureTarget, miplevel, texture, ec);
+}
+#endif
 
 } // namespace WebCore
 

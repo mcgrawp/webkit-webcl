@@ -34,21 +34,37 @@
 
 namespace WebCore {
 
+class WebCLContext;
 class WebCLImageDescriptor;
+#if ENABLE(WEBGL)
+class WebGLObject;
+class WebGLRenderbuffer;
+class WebGLTexture;
+#endif
 
 class WebCLImage : public WebCLMemoryObject {
 public:
     ~WebCLImage();
     static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat&, void*, ExceptionCode&);
 
+#if ENABLE(WEBGL)
+    static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, WebGLRenderbuffer* webGLRenderbuffer, ExceptionCode&);
+    static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, CCenum textureTarget, CCenum miplevel, WebGLTexture*, ExceptionCode&);
+    int getGLTextureInfo(CCenum paramName, ExceptionCode&);
+#endif
+
     PassRefPtr<WebCLImageDescriptor> getInfo(ExceptionCode&);
 
-protected:
+private:
     WebCLImage(WebCLContext*, PlatformComputeObject image, CCuint width, CCuint height, const CCImageFormat&);
 
     CCuint m_width;
     CCuint m_height;
     CCImageFormat m_format;
+
+#if ENABLE(WEBGL)
+    void cacheGLObjectInfo(CCenum type, WebGLObject*);
+#endif
 };
 
 } // namespace WebCore

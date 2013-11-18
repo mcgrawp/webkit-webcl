@@ -38,22 +38,21 @@ PassRefPtr<WebCLContextProperties> WebCLContextProperties::create()
     return adoptRef(new WebCLContextProperties());
 }
 
-PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, CCenum deviceType)
+PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, CCenum deviceType, PassRefPtr<WebGLRenderingContext> webGLRenderingContext)
 {
-    return adoptRef(new WebCLContextProperties(platform, devices, deviceType));
+    return adoptRef(new WebCLContextProperties(platform, devices, deviceType, webGLRenderingContext));
 }
 
 WebCLContextProperties::WebCLContextProperties()
     : m_deviceType(ComputeContext::DEVICE_TYPE_DEFAULT)
-    , m_contextPolicy(NoSharedGLContext)
 {
 }
 
-WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, CCenum deviceType)
+WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platform, const Vector<RefPtr<WebCLDevice> >& devices, CCenum deviceType, PassRefPtr<WebGLRenderingContext> webGLRenderingContext)
     : m_platform(platform)
     , m_devices(devices)
     , m_deviceType(deviceType)
-    , m_contextPolicy(NoSharedGLContext)
+    , m_webGLRenderingContext(webGLRenderingContext)
 {
 }
 
@@ -90,15 +89,15 @@ void WebCLContextProperties::setDeviceType(CCenum type)
     m_ccProperties.clear();
 }
 
-RefPtr<WebGLRenderingContext>& WebCLContextProperties::sharedContext()
+RefPtr<WebGLRenderingContext>& WebCLContextProperties::glContext()
 {
-    ASSERT_NOT_REACHED();
     return m_webGLRenderingContext;
 }
 
-void WebCLContextProperties::setSharedContext(PassRefPtr<WebGLRenderingContext>)
+void WebCLContextProperties::setGLContext(PassRefPtr<WebGLRenderingContext> webGLRenderingContext)
 {
-    ASSERT_NOT_REACHED();
+    m_webGLRenderingContext = webGLRenderingContext;
+    m_ccProperties.clear();
 }
 
 Vector<CCContextProperties>& WebCLContextProperties::computeContextProperties()
@@ -106,21 +105,18 @@ Vector<CCContextProperties>& WebCLContextProperties::computeContextProperties()
     if (m_ccProperties.size())
         return m_ccProperties;
 
-    computeContextPropertiesInternal();
-    m_ccProperties.append(0);
-    return m_ccProperties;
-}
-
-void WebCLContextProperties::computeContextPropertiesInternal()
-{
-    ASSERT(!m_ccProperties.size());
-
     if (m_platform) {
         m_ccProperties.append(ComputeContext::CONTEXT_PLATFORM);
         m_ccProperties.append(reinterpret_cast<CCContextProperties>(platform()->platformObject()));
     }
 
-    // FIXME: What about m_devices?
+    if (m_webGLRenderingContext)
+        ComputeContext::populatePropertiesForInteroperabilityWithGL(m_ccProperties, m_webGLRenderingContext->graphicsContext3D()->platformGraphicsContext3D());
+    else
+        ComputeContext::populatePropertiesForInteroperabilityWithGL(m_ccProperties, 0);
+
+    m_ccProperties.append(0);
+    return m_ccProperties;
 }
 
 }

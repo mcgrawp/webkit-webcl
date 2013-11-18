@@ -36,12 +36,14 @@
 #include "JSUint8Array.h"
 #include "JSWebCL.h"
 #include "JSWebCLCommandQueue.h"
+#include "JSWebCLContextProperties.h"
 #include "JSWebCLDevice.h"
-#include "JSWebCLGL.h"
-#include "JSWebCLGLContextProperties.h"
 #include "JSWebCLImageDescriptor.h"
 #include "JSWebCLPlatform.h"
 #include "JSWebCLProgram.h"
+#include "JSWebGLRenderingContext.h"
+#include "WebCLGetInfo.h"
+#include "WebCLContext.h"
 
 using namespace JSC;
 
@@ -50,9 +52,107 @@ namespace WebCore {
 class WebCLGetInfo;
 class WebCLExtension;
 
+// JSDictionary helper functions
+static inline void setPlatform(WebCLContextProperties* properties, const RefPtr<WebCLPlatform>& platform)
+{
+    properties->setPlatform(platform);
+}
+
+static inline void setDevices(WebCLContextProperties* properties, const Vector<RefPtr<WebCLDevice> >& devices)
+{
+    properties->setDevices(devices);
+}
+
+static inline void setDeviceType(WebCLContextProperties* properties, const unsigned long& deviceType)
+{
+    properties->setDeviceType(deviceType);
+}
+
+#if ENABLE(WEBGL)
+static inline void setGLContext(WebCLContextProperties* properties, const RefPtr<WebGLRenderingContext>& context)
+{
+    properties->setGLContext(context);
+}
+#endif
+
+static bool parseContextProperties(ExecState* exec, WebCLContextProperties* properties, unsigned argumentIndex)
+{
+    JSValue value = exec->argument(argumentIndex);
+    if (!value.isObject())
+        return false;
+
+    // Given the above test, this will always yield an object.
+    JSObject* object = value.toObject(exec);
+
+    // Create the dictionary wrapper from the initializer object.
+    JSDictionary dictionary(exec, object);
+    if (!dictionary.tryGetProperty("platform", properties, setPlatform))
+        return false;
+    if (!dictionary.tryGetProperty("devices", properties, setDevices))
+        return false;
+    if (!dictionary.tryGetProperty("deviceType", properties, setDeviceType))
+        return false;
+
+    return true;
+}
+
+// If there is one argument, we have to figure out if it is
+// a WebGLRenderingContext or a WebCLContextProperties (dictionary).
+static bool handleOneArgument(ExecState* exec, RefPtr<WebCLContextProperties>& properties)
+{
+    ASSERT(argumentCount == 1);
+
+    if (exec->argument(0).inherits(&JSWebGLRenderingContext::s_info)) {
+        RefPtr<WebGLRenderingContext> gl = toWebGLRenderingContext(exec->argument(0));
+        properties->setGLContext(gl.get());
+    } else {
+        if (!parseContextProperties(exec, properties.get(), 0 /*index*/))
+            return false;
+    }
+    return true;
+}
+
+// If there is two arguments, the first one has to be a valid non-null WebGLRenderingContext.
+// Second is a possibly-null WebCLContextProperties (dictionary).
+static bool handleTwoArguments(ExecState* exec, RefPtr<WebCLContextProperties>& properties)
+{
+    ASSERT(argumentCount == 2);
+
+    JSValue argument0 = exec->argument(0);
+    if (!argument0.inherits(&JSWebGLRenderingContext::s_info))
+        return false;
+    RefPtr<WebGLRenderingContext> gl = toWebGLRenderingContext(argument0);
+    properties->setGLContext(gl.get());
+
+    if (!parseContextProperties(exec, properties.get(), 1 /*index*/))
+        return false;
+
+    return true;
+}
+
 JSValue JSWebCL::createContext(ExecState* exec)
 {
-    return parsePropertiesAndCreateContext<JSWebCL, WebCLContext, WebCLContextProperties>(exec, globalObject(), this, false /*CLGLSharing*/);
+    unsigned argumentCount = exec->argumentCount();
+    if (!(!argumentCount || argumentCount == 1 || argumentCount == 2))
+        return throwSyntaxError(exec);
+
+    ExceptionCode ec = 0;
+    RefPtr<WebCLContext> webCLContext;
+    RefPtr<WebCLContextProperties> properties = WebCLContextProperties::create();
+
+    if (!argumentCount)
+        properties = 0;
+    else if (argumentCount == 1)
+        handleOneArgument(exec, properties);
+    else if (argumentCount == 2)
+        handleTwoArguments(exec, properties);
+
+    webCLContext = impl()->createContext(properties.get(), ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+    return toJS(exec, globalObject(), webCLContext.get());
 }
 
 JSValue JSWebCL::getSupportedExtensions(ExecState* exec)
@@ -71,37 +171,6 @@ JSValue JSWebCL::getSupportedExtensions(ExecState* exec)
         list.append(jsString(exec, value[i]));
     }
     return constructArray(exec, 0, globalObject(), list);
-}
-
-JSValue JSWebCL::getExtension(ExecState* exec)
-{
-    if (exec->argumentCount() < 1)
-        return throwError(exec, createNotEnoughArgumentsError(exec));
-
-    WebCL* webCL = static_cast<WebCL*>(impl());
-    const String name = exec->argument(0).toString(exec)->value(exec);
-    if (exec->hadException())
-        return jsUndefined();
-    WebCLExtension* extension = webCL->getExtension(name);
-    return toJS(exec, globalObject(), extension);
-}
-
-JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebCLExtension* extension)
-{
-    if (!extension)
-        return jsNull();
-    switch (extension->getName()) {
-    case WebCLExtension::KhrGLSharingName:
-#if ENABLE(WEBGL)
-        return toJS(exec, globalObject, static_cast<WebCLGL*>(extension));
-#else
-        UNUSED_PARAM(exec);
-        UNUSED_PARAM(globalObject);
-        break;
-#endif
-    }
-    ASSERT_NOT_REACHED();
-    return jsNull();
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInfo& info)
@@ -149,8 +218,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInf
     case WebCLGetInfo::kTypeWebCLPlatform:
         return toJS(exec, globalObject, info.getWebCLPlatform());
     case WebCLGetInfo::kTypeWebCLContextProperties:
-        if (info.getWebCLContextProperties()->isGLCapable())
-            return toJS(exec, globalObject, static_cast<WebCLGLContextProperties*>(info.getWebCLContextProperties().get()));
+        // FIXME: http://www.khronos.org/bugzilla/show_bug.cgi?id=1038
+        // No way to recover the WebGLRenderingContext object used by cl-gl interop
         return toJS(exec, globalObject, info.getWebCLContextProperties());
     default:
         return jsUndefined();

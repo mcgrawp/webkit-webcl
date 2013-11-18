@@ -31,6 +31,7 @@
 #if ENABLE(WEBCL)
 
 #include "WebCLObject.h"
+#include "WebCLGLObjectInfo.h"
 
 namespace WebCore {
 
@@ -42,8 +43,11 @@ public:
     virtual ~WebCLMemoryObject();
     static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PlatformComputeObject);
 
-    virtual bool isShared() const { return false; }
     WebCLGetInfo getInfo(CCenum, ExceptionCode&);
+#if ENABLE(WEBGL)
+    WebCLGLObjectInfo* getGLObjectInfo(ExceptionCode&);
+#endif
+    bool sharesGLResources() const;
 
 protected:
     WebCLMemoryObject(WebCLContext*, PlatformComputeObject, WebCLMemoryObject* = 0);
@@ -52,6 +56,10 @@ protected:
     RefPtr<WebCLContext> m_context;
     //FIXME: We need to decide what to do with parent mem objects
     WebCLMemoryObject* m_parentMemObject;
+
+#if ENABLE(WEBGL)
+    RefPtr<WebCLGLObjectInfo> m_objectInfo;
+#endif
 };
 
 } // namespace WebCore

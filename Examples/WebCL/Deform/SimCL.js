@@ -79,17 +79,12 @@ function InitCL() {
         }
         device = devices[0];
 
-        var extension = null;
-        if(GLCL_SHARE_MODE) {
-            extension = cl.getExtension("KHR_GL_SHARING");
-
-            if (extension === null)
-                GLCL_SHARE_MODE = false;
-        }
+        if(GLCL_SHARE_MODE)
+            GLCL_SHARE_MODE = cl.enableExtension("KHR_GL_SHARING");
 
         // Create a compute context
-        if (GLCL_SHARE_MODE) 
-            context = extension.createContext({platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU});
+        if (GLCL_SHARE_MODE)
+            context = cl.createContext(userData.gl, {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU});
         else
             context = cl.createContext({platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU});
         if(context === null) {

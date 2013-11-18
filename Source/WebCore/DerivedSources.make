@@ -161,11 +161,8 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/WaveShaperNode.idl \
     $(WebCore)/Modules/webaudio/PeriodicWave.idl \
     $(WebCore)/Modules/webcl/DOMWindowWebCLEnvironment.idl \
-    $(WebCore)/Modules/webcl/WebCLGLContext.idl \
     $(WebCore)/Modules/webcl/WebCL.idl \
-    $(WebCore)/Modules/webcl/WebCLGLContextProperties.idl \
     $(WebCore)/Modules/webcl/WebCLBuffer.idl \
-    $(WebCore)/Modules/webcl/WebCLGLImage.idl \
     $(WebCore)/Modules/webcl/WebCLCommandQueue.idl \
     $(WebCore)/Modules/webcl/WebCLGLObjectInfo.idl \
     $(WebCore)/Modules/webcl/WebCLContext.idl \
@@ -179,11 +176,8 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webcl/WebCLMemoryObject.idl \
     $(WebCore)/Modules/webcl/WebCLFinishCallback.idl \
     $(WebCore)/Modules/webcl/WebCLPlatform.idl \
-    $(WebCore)/Modules/webcl/WebCLGL.idl \
     $(WebCore)/Modules/webcl/WebCLProgram.idl \
-    $(WebCore)/Modules/webcl/WebCLGLBuffer.idl \
     $(WebCore)/Modules/webcl/WebCLSampler.idl \
-    $(WebCore)/Modules/webcl/WebCLGLCommandQueue.idl \
     $(WebCore)/Modules/webcl/WorkerContextWebCLEnvironment.idl \
     $(WebCore)/Modules/webdatabase/DOMWindowWebDatabase.idl \
     $(WebCore)/Modules/webdatabase/Database.idl \

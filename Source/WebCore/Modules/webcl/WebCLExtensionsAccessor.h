@@ -35,7 +35,6 @@
 
 namespace WebCore {
 
-class WebCLGL;
 class WebCLExtension;
 
 // FIXME: When WebCore switches on support for C++11,
@@ -45,9 +44,6 @@ class WebCLExtensionsAccessor {
 public:
     virtual ~WebCLExtensionsAccessor()
     {
-        // FIXME: We are leaking m_khrGLSharing here. Fix me when
-        // we implement the new CLGL extension spec.
-        m_khrGLSharing = 0;
     }
 
     T accessor() const
@@ -55,21 +51,19 @@ public:
         return m_accessor;
     }
 
-    WebCLExtension* getExtension(const String& name);
+    bool enableExtension(const String& name);
     Vector<String> getSupportedExtensions(ExceptionCode&);
 
 protected:
     WebCLExtensionsAccessor(T object)
         : m_accessor(object)
-        , m_khrGLSharing(0)
+        , m_khrGLSharing(false)
     {
     }
 
     T m_accessor;
 
-    // NOTE: Instead of OwnPtr<WebCLGL> we declare m_khrGLSharing
-    //       as a WebCLExtension otherwise it won't build.
-    WebCLGL* m_khrGLSharing;
+    bool m_khrGLSharing;
 };
 
 } // WebCore

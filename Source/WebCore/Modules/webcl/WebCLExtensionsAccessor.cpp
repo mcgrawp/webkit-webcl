@@ -31,29 +31,22 @@
 
 #include "WebCLExtensionsAccessor.h"
 
-#include "WebCLGL.h"
-
 namespace WebCore {
 
 template <class T>
-inline WebCLExtension* WebCLExtensionsAccessor<T>::getExtension(const String& name)
+inline bool WebCLExtensionsAccessor<T>::enableExtension(const String& name)
 {
 #if ENABLE(WEBGL)
-    if (equalIgnoringCase(name, "KHR_GL_SHARING")) {
-        if (!m_khrGLSharing)
-            m_khrGLSharing = WebCLGL::create();
-
-#if 0
-        return m_khrGLSharing.get();
-#else
+    if (equalIgnoringCase(name, "KHR_gl_sharing")) {
+        m_khrGLSharing = m_accessor ? ComputeExtensions::get().supports("cl_khr_gl_sharing", m_accessor)
+                                    : ComputeExtensions::get().supports("cl_khr_gl_sharing");
         return m_khrGLSharing;
-#endif
     }
 #else
     UNUSED_PARAM(name);
 #endif
 
-    return 0;
+    return false;
 }
 
 template <class T>

@@ -32,7 +32,9 @@
 #include "WebCLBuffer.h"
 
 #include "WebCLContext.h"
+#include "WebCLGLObjectInfo.h"
 #include "WebCLInputChecker.h"
+#include "WebGLBuffer.h"
 
 namespace WebCore {
 
@@ -52,6 +54,24 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memory
 
     return adoptRef(new WebCLBuffer(context, buffer));
 }
+
+#if ENABLE(WEBGL)
+PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, WebGLBuffer* webGLBuffer, ExceptionCode& ec)
+{
+    Platform3DObject platform3DObject = webGLBuffer->object();
+    ASSERT(platform3DObject);
+    CCerror error = ComputeContext::SUCCESS;
+    PlatformComputeObject buffer = context->computeContext()->createFromGLBuffer(memoryFlags, platform3DObject, error);
+    if (!buffer) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return 0;
+    }
+    RefPtr<WebCLBuffer> clglBuffer = adoptRef(new WebCLBuffer(context, buffer));
+    clglBuffer->cacheGLObjectInfo(webGLBuffer);
+    return clglBuffer.release();
+}
+#endif
 
 WebCLBuffer::WebCLBuffer(WebCLContext* context, PlatformComputeObject clBuffer, WebCLBuffer* parentBuffer)
     : WebCLMemoryObject(context, clBuffer, parentBuffer)
@@ -87,6 +107,13 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(CCenum memoryFlags, CCuint 
     RefPtr<WebCLBuffer> subBuffer = adoptRef(new WebCLBuffer(m_context.get(), ccSubBuffer, this));
     return subBuffer.release();
 }
+
+#if ENABLE(WEBGL)
+void WebCLBuffer::cacheGLObjectInfo(WebGLBuffer* webGLBuffer)
+{
+    m_objectInfo = WebCLGLObjectInfo::create(ComputeContext::GL_OBJECT_BUFFER, webGLBuffer);
+}
+#endif
 
 } // namespace WebCore
 

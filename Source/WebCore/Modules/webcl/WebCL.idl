@@ -78,9 +78,7 @@ typedef long CLint;
     const CLint INVALID_EVENT_WAIT_LIST                    = -57;
     const CLint INVALID_EVENT                              = -58;
     const CLint INVALID_OPERATION                          = -59;
-    const CLint INVALID_GL_OBJECT                          = -60;
     const CLint INVALID_BUFFER_SIZE                        = -61;
-    const CLint INVALID_MIP_LEVEL                          = -62;
     const CLint INVALID_GLOBAL_WORK_SIZE                   = -63;
     const CLint INVALID_PROPERTY                           = -64;
 
@@ -295,11 +293,31 @@ typedef long CLint;
 
     [RaisesException] sequence<WebCLPlatform> getPlatforms();
 
-    [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(optional WebCLContextProperties properties);
-
     [StrictTypeChecking, Custom] sequence<DOMString> getSupportedExtensions();
-    [StrictTypeChecking, Custom] any getExtension(DOMString name);
+    [StrictTypeChecking] boolean enableExtension(DOMString extensionName);
+
+    [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(optional WebCLContextProperties properties);
 
     // FIXME: Lacks the last optional WebCLCallback whenFinished parameter.
     [RaisesException] void waitForEvents(sequence<WebCLEvent> events);
+
+#if defined(ENABLE_WEBGL) && ENABLE_WEBGL
+    // FIXME: All constants below have have to have [CustomGetter]
+    // extended attribute, so we can check if cl-gl interop is enabled
+    // before returning their values.
+    const CLint INVALID_GL_OBJECT                         = -60;
+    const CLint INVALID_MIP_LEVEL                         = -62;
+
+    const CLenum COMMAND_ACQUIRE_GL_OBJECTS                = 0x11FF;
+    const CLenum COMMAND_RELEASE_GL_OBJECTS                = 0x1200;
+
+    const CLenum GL_OBJECT_BUFFER                          = 0x2000;
+    const CLenum GL_OBJECT_TEXTURE2D                       = 0x2001;
+    const CLenum GL_OBJECT_RENDERBUFFER                    = 0x2003;
+
+    const CLenum GL_TEXTURE_TARGET                         = 0x2004;
+    const CLenum GL_MIPMAP_LEVEL                           = 0x2005;
+
+    [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(WebGLRenderingContext gl, optional WebCLContextProperties properties);
+#endif
 };

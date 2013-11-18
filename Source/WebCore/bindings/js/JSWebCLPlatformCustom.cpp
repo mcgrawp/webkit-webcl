@@ -71,19 +71,6 @@ JSValue JSWebCLPlatform::getSupportedExtensions(ExecState* exec)
     return constructArray(exec, 0, globalObject(), list);
 }
 
-JSValue JSWebCLPlatform::getExtension(ExecState* exec)
-{
-    if (exec->argumentCount() < 1)
-        return throwError(exec, createNotEnoughArgumentsError(exec));
-
-    const String name = exec->argument(0).toString(exec)->value(exec);
-    if (exec->hadException())
-        return jsUndefined();
-
-    WebCLPlatform* webCLPlatform = static_cast<WebCLPlatform*>(impl());
-    WebCLExtension* extension = webCLPlatform->getExtension(name);
-    return toJS(exec, globalObject(), extension);
-}
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

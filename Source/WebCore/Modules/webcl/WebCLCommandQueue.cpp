@@ -40,6 +40,7 @@
 #include "WebCLImageDescriptor.h"
 #include "WebCLInputChecker.h"
 #include "WebCLKernel.h"
+#include "WebCLMemoryObject.h"
 #include "WebCLProgram.h"
 
 namespace WebCore {
@@ -49,11 +50,19 @@ WebCLCommandQueue::~WebCLCommandQueue()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, CCenum queueProperties, const RefPtr<WebCLDevice>& webCLDevice, ExceptionCode& ec)
+PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, CCenum properties, const RefPtr<WebCLDevice>& webCLDevice, ExceptionCode& ec)
 {
-    RefPtr<WebCLCommandQueue> queue;
-    createBase(context, queueProperties, webCLDevice, ec, queue);
+    CCerror error = ComputeContext::SUCCESS;
+    CCCommandQueue clCommandQueue = context->computeContext()->createCommandQueue(webCLDevice->platformObject(), properties, error);
+    if (!clCommandQueue) {
+        ASSERT(error != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        return 0;
+    }
+
+    RefPtr<WebCLCommandQueue> queue = adoptRef(new WebCLCommandQueue(context, webCLDevice, clCommandQueue));
     return queue.release();
+
 }
 
 WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, const RefPtr<WebCLDevice>& webCLDevice, CCCommandQueue commandQueue)
@@ -791,10 +800,65 @@ void WebCLCommandQueue::releasePlatformObjectImpl()
     ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
 }
 
-CCCommandQueue WebCLCommandQueue::createBaseInternal(WebCLContext* context, CCenum commandQueueProperty, const RefPtr<WebCLDevice>& webCLDevice, CCerror& error)
+#if ENABLE(WEBGL)
+void WebCLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    return context->computeContext()->createCommandQueue(webCLDevice->platformObject(), commandQueueProperty, error);
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        return;
+    }
+
+    Vector<PlatformComputeObject> ccMemoryObjectIDs;
+    for (size_t i = 0; i < memoryObjects.size(); ++i) {
+        if (!memoryObjects[i]->sharesGLResources()) {
+            ec = WebCLException::INVALID_GL_OBJECT;
+            return;
+        }
+        ccMemoryObjectIDs.append(memoryObjects[i]->platformObject());
+    }
+
+    Vector<CCEvent> ccEvents;
+    for (size_t i = 0; i < events.size(); ++i)
+        ccEvents.append(events[i]->platformObject());
+
+    // FIXME: Crash!?
+    CCEvent* ccEvent = 0;
+    if (event)
+        *ccEvent = event->platformObject();
+
+    CCerror err = m_context->computeContext()->enqueueAcquireGLObjects(platformObject(), ccMemoryObjectIDs, ccEvents, ccEvent);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
+
+void WebCLCommandQueue::enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+{
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        return;
+    }
+
+    Vector<PlatformComputeObject> ccMemoryObjectIDs;
+    for (size_t i = 0; i < memoryObjects.size(); ++i) {
+        if (!memoryObjects[i]->sharesGLResources()) {
+            ec = WebCLException::INVALID_GL_OBJECT;
+            return;
+        }
+        ccMemoryObjectIDs.append(memoryObjects[i]->platformObject());
+    }
+
+    Vector<CCEvent> ccEvents;
+    for (size_t i = 0; i < events.size(); ++i)
+        ccEvents.append(events[i]->platformObject());
+
+    // FIXME: Crash!?
+    CCEvent* ccEvent = 0;
+    if (event)
+        *ccEvent = event->platformObject();
+
+    CCerror err = m_context->computeContext()->enqueueReleaseGLObjects(platformObject(), ccMemoryObjectIDs, ccEvents, ccEvent);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+}
+#endif
 
 } // namespace WebCore
 

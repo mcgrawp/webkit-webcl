@@ -106,6 +106,27 @@ WebCLGetInfo WebCLMemoryObject::getInfo(CCenum paramName, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
+bool WebCLMemoryObject::sharesGLResources() const
+{
+#if ENABLE(WEBGL)
+    return m_objectInfo.get();
+#else
+    return false;
+#endif
+}
+
+#if ENABLE(WEBGL)
+WebCLGLObjectInfo* WebCLMemoryObject::getGLObjectInfo(ExceptionCode& ec)
+{
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_MEM_OBJECT;
+        return 0;
+    }
+
+    return m_objectInfo.get();
+}
+#endif
+
 void WebCLMemoryObject::releasePlatformObjectImpl()
 {
     CCerror computeContextErrorCode = m_context->computeContext()->releaseMemoryObject(platformObject());
