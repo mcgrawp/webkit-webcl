@@ -20,9 +20,11 @@ window.WebCLCommon = (function (debug) {
     var NO_WEBCL_FOUND = "Unfortunately your system does not support WebCL";
     var NO_PLATFORM_FOUND = "No WebCL platform found in your system";
     var NO_DEVICE_FOUND = "No WebCL device found in your system";
-    var EXTENSION_NOT_SUPPORTED = "Extension is not supported";
+    var EXTENSION_NOT_ENABLED = "Extension is not enabled";
     var INVALID_SEQUENCE = "Context is null, you must create a context " +
             "before call createWebCLProgram";
+    // Extensions
+    var WEBGL_RESOURCE_SHARING = "KHR_gl_sharing";
 
     /* Global vars */
     var platforms = [], devices = [], context = null, program = null;
@@ -132,7 +134,7 @@ window.WebCLCommon = (function (debug) {
         createContext : function (props) {
             var ctxProps = {};
             var resource;
-            var extension;
+            var extensions;
 
             /* Populate ctxProps with default values */
             ctxProps.platform = (props && props.platform) ? props.platform : platforms[0];
@@ -140,16 +142,29 @@ window.WebCLCommon = (function (debug) {
             ctxProps.deviceType = (props && props.deviceType) ? props.deviceType :  webcl.DEVICE_TYPE_GPU;
             ctxProps.hint = (props && props.hint) ? props.hint : null;
 
-            /* Checking for possible extensions*/
-            resource = (props && props.extension) ? props.extension : null;
+            /* Checking for possible extensions.
+             * All extensions should be passed using JSON format. For example, using gl_sharing and
+             * KHR_fp64: contextProperties = {extensions: [{"KHR_gl_sharing": gl}, "KHR_fp64"]}
+             */
+            extensions = (props && props.extensions) ? props.extensions : null;
 
             try {
-                if (resource) {
-                    extension = webcl.getExtension(resource);
-                    if (!extension) {
-                        throw new Error(EXTENSION_NOT_SUPPORTED);
+                if (extensions) {
+                    for (var i in extensions) {
+                        if (extensions[i].hasOwnProperty(WEBGL_RESOURCE_SHARING)) {
+                            if (webcl.enableExtension(WEBGL_RESOURCE_SHARING)) {
+                                var gl = extensions[i].KHR_gl_sharing;
+                                ctxProps.deviceType = webcl.DEVICE_TYPE_GPU;
+                                context = webcl.createContext(gl, ctxProps);
+                            } else {
+                                throw new Error(EXTENSION_NOT_ENABLED);
+                            }
+                        } else {
+                            if (!webcl.enableExtension(extensions[i])) {
+                                throw new Error(EXTENSION_NOT_ENABLED);
+                            }
+                        }
                     }
-                    context = extension.createContext(ctxProps);
                 } else {
                     context = webcl.createContext(ctxProps);
                 }

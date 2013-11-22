@@ -103,7 +103,7 @@ function createProperContext() {
     try {
         var contextProperties;
         if (interop) {
-            contextProperties = {extension: "KHR_GL_SHARING"};
+            contextProperties = {extensions: [{"KHR_gl_sharing": gl}]};
         }
 
         context = WebCLCommon.createContext(contextProperties);
