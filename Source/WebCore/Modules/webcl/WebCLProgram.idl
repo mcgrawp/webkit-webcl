@@ -37,7 +37,8 @@ typedef unsigned long CLenum;
 
     [StrictTypeChecking, RaisesException] sequence<WebCLKernel> createKernelsInProgram();
 
-    [StrictTypeChecking, Custom, RaisesException] void build (sequence<WebCLDevice> devices,
+    [StrictTypeChecking, Custom, RaisesException] void build(
+        [Default=Undefined] sequence<WebCLDevice> devices,
         [Default=Undefined, TreatNullAs = NullString, TreatUndefinedAs = NullString] optional DOMString options,
         [Default=Undefined] optional WebCLFinishCallback whenFinished);
 

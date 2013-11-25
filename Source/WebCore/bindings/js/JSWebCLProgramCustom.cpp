@@ -93,16 +93,16 @@ static PassRefPtr<WebCLFinishCallback> createFinishCallback(ExecState* exec, JSD
 
 JSValue JSWebCLProgram::build(JSC::ExecState* exec)
 {
-    if (exec->argumentCount() < 1)
-        return throwSyntaxError(exec);
-
-    if (!isJSArray(exec->argument(0))) {
+    if (exec->argumentCount() > 1 && !exec->argument(0).isUndefinedOrNull() && !isJSArray(exec->argument(0))) {
         setDOMException(exec, WebCLException::INVALID_DEVICE);
         return jsUndefined();
     }
+
     Vector<RefPtr<WebCLDevice> > devices = toRefPtrNativeArray<WebCLDevice, JSWebCLDevice>(exec, exec->argument(0), &toWebCLDevice);
-    if (exec->hadException())
+    if (exec->hadException()) {
+        setDOMException(exec, WebCLException::INVALID_DEVICE);
         return jsUndefined();
+    }
 
     // FIXME: This is ugly!
     String options = "";
