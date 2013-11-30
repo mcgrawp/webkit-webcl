@@ -760,12 +760,12 @@ Vector<CCKernel> ComputeContext::createKernelsInProgram(CCProgram program, CCerr
 void ComputeContext::populatePropertiesForInteroperabilityWithGL(Vector<CCContextProperties>& properties, PlatformGraphicsContext3D context3D)
 {
 #if PLATFORM(MAC)
-    CGLContextObj kCGLContext = context3D ? context3D : CGLGetCurrentContext();
+    CGLContextObj kCGLContext = context3D;
     CGLShareGroupObj kCGLShareGroup = CGLGetShareGroup(kCGLContext);
     properties.append(CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE);
     properties.append(reinterpret_cast<CCContextProperties>(kCGLShareGroup));
 #elif USE(GLX)
-    PlatformGraphicsContext3D glContext = context3D ? context3D : glXGetCurrentContext();
+    PlatformGraphicsContext3D glContext = context3D;
     properties.append(CL_GL_CONTEXT_KHR);
     properties.append(reinterpret_cast<CCContextProperties>(glContext));
     properties.append(CL_GLX_DISPLAY_KHR);

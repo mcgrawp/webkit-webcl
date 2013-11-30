@@ -126,8 +126,6 @@ Vector<CCContextProperties>& WebCLContextProperties::computeContextProperties()
 #if ENABLE(WEBGL)
     if (m_webGLRenderingContext)
         ComputeContext::populatePropertiesForInteroperabilityWithGL(m_ccProperties, m_webGLRenderingContext->graphicsContext3D()->platformGraphicsContext3D());
-    else
-        ComputeContext::populatePropertiesForInteroperabilityWithGL(m_ccProperties, 0);
 #endif
 
     m_ccProperties.append(0);
