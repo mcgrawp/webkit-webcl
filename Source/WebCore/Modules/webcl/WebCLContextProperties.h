@@ -65,7 +65,7 @@ public:
 
     Vector<CCContextProperties>& computeContextProperties();
 
-    bool isGLCapable() const { return !!m_webGLRenderingContext.get(); }
+    bool isGLCapable() const;
 
 protected:
     WebCLContextProperties();
@@ -78,7 +78,9 @@ protected:
     CCenum m_deviceType;
     Vector<CCContextProperties> m_ccProperties;
 
+#if ENABLE(WEBGL)
     RefPtr<WebGLRenderingContext> m_webGLRenderingContext;
+#endif
 };
 
 }// namespace WebCore

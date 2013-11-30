@@ -52,7 +52,9 @@ WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platfor
     : m_platform(platform)
     , m_devices(devices)
     , m_deviceType(deviceType)
+#if ENABLE(WEBGL)
     , m_webGLRenderingContext(webGLRenderingContext)
+#endif
 {
 }
 
@@ -89,6 +91,7 @@ void WebCLContextProperties::setDeviceType(CCenum type)
     m_ccProperties.clear();
 }
 
+#if ENABLE(WEBGL)
 RefPtr<WebGLRenderingContext>& WebCLContextProperties::glContext()
 {
     return m_webGLRenderingContext;
@@ -98,6 +101,16 @@ void WebCLContextProperties::setGLContext(PassRefPtr<WebGLRenderingContext> webG
 {
     m_webGLRenderingContext = webGLRenderingContext;
     m_ccProperties.clear();
+}
+#endif
+
+bool WebCLContextProperties::isGLCapable() const
+{
+#if ENABLE(WEBGL)
+    return !!m_webGLRenderingContext.get();
+#else
+    return false;
+#endif
 }
 
 Vector<CCContextProperties>& WebCLContextProperties::computeContextProperties()
@@ -110,10 +123,12 @@ Vector<CCContextProperties>& WebCLContextProperties::computeContextProperties()
         m_ccProperties.append(reinterpret_cast<CCContextProperties>(platform()->platformObject()));
     }
 
+#if ENABLE(WEBGL)
     if (m_webGLRenderingContext)
         ComputeContext::populatePropertiesForInteroperabilityWithGL(m_ccProperties, m_webGLRenderingContext->graphicsContext3D()->platformGraphicsContext3D());
     else
         ComputeContext::populatePropertiesForInteroperabilityWithGL(m_ccProperties, 0);
+#endif
 
     m_ccProperties.append(0);
     return m_ccProperties;
