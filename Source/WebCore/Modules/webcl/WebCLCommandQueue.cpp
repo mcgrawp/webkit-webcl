@@ -821,10 +821,16 @@ void WebCLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryO
     for (size_t i = 0; i < events.size(); ++i)
         ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->platformObject();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueAcquireGLObjects(platformObject(), ccMemoryObjectIDs, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
@@ -850,10 +856,16 @@ void WebCLCommandQueue::enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryO
     for (size_t i = 0; i < events.size(); ++i)
         ccEvents.append(events[i]->platformObject());
 
-    // FIXME: Crash!?
     CCEvent* ccEvent = 0;
-    if (event)
-        *ccEvent = event->platformObject();
+    if (event) {
+        CCEvent platformEventObject = event->platformObject();
+        if (event->isReleased()) {
+            ec = WebCLException::INVALID_EVENT;
+            return;
+        }
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
 
     CCerror err = m_context->computeContext()->enqueueReleaseGLObjects(platformObject(), ccMemoryObjectIDs, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);

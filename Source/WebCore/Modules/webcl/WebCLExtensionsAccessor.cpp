@@ -36,15 +36,15 @@ namespace WebCore {
 template <class T>
 inline bool WebCLExtensionsAccessor<T>::enableExtension(const String& name)
 {
-#if ENABLE(WEBGL)
     if (equalIgnoringCase(name, "KHR_gl_sharing")) {
+#if ENABLE(WEBGL)
         m_khrGLSharing = m_accessor ? ComputeExtensions::get().supports("cl_khr_gl_sharing", m_accessor)
                                     : ComputeExtensions::get().supports("cl_khr_gl_sharing");
         return m_khrGLSharing;
-    }
 #else
     UNUSED_PARAM(name);
 #endif
+    }
 
     return false;
 }
