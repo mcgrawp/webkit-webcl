@@ -100,7 +100,8 @@ static bool parseContextProperties(ExecState* exec, WebCLContextProperties* prop
 // a WebGLRenderingContext or a WebCLContextProperties (dictionary).
 static bool handleOneArgument(ExecState* exec, RefPtr<WebCLContextProperties>& properties)
 {
-    ASSERT(argumentCount == 1);
+    unsigned argumentCount = exec->argumentCount();
+    ASSERT_UNUSED(argumentCount, argumentCount == 1);
 
     if (exec->argument(0).inherits(&JSWebGLRenderingContext::s_info)) {
         RefPtr<WebGLRenderingContext> gl = toWebGLRenderingContext(exec->argument(0));
@@ -116,7 +117,8 @@ static bool handleOneArgument(ExecState* exec, RefPtr<WebCLContextProperties>& p
 // Second is a possibly-null WebCLContextProperties (dictionary).
 static bool handleTwoArguments(ExecState* exec, RefPtr<WebCLContextProperties>& properties)
 {
-    ASSERT(argumentCount == 2);
+    unsigned argumentCount = exec->argumentCount();
+    ASSERT_UNUSED(argumentCount, argumentCount == 2);
 
     JSValue argument0 = exec->argument(0);
     if (!argument0.inherits(&JSWebGLRenderingContext::s_info))
