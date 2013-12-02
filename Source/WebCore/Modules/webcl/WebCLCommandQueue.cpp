@@ -62,7 +62,6 @@ PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, C
 
     RefPtr<WebCLCommandQueue> queue = adoptRef(new WebCLCommandQueue(context, webCLDevice, clCommandQueue));
     return queue.release();
-
 }
 
 WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, const RefPtr<WebCLDevice>& webCLDevice, CCCommandQueue commandQueue)

@@ -152,12 +152,9 @@ PassRefPtr<WebCLContext> WebCL::createContext(PassRefPtr<WebCLContextProperties>
             return 0;
     }
 
-    CCerror error = ComputeContext::SUCCESS;
-
-    RefPtr<WebCLContext> context = WebCLContext::create(refProperties.release(), error);
+    RefPtr<WebCLContext> context = WebCLContext::create(refProperties.release(), ec);
     if (!context) {
-        ASSERT(error != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        ASSERT(ec != WebCLException::SUCCESS);
         return 0;
     }
     return context.release();
