@@ -34,7 +34,7 @@ typedef long GLint;
 ] interface WebCLContext {
     [StrictTypeChecking, Custom, RaisesException] any getInfo (CLenum contextInfo);
 
-    [RaisesException] WebCLEvent createUserEvent();
+    [RaisesException] WebCLUserEvent createUserEvent();
 
     [RaisesException] sequence<WebCLImageDescriptor> getSupportedImageFormats(CLenum memFlags);
 

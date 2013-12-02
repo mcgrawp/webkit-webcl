@@ -47,11 +47,12 @@ WebCLEvent::~WebCLEvent()
 
 PassRefPtr<WebCLEvent> WebCLEvent::create()
 {
-    return adoptRef(new WebCLEvent());
+    // the platform object is initialized by enqueue methods
+    return adoptRef(new WebCLEvent(0));
 }
 
-WebCLEvent::WebCLEvent()
-    : WebCLObject()
+WebCLEvent::WebCLEvent(CCEvent event)
+    : WebCLObject(event)
     , m_commandQueue(0)
 {
 }

@@ -405,6 +405,11 @@ CCEvent ComputeContext::createUserEvent(CCerror& error)
     return clCreateUserEvent(m_clContext, &error);
 }
 
+CCint ComputeContext::setUserEventStatus(CCEvent event, CCint executionStatus)
+{
+    return clSetUserEventStatus(event, executionStatus);
+}
+
 CCProgram ComputeContext::createProgram(const String& kernelSource, CCerror& error)
 {
     const CString& kernelSourceCString = kernelSource.utf8();

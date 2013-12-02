@@ -25,57 +25,11 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCLObject_h
-#define WebCLObject_h
+typedef long CLint;
 
-#if ENABLE(WEBCL)
-
-#include "ComputeContext.h"
-#include "ExceptionCode.h"
-#include "WebCLException.h"
-#include <wtf/RefCounted.h>
-
-namespace WebCore {
-
-template <class T>
-class WebCLObject : public RefCounted<WebCLObject<T> > {
-public:
-    virtual ~WebCLObject()
-    {
-    }
-
-    T platformObject() const { return m_platformObject; }
-
-    bool isReleased() const { return m_isReleased; }
-
-    void releasePlatformObject()
-    {
-        if (!m_platformObject)
-            return;
-
-        ASSERT(!m_isReleased);
-
-        releasePlatformObjectImpl();
-        m_platformObject = 0;
-        m_isReleased = true;
-    }
-
-protected:
-    WebCLObject(T object)
-        : m_platformObject(object)
-        , m_isReleased(false)
-    {
-    }
-
-    virtual void releasePlatformObjectImpl() { }
-
-private:
-    T m_platformObject;
-    bool m_isReleased;
+[
+    Conditional=WEBCL,
+    JSGenerateToJSObject,
+] interface WebCLUserEvent : WebCLEvent {
+   [RaisesException] void setUserEventStatus(CLint executionStatus);
 };
-
-} // WebCore
-
-#endif // ENABLE(WEBCL)
-
-#endif // WebCLObject_h

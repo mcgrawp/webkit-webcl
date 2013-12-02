@@ -43,6 +43,7 @@
 #include "WebCLImageDescriptor.h"
 #include "WebCLProgram.h"
 #include "WebCLSampler.h"
+#include "WebCLUserEvent.h"
 #if ENABLE(WEBGL)
 #include "WebGLBuffer.h"
 #include "WebGLRenderbuffer.h"
@@ -419,25 +420,14 @@ PassRefPtr<WebCLSampler> WebCLContext::createSampler(CCbool normCoords, CCenum a
     return WebCLSampler::create(this, normCoords, addressingMode, filterMode, ec);
 }
 
-PassRefPtr<WebCLEvent> WebCLContext::createUserEvent(ExceptionCode& ec)
+PassRefPtr<WebCLUserEvent> WebCLContext::createUserEvent(ExceptionCode& ec)
 {
-    UNUSED_PARAM(ec);
-    /*if (!platformObject()) {
+    if (!platformObject()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
 
-    CCerror error;
-    CCEvent ccEvent = platformObject()->createUserEvent(error);
-    if (!ccEvent) {
-        ASSERT(error != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return 0;
-    }
-    RefPtr<WebCLEvent> resultEvent = WebCLEvent::create(this, ccEvent);
-    return resultEvent.release();*/
-
-    return 0;
+    return WebCLUserEvent::create(this, ec);
 }
 
 PassRefPtr<Image> WebCLContext::videoFrameToImage(HTMLVideoElement* video)

@@ -330,6 +330,7 @@ public:
 
     CCCommandQueue createCommandQueue(CCDeviceID, CCCommandQueueProperties, CCerror&);
     CCEvent createUserEvent(CCerror&);
+    CCint setUserEventStatus(CCEvent, CCint executionStatus);
 
     CCProgram createProgram(const String& kernelSource, CCerror&);
     CCerror buildProgram(CCProgram, const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction);

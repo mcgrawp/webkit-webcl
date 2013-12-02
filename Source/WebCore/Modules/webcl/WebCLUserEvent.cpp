@@ -1,0 +1,86 @@
+/*
+ * Copyright (C) 2013 Samsung Electronics Corporation. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY SAMSUNG ELECTRONICS CORPORATION AND ITS
+ * CONTRIBUTORS "AS IS", AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL SAMSUNG
+ * ELECTRONICS CORPORATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS, OR BUSINESS INTERRUPTION), HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING
+ * NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+
+#if ENABLE(WEBCL)
+
+#include "WebCLUserEvent.h"
+
+#include "WebCLContext.h"
+
+namespace WebCore {
+
+WebCLUserEvent::~WebCLUserEvent()
+{
+    releasePlatformObject();
+}
+
+PassRefPtr<WebCLUserEvent> WebCLUserEvent::create(WebCLContext* ctx, ExceptionCode& ec)
+{
+    CCerror userEventError;
+    CCEvent userEvent = ctx->computeContext()->createUserEvent(userEventError);
+    if (!userEvent) {
+        ASSERT(userEventError != ComputeContext::SUCCESS);
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(userEventError);
+        return 0;
+    }
+    return adoptRef(new WebCLUserEvent(ctx, userEvent));
+}
+
+WebCLUserEvent::WebCLUserEvent(WebCLContext* ctx, CCEvent event)
+    : WebCLEvent(event)
+    , m_context(ctx)
+{
+}
+
+void WebCLUserEvent::setUserEventStatus(CCint executionStatus, ExceptionCode& ec)
+{
+    if (!platformObject()) {
+        ec = WebCLException::INVALID_EVENT;
+        return;
+    }
+
+    // Some OpenCL implementations do not thrown an exception when executionStatus is negative
+    if (executionStatus < 0) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
+    CCerror userEventError = m_context->computeContext()->setUserEventStatus(platformObject(), executionStatus);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(userEventError);
+}
+
+void WebCLUserEvent::releasePlatformObjectImpl()
+{
+    CCerror computeContextErrorCode = m_context->computeContext()->releaseEvent(platformObject());
+    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBCL)

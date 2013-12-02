@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+* Copyright (C) 2013 Samsung Electronics Corporation. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided the following conditions
@@ -25,39 +25,32 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef WebCLEvent_h
-#define WebCLEvent_h
+#ifndef WebCLUserEvent_h
+#define WebCLUserEvent_h
 
 #if ENABLE(WEBCL)
 
-#include "WebCLObject.h"
+#include "WebCLEvent.h"
 
 namespace WebCore {
 
-class WebCLGetInfo;
-class WebCLCommandQueue;
-class WebCLFinishCallback;
+class WebCLContext;
 
-class WebCLEvent : public WebCLObject<CCEvent> {
+class WebCLUserEvent : public WebCLEvent {
 public:
-    virtual ~WebCLEvent();
-    static PassRefPtr<WebCLEvent> create();
-    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
-    WebCLGetInfo getProfilingInfo(CCenum, ExceptionCode&);
-    void setCallback(CCenum, PassRefPtr<WebCLFinishCallback>, ExceptionCode&);
+    ~WebCLUserEvent();
+    static PassRefPtr<WebCLUserEvent> create(WebCLContext*, ExceptionCode&);
 
-    void setAssociatedCommandQueue(WebCLCommandQueue* commandQueue);
-    RefPtr<WebCLFinishCallback> m_finishCallback;
-protected:
-    WebCLEvent(CCEvent);
-    virtual void releasePlatformObjectImpl();
+    void setUserEventStatus(CCint, ExceptionCode&);
 private:
-    static WebCLEvent* thisPointer;
-    RefPtr<WebCLCommandQueue> m_commandQueue;
+    WebCLUserEvent(WebCLContext*, CCEvent);
+    void releasePlatformObjectImpl();
+
+    RefPtr<WebCLContext> m_context;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)
-#endif // WebCLEvent_h
+#endif // WebCLUserEvent_h
 

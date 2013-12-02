@@ -51,6 +51,7 @@ class WebCLImage;
 class WebCLImageDescriptor;
 class WebCLProgram;
 class WebCLSampler;
+class WebCLUserEvent;
 #if ENABLE(WEBGL)
 class WebGLRenderbuffer;
 class WebGLTexture;
@@ -74,7 +75,7 @@ public:
 
     PassRefPtr<WebCLSampler> createSampler(CCbool normalizedCoords, CCenum addressingMode, CCenum filterMode, ExceptionCode&);
 
-    PassRefPtr<WebCLEvent> createUserEvent(ExceptionCode&);
+    PassRefPtr<WebCLUserEvent> createUserEvent(ExceptionCode&);
 
     WebCLGetInfo getInfo(CCenum flag, ExceptionCode&);
 
