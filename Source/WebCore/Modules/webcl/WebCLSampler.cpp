@@ -64,6 +64,7 @@ WebCLSampler::WebCLSampler(WebCLContext* context, CCSampler sampler, CCbool norm
     , m_filterMode(filterMode)
     , m_context(context)
 {
+    context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
 WebCLGetInfo WebCLSampler::getInfo(CCenum infoType, ExceptionCode& ec)

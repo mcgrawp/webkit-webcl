@@ -111,6 +111,9 @@ public:
 
     ComputeContext* computeContext() const { return platformObject(); }
 
+    void trackReleaseableWebCLObject(WeakPtr<WebCLAgnosticObject>);
+    void releaseAll();
+
 protected:
     WebCLContext(ComputeContext*, PassRefPtr<WebCLContextProperties>);
     // FIXME: Delete the constructor below?
@@ -125,6 +128,8 @@ private:
     RefPtr<WebCLCommandQueue> m_commandQueue;
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
     RefPtr<WebCLContextProperties> m_contextProperties;
+
+    Vector<WeakPtr<WebCLAgnosticObject> > m_descendantWebCLObjects;
 };
 
 } // namespace WebCore

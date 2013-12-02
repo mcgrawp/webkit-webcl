@@ -174,4 +174,8 @@ typedef unsigned long CLuint;
         [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
         [Default=Undefined] optional WebCLEvent event);
 #endif
+
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    void release();
+#endif
 };

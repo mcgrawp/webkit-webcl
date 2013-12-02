@@ -35,4 +35,8 @@ typedef unsigned long CLenum;
     [StrictTypeChecking, Custom, RaisesException] void getInfo(CLenum paramName);
     [StrictTypeChecking, Custom, RaisesException] void getProfilingInfo(CLenum paramName);
     [StrictTypeChecking, Custom, RaisesException] void setCallback(CLenum execStatus,  WebCLFinishCallback notifyCallback);
+
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    void release();
+#endif
 };

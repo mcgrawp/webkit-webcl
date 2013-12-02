@@ -31,6 +31,8 @@ typedef unsigned long CLenum;
     Conditional=WEBCL,
 ] interface WebCLMemoryObject {
     [StrictTypeChecking, Custom, RaisesException] any getInfo(CLenum name);
-    // FIXME: Needs implemention.
-    // void release();
+
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    void release();
+#endif
 };

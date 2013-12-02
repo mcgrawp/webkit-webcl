@@ -101,6 +101,7 @@ WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, CCKernel 
     , m_kernelName(kernelName)
     , m_argumentList(this)
 {
+    context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
 WebCLGetInfo WebCLKernel::getInfo(CCenum kernelInfo, ExceptionCode& ec)

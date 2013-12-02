@@ -62,4 +62,10 @@ typedef long GLint;
     [RaisesException] WebCLImage createFromGLRenderbuffer(CLenum memFlags, WebGLRenderbuffer renderbuffer);
     [RaisesException] WebCLImage createFromGLTexture(CLenum memFlags, CLenum textureTarget, GLint miplevel, WebGLTexture texture);
 #endif
+
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    void release();
+#endif
+
+    void releaseAll();
 };

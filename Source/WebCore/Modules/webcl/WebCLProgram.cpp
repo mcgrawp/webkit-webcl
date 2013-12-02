@@ -65,6 +65,7 @@ WebCLProgram::WebCLProgram(WebCLContext*context, CCProgram program, const String
     , m_context(context)
     , m_programSource(programSource)
 {
+    context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
 WebCLGetInfo WebCLProgram::getInfo(CCenum infoType, ExceptionCode& ec)
@@ -99,6 +100,7 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, CCenum infoType, Ex
     }
 
     if (!WebCLInputChecker::validateWebCLObject(device)) {
+        // FIXME: Wrong exception?
         ec = WebCLException::INVALID_PROGRAM;
         return WebCLGetInfo();
     }
@@ -284,11 +286,6 @@ const String& WebCLProgram::sourceWithCommentsStripped()
         removeComments(m_programSource, m_programSourceWithCommentsStripped);
 
     return m_programSourceWithCommentsStripped;
-}
-
-void WebCLProgram::release()
-{
-    releasePlatformObject();
 }
 
 void WebCLProgram::releasePlatformObjectImpl()

@@ -34,11 +34,34 @@
 #include "ExceptionCode.h"
 #include "WebCLException.h"
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class WebCLAgnosticObject : public RefCounted<WebCLAgnosticObject> {
+public:
+    virtual ~WebCLAgnosticObject()
+    {
+    }
+
+    bool isReleased() const { return m_isReleased; }
+    virtual void release() { }
+
+    WeakPtr<WebCLAgnosticObject> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
+
+protected:
+    WebCLAgnosticObject()
+        : m_weakFactory(this)
+        , m_isReleased(false)
+    {
+    }
+
+    WeakPtrFactory<WebCLAgnosticObject> m_weakFactory;
+    bool m_isReleased;
+};
+
 template <class T>
-class WebCLObject : public RefCounted<WebCLObject<T> > {
+class WebCLObject : public WebCLAgnosticObject {
 public:
     virtual ~WebCLObject()
     {
@@ -46,9 +69,12 @@ public:
 
     T platformObject() const { return m_platformObject; }
 
-    bool isReleased() const { return m_isReleased; }
+    virtual void release()
+    {
+        releasePlatformObject();
+    }
 
-    void releasePlatformObject()
+    virtual void releasePlatformObject()
     {
         if (!m_platformObject)
             return;
@@ -63,7 +89,6 @@ public:
 protected:
     WebCLObject(T object)
         : m_platformObject(object)
-        , m_isReleased(false)
     {
     }
 
@@ -71,7 +96,6 @@ protected:
 
 private:
     T m_platformObject;
-    bool m_isReleased;
 };
 
 } // WebCore

@@ -53,6 +53,7 @@ WebCLMemoryObject::WebCLMemoryObject(WebCLContext* context, PlatformComputeObjec
     , m_context(context)
     , m_parentMemObject(parentBuffer)
 {
+    context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
 WebCLGetInfo WebCLMemoryObject::getInfo(CCenum paramName, ExceptionCode& ec)

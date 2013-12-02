@@ -137,8 +137,7 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
     } else
         webCLDevice = device;
 
-    RefPtr<WebCLCommandQueue> webCLCommandQueue = WebCLCommandQueue::create(this, properties, webCLDevice, ec);
-    return webCLCommandQueue.release();
+    return WebCLCommandQueue::create(this, properties, webCLDevice, ec);
 }
 
 PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& programSource, ExceptionCode& ec)
@@ -273,8 +272,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint widt
     if (data)
         flags |= ComputeContext::MEM_COPY_HOST_PTR;
 
-    RefPtr<WebCLImage> imageObject = WebCLImage::create(this, flags, width, height, rowPitch, imageFormat, data, ec);
-    return imageObject.release();
+    return WebCLImage::create(this, flags, width, height, rowPitch, imageFormat, data, ec);
 }
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
@@ -430,6 +428,8 @@ PassRefPtr<WebCLUserEvent> WebCLContext::createUserEvent(ExceptionCode& ec)
     return WebCLUserEvent::create(this, ec);
 }
 
+
+// FIXME:: Should be a static local function.
 PassRefPtr<Image> WebCLContext::videoFrameToImage(HTMLVideoElement* video)
 {
     if (!video || !video->videoWidth() || !video->videoHeight())
@@ -503,8 +503,31 @@ Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(CCe
     return imageDescriptors;
 }
 
+void WebCLContext::trackReleaseableWebCLObject(WeakPtr<WebCLAgnosticObject> object)
+{
+    m_descendantWebCLObjects.append(object);
+}
+
+void WebCLContext::releaseAll()
+{
+    if (!platformObject())
+        return;
+
+    for (size_t i = 0; i < m_descendantWebCLObjects.size(); ++i) {
+        WebCLAgnosticObject* object = m_descendantWebCLObjects.at(i).get();
+        if (!object)
+            continue;
+
+        object->release();
+    }
+
+    release();
+}
+
 void WebCLContext::releasePlatformObjectImpl()
 {
+    // FIXME: We should special case WebCLContext release, instead of
+    // deleting the ComputeContext.
     delete platformObject();
 }
 

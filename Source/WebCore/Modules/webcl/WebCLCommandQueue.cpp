@@ -69,6 +69,7 @@ WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, const RefPtr<WebCLDe
     , m_context(context)
     , m_device(webCLDevice)
 {
+    context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
 WebCLGetInfo WebCLCommandQueue::getInfo(CCenum paramName, ExceptionCode& ec)

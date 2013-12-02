@@ -30,4 +30,8 @@ typedef unsigned long CLenum;
     Conditional=WEBCL,
 ] interface WebCLSampler {
     [StrictTypeChecking, Custom, RaisesException] any getInfo(CLenum paramName);
+
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    void release();
+#endif
 };

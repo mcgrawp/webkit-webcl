@@ -55,8 +55,6 @@ public:
 
     const String& sourceWithCommentsStripped();
 
-    void release();
-
 private:
     WebCLProgram(WebCLContext*, CCProgram, const String&);
     static void finishCallback(CCProgram, void*);
