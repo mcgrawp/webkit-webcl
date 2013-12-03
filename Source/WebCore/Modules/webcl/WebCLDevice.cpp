@@ -183,15 +183,8 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
             return WebCLGetInfo(static_cast<unsigned long>(deviceFPConfig));
         break;
     }
-    case ComputeContext::DEVICE_EXECUTION_CAPABILITIES: {
-#ifndef NDEBUG
-        CCDeviceExecCapabilities deviceExecCapabilities = 0;
-        err = ComputeContext::getDeviceInfo(platformObject(), infoType, &deviceExecCapabilities);
-        ASSERT(err == ComputeContext::SUCCESS);
-        ASSERT(static_cast<unsigned>(deviceExecCapabilities) == ComputeContext::EXEC_KERNEL);
-#endif
+    case ComputeContext::DEVICE_EXECUTION_CAPABILITIES:
         return WebCLGetInfo(static_cast<unsigned>(ComputeContext::EXEC_KERNEL));
-    }
     default:
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
