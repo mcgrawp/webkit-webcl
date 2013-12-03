@@ -58,7 +58,7 @@ PassRefPtr<WebCLSampler> WebCLSampler::create(WebCLContext* context, CCbool norm
 }
 
 WebCLSampler::WebCLSampler(WebCLContext* context, CCSampler sampler, CCbool normCoords, CCenum addressingMode, CCenum filterMode)
-    : WebCLObject(sampler)
+    : WebCLObjectImpl(sampler)
     , m_normCoords(normCoords)
     , m_addressingMode(addressingMode)
     , m_filterMode(filterMode)

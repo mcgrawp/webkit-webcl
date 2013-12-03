@@ -38,7 +38,7 @@ class WebCLGetInfo;
 class WebCLCommandQueue;
 class WebCLFinishCallback;
 
-class WebCLEvent : public WebCLObject<CCEvent> {
+class WebCLEvent : public WebCLObjectImpl<CCEvent> {
 public:
     virtual ~WebCLEvent();
     static PassRefPtr<WebCLEvent> create();

@@ -49,7 +49,7 @@ PassRefPtr<WebCLMemoryObject> WebCLMemoryObject::create(WebCLContext* context, P
 }
 
 WebCLMemoryObject::WebCLMemoryObject(WebCLContext* context, PlatformComputeObject CCmem, WebCLMemoryObject* parentBuffer)
-    : WebCLObject(CCmem)
+    : WebCLObjectImpl(CCmem)
     , m_context(context)
     , m_parentMemObject(parentBuffer)
 {

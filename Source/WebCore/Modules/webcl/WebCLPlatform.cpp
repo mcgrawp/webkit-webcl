@@ -52,7 +52,7 @@ PassRefPtr<WebCLPlatform> WebCLPlatform::create(CCPlatformID platformID)
 }
 
 WebCLPlatform::WebCLPlatform(CCPlatformID platformID)
-    : WebCLObject(platformID)
+    : WebCLObjectImpl(platformID)
     , WebCLExtensionsAccessor(platformID)
     , m_cachedDeviceType(0)
 {

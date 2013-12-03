@@ -37,7 +37,7 @@ namespace WebCore {
 class WebCLGetInfo;
 class WebCLContext;
 
-class WebCLSampler : public WebCLObject<CCSampler> {
+class WebCLSampler : public WebCLObjectImpl<CCSampler> {
 public:
     virtual ~WebCLSampler();
     static PassRefPtr<WebCLSampler> create(WebCLContext*, CCbool, CCenum, CCenum, ExceptionCode&);

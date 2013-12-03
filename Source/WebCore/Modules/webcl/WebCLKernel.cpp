@@ -95,7 +95,7 @@ Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* c
 }
 
 WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, CCKernel kernel, const String& kernelName)
-    : WebCLObject(kernel)
+    : WebCLObjectImpl(kernel)
     , m_context(context)
     , m_program(program)
     , m_kernelName(kernelName)

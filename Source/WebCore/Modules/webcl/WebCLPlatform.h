@@ -39,7 +39,7 @@ namespace WebCore {
 class WebCLDevice;
 class WebCLGetInfo;
 
-class WebCLPlatform : public WebCLObject<CCPlatformID> , public WebCLExtensionsAccessor<CCPlatformID> {
+class WebCLPlatform : public WebCLObjectImpl<CCPlatformID> , public WebCLExtensionsAccessor<CCPlatformID> {
 public:
     virtual ~WebCLPlatform();
     static PassRefPtr<WebCLPlatform> create(CCPlatformID);

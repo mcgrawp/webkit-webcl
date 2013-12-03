@@ -62,7 +62,7 @@ class WebGLTexture;
 // WebCLContext has as platformObject() an abstraction called ComputeContext
 
 typedef ComputeContext* ComputeContextPtr;
-class WebCLContext : public WebCLObject<ComputeContextPtr> {
+class WebCLContext : public WebCLObjectImpl<ComputeContextPtr> {
 public:
     virtual ~WebCLContext();
     static PassRefPtr<WebCLContext> create(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
@@ -111,7 +111,7 @@ public:
 
     ComputeContext* computeContext() const { return platformObject(); }
 
-    void trackReleaseableWebCLObject(WeakPtr<WebCLAgnosticObject>);
+    void trackReleaseableWebCLObject(WeakPtr<WebCLObject>);
     void releaseAll();
 
 protected:
@@ -129,7 +129,7 @@ private:
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
     RefPtr<WebCLContextProperties> m_contextProperties;
 
-    Vector<WeakPtr<WebCLAgnosticObject> > m_descendantWebCLObjects;
+    Vector<WeakPtr<WebCLObject> > m_descendantWebCLObjects;
 };
 
 } // namespace WebCore

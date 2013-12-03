@@ -65,7 +65,7 @@ PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, C
 }
 
 WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, const RefPtr<WebCLDevice>& webCLDevice, CCCommandQueue commandQueue)
-    : WebCLObject(commandQueue)
+    : WebCLObjectImpl(commandQueue)
     , m_context(context)
     , m_device(webCLDevice)
 {

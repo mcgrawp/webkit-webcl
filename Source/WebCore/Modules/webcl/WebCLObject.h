@@ -38,32 +38,32 @@
 
 namespace WebCore {
 
-class WebCLAgnosticObject : public RefCounted<WebCLAgnosticObject> {
+class WebCLObject : public RefCounted<WebCLObject> {
 public:
-    virtual ~WebCLAgnosticObject()
+    virtual ~WebCLObject()
     {
     }
 
     bool isReleased() const { return m_isReleased; }
     virtual void release() { }
 
-    WeakPtr<WebCLAgnosticObject> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
+    WeakPtr<WebCLObject> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 
 protected:
-    WebCLAgnosticObject()
+    WebCLObject()
         : m_weakFactory(this)
         , m_isReleased(false)
     {
     }
 
-    WeakPtrFactory<WebCLAgnosticObject> m_weakFactory;
+    WeakPtrFactory<WebCLObject> m_weakFactory;
     bool m_isReleased;
 };
 
 template <class T>
-class WebCLObject : public WebCLAgnosticObject {
+class WebCLObjectImpl : public WebCLObject {
 public:
-    virtual ~WebCLObject()
+    virtual ~WebCLObjectImpl()
     {
     }
 
@@ -87,7 +87,7 @@ public:
     }
 
 protected:
-    WebCLObject(T object)
+    WebCLObjectImpl(T object)
         : m_platformObject(object)
     {
     }

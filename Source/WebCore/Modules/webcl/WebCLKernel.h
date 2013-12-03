@@ -49,7 +49,7 @@ class WebCLProgram;
 class WebCLMemoryObject;
 class WebCLSampler;
 
-class WebCLKernel : public WebCLObject<CCKernel> {
+class WebCLKernel : public WebCLObjectImpl<CCKernel> {
 public:
     class Argument {
     public:

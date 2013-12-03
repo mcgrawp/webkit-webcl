@@ -38,7 +38,7 @@ namespace WebCore {
 class WebCLContext;
 class WebCLGetInfo;
 
-class WebCLMemoryObject : public WebCLObject<PlatformComputeObject> {
+class WebCLMemoryObject : public WebCLObjectImpl<PlatformComputeObject> {
 public:
     virtual ~WebCLMemoryObject();
     static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PlatformComputeObject);

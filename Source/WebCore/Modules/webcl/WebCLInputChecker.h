@@ -50,7 +50,7 @@ bool isValidGLTextureInfo(unsigned long);
 bool isValidKernelArgIndex(WebCLKernel*, unsigned index);
 
 template<class T>
-bool validateWebCLObject(WebCLObject<T>* object)
+bool validateWebCLObject(WebCLObjectImpl<T>* object)
 {
     return object && object->platformObject();
 }

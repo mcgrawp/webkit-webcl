@@ -52,7 +52,7 @@ PassRefPtr<WebCLEvent> WebCLEvent::create()
 }
 
 WebCLEvent::WebCLEvent(CCEvent event)
-    : WebCLObject(event)
+    : WebCLObjectImpl(event)
     , m_commandQueue(0)
 {
 }

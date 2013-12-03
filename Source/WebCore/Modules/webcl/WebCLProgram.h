@@ -40,7 +40,7 @@ class WebCLFinishCallback;
 class WebCLGetInfo;
 class WebCLKernel;
 
-class WebCLProgram : public WebCLObject<CCProgram> {
+class WebCLProgram : public WebCLObjectImpl<CCProgram> {
 public:
     virtual ~WebCLProgram();
     static PassRefPtr<WebCLProgram> create(WebCLContext*, const String& programSource, ExceptionCode&);

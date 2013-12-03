@@ -78,7 +78,7 @@ PassRefPtr<WebCLContext> WebCLContext::create(PassRefPtr<WebCLContextProperties>
 }
 
 WebCLContext::WebCLContext(ComputeContext* computeContext, PassRefPtr<WebCLContextProperties> properties)
-    : WebCLObject(computeContext)
+    : WebCLObjectImpl(computeContext)
     , m_videoCache(4) // FIXME: Why '4'?
     , m_contextProperties(properties)
 {
@@ -503,7 +503,7 @@ Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(CCe
     return imageDescriptors;
 }
 
-void WebCLContext::trackReleaseableWebCLObject(WeakPtr<WebCLAgnosticObject> object)
+void WebCLContext::trackReleaseableWebCLObject(WeakPtr<WebCLObject> object)
 {
     m_descendantWebCLObjects.append(object);
 }
@@ -514,7 +514,7 @@ void WebCLContext::releaseAll()
         return;
 
     for (size_t i = 0; i < m_descendantWebCLObjects.size(); ++i) {
-        WebCLAgnosticObject* object = m_descendantWebCLObjects.at(i).get();
+        WebCLObject* object = m_descendantWebCLObjects.at(i).get();
         if (!object)
             continue;
 

@@ -44,7 +44,7 @@ class WebCLImage;
 class WebCLKernel;
 class WebCLMemoryObject;
 
-class WebCLCommandQueue : public WebCLObject<CCCommandQueue> {
+class WebCLCommandQueue : public WebCLObjectImpl<CCCommandQueue> {
 public:
     ~WebCLCommandQueue();
     static PassRefPtr<WebCLCommandQueue> create(WebCLContext*, CCenum queueProperties, const RefPtr<WebCLDevice>&, ExceptionCode&);

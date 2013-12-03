@@ -52,7 +52,7 @@ PassRefPtr<WebCLDevice> WebCLDevice::create(CCDeviceID deviceID, const WebCLPlat
 }
 
 WebCLDevice::WebCLDevice(CCDeviceID deviceID, const WebCLPlatform* platform)
-    : WebCLObject(deviceID)
+    : WebCLObjectImpl(deviceID)
     , WebCLExtensionsAccessor(deviceID)
     , m_platform(platform)
 {

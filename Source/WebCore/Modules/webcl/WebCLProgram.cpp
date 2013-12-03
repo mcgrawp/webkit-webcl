@@ -61,7 +61,7 @@ PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const Strin
 }
 
 WebCLProgram::WebCLProgram(WebCLContext*context, CCProgram program, const String& programSource)
-    : WebCLObject(program)
+    : WebCLObjectImpl(program)
     , m_context(context)
     , m_programSource(programSource)
 {
