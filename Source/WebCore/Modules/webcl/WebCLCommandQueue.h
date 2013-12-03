@@ -111,6 +111,8 @@ private:
 
     void releasePlatformObjectImpl();
 
+    CCEvent* ccEventFromWebCLEvent(WebCLEvent*, ExceptionCode&);
+
     RefPtr<WebCLContext> m_context;
     const RefPtr<WebCLDevice> m_device;
 };
