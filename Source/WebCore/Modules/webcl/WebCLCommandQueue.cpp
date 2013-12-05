@@ -103,6 +103,21 @@ WebCLGetInfo WebCLCommandQueue::getInfo(CCenum paramName, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
+CCEvent* WebCLCommandQueue::ccEventFromWebCLEvent(WebCLEvent* event, ExceptionCode& ec)
+{
+    CCEvent* ccEvent = 0;
+    if (event) {
+        if (event->isPlatformObjectNeutralized()) {
+            ec = WebCLException::INVALID_EVENT;
+            return ccEvent;
+        }
+        CCEvent& platformEventObject = event->platformObjectRef();
+        ccEvent = &platformEventObject;
+        event->setAssociatedCommandQueue(this);
+    }
+    return ccEvent;
+}
+
 void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, CCuint bufferSize, void* data,
     const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
@@ -126,16 +141,9 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool block
     for (size_t i = 0; i < events.size(); ++i)
         ccEvents.append(events[i]->platformObject());
 
-    CCEvent* ccEvent = 0;
-    if (event) {
-        CCEvent platformEventObject = event->platformObject();
-        if (event->isReleased()) {
-            ec = WebCLException::INVALID_EVENT;
-            return;
-        }
-        ccEvent = &platformEventObject;
-        event->setAssociatedCommandQueue(this);
-    }
+    CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCerror error = platformObject()->enqueueWriteBuffer(ccBuffer, blockingWrite, offset, bufferSize, data, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
@@ -156,21 +164,6 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingW
     unsigned char* bufferArray = imageData->data()->data();
 
     enqueueWriteBufferBase(buffer, blockingWrite, offset, byteLength, static_cast<void*>(bufferArray), events, event, ec);
-}
-
-CCEvent* WebCLCommandQueue::ccEventFromWebCLEvent(WebCLEvent* event, ExceptionCode& ec)
-{
-    CCEvent* ccEvent = 0;
-    if (event) {
-        CCEvent platformEventObject = event->platformObject();
-        if (event->isReleased()) {
-            ec = WebCLException::INVALID_EVENT;
-            return ccEvent;
-        }
-        ccEvent = &platformEventObject;
-        event->setAssociatedCommandQueue(this);
-    }
-    return ccEvent;
 }
 
 void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool blockingWrite, const Vector<unsigned>& bufferOrigin,

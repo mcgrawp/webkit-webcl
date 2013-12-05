@@ -65,6 +65,7 @@ public:
     }
 
     T platformObject() const { return m_platformObject; }
+    T& platformObjectRef() { return m_platformObject; }
 
     virtual bool isReleased() const { return m_isReleased; }
 
