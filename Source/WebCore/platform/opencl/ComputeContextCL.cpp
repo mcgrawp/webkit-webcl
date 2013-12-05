@@ -466,7 +466,7 @@ PlatformComputeObject ComputeContext::createFromGLBuffer(CCMemoryFlags type, GLu
     return clCreateFromGLBuffer(m_clContext, memoryType, bufferId, &error);
 }
 
-PlatformComputeObject ComputeContext::createFromGLRenderbuffer(CCMemoryFlags type, GC3Dint renderbufferId, CCerror& error)
+PlatformComputeObject ComputeContext::createFromGLRenderbuffer(CCMemoryFlags type, GC3Duint renderbufferId, CCerror& error)
 {
     CCint memoryType = computeMemoryTypeToCL(type);
     return clCreateFromGLRenderbuffer(m_clContext, memoryType, renderbufferId, &error);

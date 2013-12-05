@@ -340,7 +340,7 @@ public:
     PlatformComputeObject createSubBuffer(PlatformComputeObject, CCMemoryFlags type, CCBufferCreateType bufferCreatetype, CCBufferRegion* bufferCreateInfo, CCerror&);
     PlatformComputeObject createImage2D(CCMemoryFlags type, size_t width, size_t height, CCuint rowPitch, const CCImageFormat&, void* data, CCerror&);
     PlatformComputeObject createFromGLBuffer(CCMemoryFlags type, GLuint bufferId, CCerror&);
-    PlatformComputeObject createFromGLRenderbuffer(CCMemoryFlags type, GC3Dint renderbufferId, CCerror&);
+    PlatformComputeObject createFromGLRenderbuffer(CCMemoryFlags type, GC3Duint renderbufferId, CCerror&);
     CCSampler createSampler(CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
     PlatformComputeObject createFromGLTexture2D(CCMemoryFlags type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror&);
 
