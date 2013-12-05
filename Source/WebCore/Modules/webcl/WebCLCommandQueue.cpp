@@ -194,6 +194,16 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool block
         return;
     }
 
+    if (!WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
+    if (!WebCLInputChecker::isValidPitchForArrayBufferView(hostSlicePitch, ptr)) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     Vector<size_t> bufferOriginCopy, hostOriginCopy, regionCopy;
     bufferOriginCopy.appendVector(bufferOrigin);
     hostOriginCopy.appendVector(hostOrigin);
@@ -252,7 +262,7 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRe
 }
 
 void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead, const Vector<unsigned>& origin, const Vector<unsigned>& region,
-    CCuint rowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
@@ -267,6 +277,11 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead,
     PlatformComputeObject ccImage = image->platformObject();
 
     if (!ptr) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
+    if (!WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -294,7 +309,7 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead,
         return;
 
     CCerror err = m_context->computeContext()->enqueueReadImage(platformObject(), ccImage, blockingRead, originCopy,
-        regionCopy, rowPitch, 0, ptr->baseAddress(), ccEvents, ccEvent);
+        regionCopy, hostRowPitch, 0, ptr->baseAddress(), ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -349,6 +364,17 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blocki
     PlatformComputeObject ccBuffer = buffer->platformObject();
 
     if (!ptr) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
+
+    if (!WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
+    if (!WebCLInputChecker::isValidPitchForArrayBufferView(hostSlicePitch, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -456,7 +482,7 @@ void WebCLCommandQueue::flush(ExceptionCode& ec)
 }
 
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
-    CCuint inputRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (!platformObject()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
@@ -474,6 +500,13 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrit
         ec = WebCLException::INVALID_VALUE;
         return;
     }
+
+
+    if (!WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
 
     Vector<size_t> originCopy, regionCopy;
     originCopy.appendVector(origin);
@@ -497,7 +530,7 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrit
         return;
 
     CCerror err = m_context->computeContext()->enqueueWriteImage(platformObject(), ccImage, blockingWrite,
-        originCopy, regionCopy, inputRowPitch, 0, ptr->baseAddress(), ccEvents, ccEvent);
+        originCopy, regionCopy, hostRowPitch, 0, ptr->baseAddress(), ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 

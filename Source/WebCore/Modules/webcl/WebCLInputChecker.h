@@ -32,6 +32,10 @@
 
 #include "WebCLObject.h"
 
+namespace WTF {
+class ArrayBufferView;
+}
+
 namespace WebCore {
 
 class WebCLKernel;
@@ -48,6 +52,7 @@ bool isValidChannelOrder(unsigned long);
 bool isValidCommandQueueProperty(unsigned long);
 bool isValidGLTextureInfo(unsigned long);
 bool isValidKernelArgIndex(WebCLKernel*, unsigned index);
+bool isValidPitchForArrayBufferView(unsigned long, ArrayBufferView*);
 
 template<class T>
 bool validateWebCLObject(WebCLObjectImpl<T>* object)

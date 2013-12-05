@@ -31,6 +31,7 @@
 
 #include "WebCLInputChecker.h"
 #include "WebCLKernel.h"
+#include <wtf/ArrayBufferView.h>
 
 namespace WebCore {
 namespace WebCLInputChecker {
@@ -214,6 +215,37 @@ bool isValidKernelArgIndex(WebCLKernel* kernel, unsigned index)
 {
     ASSERT(kernel);
     return index < kernel->numberOfArguments();
+}
+
+bool isValidPitchForArrayBufferView(unsigned long pitch, ArrayBufferView* arrayBufferView)
+{
+    ASSERT(arrayBufferView);
+
+    unsigned bytesPerElement = 1;
+    switch (arrayBufferView->getType()) {
+        case ArrayBufferView::TypeInt8:
+        case ArrayBufferView::TypeUint8:
+        case ArrayBufferView::TypeUint8Clamped:
+            bytesPerElement = 1;
+            break;
+        case ArrayBufferView::TypeInt16:
+        case ArrayBufferView::TypeUint16:
+            bytesPerElement = 2;
+            break;
+        case ArrayBufferView::TypeInt32:
+        case ArrayBufferView::TypeUint32:
+        case ArrayBufferView::TypeFloat32:
+            bytesPerElement = 4;
+            break;
+        case ArrayBufferView::TypeFloat64:
+            bytesPerElement = 8;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            return false;
+    }
+
+    return !(pitch % bytesPerElement);
 }
 
 }
