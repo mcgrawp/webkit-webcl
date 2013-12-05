@@ -46,6 +46,8 @@ public:
 
     WeakPtr<WebCLObject> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 
+    virtual void release() { ASSERT_NOT_REACHED(); }
+
 protected:
     WebCLObject()
         : m_weakFactory(this)
@@ -64,7 +66,7 @@ public:
 
     T platformObject() const { return m_platformObject; }
 
-    bool holdsValidPlatformObject const { return !!m_platformObject; }
+    bool holdsValidPlatformObject() const { return !!m_platformObject; }
 
     virtual void release()
     {
