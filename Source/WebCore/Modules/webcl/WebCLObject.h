@@ -44,20 +44,15 @@ public:
     {
     }
 
-    bool isReleased() const { return m_isReleased; }
-    virtual void release() { }
-
     WeakPtr<WebCLObject> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 
 protected:
     WebCLObject()
         : m_weakFactory(this)
-        , m_isReleased(false)
     {
     }
 
     WeakPtrFactory<WebCLObject> m_weakFactory;
-    bool m_isReleased;
 };
 
 template <class T>
@@ -69,6 +64,8 @@ public:
 
     T platformObject() const { return m_platformObject; }
 
+    bool holdsValidPlatformObject const { return !!m_platformObject; }
+
     virtual void release()
     {
         releasePlatformObject();
@@ -79,11 +76,8 @@ public:
         if (!m_platformObject)
             return;
 
-        ASSERT(!m_isReleased);
-
         releasePlatformObjectImpl();
         m_platformObject = 0;
-        m_isReleased = true;
     }
 
 protected:
