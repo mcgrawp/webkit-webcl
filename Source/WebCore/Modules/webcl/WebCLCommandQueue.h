@@ -30,6 +30,7 @@
 
 #if ENABLE(WEBCL)
 
+#include "ComputeCommandQueue.h"
 #include "WebCLObject.h"
 
 namespace WebCore {
@@ -44,7 +45,8 @@ class WebCLImage;
 class WebCLKernel;
 class WebCLMemoryObject;
 
-class WebCLCommandQueue : public WebCLObjectImpl<CCCommandQueue> {
+typedef ComputeCommandQueue* ComputeCommandQueuePtr;
+class WebCLCommandQueue : public WebCLObjectImpl<ComputeCommandQueuePtr> {
 public:
     ~WebCLCommandQueue();
     static PassRefPtr<WebCLCommandQueue> create(WebCLContext*, CCenum queueProperties, const RefPtr<WebCLDevice>&, ExceptionCode&);
@@ -103,7 +105,7 @@ public:
 #endif
 
 private:
-    WebCLCommandQueue(WebCLContext*, const RefPtr<WebCLDevice>&, CCCommandQueue);
+    WebCLCommandQueue(WebCLContext*, ComputeCommandQueue*, const RefPtr<WebCLDevice>&);
 
     friend class WebCLEvent;
 

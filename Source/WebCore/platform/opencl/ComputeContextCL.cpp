@@ -29,6 +29,8 @@
 
 #include "ComputeContext.h"
 
+#include "ComputeCommandQueue.h"
+
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -395,9 +397,9 @@ CCerror ComputeContext::waitForEvents(const Vector<CCEvent>& events)
     return clError;
 }
 
-CCCommandQueue ComputeContext::createCommandQueue(CCDeviceID deviceId, CCCommandQueueProperties properties, CCerror& error)
+ComputeCommandQueue* ComputeContext::createCommandQueue(CCDeviceID deviceId, CCCommandQueueProperties properties, CCerror& error)
 {
-    return clCreateCommandQueue(m_clContext, deviceId, properties, &error);
+    return new ComputeCommandQueue(this, deviceId, properties, error);
 }
 
 CCEvent ComputeContext::createUserEvent(CCerror& error)
@@ -525,11 +527,6 @@ CCerror ComputeContext::getBuildInfoBase(CCProgram program, CCDeviceID device, C
     return clGetProgramBuildInfo(program, device, infoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getCommandQueueInfoBase(CCCommandQueue queue, CCCommandQueueInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
-{
-   return clGetCommandQueueInfo(queue, infoType, sizeOfData, data, retSize);
-}
-
 CCerror ComputeContext::getEventInfoBase(CCEvent event, CCEventInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
     return clGetEventInfo(event, infoType, sizeOfData, data, retSize);
@@ -593,146 +590,6 @@ CCerror ComputeContext::releaseMemoryObject(PlatformComputeObject memmory)
 CCerror ComputeContext::releaseProgram(CCProgram program)
 {
     return clReleaseProgram(program);
-}
-
-CCerror ComputeContext::enqueueNDRangeKernel(CCCommandQueue commandQueue, CCKernel kernelID, CCuint workItemDimensions,
-    const Vector<size_t>& globalWorkOffset, const Vector<size_t>& globalWorkSize, const Vector<size_t>& localWorkSize,
-    const Vector<CCEvent>& eventWaitList, CCEvent* event)
-{
-    return clEnqueueNDRangeKernel(commandQueue, kernelID, workItemDimensions,
-        globalWorkOffset.data(), globalWorkSize.data(), localWorkSize.data(), eventWaitList.size(), eventWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueBarrier(CCCommandQueue commandQueue)
-{
-    CCint error;
-#if defined(CL_VERSION_1_2)
-    error = clEnqueueBarrierWithWaitList(commandQueue, 0 /*eventsWaitListLength*/, 0 /*eventsWaitList*/, 0 /*event*/);
-#else
-    error = clEnqueueBarrier(commandQueue);
-#endif
-    return error;
-}
-
-CCerror ComputeContext::enqueueMarker(CCCommandQueue commandQueue, CCEvent* event)
-{
-    CCint error;
-#if defined(CL_VERSION_1_2)
-    error = clEnqueueMarkerWithWaitList(commandQueue, 0 /*eventsWaitListLength*/, 0 /*eventsWaitList*/, event);
-#else
-    error = clEnqueueMarker(commandQueue, event);
-#endif
-    return error;
-}
-
-CCerror ComputeContext::enqueueTask(CCCommandQueue commandQueue, CCKernel kernelID, const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueTask(commandQueue, kernelID, eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueWriteBuffer(CCCommandQueue commandQueue, PlatformComputeObject buffer, CCbool blockingWrite,
-    size_t offset, size_t bufferSize, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueWriteBuffer(commandQueue, buffer, blockingWrite, offset,
-        bufferSize, baseAddress, eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueWriteBufferRect(CCCommandQueue commandQueue, PlatformComputeObject buffer, CCbool blockingWrite,
-    const Vector<size_t>& bufferOriginArray, const Vector<size_t>& hostOriginArray, const Vector<size_t>& regionArray, size_t bufferRowPitch,
-    size_t bufferSlicePitch, size_t hostRowPitch, size_t hostSlicePitch, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueWriteBufferRect(commandQueue, buffer, blockingWrite, bufferOriginArray.data(), hostOriginArray.data(), regionArray.data(),
-        bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, baseAddress, eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueReadBuffer(CCCommandQueue commandQueue, PlatformComputeObject buffer, CCbool blockingRead, size_t offset, size_t bufferSize, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueReadBuffer(commandQueue, buffer, blockingRead, offset,
-        bufferSize, baseAddress, eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueReadBufferRect(CCCommandQueue commandQueue, PlatformComputeObject buffer, CCbool blockingRead,
-    const Vector<size_t>& bufferOriginArray, const Vector<size_t>& hostOriginArray, const Vector<size_t>& regionArray, size_t bufferRowPitch,
-    size_t bufferSlicePitch, size_t hostRowPitch, size_t hostSlicePitch, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueReadBufferRect(commandQueue, buffer, blockingRead, bufferOriginArray.data(), hostOriginArray.data(), regionArray.data(),
-        bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, baseAddress, eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueReadImage(CCCommandQueue commandQueue, PlatformComputeObject image, CCbool blockingRead, const Vector<size_t>& originArray,
-    const Vector<size_t>& regionArray, size_t rowPitch, size_t slicePitch, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueReadImage(commandQueue, image, blockingRead, originArray.data(), regionArray.data(), rowPitch, slicePitch, baseAddress,
-        eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueWriteImage(CCCommandQueue commandQueue, PlatformComputeObject image, CCbool blockingWrite, const Vector<size_t>& originArray,
-    const Vector<size_t>& regionArray, size_t rowPitch, size_t slicePitch, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueWriteImage(commandQueue, image, blockingWrite, originArray.data(), regionArray.data(), rowPitch, slicePitch, baseAddress,
-        eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueAcquireGLObjects(CCCommandQueue commandQueue, const Vector<PlatformComputeObject>& objects, const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueAcquireGLObjects(commandQueue, objects.size(), objects.data(), eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueReleaseGLObjects(CCCommandQueue commandQueue, const Vector<PlatformComputeObject>& objects, const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueReleaseGLObjects(commandQueue, objects.size(), objects.data(), eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueCopyImage(CCCommandQueue commandQueue, PlatformComputeObject originImage, PlatformComputeObject targetImage,
-    const Vector<size_t>& sourceOriginArray, const Vector<size_t>& targetOriginArray, const Vector<size_t>& regionArray,
-    const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueCopyImage(commandQueue, originImage, targetImage, sourceOriginArray.data(), targetOriginArray.data(), regionArray.data(),
-        eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueCopyImageToBuffer(CCCommandQueue commandQueue, PlatformComputeObject sourceImage, PlatformComputeObject targetBuffer,
-    const Vector<size_t>& sourceOriginArray, const Vector<size_t>& regionArray, size_t targetOffset, const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueCopyImageToBuffer(commandQueue, sourceImage, targetBuffer, sourceOriginArray.data(), regionArray.data(), targetOffset,
-        eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueCopyBufferToImage(CCCommandQueue commandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetImage,
-    size_t srcOffset, const Vector<size_t>& targetOriginArray, const Vector<size_t>& regionArray, const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueCopyBufferToImage(commandQueue, sourceBuffer, targetImage, srcOffset, targetOriginArray.data(), regionArray.data(),
-        eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueCopyBuffer(CCCommandQueue commandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
-    size_t sourceOffset, size_t targetOffset, size_t sizeInBytes, const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueCopyBuffer(commandQueue, sourceBuffer, targetBuffer, sourceOffset, targetOffset, sizeInBytes,
-        eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::enqueueCopyBufferRect(CCCommandQueue commandQueue, PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
-    const Vector<size_t>& sourceOriginArray, const Vector<size_t>& targetOriginArray, const Vector<size_t>& regionArray, size_t sourceRowPitch,
-    size_t sourceSlicePitch, size_t targetRowPitch, size_t targetSlicePitch, const Vector<CCEvent>& eventsWaitList, CCEvent* event)
-{
-    return clEnqueueCopyBufferRect(commandQueue, sourceBuffer, targetBuffer, sourceOriginArray.data(), targetOriginArray.data(), regionArray.data(),
-        sourceRowPitch, sourceSlicePitch, targetRowPitch, targetSlicePitch, eventsWaitList.size(), eventsWaitList.data(), event);
-}
-
-CCerror ComputeContext::releaseCommandQueue(CCCommandQueue commandQueue)
-{
-    return clReleaseCommandQueue(commandQueue);
-}
-
-CCerror ComputeContext::finishCommandQueue(CCCommandQueue commandQueue)
-{
-    return clFinish(commandQueue);
-}
-
-CCerror ComputeContext::flushCommandQueue(CCCommandQueue commandQueue)
-{
-    return clFlush(commandQueue);
 }
 
 CCKernel ComputeContext::createKernel(CCProgram program, const String& kernelName, CCerror& error)

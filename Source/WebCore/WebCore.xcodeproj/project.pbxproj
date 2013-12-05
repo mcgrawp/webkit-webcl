@@ -3040,6 +3040,8 @@
 		93F9B7A00BA6032600854064 /* JSCDATASection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B79E0BA6032600854064 /* JSCDATASection.cpp */; };
 		93F9B7A10BA6032600854064 /* JSCDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B79F0BA6032600854064 /* JSCDATASection.h */; };
 		93FDAFCA0B11307400E2746F /* EditorInsertAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDAFC90B11307400E2746F /* EditorInsertAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		95105AC61850FA8700B0F977 /* ComputeCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 95105AC51850FA8700B0F977 /* ComputeCommandQueue.h */; };
+		95105AC81850FAA300B0F977 /* ComputeCommandQueueCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95105AC71850FAA300B0F977 /* ComputeCommandQueueCL.cpp */; };
 		956BD8B5184D12FF00AE33AE /* JSWebCLUserEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 956BD8B3184D12FF00AE33AE /* JSWebCLUserEvent.cpp */; };
 		956BD8B6184D130000AE33AE /* JSWebCLUserEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 956BD8B4184D12FF00AE33AE /* JSWebCLUserEvent.h */; };
 		95C6437F1843E15200EB3439 /* WebCLUserEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95C6437E1843E15200EB3439 /* WebCLUserEvent.cpp */; };
@@ -8492,9 +8494,6 @@
 		758C8F0A178A12B300FAD9BA /* JSWebCLImageDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLImageDescriptor.h; sourceTree = "<group>"; };
 		758C8F0B178A12B300FAD9BA /* JSWebCLKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLKernel.cpp; sourceTree = "<group>"; };
 		758C8F0C178A12B300FAD9BA /* JSWebCLKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLKernel.h; sourceTree = "<group>"; };
-		956BD8B3184D12FF00AE33AE /* JSWebCLUserEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebCLUserEvent.cpp; path = JSWebCLUserEvent.cpp; sourceTree = "<group>"; };
-		956BD8B4184D12FF00AE33AE /* JSWebCLUserEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; path = JSWebCLUserEvent.h; sourceTree = "<group>"; };
-
 		758C8F0D178A12B300FAD9BA /* JSWebCLEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLEvent.cpp; sourceTree = "<group>"; };
 		758C8F0E178A12B300FAD9BA /* JSWebCLEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLEvent.h; sourceTree = "<group>"; };
 		758C8F11178A12B300FAD9BA /* JSWebCLDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLDevice.cpp; sourceTree = "<group>"; };
@@ -9571,6 +9570,10 @@
 		93F9B79F0BA6032600854064 /* JSCDATASection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCDATASection.h; sourceTree = "<group>"; };
 		93FDAFC90B11307400E2746F /* EditorInsertAction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditorInsertAction.h; sourceTree = "<group>"; };
 		950C4C02BED8936F818E2F99 /* JSSVGGraphicsElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGGraphicsElement.h; sourceTree = "<group>"; };
+		95105AC51850FA8700B0F977 /* ComputeCommandQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeCommandQueue.h; sourceTree = "<group>"; };
+		95105AC71850FAA300B0F977 /* ComputeCommandQueueCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeCommandQueueCL.cpp; sourceTree = "<group>"; };
+		956BD8B3184D12FF00AE33AE /* JSWebCLUserEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLUserEvent.cpp; sourceTree = "<group>"; };
+		956BD8B4184D12FF00AE33AE /* JSWebCLUserEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; path = JSWebCLUserEvent.h; sourceTree = "<group>"; };
 		95C6437E1843E15200EB3439 /* WebCLUserEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLUserEvent.cpp; sourceTree = "<group>"; };
 		95C643801843E18100EB3439 /* WebCLUserEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLUserEvent.h; sourceTree = "<group>"; };
 		95C643821843E19100EB3439 /* WebCLUserEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLUserEvent.idl; sourceTree = "<group>"; };
@@ -15129,6 +15132,7 @@
 		758C8EEA17887BA000FAD9BA /* opencl */ = {
 			isa = PBXGroup;
 			children = (
+				95105AC71850FAA300B0F977 /* ComputeCommandQueueCL.cpp */,
 				758C8EEB17887BA000FAD9BA /* ComputeContextCL.cpp */,
 				758C8EEC17887BA000FAD9BA /* ComputeExtensionsCL.cpp */,
 			);
@@ -19593,6 +19597,7 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				95105AC51850FA8700B0F977 /* ComputeCommandQueue.h */,
 				758C8EE517887BA000FAD9BA /* ComputeContext.h */,
 				758C8EE617887BA000FAD9BA /* ComputeExtensions.h */,
 				758C8EE717887BA000FAD9BA /* ComputeExtensionsTraits.h */,
@@ -24219,6 +24224,7 @@
 				3FFFF9AE159D9B060020BBD5 /* ViewportStyleResolver.h in Headers */,
 				93309E20099E64920056E581 /* VisiblePosition.h in Headers */,
 				A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */,
+				95105AC61850FA8700B0F977 /* ComputeCommandQueue.h in Headers */,
 				93309E1E099E64920056E581 /* VisibleUnits.h in Headers */,
 				419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */,
 				515788C11207852C00A37C4A /* VisitedLinkStrategy.h in Headers */,
@@ -26977,6 +26983,7 @@
 				71CC7A20152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp in Sources */,
 				43F6FD9613BCD0B100224052 /* SVGAnimatedInteger.cpp in Sources */,
 				1A3586E115264F950022A659 /* SVGAnimatedIntegerOptionalInteger.cpp in Sources */,
+				95105AC81850FAA300B0F977 /* ComputeCommandQueueCL.cpp in Sources */,
 				4381763B13A697D4007D1187 /* SVGAnimatedLength.cpp in Sources */,
 				431A2FD713B7707A007791E4 /* SVGAnimatedLengthList.cpp in Sources */,
 				43A0F0B113AC7D6D00A5F0A7 /* SVGAnimatedNumber.cpp in Sources */,
