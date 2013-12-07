@@ -66,25 +66,26 @@ public:
 
     T platformObject() const { return m_platformObject; }
 
-    bool holdsValidPlatformObject() const { return !!m_platformObject; }
+    virtual bool isReleased() const { return m_isReleased; }
 
-    virtual void release()
-    {
-        releasePlatformObject();
-    }
+    virtual void release() { releasePlatformObject(); }
 
     virtual void releasePlatformObject()
     {
         if (!m_platformObject)
             return;
 
+        ASSERT(!m_isReleased);
+
         releasePlatformObjectImpl();
         m_platformObject = 0;
+        m_isReleased = true;
     }
 
 protected:
     WebCLObjectImpl(T object)
         : m_platformObject(object)
+        , m_isReleased(false)
     {
     }
 
@@ -92,6 +93,7 @@ protected:
 
 private:
     T m_platformObject;
+    bool m_isReleased;
 };
 
 } // WebCore

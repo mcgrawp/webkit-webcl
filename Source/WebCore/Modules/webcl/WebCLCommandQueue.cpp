@@ -129,7 +129,7 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool block
     CCEvent* ccEvent = 0;
     if (event) {
         CCEvent platformEventObject = event->platformObject();
-        if (!event->holdsValidPlatformObject()) {
+        if (event->isReleased()) {
             ec = WebCLException::INVALID_EVENT;
             return;
         }
@@ -163,7 +163,7 @@ CCEvent* WebCLCommandQueue::ccEventFromWebCLEvent(WebCLEvent* event, ExceptionCo
     CCEvent* ccEvent = 0;
     if (event) {
         CCEvent platformEventObject = event->platformObject();
-        if (!event->holdsValidPlatformObject()) {
+        if (event->isReleased()) {
             ec = WebCLException::INVALID_EVENT;
             return ccEvent;
         }
@@ -756,7 +756,7 @@ void WebCLCommandQueue::enqueueMarker(WebCLEvent* event, ExceptionCode& ec)
         return;
     }
 
-    if (!event || !event->holdsValidPlatformObject()) {
+    if (!event || event->isReleased()) {
         ec = WebCLException::INVALID_EVENT;
         return;
     }
