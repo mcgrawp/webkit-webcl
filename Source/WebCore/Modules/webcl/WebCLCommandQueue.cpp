@@ -74,7 +74,7 @@ WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, ComputeCommandQueue 
 
 WebCLGetInfo WebCLCommandQueue::getInfo(CCenum paramName, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return WebCLGetInfo();
     }
@@ -106,7 +106,7 @@ WebCLGetInfo WebCLCommandQueue::getInfo(CCenum paramName, ExceptionCode& ec)
 void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, CCuint bufferSize, void* data,
     const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -177,7 +177,7 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool block
     const Vector<unsigned>& hostOrigin, const Vector<unsigned>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch,
     CCuint hostSlicePitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -229,7 +229,7 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool block
 
 void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRead, CCuint offset, ImageData* imageData, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -264,7 +264,7 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRe
 void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead, const Vector<unsigned>& origin, const Vector<unsigned>& region,
     CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -316,7 +316,7 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead,
 void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* sourceBuffer, CCbool blockingRead, CCuint offset, CCuint bufferSize,
     ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -351,7 +351,7 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blocki
     CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
     ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -406,7 +406,7 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, CCuint workDim
     const Vector<unsigned>& globalWorkSize, const Vector<unsigned>& localWorkSize, const Vector<RefPtr<WebCLEvent> >& events,
     WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -460,7 +460,7 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, CCuint workDim
 
 void WebCLCommandQueue::finish(ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -472,7 +472,7 @@ void WebCLCommandQueue::finish(ExceptionCode& ec)
 
 void WebCLCommandQueue::flush(ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -484,7 +484,7 @@ void WebCLCommandQueue::flush(ExceptionCode& ec)
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
     CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -537,7 +537,7 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrit
 void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* targetImage, const Vector<unsigned>& sourceOrigin,
     const Vector<unsigned>& targetOrigin, const Vector<unsigned>& region, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -583,7 +583,7 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
 void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *sourceImage, WebCLBuffer *targetBuffer, const Vector<unsigned>&
     sourceOrigin, const Vector<unsigned>& region, CCuint targetOffset, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -624,10 +624,10 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *sourceImage, WebCLB
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *sourceBuffer, WebCLImage *targetImage, CCuint sourceOffset,
+void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer* sourceBuffer, WebCLImage* targetImage, CCuint sourceOffset,
     const Vector<unsigned>& targetOrigin, const Vector<unsigned>& region, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -670,7 +670,7 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer *sourceBuffer, WebC
 void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer* targetBuffer, CCuint sourceOffset,
     CCuint targetOffset, CCuint sizeInBytes, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -701,7 +701,7 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
     const Vector<unsigned>& targetOrigin, const Vector<unsigned>& region, CCuint sourceRowPitch, CCuint sourceSlicePitch, CCuint targetRowPitch,
     CCuint targetSlicePitch, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -740,7 +740,7 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
 
 void WebCLCommandQueue::enqueueBarrier(ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -751,12 +751,12 @@ void WebCLCommandQueue::enqueueBarrier(ExceptionCode& ec)
 
 void WebCLCommandQueue::enqueueMarker(WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
 
-    if (!event || event->isReleased()) {
+    if (!WebCLInputChecker::validateWebCLObject(event)) {
         ec = WebCLException::INVALID_EVENT;
         return;
     }
@@ -777,7 +777,7 @@ void WebCLCommandQueue::releasePlatformObjectImpl()
 #if ENABLE(WEBGL)
 void WebCLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
@@ -805,7 +805,7 @@ void WebCLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryO
 
 void WebCLCommandQueue::enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }

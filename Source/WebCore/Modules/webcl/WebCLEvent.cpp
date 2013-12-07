@@ -59,7 +59,7 @@ WebCLEvent::WebCLEvent(CCEvent event)
 
 WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_EVENT;
         return WebCLGetInfo();
     }
@@ -104,7 +104,7 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionCode& ec)
 
 WebCLGetInfo WebCLEvent::getProfilingInfo(CCenum paramName, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_EVENT;
         return WebCLGetInfo();
     }
@@ -144,6 +144,11 @@ void WebCLEvent::setCallback(CCenum executionStatus, PassRefPtr<WebCLCallback> n
     // FIXME :: Callback implementation is not working. Need to rework.
     // Issue # 102
     return;
+}
+
+bool WebCLEvent::isPlatformObjectNeutralized() const
+{
+    return isReleased();
 }
 
 void WebCLEvent::releasePlatformObjectImpl()

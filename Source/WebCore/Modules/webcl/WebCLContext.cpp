@@ -86,7 +86,7 @@ WebCLContext::WebCLContext(ComputeContext* computeContext, PassRefPtr<WebCLConte
 
 WebCLGetInfo WebCLContext::getInfo(CCenum paramName, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return WebCLGetInfo();
     }
@@ -107,7 +107,7 @@ WebCLGetInfo WebCLContext::getInfo(CCenum paramName, ExceptionCode& ec)
 
 PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* device, CCenum properties, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -142,7 +142,7 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
 
 PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& programSource, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -157,7 +157,7 @@ PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& programSource
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBufferBase(CCenum memoryFlags, CCuint size, void* hostPtr, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -249,7 +249,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLImage
 PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat& imageFormat,
     void* data, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -395,7 +395,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescrip
 
 PassRefPtr<WebCLSampler> WebCLContext::createSampler(CCbool normCoords, CCenum addressingMode, CCenum filterMode, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -420,7 +420,7 @@ PassRefPtr<WebCLSampler> WebCLContext::createSampler(CCbool normCoords, CCenum a
 
 PassRefPtr<WebCLUserEvent> WebCLContext::createUserEvent(ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -479,7 +479,7 @@ void WebCLContext::LRUImageBufferCache::bubbleToFront(int idx)
 Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(CCenum memoryFlags, ExceptionCode &ec)
 {
     Vector<RefPtr<WebCLImageDescriptor> > imageDescriptors;
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return imageDescriptors;
     }
@@ -510,7 +510,7 @@ void WebCLContext::trackReleaseableWebCLObject(WeakPtr<WebCLObject> object)
 
 void WebCLContext::releaseAll()
 {
-    if (!platformObject())
+    if (isPlatformObjectNeutralized())
         return;
 
     for (size_t i = 0; i < m_descendantWebCLObjects.size(); ++i) {
@@ -534,7 +534,7 @@ void WebCLContext::releasePlatformObjectImpl()
 #if ENABLE(WEBGL)
 PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(CCenum flags, WebGLBuffer* webGLBuffer, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -549,7 +549,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(CCenum flags, WebGLBuff
 
 PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderbuffer(CCenum flags, WebGLRenderbuffer* renderbuffer, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }
@@ -564,7 +564,7 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderbuffer(CCenum flags, WebG
 
 PassRefPtr<WebCLImage> WebCLContext::createFromGLTexture(CCenum flags, CCenum textureTarget, GC3Dint miplevel, WebGLTexture* texture, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
     }

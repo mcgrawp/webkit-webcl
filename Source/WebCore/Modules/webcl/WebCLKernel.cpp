@@ -106,7 +106,7 @@ WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, CCKernel 
 
 WebCLGetInfo WebCLKernel::getInfo(CCenum kernelInfo, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_KERNEL;
         return WebCLGetInfo();
     }
@@ -141,7 +141,7 @@ WebCLGetInfo WebCLKernel::getInfo(CCenum kernelInfo, ExceptionCode& ec)
 
 WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_KERNEL;
         return WebCLGetInfo();
     }
@@ -210,7 +210,7 @@ void WebCLKernel::releasePlatformObjectImpl()
 
 void WebCLKernel::setArg(CCuint index, WebCLMemoryObject* memoryObject, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_KERNEL;
         return;
     }
@@ -232,7 +232,7 @@ void WebCLKernel::setArg(CCuint index, WebCLMemoryObject* memoryObject, Exceptio
 
 void WebCLKernel::setArg(CCuint index, WebCLSampler* sampler, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_KERNEL;
         return;
     }
@@ -254,7 +254,7 @@ void WebCLKernel::setArg(CCuint index, WebCLSampler* sampler, ExceptionCode& ec)
 
 void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_KERNEL;
         return;
     }

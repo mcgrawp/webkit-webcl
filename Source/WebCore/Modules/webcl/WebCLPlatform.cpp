@@ -60,7 +60,7 @@ WebCLPlatform::WebCLPlatform(CCPlatformID platformID)
 
 WebCLGetInfo WebCLPlatform::getInfo(CCenum platform_info, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_PLATFORM;
         return WebCLGetInfo();
     }
@@ -81,7 +81,7 @@ WebCLGetInfo WebCLPlatform::getInfo(CCenum platform_info, ExceptionCode& ec)
 
 Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(CCenum deviceType, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_PLATFORM;
         return Vector<RefPtr<WebCLDevice> >();
     }

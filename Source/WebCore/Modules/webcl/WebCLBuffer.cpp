@@ -80,7 +80,7 @@ WebCLBuffer::WebCLBuffer(WebCLContext* context, PlatformComputeObject clBuffer, 
 
 PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(CCenum memoryFlags, CCuint origin, CCuint size, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return 0;
     }

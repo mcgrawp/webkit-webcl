@@ -30,9 +30,8 @@ typedef unsigned long CLuint;
 [
     Conditional=WEBCL,
 ] interface WebCLKernel {
-    // FIXME: Wrong return value.
-    [StrictTypeChecking, Custom, RaisesException] void getInfo (CLenum kernelInfo);
-    [StrictTypeChecking, Custom, RaisesException] void getWorkGroupInfo(WebCLDevice device, CLenum paramName);
+    [StrictTypeChecking, Custom, RaisesException] any getInfo (CLenum name);
+    [StrictTypeChecking, Custom, RaisesException] any getWorkGroupInfo(WebCLDevice device, CLenum name);
 
     [RaisesException] void setArg(CLuint index, WebCLMemoryObject value);
     [RaisesException] void setArg(CLuint index, WebCLSampler value);

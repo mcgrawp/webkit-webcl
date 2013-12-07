@@ -69,7 +69,7 @@ WebCLSampler::WebCLSampler(WebCLContext* context, CCSampler sampler, CCbool norm
 
 WebCLGetInfo WebCLSampler::getInfo(CCenum infoType, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_SAMPLER;
         return WebCLGetInfo();
     }

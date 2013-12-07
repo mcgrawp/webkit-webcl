@@ -60,7 +60,7 @@ WebCLUserEvent::WebCLUserEvent(WebCLContext* ctx, CCEvent event)
 
 void WebCLUserEvent::setUserEventStatus(CCint executionStatus, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_EVENT;
         return;
     }

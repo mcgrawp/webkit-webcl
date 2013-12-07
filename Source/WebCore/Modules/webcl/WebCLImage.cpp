@@ -114,7 +114,7 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, C
 
 int WebCLImage::getGLTextureInfo(CCenum textureInfoType, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return 0;
     }
@@ -161,7 +161,7 @@ WebCLImage::WebCLImage(WebCLContext* context, PlatformComputeObject image, CCuin
 
 PassRefPtr<WebCLImageDescriptor> WebCLImage::getInfo(ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return 0;
     }

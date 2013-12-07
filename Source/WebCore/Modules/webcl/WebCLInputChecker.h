@@ -57,7 +57,7 @@ bool isValidPitchForArrayBufferView(unsigned long, ArrayBufferView*);
 template<class T>
 bool validateWebCLObject(WebCLObjectImpl<T>* object)
 {
-    return object && object->platformObject();
+    return object && !object->isPlatformObjectNeutralized();
 }
 
 }

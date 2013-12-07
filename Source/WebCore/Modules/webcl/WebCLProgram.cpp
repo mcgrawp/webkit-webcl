@@ -68,7 +68,7 @@ WebCLProgram::WebCLProgram(WebCLContext*context, CCProgram program, const String
 
 WebCLGetInfo WebCLProgram::getInfo(CCenum infoType, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_PROGRAM;
         return WebCLGetInfo();
     }
@@ -92,7 +92,7 @@ WebCLGetInfo WebCLProgram::getInfo(CCenum infoType, ExceptionCode& ec)
 
 WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, CCenum infoType, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_PROGRAM;
         return WebCLGetInfo();
     }
@@ -133,7 +133,7 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, CCenum infoType, Ex
 
 PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_PROGRAM;
         return 0;
     }
@@ -143,7 +143,7 @@ PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, Exc
 
 Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_PROGRAM;
         return Vector<RefPtr<WebCLKernel> >();
     }
@@ -162,7 +162,7 @@ Vector<WeakPtr<WebCLProgram> >* WebCLProgram::s_thisPointers =  nullptr;
 
 void WebCLProgram::callbackProxy(CCProgram program, void* userData)
 {
-	UNUSED_PARAM(program);
+    UNUSED_PARAM(program);
     size_t index = *((int*)userData);
     ASSERT(index < s_thisPointers->size());
 
@@ -173,7 +173,7 @@ void WebCLProgram::callbackProxy(CCProgram program, void* userData)
 
 void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const String& buildOptions, PassRefPtr<WebCLCallback> callback, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_PROGRAM;
         return;
     }

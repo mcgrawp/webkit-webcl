@@ -47,6 +47,11 @@ public:
     WebCLGetInfo getInfo (CCenum, ExceptionCode&);
     Vector<RefPtr<WebCLDevice> > getDevices(CCenum, ExceptionCode&);
 
+    virtual bool isPlatformObjectNeutralized() const { return false; }
+    virtual bool isReleased() const { ASSERT_NOT_REACHED(); return false; }
+    virtual void release() { ASSERT_NOT_REACHED();}
+    virtual void releasePlatformObject() { ASSERT_NOT_REACHED(); }
+
 private:
     WebCLPlatform(CCPlatformID);
 

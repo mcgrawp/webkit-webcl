@@ -72,14 +72,18 @@ public:
 
     virtual void releasePlatformObject()
     {
-        if (!m_platformObject)
+        if (isPlatformObjectNeutralized())
             return;
-
-        ASSERT(!m_isReleased);
 
         releasePlatformObjectImpl();
         m_platformObject = 0;
         m_isReleased = true;
+    }
+
+    virtual bool isPlatformObjectNeutralized() const
+    {
+        ASSERT(!!platformObject() != isReleased());
+        return isReleased();
     }
 
 protected:

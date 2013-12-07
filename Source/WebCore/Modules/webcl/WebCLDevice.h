@@ -45,6 +45,11 @@ public:
     WebCLGetInfo getInfo(CCenum, ExceptionCode&);
     const WebCLPlatform* platform();
 
+    virtual bool isPlatformObjectNeutralized() const { return false; }
+    virtual bool isReleased() const { ASSERT_NOT_REACHED(); return false; }
+    virtual void release() { ASSERT_NOT_REACHED();}
+    virtual void releasePlatformObject() { ASSERT_NOT_REACHED(); }
+
 private:
     WebCLDevice(CCDeviceID, const WebCLPlatform*);
     const WebCLPlatform* m_platform;

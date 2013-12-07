@@ -58,7 +58,7 @@ WebCLMemoryObject::WebCLMemoryObject(WebCLContext* context, PlatformComputeObjec
 
 WebCLGetInfo WebCLMemoryObject::getInfo(CCenum paramName, ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return WebCLGetInfo();
     }
@@ -119,7 +119,7 @@ bool WebCLMemoryObject::sharesGLResources() const
 #if ENABLE(WEBGL)
 WebCLGLObjectInfo* WebCLMemoryObject::getGLObjectInfo(ExceptionCode& ec)
 {
-    if (!platformObject()) {
+    if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return 0;
     }

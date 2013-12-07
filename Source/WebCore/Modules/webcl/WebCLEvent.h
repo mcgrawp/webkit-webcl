@@ -44,9 +44,12 @@ public:
     static PassRefPtr<WebCLEvent> create();
     WebCLGetInfo getInfo(CCenum, ExceptionCode&);
     WebCLGetInfo getProfilingInfo(CCenum, ExceptionCode&);
-    void setCallback(CCenum, PassRefPtr<WebCLCallback>, ExceptionCode&);
 
+    void setCallback(CCenum, PassRefPtr<WebCLCallback>, ExceptionCode&);
     void setAssociatedCommandQueue(WebCLCommandQueue* commandQueue);
+
+    virtual bool isPlatformObjectNeutralized() const;
+
 protected:
     WebCLEvent(CCEvent);
     virtual void releasePlatformObjectImpl();
