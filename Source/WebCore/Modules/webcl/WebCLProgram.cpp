@@ -166,7 +166,7 @@ void WebCLProgram::callbackProxy(CCProgram program, void* userData)
     size_t index = *((int*)userData);
     ASSERT(index < s_thisPointers->size());
 
-    WeakPtr<WebCLProgram> webCLProgram = WebCLProgram::s_thisPointers->at(index - 1);
+    WeakPtr<WebCLProgram> webCLProgram = WebCLProgram::s_thisPointers->at(index);
     if (webCLProgram.get())
         webCLProgram.get()->callEvent();
 }
@@ -232,7 +232,7 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
         callbackProxyPtr = &callbackProxy;
     }
 
-    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, buildOptions, callbackProxyPtr, s_thisPointers ? s_thisPointers->size() : 0);
+    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, buildOptions, callbackProxyPtr, s_thisPointers ? s_thisPointers->size() - 1 : 0);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
