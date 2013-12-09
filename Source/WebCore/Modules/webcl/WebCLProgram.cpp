@@ -219,11 +219,6 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
         }
     }
 
-    // As per the specification, implicitly set -cl-std=CL1.1.
-    StringBuilder webclBuildOptions;
-    webclBuildOptions.append(buildOptions);
-    webclBuildOptions.append(" -cl-std=CL1.1");
-
     Vector<CCDeviceID> ccDevices;
     for (size_t i = 0; i < devices.size(); i++)
         ccDevices.append(devices[i]->platformObject());
@@ -237,7 +232,7 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
         callbackProxyPtr = &callbackProxy;
     }
 
-    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, webclBuildOptions.toString(), callbackProxyPtr, s_thisPointers ? s_thisPointers->size() : 0);
+    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, buildOptions, callbackProxyPtr, s_thisPointers ? s_thisPointers->size() : 0);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
