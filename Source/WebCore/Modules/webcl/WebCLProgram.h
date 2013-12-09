@@ -68,9 +68,11 @@ private:
     };
 
     static Vector<WeakPtr<WebCLProgram> >* s_thisPointers;
+
     RefPtr<WebCLCallback> m_callback;
     
     RefPtr<WebCLContext> m_context;
+    WeakPtrFactory<WebCLProgram> m_weakPtrFactory;
     String m_programSource;
     String m_programSourceWithCommentsStripped;
 };

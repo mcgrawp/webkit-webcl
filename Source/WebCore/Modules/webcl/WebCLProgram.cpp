@@ -61,6 +61,7 @@ PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const Strin
 WebCLProgram::WebCLProgram(WebCLContext*context, CCProgram program, const String& programSource)
     : WebCLObjectImpl(program)
     , m_context(context)
+    , m_weakPtrFactory(this)
     , m_programSource(programSource)
 {
     context->trackReleaseableWebCLObject(createWeakPtr());
@@ -223,12 +224,11 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
     for (size_t i = 0; i < devices.size(); i++)
         ccDevices.append(devices[i]->platformObject());
     pfnNotify callbackProxyPtr = 0;
-    WeakPtrFactory<WebCLProgram> programWeakPointer(const_cast<WebCLProgram*>(this));
     if (callback) {
         m_callback = callback;
         if (!s_thisPointers)
             s_thisPointers = new Vector<WeakPtr<WebCLProgram> >();
-        s_thisPointers->append(programWeakPointer.createWeakPtr());
+        s_thisPointers->append(m_weakPtrFactory.createWeakPtr());
         callbackProxyPtr = &callbackProxy;
     }
 

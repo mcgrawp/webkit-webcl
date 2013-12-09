@@ -122,9 +122,6 @@ WebCLGetInfo WebCLKernel::getInfo(CCenum kernelInfo, ExceptionCode& ec)
             return WebCLGetInfo(static_cast<unsigned>(numberOfArgs));
         break;
     }
-
-    // FIXME: This backpointer to m_program can be dangling in
-    // case it gets deleted (JS gc'ed), etc.
     case ComputeContext::KERNEL_PROGRAM:
         return WebCLGetInfo(m_program.get());
     case ComputeContext::KERNEL_CONTEXT:
