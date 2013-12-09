@@ -76,7 +76,9 @@ public:
         if (isPlatformObjectNeutralized())
             return;
 
-        releasePlatformObjectImpl();
+        if (platformObject())
+            releasePlatformObjectImpl();
+
         m_platformObject = 0;
         m_isReleased = true;
     }

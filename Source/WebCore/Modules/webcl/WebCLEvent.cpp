@@ -153,6 +153,7 @@ bool WebCLEvent::isPlatformObjectNeutralized() const
 
 void WebCLEvent::releasePlatformObjectImpl()
 {
+    ASSERT(m_commandQueue);
     CCerror computeContextErrorCode = m_commandQueue->m_context->computeContext()->releaseEvent(platformObject());
     ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
 }
