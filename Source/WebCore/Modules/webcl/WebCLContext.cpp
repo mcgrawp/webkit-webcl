@@ -39,6 +39,7 @@
 #include "WebCLBuffer.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLEvent.h"
+#include "WebCLHTMLInterop.h"
 #include "WebCLImage.h"
 #include "WebCLImageDescriptor.h"
 #include "WebCLProgram.h"
@@ -206,21 +207,20 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, ImageData
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
 {
-    if (!srcCanvas || !srcCanvas->buffer()) {
+    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!srcCanvas) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
 
-    RefPtr<ImageData> imageData = srcCanvas->getImageData();
-    if (!imageData || !imageData->data()) {
+    void* hostPtr = nullptr;
+    size_t canvasSize = 0;
+    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
+    if (!hostPtr || !canvasSize) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
-
-    void* hostPtr = imageData->data()->data();
-    CCuint bufferSize = imageData->data()->length();
-
-    return createBufferBase(memoryFlags, bufferSize, hostPtr, ec);
+    return createBufferBase(memoryFlags, canvasSize, hostPtr, ec);
 }
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLImageElement* srcImage, ExceptionCode& ec)
@@ -277,21 +277,22 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint widt
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
 {
-    if (!srcCanvas || !srcCanvas->getImageData()) {
-        ec = WebCLException::INVALID_HOST_PTR;
-        return 0;
-    }
-    RefPtr<ImageData> imageData = srcCanvas->getImageData();
-
-    if (!imageData && !imageData->data() && !imageData->data()->data()) {
+    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!srcCanvas) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
 
-    void* hostPtr = imageData->data()->data();
+    void* hostPtr = nullptr;
+    size_t canvasSize = 0;
+    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
+    if (!hostPtr || !canvasSize) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return 0;
+    }
+
     CCuint width = srcCanvas->width();
     CCuint height = srcCanvas->height();
-
     CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
     return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, hostPtr, ec);
 }

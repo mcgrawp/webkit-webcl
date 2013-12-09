@@ -64,31 +64,33 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
-    [RaisesException] void enqueueReadBuffer(WebCLBuffer bufferId,
+    [RaisesException] void enqueueReadBuffer(WebCLBuffer buffer,
             CLboolean blockingRead,
-            CLuint offset,
-            CLuint bufferSize,
-            ArrayBufferView ptr,
+            CLuint bufferOffset,
+            CLuint numBytes,
+            ArrayBufferView hostPtr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
-    [RaisesException] void enqueueReadBuffer(WebCLBuffer bufferId,
+    [RaisesException] void enqueueReadBufferRect(WebCLBuffer buffer,
             CLboolean blockingRead,
-            CLuint offset,
-            ImageData ptr,
-            [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
-            [Default=Undefined] optional WebCLEvent event);
-
-    [RaisesException] void enqueueReadBufferRect(WebCLBuffer bufferId,
-            CLboolean blockingRead,
-            sequence<CLuint> sourceOrigin,
-            sequence<CLuint> targetOrigin,
+            sequence<CLuint> bufferOrigin,
+            sequence<CLuint> hostOrigin,
             sequence<CLuint> region,
-            CLuint sourceRowPitch,
-            CLuint sourceSlicePitch,
-            CLuint targetRowPitch,
-            CLuint targetSlicePitch,
-            ArrayBufferView ptr,
+            CLuint bufferRowPitch,
+            CLuint bufferSlicePitch,
+            CLuint hostRowPitch,
+            CLuint hostSlicePitch,
+            ArrayBufferView hostPtr,
+            [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            [Default=Undefined] optional WebCLEvent event);
+
+   [RaisesException] void enqueueReadImage(WebCLImage image,
+            CLboolean blockingRead,
+            sequence<CLuint> origin,
+            sequence<CLuint> region,
+            CLuint hostRowPitch,
+            ArrayBufferView hostPtr,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
@@ -109,14 +111,6 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
-    [RaisesException] void enqueueReadImage(WebCLImage image,
-            CLboolean blockingRead,
-            sequence<CLuint> origin,
-            sequence<CLuint> region,
-            CLuint rowPitch,
-            ArrayBufferView ptr,
-            [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
-            [Default=Undefined] optional WebCLEvent event);
 
     [RaisesException] void enqueueCopyBuffer(WebCLBuffer sourceBuffer,
             WebCLBuffer targetBuffer,
@@ -169,6 +163,32 @@ typedef unsigned long CLuint;
     [RaisesException] void finish();
 
     [RaisesException] void flush();
+
+    [RaisesException] void enqueueReadBuffer(WebCLBuffer bufferId,
+            CLboolean blockingRead,
+            CLuint bufferOffset,
+            CLuint numBytes,
+            HTMLCanvasElement dstCanvas,
+            [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            [Default=Undefined] optional WebCLEvent event);
+
+    [RaisesException] void enqueueReadBufferRect(WebCLBuffer buffer,
+            CLboolean blockingRead,
+            sequence<CLuint> bufferOrigin,
+            sequence<CLuint> dstOrigin,
+            sequence<CLuint> region,
+            CLuint bufferRowPitch,
+            HTMLCanvasElement dstCanvas,
+            [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            [Default=Undefined] optional WebCLEvent event);
+
+    [RaisesException] void enqueueReadImage(WebCLImage image,
+            CLboolean blockingRead,
+            sequence<CLuint> origin,
+            sequence<CLuint> region,
+            HTMLCanvasElement dstCanvas,
+            [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            [Default=Undefined] optional WebCLEvent event);
 
 #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
     [RaisesException] void enqueueAcquireGLObjects(sequence<WebCLMemoryObject> memObjects,

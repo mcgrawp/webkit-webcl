@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class ImageData;
+class HTMLCanvasElement;
 class WebCLBuffer;
 class WebCLContext;
 class WebCLDevice;
@@ -59,12 +60,14 @@ public:
         const Vector<unsigned>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
         ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
-    void enqueueReadBuffer(WebCLBuffer*, CCbool blockingWrite, CCuint bufferOffset, ImageData*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
     void enqueueReadBuffer(WebCLBuffer*, CCbool blockingWrite, CCuint bufferOffset, CCuint numBytes, ArrayBufferView*,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
-    void enqueueReadBufferRect(WebCLBuffer*, CCbool blockingWrite, const Vector<unsigned>& bufferOrigin, const Vector<unsigned>& hostOrigin,
-        const Vector<unsigned>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
+    void enqueueReadBufferRect(WebCLBuffer*, CCbool blockingWrite, const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin,
+        const Vector<CCuint>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
+        ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+
+    void enqueueReadImage(WebCLImage*, CCbool blockingWrite,  const Vector<CCuint>& origin, const Vector<CCuint>& region, CCuint rowPitch,
         ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void enqueueNDRangeKernel(WebCLKernel*, CCuint workDim, const Vector<unsigned>& globalWorkOffsets, const Vector<unsigned>& globalWorkSize,
@@ -74,9 +77,6 @@ public:
     void flush(ExceptionCode&);
 
     void enqueueWriteImage(WebCLImage*, CCbool blockingWrite,  const Vector<unsigned>& origin, const Vector<unsigned>& region, CCuint inputRowPitch,
-        ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
-
-    void enqueueReadImage(WebCLImage*, CCbool blockingWrite,  const Vector<unsigned>& origin, const Vector<unsigned>& region, CCuint rowPitch,
         ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void enqueueCopyBuffer(WebCLBuffer*, WebCLBuffer*, CCuint sourceOffset, CCuint targetOffset, CCuint sizeInBytes,
@@ -104,12 +104,26 @@ public:
     void enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryObject> >&, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 #endif
 
+    void enqueueReadBuffer(WebCLBuffer*, CCbool blockingWrite, CCuint bufferOffset, CCuint numBytes, HTMLCanvasElement*,
+        const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+
+    void enqueueReadBufferRect(WebCLBuffer*, CCbool blockingWrite, const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin,
+        const Vector<CCuint>& region, CCuint bufferRowPitch, HTMLCanvasElement*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+
+    void enqueueReadImage(WebCLImage*, CCbool blockingWrite,  const Vector<CCuint>& origin, const Vector<CCuint>& region, HTMLCanvasElement*,
+        const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+
 private:
     WebCLCommandQueue(WebCLContext*, ComputeCommandQueue*, const RefPtr<WebCLDevice>&);
 
     friend class WebCLEvent;
 
     void enqueueWriteBufferBase(WebCLBuffer*, CCbool blockingWrite, CCuint, CCuint, void*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueReadBufferBase(WebCLBuffer*, CCbool blockingRead, CCuint, CCuint, void* hostPtr, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueReadBufferRectBase(WebCLBuffer*, CCbool blockingRead, const Vector<CCuint>&, const Vector<CCuint>&, const Vector<CCuint>&, CCuint, CCuint,
+        CCuint, CCuint, void* hostPtr, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueReadImageBase(WebCLImage*, CCbool blockingRead, const Vector<CCuint>&, const Vector<CCuint>&, CCuint, void* hostPtr, const Vector<RefPtr<WebCLEvent> >&,
+        WebCLEvent*, ExceptionCode&);
 
     void releasePlatformObjectImpl();
 
