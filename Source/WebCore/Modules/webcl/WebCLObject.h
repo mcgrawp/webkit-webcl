@@ -60,9 +60,7 @@ protected:
 template <class T>
 class WebCLObjectImpl : public WebCLObject {
 public:
-    virtual ~WebCLObjectImpl()
-    {
-    }
+    virtual ~WebCLObjectImpl() { }
 
     T platformObject() const { return m_platformObject; }
     T& platformObjectRef() { return m_platformObject; }
