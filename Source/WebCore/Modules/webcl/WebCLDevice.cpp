@@ -99,7 +99,6 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_MEM_BASE_ADDR_ALIGN: 
     case ComputeContext::DEVICE_MAX_COMPUTE_UNITS: 
     case ComputeContext::DEVICE_GLOBAL_MEM_CACHELINE_SIZE:
-    case ComputeContext::DEVICE_GLOBAL_MEM_CACHE_SIZE:
     case ComputeContext::DEVICE_GLOBAL_MEM_CACHE_TYPE: {
         CCuint infoValue = 0;
         err = ComputeContext::getDeviceInfo(platformObject(), infoType, &infoValue);
@@ -133,6 +132,7 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_LOCAL_MEM_SIZE:
     case ComputeContext::DEVICE_MAX_CONSTANT_BUFFER_SIZE:
     case ComputeContext::DEVICE_GLOBAL_MEM_SIZE:
+    case ComputeContext::DEVICE_GLOBAL_MEM_CACHE_SIZE:
     case ComputeContext::DEVICE_MAX_MEM_ALLOC_SIZE: { // unsigned long long
         CCulong infoValue = 0;
         err = ComputeContext::getDeviceInfo(platformObject(), infoType, &infoValue);
