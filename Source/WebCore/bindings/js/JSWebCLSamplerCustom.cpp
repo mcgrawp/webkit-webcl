@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -33,31 +33,25 @@
 
 #include "JSWebCLCustom.h"
 
-using namespace JSC;
-using namespace std;
-
 namespace WebCore {
-
 
 JSValue JSWebCLSampler::getInfo(JSC::ExecState* exec)
 {
-	if (exec->argumentCount() != 1)
-		return throwSyntaxError(exec);
+    if (exec->argumentCount() != 1)
+        return throwSyntaxError(exec);
 
-	ExceptionCode ec = 0;
-	WebCLSampler* sampler = static_cast<WebCLSampler*>(impl());
-	if (exec->hadException())
-		return jsUndefined();
-	unsigned sampler_info  = exec->argument(0).toInt32(exec);
-	if (exec->hadException())
-		return jsUndefined();
-	printf(" %d =>>  ", sampler_info);
-	WebCLGetInfo info = sampler->getInfo(sampler_info,ec);
-	if (ec) {
-		setDOMException(exec, ec);
-		return jsUndefined();
-	}
-	return toJS(exec, globalObject(), info);
+    unsigned infoName = exec->argument(0).toInt32(exec);
+    if (exec->hadException())
+        return jsUndefined();
+
+    ExceptionCode ec = 0;
+    WebCLSampler* sampler = static_cast<WebCLSampler*>(impl());
+    WebCLGetInfo info = sampler->getInfo(infoName, ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+    return toJS(exec, globalObject(), info);
 }
 
 } // namespace WebCore
