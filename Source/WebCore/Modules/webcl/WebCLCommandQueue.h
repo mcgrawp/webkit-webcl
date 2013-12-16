@@ -50,7 +50,7 @@ typedef ComputeCommandQueue* ComputeCommandQueuePtr;
 class WebCLCommandQueue : public WebCLObjectImpl<ComputeCommandQueuePtr> {
 public:
     ~WebCLCommandQueue();
-    static PassRefPtr<WebCLCommandQueue> create(WebCLContext*, CCenum queueProperties, const RefPtr<WebCLDevice>&, ExceptionCode&);
+    static PassRefPtr<WebCLCommandQueue> create(WebCLContext*, CCenum queueProperties, WebCLDevice*, ExceptionCode&);
     WebCLGetInfo getInfo(CCenum, ExceptionCode&);
 
     void enqueueWriteBuffer(WebCLBuffer*, CCbool blockingWrite, CCuint bufferOffset, CCuint numBytes, ArrayBufferView*,
@@ -114,7 +114,7 @@ public:
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
 private:
-    WebCLCommandQueue(WebCLContext*, ComputeCommandQueue*, const RefPtr<WebCLDevice>&);
+    WebCLCommandQueue(WebCLContext*, ComputeCommandQueue*, WebCLDevice*);
 
     friend class WebCLEvent;
 
@@ -130,7 +130,7 @@ private:
     CCEvent* ccEventFromWebCLEvent(WebCLEvent*, ExceptionCode&);
 
     RefPtr<WebCLContext> m_context;
-    const RefPtr<WebCLDevice> m_device;
+    RefPtr<WebCLDevice> m_device;
 };
 
 } // namespace WebCore

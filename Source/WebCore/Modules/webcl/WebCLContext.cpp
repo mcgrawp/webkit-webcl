@@ -138,7 +138,7 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
     } else
         webCLDevice = device;
 
-    return WebCLCommandQueue::create(this, properties, webCLDevice, ec);
+    return WebCLCommandQueue::create(this, properties, webCLDevice.get(), ec);
 }
 
 PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& programSource, ExceptionCode& ec)
