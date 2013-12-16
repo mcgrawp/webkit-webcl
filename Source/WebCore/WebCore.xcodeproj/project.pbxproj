@@ -8424,7 +8424,6 @@
 		758C8E7217887AD600FAD9BA /* WebCLException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLException.cpp; sourceTree = "<group>"; };
 		758C8E7317887AD600FAD9BA /* WebCLException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLException.h; sourceTree = "<group>"; };
 		758C8E7417887AD600FAD9BA /* WebCLException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCLException.idl; sourceTree = "<group>"; };
-		758C8E7517887AD600FAD9BA /* WebCLExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLExtension.h; sourceTree = "<group>"; };
 		758C8E7617887AD600FAD9BA /* WebCLExtensionsAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLExtensionsAccessor.cpp; sourceTree = "<group>"; };
 		758C8E7717887AD600FAD9BA /* WebCLExtensionsAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLExtensionsAccessor.h; sourceTree = "<group>"; };
 		758C8E7A17887AD600FAD9BA /* WebCLGetInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLGetInfo.cpp; sourceTree = "<group>"; };
@@ -15094,7 +15093,6 @@
 				758C8E7217887AD600FAD9BA /* WebCLException.cpp */,
 				758C8E7317887AD600FAD9BA /* WebCLException.h */,
 				758C8E7417887AD600FAD9BA /* WebCLException.idl */,
-				758C8E7517887AD600FAD9BA /* WebCLExtension.h */,
 				758C8E7617887AD600FAD9BA /* WebCLExtensionsAccessor.cpp */,
 				758C8E7717887AD600FAD9BA /* WebCLExtensionsAccessor.h */,
 				758C8E7A17887AD600FAD9BA /* WebCLGetInfo.cpp */,
