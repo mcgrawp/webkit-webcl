@@ -32,7 +32,6 @@
 
 #include "WebCLContextProperties.h"
 #include "WebCLException.h"
-#include "WebCLExtension.h"
 #include "WebCLInputChecker.h"
 #include "WebCLPlatform.h"
 
