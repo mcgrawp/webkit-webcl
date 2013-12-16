@@ -51,7 +51,7 @@ WebCLCommandQueue::~WebCLCommandQueue()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, CCenum properties, const RefPtr<WebCLDevice>& webCLDevice, ExceptionCode& ec)
+PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, CCenum properties, WebCLDevice* webCLDevice, ExceptionCode& ec)
 {
     CCerror error = ComputeContext::SUCCESS;
     ComputeCommandQueue* computeCommandQueue = context->computeContext()->createCommandQueue(webCLDevice->platformObject(), properties, error);
@@ -65,7 +65,7 @@ PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, C
     return queue.release();
 }
 
-WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, ComputeCommandQueue *computeCommandQueue, const RefPtr<WebCLDevice>& webCLDevice)
+WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, ComputeCommandQueue *computeCommandQueue, WebCLDevice* webCLDevice)
     : WebCLObjectImpl(computeCommandQueue)
     , m_context(context)
     , m_device(webCLDevice)

@@ -30,10 +30,8 @@ typedef unsigned long CLenum;
     Conditional=WEBCL,
     Constructor,
 ] interface WebCLEvent {
-    // FIXME: wrong return type of all three methods below. It should be "any".
-    [StrictTypeChecking, Custom, RaisesException] void getInfo(CLenum paramName);
-    [StrictTypeChecking, Custom, RaisesException] void getInfo(CLenum paramName);
-    [StrictTypeChecking, Custom, RaisesException] void getProfilingInfo(CLenum paramName);
+    [StrictTypeChecking, Custom, RaisesException] any getInfo(CLenum paramName);
+    [StrictTypeChecking, Custom, RaisesException] any getProfilingInfo(CLenum paramName);
     [StrictTypeChecking, Custom, RaisesException] void setCallback(CLenum execStatus,  WebCLCallback notifyCallback);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
