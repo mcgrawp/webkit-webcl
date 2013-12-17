@@ -52,53 +52,66 @@ namespace WebCore {
 class WebCLGetInfo;
 class WebCLExtension;
 
-// JSDictionary helper functions
-static inline void setPlatform(WebCLContextProperties* properties, const RefPtr<WebCLPlatform>& platform)
-{
-    properties->setPlatform(platform);
-}
-
-static inline void setDevices(WebCLContextProperties* properties, const Vector<RefPtr<WebCLDevice> >& devices)
-{
-    properties->setDevices(devices);
-}
-
-static inline void setDeviceType(WebCLContextProperties* properties, const unsigned long& deviceType)
-{
-    properties->setDeviceType(deviceType);
-}
-
-#if ENABLE(WEBGL)
-static inline void setGLContext(WebCLContextProperties* properties, const RefPtr<WebGLRenderingContext>& context)
-{
-    properties->setGLContext(context);
-}
-#endif
-
-static bool parseContextProperties(ExecState* exec, WebCLContextProperties* properties, unsigned argumentIndex)
+static void parseContextProperties(ExecState* exec, WebCLContextProperties* properties, unsigned argumentIndex, ExceptionCode& ec)
 {
     JSValue value = exec->argument(argumentIndex);
-    if (!value.isObject())
-        return false;
+    if (!value.isObject()) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
 
     // Given the above test, this will always yield an object.
     JSObject* object = value.toObject(exec);
 
-    // Create the dictionary wrapper from the initializer object.
-    JSDictionary dictionary(exec, object);
-    if (!dictionary.tryGetProperty("platform", properties, setPlatform))
-        return false;
-    if (!dictionary.tryGetProperty("devices", properties, setDevices))
-        return false;
-    if (!dictionary.tryGetProperty("deviceType", properties, setDeviceType))
-        return false;
+    Vector<RefPtr<WebCLDevice> > devices;
+    Identifier devicesIdentifier(exec, "devices");
+    if (object->hasProperty(exec, devicesIdentifier)) {
+        JSValue value = object->get(exec, devicesIdentifier);
+        if (!value.isNull()) {
+            devices = toRefPtrNativeArray<WebCLDevice, JSWebCLDevice>(exec, value, &toWebCLDevice);
+            if (!devices.size()) {
+                ec = WebCLException::INVALID_DEVICE;
+                return;
+            }
+            properties->setDevices(devices);
+            // Finish the algorithm right way because spec says
+            // the other fields are ignored if 'devices' is valid.
+            return;
+        }
+    }
 
-    return true;
+    WebCLPlatform* platform = 0;
+    Identifier platformIdentifier(exec, "platform");
+    if (object->hasProperty(exec, platformIdentifier)) {
+        JSValue value = object->get(exec, platformIdentifier);
+        if (!value.isNull()) {
+            platform = toWebCLPlatform(object->get(exec, platformIdentifier));
+            if (!platform) {
+                ec = WebCLException::INVALID_PLATFORM;
+                return;
+            }
+            properties->setPlatform(platform);
+        }
+    }
+
+    unsigned deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
+    Identifier deviceTypeIdentifier(exec, "deviceType");
+    if (object->hasProperty(exec, deviceTypeIdentifier)) {
+        JSValue value = object->get(exec, deviceTypeIdentifier);
+        if (!value.isNull()) {
+            deviceType = value.toUInt32(exec);
+            if (!WebCLInputChecker::isValidDeviceType(deviceType)) {
+                ec = WebCLException::INVALID_DEVICE_TYPE;
+                return;
+            }
+            properties->setDeviceType(deviceType);
+        }
+    }
 }
 
 // If there is one argument, we have to figure out if it is
 // a WebGLRenderingContext or a WebCLContextProperties (dictionary).
-static bool handleOneArgument(ExecState* exec, RefPtr<WebCLContextProperties>& properties)
+static void handleOneArgument(ExecState* exec, WebCLContextProperties* properties, ExceptionCode& ec)
 {
     unsigned argumentCount = exec->argumentCount();
     ASSERT_UNUSED(argumentCount, argumentCount == 1);
@@ -106,30 +119,27 @@ static bool handleOneArgument(ExecState* exec, RefPtr<WebCLContextProperties>& p
     if (exec->argument(0).inherits(&JSWebGLRenderingContext::s_info)) {
         RefPtr<WebGLRenderingContext> gl = toWebGLRenderingContext(exec->argument(0));
         properties->setGLContext(gl.get());
-    } else {
-        if (!parseContextProperties(exec, properties.get(), 0 /*index*/))
-            return false;
+        return;
     }
-    return true;
+
+    parseContextProperties(exec, properties, 0 /*index*/, ec);
 }
 
 // If there is two arguments, the first one has to be a valid non-null WebGLRenderingContext.
 // Second is a possibly-null WebCLContextProperties (dictionary).
-static bool handleTwoArguments(ExecState* exec, RefPtr<WebCLContextProperties>& properties)
+static void handleTwoArguments(ExecState* exec, WebCLContextProperties* properties, ExceptionCode& ec)
 {
     unsigned argumentCount = exec->argumentCount();
     ASSERT_UNUSED(argumentCount, argumentCount == 2);
 
     JSValue argument0 = exec->argument(0);
     if (!argument0.inherits(&JSWebGLRenderingContext::s_info))
-        return false;
+        return;
+
     RefPtr<WebGLRenderingContext> gl = toWebGLRenderingContext(argument0);
     properties->setGLContext(gl.get());
 
-    if (!parseContextProperties(exec, properties.get(), 1 /*index*/))
-        return false;
-
-    return true;
+    parseContextProperties(exec, properties, 1 /*index*/, ec);
 }
 
 JSValue JSWebCL::createContext(ExecState* exec)
@@ -145,9 +155,14 @@ JSValue JSWebCL::createContext(ExecState* exec)
     if (!argumentCount)
         properties = 0;
     else if (argumentCount == 1)
-        handleOneArgument(exec, properties);
+        handleOneArgument(exec, properties.get(), ec);
     else if (argumentCount == 2)
-        handleTwoArguments(exec, properties);
+        handleTwoArguments(exec, properties.get(), ec);
+
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
 
     webCLContext = impl()->createContext(properties.get(), ec);
     if (ec) {
