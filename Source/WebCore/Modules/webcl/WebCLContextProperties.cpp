@@ -58,9 +58,9 @@ WebCLContextProperties::WebCLContextProperties(PassRefPtr<WebCLPlatform> platfor
 {
 }
 
-RefPtr<WebCLPlatform>& WebCLContextProperties::platform()
+WebCLPlatform* WebCLContextProperties::platform()
 {
-    return m_platform;
+    return m_platform.get();
 }
 
 void WebCLContextProperties::setPlatform(PassRefPtr<WebCLPlatform> platform)
@@ -69,12 +69,12 @@ void WebCLContextProperties::setPlatform(PassRefPtr<WebCLPlatform> platform)
     m_ccProperties.clear();
 }
 
-Vector<RefPtr<WebCLDevice> >& WebCLContextProperties::devices()
+const Vector<RefPtr<WebCLDevice> >& WebCLContextProperties::devices() const
 {
     return m_devices;
 }
 
-void WebCLContextProperties::setDevices(Vector<RefPtr<WebCLDevice> > devices)
+void WebCLContextProperties::setDevices(const Vector<RefPtr<WebCLDevice> >& devices)
 {
     m_devices = devices;
     m_ccProperties.clear();
@@ -92,9 +92,9 @@ void WebCLContextProperties::setDeviceType(CCenum type)
 }
 
 #if ENABLE(WEBGL)
-RefPtr<WebGLRenderingContext>& WebCLContextProperties::glContext()
+WebGLRenderingContext* WebCLContextProperties::glContext()
 {
-    return m_webGLRenderingContext;
+    return m_webGLRenderingContext.get();
 }
 
 void WebCLContextProperties::setGLContext(PassRefPtr<WebGLRenderingContext> webGLRenderingContext)
