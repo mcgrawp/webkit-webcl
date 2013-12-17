@@ -351,9 +351,18 @@ static cl_mem_flags computeMemoryTypeToCL(int memoryType)
     return clMemoryType;
 }
 
-ComputeContext::ComputeContext(CCContextProperties* contextProperties, const Vector<CCDeviceID>& devices, CCerror& error)
+// NOTE: Some OpenCL platforms have a bug where passing array with only the terminator (i.e. 0)
+// only works if it is a literal array like {0}.
+ComputeContext::ComputeContext(Vector<CCContextProperties> contextProperties, const Vector<CCDeviceID>& devices, CCerror& error)
 {
-    m_clContext = clCreateContext(contextProperties, devices.size(), devices.data(), 0, 0, &error);
+    CCContextProperties* ccContextProperties = contextProperties.size() > 1 ? contextProperties.data() : 0;
+    m_clContext = clCreateContext(ccContextProperties, devices.size(), devices.data(), 0, 0, &error);
+}
+
+ComputeContext::ComputeContext(Vector<CCContextProperties> contextProperties, unsigned deviceType, CCerror& error)
+{
+    CCContextProperties* ccContextProperties = contextProperties.size() > 1 ? contextProperties.data() : 0;
+    m_clContext = clCreateContextFromType(ccContextProperties, deviceType, 0, 0, &error);
 }
 
 ComputeContext::~ComputeContext()

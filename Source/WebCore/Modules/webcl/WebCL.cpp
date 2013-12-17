@@ -74,85 +74,36 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCo
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
 }
 
-RefPtr<WebCLContextProperties>& WebCL::defaultProperties(ExceptionCode& ec)
+void WebCL::ensureFallbackContextProperties(ExceptionCode& ec)
 {
-    if (m_defaultProperties)
-        return m_defaultProperties;
+    if (m_fallbackContextProperties)
+        return;
 
     Vector<RefPtr<WebCLPlatform> > webCLPlatforms = getPlatforms(ec);
     if (ec != WebCLException::SUCCESS)
-        return m_defaultProperties;
+        return;
 
     Vector<RefPtr<WebCLDevice> > webCLDevices = webCLPlatforms[0]->getDevices(ComputeContext::DEVICE_TYPE_DEFAULT, ec);
     if (ec != WebCLException::SUCCESS)
-        return m_defaultProperties;
+        return;
 
-    m_defaultProperties = WebCLContextProperties::create(webCLPlatforms[0], webCLDevices, ComputeContext::DEVICE_TYPE_DEFAULT);
-    return m_defaultProperties;
+    m_fallbackContextProperties = WebCLContextProperties::create(webCLPlatforms[0], webCLDevices, ComputeContext::DEVICE_TYPE_DEFAULT);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCL::createContext(PassRefPtr<WebCLContextProperties> userProvidedProperties, ExceptionCode& ec)
 {
-    RefPtr<WebCLContextProperties> refProperties = properties;
-    if (refProperties) {
-        // If properties has devices, neglect deviceType and set platform based on devices.
-        // FIXME: Handle "If the array is not null, it must not be empty".
-        if (refProperties->devices().size()) {
-            // FIXME: Spec says "This field (platform) is ignored if devices is non-null."
-            if (refProperties->platform()) {
-                // Ensure devices are from same platform as sent in properties.
-                RefPtr<WebCLPlatform> devicePlatform = refProperties->platform();
-                for (size_t i = 0; i < refProperties->devices().size(); i++) {
-                    if (refProperties->devices()[0]->platform() != devicePlatform) {
-                        ec = WebCLException::INVALID_DEVICE;
-                        return 0;
-                    }
-                }
-            } else {
-                // Check if all devices are belonging to same platform.
-                // if yes set that platform object as propreties.platform.
-                const WebCLPlatform* devicePlatform = refProperties->devices()[0]->platform();
-                for (size_t i = 1; i < refProperties->devices().size(); i++) {
-                    if (refProperties->devices()[i]->platform() != devicePlatform) {
-                        ec = WebCLException::INVALID_DEVICE;
-                        return 0;
-                    }
-                }
-                refProperties->setPlatform(const_cast<WebCLPlatform*>(devicePlatform));
-            }
-        } else {
-            // No devices sent by user, check if deviceType was sent. Else use default.
-            unsigned long deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
-            if (refProperties->deviceType()) {
-                deviceType = refProperties->deviceType();
-                if (!WebCLInputChecker::isValidDeviceType(deviceType)) {
-                    ec = WebCLException::INVALID_VALUE;
-                    return 0;
-                }
-            }
-            // Get devices of "deviceType".
-            if (refProperties->platform()) {
-                Vector<RefPtr<WebCLDevice> > webCLDevices = refProperties->platform()->getDevices(deviceType, ec);
-                if (ec != WebCLException::SUCCESS)
-                    return 0;
-                refProperties->setDevices(webCLDevices);
-            } else {
-                // No Platform nor device sent in Properties.
-                RefPtr<WebCLPlatform> defaultPlatform = getPlatforms(ec)[0];
-                Vector<RefPtr<WebCLDevice> > webCLDevices = defaultPlatform->getDevices(deviceType, ec);
-                if (ec != WebCLException::SUCCESS)
-                    return 0;
-                refProperties->setPlatform(defaultPlatform);
-                refProperties->setDevices(webCLDevices);
-            }
-        }
-    } else {
-        refProperties = defaultProperties(ec);
+    ASSERT(userProvidedProperties);
+    RefPtr<WebCLContextProperties> referenceProperties;
+    if (!userProvidedProperties || !userProvidedProperties->isValid()) {
+        ensureFallbackContextProperties(ec);
         if (ec != WebCLException::SUCCESS)
             return 0;
-    }
 
-    RefPtr<WebCLContext> context = WebCLContext::create(refProperties.release(), ec);
+        referenceProperties = m_fallbackContextProperties;
+    } else
+        referenceProperties = userProvidedProperties;
+
+    RefPtr<WebCLContext> context = WebCLContext::create(userProvidedProperties, referenceProperties, ec);
     if (!context) {
         ASSERT(ec != WebCLException::SUCCESS);
         return 0;

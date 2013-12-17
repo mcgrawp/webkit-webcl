@@ -33,7 +33,7 @@ var	NUM_VERTEX_COMPONENTS = 3;			// xyz, xyz, ...
 var SAMPLEPERIOD        = 10;           // calculate fps and sim/draw times over this many frames
 var DISPLAYPERIOD       = 400;          // msecs between display updates of fps and sim/draw times
 
-var GLCL_SHARE_MODE     = true;         // shareMode is boolean
+var GLCL_SHARE_MODE     = false;         // shareMode is boolean
 var PHASE_DELTA			= 0.01;			// per cycle change to phase
 
 var NO_SIM              = 0;

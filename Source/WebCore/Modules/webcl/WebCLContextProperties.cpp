@@ -44,7 +44,8 @@ PassRefPtr<WebCLContextProperties> WebCLContextProperties::create(PassRefPtr<Web
 }
 
 WebCLContextProperties::WebCLContextProperties()
-    : m_deviceType(ComputeContext::DEVICE_TYPE_DEFAULT)
+    //: m_deviceType(ComputeContext::DEVICE_TYPE_DEFAULT)
+    : m_deviceType(0)
 {
 }
 
@@ -113,12 +114,19 @@ bool WebCLContextProperties::isGLCapable() const
 #endif
 }
 
-Vector<CCContextProperties>& WebCLContextProperties::computeContextProperties()
+bool WebCLContextProperties::isValid() const
 {
+    return m_platform || m_devices.size() || m_deviceType;
+}
+
+Vector<CCContextProperties> WebCLContextProperties::computeContextProperties()
+{
+    printf("%s:%d\n", __FUNCTION__, __LINE__);
     if (m_ccProperties.size())
         return m_ccProperties;
 
     if (m_platform) {
+        printf("%s:%d\n", __FUNCTION__, __LINE__);
         m_ccProperties.append(ComputeContext::CONTEXT_PLATFORM);
         m_ccProperties.append(reinterpret_cast<CCContextProperties>(platform()->platformObject()));
     }
@@ -128,7 +136,8 @@ Vector<CCContextProperties>& WebCLContextProperties::computeContextProperties()
         ComputeContext::populatePropertiesForInteroperabilityWithGL(m_ccProperties, m_webGLRenderingContext->graphicsContext3D()->platformGraphicsContext3D());
 #endif
 
-    m_ccProperties.append(0);
+    printf("%s:%d\n", __FUNCTION__, __LINE__);
+    m_ccProperties.append(static_cast<CCContextProperties>(0));
     return m_ccProperties;
 }
 

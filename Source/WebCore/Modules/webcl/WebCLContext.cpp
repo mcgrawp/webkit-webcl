@@ -58,8 +58,9 @@ WebCLContext::~WebCLContext()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLContext> WebCLContext::create(PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCLContext::create(PassRefPtr<WebCLContextProperties> userProvidedProperties, PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec)
 {
+    ASSERT(userProvidedProperties);
     ASSERT(properties);
 
     Vector<CCDeviceID> ccDevices;
@@ -67,14 +68,22 @@ PassRefPtr<WebCLContext> WebCLContext::create(PassRefPtr<WebCLContextProperties>
         ccDevices.append(properties->devices()[i]->platformObject());
 
     CCerror error = ComputeContext::SUCCESS;
-    ComputeContext* computeContext = new ComputeContext(properties->computeContextProperties().data(), ccDevices, error);
+
+    ComputeContext* computeContext = 0;
+    if (ccDevices.size())
+        computeContext = new ComputeContext(properties->computeContextProperties(), ccDevices, error);
+    else if (properties->deviceType())
+        computeContext = new ComputeContext(properties->computeContextProperties(), properties->deviceType(), error);
+    else
+        return 0;
+
     if (error != ComputeContext::SUCCESS) {
         delete computeContext;
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
 
-    RefPtr<WebCLContext> context = adoptRef(new WebCLContext(computeContext, properties));
+    RefPtr<WebCLContext> context = adoptRef(new WebCLContext(computeContext, userProvidedProperties));
     return context.release();
 }
 

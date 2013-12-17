@@ -65,9 +65,11 @@ public:
     void setGLContext(PassRefPtr<WebGLRenderingContext>);
 #endif
 
-    Vector<CCContextProperties>& computeContextProperties();
+    Vector<CCContextProperties> computeContextProperties();
 
     bool isGLCapable() const;
+
+    bool isValid() const;
 
 protected:
     WebCLContextProperties();

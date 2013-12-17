@@ -149,12 +149,9 @@ JSValue JSWebCL::createContext(ExecState* exec)
         return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
-    RefPtr<WebCLContext> webCLContext;
     RefPtr<WebCLContextProperties> properties = WebCLContextProperties::create();
 
-    if (!argumentCount)
-        properties = 0;
-    else if (argumentCount == 1)
+    if (argumentCount == 1)
         handleOneArgument(exec, properties.get(), ec);
     else if (argumentCount == 2)
         handleTwoArguments(exec, properties.get(), ec);
@@ -164,7 +161,7 @@ JSValue JSWebCL::createContext(ExecState* exec)
         return jsUndefined();
     }
 
-    webCLContext = impl()->createContext(properties.get(), ec);
+    RefPtr<WebCLContext> webCLContext = impl()->createContext(properties.get(), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

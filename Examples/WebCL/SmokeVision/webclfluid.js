@@ -309,7 +309,7 @@ function setupWebCL() {
 
         allocateBuffers();
     } catch (err) {
-        console.log(err);
+        console.log(err.message);
         alert("Error initializing WebCL");
         return false;
     }

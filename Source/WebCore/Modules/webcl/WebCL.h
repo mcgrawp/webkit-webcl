@@ -55,8 +55,9 @@ public:
 private:
     WebCL();
 
-    RefPtr<WebCLContextProperties>& defaultProperties(ExceptionCode&);
-    RefPtr<WebCLContextProperties> m_defaultProperties;
+    void ensureFallbackContextProperties(ExceptionCode&);
+
+    RefPtr<WebCLContextProperties> m_fallbackContextProperties;
     Vector<RefPtr<WebCLPlatform> > m_platforms;
 };
 

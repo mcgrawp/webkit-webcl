@@ -65,7 +65,7 @@ typedef ComputeContext* ComputeContextPtr;
 class WebCLContext : public WebCLObjectImpl<ComputeContextPtr> {
 public:
     virtual ~WebCLContext();
-    static PassRefPtr<WebCLContext> create(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
+    static PassRefPtr<WebCLContext> create(PassRefPtr<WebCLContextProperties>, PassRefPtr<WebCLContextProperties>, ExceptionCode&);
 
     PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, CCenum commandQueueProperty, ExceptionCode&);
 
