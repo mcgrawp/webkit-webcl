@@ -220,6 +220,7 @@ unsigned long WebCLGetInfo::getUnsignedLong() const
     ASSERT(getType() == kTypeUnsignedLong);
     return m_unsignedLong;
 }
+
 void* WebCLGetInfo::getVoidPointer() const
 {
     ASSERT(getType() == kTypeVoidPointer);
@@ -271,7 +272,7 @@ PassRefPtr<WebCLDevice> WebCLGetInfo::getWebCLDevice() const
     ASSERT(getType() == kTypeWebCLDevice);
     return m_webCLDevice;
 }
-Vector<RefPtr<WebCLDevice> > WebCLGetInfo::getWebCLDevices() const
+const Vector<RefPtr<WebCLDevice> >& WebCLGetInfo::getWebCLDevices() const
 {
     ASSERT(getType() == kTypeWebCLDevices);
     return m_webCLDevices;

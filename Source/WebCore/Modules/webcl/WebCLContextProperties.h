@@ -51,17 +51,19 @@ public:
 
     virtual ~WebCLContextProperties() { }
 
-    Vector<RefPtr<WebCLDevice> >& devices();
-    void setDevices(Vector<RefPtr<WebCLDevice> >);
+    const Vector<RefPtr<WebCLDevice> >& devices() const;
+    void setDevices(const Vector<RefPtr<WebCLDevice> >&);
 
-    RefPtr<WebCLPlatform>& platform();
+    WebCLPlatform* platform();
     void setPlatform(PassRefPtr<WebCLPlatform>);
 
     CCenum deviceType() const;
     void setDeviceType(CCenum type);
 
-    RefPtr<WebGLRenderingContext>& glContext();
+#if ENABLE(WEBGL)
+    WebGLRenderingContext* glContext();
     void setGLContext(PassRefPtr<WebGLRenderingContext>);
+#endif
 
     Vector<CCContextProperties>& computeContextProperties();
 

@@ -121,7 +121,7 @@ public:
     PassRefPtr<WebCLContext> getWebCLContext() const;
     PassRefPtr<WebCLCommandQueue> getWebCLCommandQueue() const;
     PassRefPtr<WebCLDevice> getWebCLDevice() const;
-    Vector<RefPtr<WebCLDevice> > getWebCLDevices() const;
+    const Vector<RefPtr<WebCLDevice> >& getWebCLDevices() const;
     PassRefPtr<WebCLMemoryObject> getWebCLMemoryObject() const;
     PassRefPtr<WebCLPlatform> getWebCLPlatform() const;
     PassRefPtr<WebCLContextProperties> getWebCLContextProperties() const;
