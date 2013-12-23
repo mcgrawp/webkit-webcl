@@ -37,6 +37,7 @@ namespace WebCore {
 
 class ImageData;
 class HTMLCanvasElement;
+class HTMLImageElement;
 class WebCLBuffer;
 class WebCLContext;
 class WebCLDevice;
@@ -56,9 +57,18 @@ public:
     void enqueueWriteBuffer(WebCLBuffer*, CCbool blockingWrite, CCuint bufferOffset, CCuint numBytes, ArrayBufferView*,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
     void enqueueWriteBuffer(WebCLBuffer*, CCbool blockingWrite, CCuint bufferOffset, ImageData*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
-    void enqueueWriteBufferRect(WebCLBuffer*, CCbool blockingWrite, const Vector<unsigned>& bufferOrigin, const Vector<unsigned>& hostOrigin,
-        const Vector<unsigned>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
-        ArrayBufferView*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueWriteBuffer(WebCLBuffer*, CCbool blockingWrite, CCuint bufferOffset, HTMLCanvasElement*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueWriteBuffer(WebCLBuffer*, CCbool blockingWrite, CCuint bufferOffset, HTMLImageElement*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+
+    void enqueueWriteBufferRect(WebCLBuffer*, CCbool blockingWrite, const Vector<CCuint>&, const Vector<CCuint>&, const Vector<CCuint>&,
+        CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch, ArrayBufferView*,
+        const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueWriteBufferRect(WebCLBuffer*, CCbool blockingWrite, const Vector<CCuint>&, const Vector<CCuint>&, const Vector<CCuint>&,
+        CCuint bufferRowPitch, CCuint bufferSlicePitch, ImageData*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueWriteBufferRect(WebCLBuffer*, CCbool blockingWrite, const Vector<CCuint>&, const Vector<CCuint>&, const Vector<CCuint>&,
+        CCuint bufferRowPitch, CCuint bufferSlicePitch, HTMLCanvasElement*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueWriteBufferRect(WebCLBuffer*, CCbool blockingWrite, const Vector<CCuint>&, const Vector<CCuint>&, const Vector<CCuint>&,
+        CCuint bufferRowPitch, CCuint bufferSlicePitch, HTMLImageElement*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void enqueueReadBuffer(WebCLBuffer*, CCbool blockingWrite, CCuint bufferOffset, CCuint numBytes, ArrayBufferView*,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
@@ -118,12 +128,16 @@ private:
 
     friend class WebCLEvent;
 
-    void enqueueWriteBufferBase(WebCLBuffer*, CCbool blockingWrite, CCuint, CCuint, void*, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueWriteBufferBase(WebCLBuffer*, CCbool blockingWrite, CCuint, CCuint, void* hostPtr, size_t hostPtrLength,
+        const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
     void enqueueReadBufferBase(WebCLBuffer*, CCbool blockingRead, CCuint, CCuint, void* hostPtr, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
     void enqueueReadBufferRectBase(WebCLBuffer*, CCbool blockingRead, const Vector<CCuint>&, const Vector<CCuint>&, const Vector<CCuint>&, CCuint, CCuint,
         CCuint, CCuint, void* hostPtr, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
     void enqueueReadImageBase(WebCLImage*, CCbool blockingRead, const Vector<CCuint>&, const Vector<CCuint>&, CCuint, void* hostPtr, const Vector<RefPtr<WebCLEvent> >&,
         WebCLEvent*, ExceptionCode&);
+    void enqueueWriteBufferRectBase(WebCLBuffer*, CCbool blockingWrite, const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin,
+        const Vector<CCuint>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
+        void* hostPtr, size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void releasePlatformObjectImpl();
 

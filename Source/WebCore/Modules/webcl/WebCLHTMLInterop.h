@@ -35,10 +35,12 @@
 namespace WebCore {
 
 class HTMLCanvasElement;
+class HTMLImageElement;
 
 class WebCLHTMLInterop {
 public:
     static void extractDataFromCanvas(HTMLCanvasElement*, void** hostPtr, size_t& canvasSize);
+    static void extractDataFromImage(HTMLImageElement*, void** hostPtr, size_t& canvasSize);
 };
 }
 

@@ -31,7 +31,6 @@
 
 #include "WebCLContext.h"
 
-#include "CachedImage.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
@@ -196,6 +195,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint si
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, ImageData* srcPixels, ExceptionCode& ec)
 {
+    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
     if (!srcPixels || !srcPixels->data() || !srcPixels->data()->data()) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
@@ -210,11 +210,6 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, ImageData
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    if (!srcCanvas) {
-        ec = WebCLException::INVALID_HOST_PTR;
-        return 0;
-    }
-
     void* hostPtr = nullptr;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
@@ -227,20 +222,11 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLCanva
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLImageElement* srcImage, ExceptionCode& ec)
 {
-    if (!srcImage && !srcImage->cachedImage()) {
-        ec = WebCLException::INVALID_HOST_PTR;
-        return 0;
-    }
-
-    CachedImage* cachedImage = srcImage->cachedImage();
-    if (!cachedImage || !cachedImage->image() || !cachedImage->image()->data()) {
-        ec = WebCLException::INVALID_HOST_PTR;
-        return 0;
-    }
-
-    void* hostPtr = (void*) cachedImage->image()->data()->data();
-    unsigned bufferSize = srcImage->width() * srcImage->height() * 4 /* source pixel format is treated as 32-bit(4 byte) RGBA regardless of the source. */;
-    if (!hostPtr) {
+    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    void* hostPtr = nullptr;
+    size_t bufferSize = 0;
+    WebCLHTMLInterop::extractDataFromImage(srcImage, &hostPtr, bufferSize);
+    if (!hostPtr || !bufferSize) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
@@ -280,11 +266,6 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint widt
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    if (!srcCanvas) {
-        ec = WebCLException::INVALID_HOST_PTR;
-        return 0;
-    }
-
     void* hostPtr = nullptr;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
@@ -301,19 +282,11 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLImageElement* srcImage, ExceptionCode& ec)
 {
-    if (!srcImage || !srcImage->cachedImage()) {
-        ec = WebCLException::INVALID_HOST_PTR;
-        return 0;
-    }
-
-    CachedImage* cachedImage = srcImage->cachedImage();
-    if (!cachedImage || !cachedImage->image() || !cachedImage->image()->data()) {
-        ec = WebCLException::INVALID_HOST_PTR;
-        return 0;
-    }
-
-    void* hostPtr = (void*) cachedImage->image()->data()->data();
-    if (!hostPtr) {
+    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    void* hostPtr = nullptr;
+    size_t bufferSize = 0;
+    WebCLHTMLInterop::extractDataFromImage(srcImage, &hostPtr, bufferSize);
+    if (!hostPtr || !bufferSize) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
@@ -357,6 +330,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLVideoElement*
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, ImageData* srcPixels, ExceptionCode& ec)
 {
+    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
     if (!srcPixels || !srcPixels->data() || !srcPixels->data()->data()) {
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;

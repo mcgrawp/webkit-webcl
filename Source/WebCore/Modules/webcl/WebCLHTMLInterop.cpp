@@ -31,15 +31,20 @@
 
 #include "WebCLHTMLInterop.h"
 
+#include "CachedImage.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLImageElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
+#include "SharedBuffer.h"
 #include <wtf/Uint8ClampedArray.h>
 
 namespace WebCore {
 
 void WebCLHTMLInterop::extractDataFromCanvas(HTMLCanvasElement* canvas, void** hostPtr, size_t& canvasSize)
 {
+    if (!canvas)
+        return;
     RefPtr<ImageData> imageData;
 #if USE(CG)
     // If CoreGraphics usage is enabled, use it to retrive the data.
@@ -59,6 +64,20 @@ void WebCLHTMLInterop::extractDataFromCanvas(HTMLCanvasElement* canvas, void** h
         canvasSize = clampedArray->byteLength();
     }
 }
+
+void WebCLHTMLInterop::extractDataFromImage(HTMLImageElement* image, void** hostPtr, size_t& imageSize)
+{
+    if (!image || !image->cachedImage())
+        return;
+
+    CachedImage* cachedImage = image->cachedImage();
+    if (!cachedImage || !cachedImage->image() || !cachedImage->image()->data())
+        return;
+    unsigned sourcePixelFormat = 4; // source pixel format is treated as 32-bit(4 byte) RGBA regardless of the source.
+    *hostPtr = (void*) cachedImage->image()->data()->data();
+    imageSize = image->width() * image->height() * sourcePixelFormat;
+}
+
 }
 
 #endif

@@ -248,6 +248,28 @@ bool isValidPitchForArrayBufferView(unsigned long pitch, ArrayBufferView* arrayB
     return !(pitch % bytesPerElement);
 }
 
+bool isValidByteLengthForArrayBufferView(unsigned long numBytes, ArrayBufferView* arrayBufferView)
+{
+    if (!arrayBufferView)
+        return false;
+
+    if (arrayBufferView->byteLength() > numBytes && isValidPitchForArrayBufferView(numBytes, arrayBufferView))
+        return true;
+
+    return false;
+}
+
+bool isValidLengthForRegion(const Vector<CCuint>& origin, const Vector<CCuint>& region, CCuint hostRowPitch, CCuint hostSlicePitch, size_t length)
+{
+    // length must be less than the region being read + offset.
+    // The offset in bytes is computed as origin[2] * host_slice_pitch + origin[1] * hostRowPitch + origin[0].
+    CCuint regionArea = region[0] * region[1] * region[2];
+    CCuint offset = origin[0] * hostSlicePitch + origin[1]  * hostRowPitch + origin[2];
+    if ((regionArea + offset) > length)
+        return false;
+    return true;
+}
+
 }
 }
 
