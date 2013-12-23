@@ -42,46 +42,61 @@ class ArrayBufferView;
 
 namespace WebCore {
 
-class WebCLGetInfo;
 class WebCLContext;
 class WebCLDevice;
-class WebCLProgram;
+class WebCLGetInfo;
+class WebCLKernel;
 class WebCLMemoryObject;
+class WebCLProgram;
 class WebCLSampler;
+
+class WebCLKernelArgInfo : public RefCounted<WebCLKernelArgInfo> {
+public:
+    WebCLKernelArgInfo(const String& addressQualifier, const String& accessQualifier, const String& type, const String& name)
+        : m_addressQualifier(addressQualifier)
+        , m_accessQualifier(accessQualifier)
+        , m_type(type)
+        , m_name(name)
+    {
+    }
+
+    String name() const { return m_name; }
+    String typeName() const { return m_type; }
+    String addressQualifier() const { return m_addressQualifier; }
+    String accessQualifier() const { return m_accessQualifier; }
+
+private:
+    String m_addressQualifier;
+    String m_accessQualifier;
+    String m_type;
+    String m_name;
+};
+
+class WebCLKernelArgInfoProvider {
+public:
+    WebCLKernelArgInfoProvider(WebCLKernel*);
+
+    const Vector<RefPtr<WebCLKernelArgInfo> >& argumentsInfo();
+
+private:
+    void ensureInfo();
+
+    void parseAndAppendDeclaration(const String& argumentDeclaration);
+    String extractAddressQualifier(Vector<String>& declaration);
+    String extractAccessQualifier(Vector<String>& declaration);
+    String extractType(Vector<String>& declaration);
+    String extractName(Vector<String>& declaration);
+
+    WebCLKernel* m_kernel;
+    Vector<RefPtr<WebCLKernelArgInfo> > m_argumentInfoVector;
+};
 
 class WebCLKernel : public WebCLObjectImpl<CCKernel> {
 public:
-    class Argument {
-    public:
-        Argument(const String& argumentDeclaration);
-
-        enum Qualifier {
-            Local,
-            Global,
-            Const
-        };
-        bool hasQualifier(enum Qualifier qualifier) const;
-    private:
-        bool m_hasLocalQualifier;
-        bool m_hasGlobalQualifier;
-        bool m_hasConstQualifier;
-    };
-
-    class ArgumentList {
-    public:
-        ArgumentList(WebCLKernel*);
-
-        const Vector<Argument>& it();
-    private:
-        void ensureArgumentData();
-
-        WebCLKernel* m_kernel;
-        Vector<Argument> m_argumentData;
-    };
-
     virtual ~WebCLKernel();
     static PassRefPtr<WebCLKernel> create(WebCLContext*, WebCLProgram*, const String&, ExceptionCode&);
     static Vector<RefPtr<WebCLKernel> > createKernelsInProgram(WebCLContext*, WebCLProgram*, ExceptionCode&);
+
     WebCLGetInfo getInfo(CCenum, ExceptionCode&);
     WebCLGetInfo getWorkGroupInfo(WebCLDevice*, CCenum, ExceptionCode&);
 
@@ -89,14 +104,13 @@ public:
     void setArg(CCuint index, WebCLSampler*, ExceptionCode&);
     void setArg(CCuint index, ArrayBufferView*, ExceptionCode&);
 
-    void setDevice(PassRefPtr<WebCLDevice>);
+    WebCLProgram* program() const;
+    String kernelName() const;
 
     unsigned numberOfArguments();
 
 private:
     WebCLKernel(WebCLContext*, WebCLProgram*, CCKernel, const String&);
-
-    const Argument& argument(unsigned index);
 
     void releasePlatformObjectImpl();
 
@@ -104,10 +118,7 @@ private:
     RefPtr<WebCLProgram> m_program;
     String m_kernelName;
 
-    RefPtr<WebCLDevice> m_deviceID;
-    ArgumentList m_argumentList;
-
-    friend class ArgumentList;
+    WebCLKernelArgInfoProvider m_argumentInfoProvider;
 };
 
 } // namespace WebCore

@@ -51,6 +51,167 @@
 
 namespace WebCore {
 
+static bool isASCIILineBreakOrStarCharacter(UChar c)
+{
+    return c == '\r' || c == '\n' || c == '*';
+}
+
+WebCLKernelArgInfoProvider::WebCLKernelArgInfoProvider(WebCLKernel* kernel)
+    : m_kernel(kernel)
+{
+    ASSERT(kernel);
+}
+
+const Vector<RefPtr<WebCLKernelArgInfo> >& WebCLKernelArgInfoProvider::argumentsInfo()
+{
+    ensureInfo();
+    return m_argumentInfoVector;
+}
+
+void WebCLKernelArgInfoProvider::ensureInfo()
+{
+    if (m_argumentInfoVector.size())
+        return;
+
+    const String& source = m_kernel->program()->sourceWithCommentsStripped();
+
+    // 1) find "kernel" string.
+    // 2) find the first open braces past "kernel.
+    // 3) reverseFind the given kernel name string.
+    // 4) if not found go back to (1)
+    // 5) if found, parse its argument list.
+    size_t startIndex = 0;
+    size_t kernelNameIndex = 0;
+    while (1) {
+
+        // FIXME: Check the if "kernel" is not a substring, like "akernel" or "__kernel_",
+        // which are valid tokens.
+        size_t kernelDeclarationIndex = source.find("kernel", startIndex);
+        if (kernelDeclarationIndex == WTF::notFound)
+            CRASH();
+
+        size_t openBrace = source.find("{", kernelDeclarationIndex + 8);
+        kernelNameIndex = source.reverseFind(m_kernel->kernelName(), openBrace);
+
+        ASSERT(kernelNameIndex > kernelDeclarationIndex);
+        if (kernelNameIndex != WTF::notFound)
+            break;
+
+        startIndex = kernelDeclarationIndex + 8;
+    }
+
+    ASSERT(kernelNameIndex);
+    size_t openBraket = source.find("(", kernelNameIndex);
+    size_t closeBraket = source.find(")", openBraket);
+    String argumentListStr = source.substring(openBraket + 1, closeBraket - openBraket - 1);
+
+    Vector<String> argumentStrVector;
+    argumentListStr.split(",", argumentStrVector);
+    for (size_t i = 0; i < argumentStrVector.size(); ++i) {
+        argumentStrVector[i] = argumentStrVector[i].removeCharacters(isASCIILineBreakOrStarCharacter);
+        argumentStrVector[i] = argumentStrVector[i].stripWhiteSpace();
+        parseAndAppendDeclaration(argumentStrVector[i]);
+    }
+}
+
+void WebCLKernelArgInfoProvider::parseAndAppendDeclaration(const String& argumentDeclaration)
+{
+    Vector<String> declarationStrVector;
+    argumentDeclaration.split(" ", declarationStrVector);
+
+    String name = extractName(declarationStrVector);
+    String type = extractType(declarationStrVector);
+    String addressQualifier = extractAddressQualifier(declarationStrVector);
+
+    DEFINE_STATIC_LOCAL(AtomicString, image2d_t, ("image2d_t", AtomicString::ConstructFromLiteral));
+    String accessQualifier = (type == image2d_t) ? extractAccessQualifier(declarationStrVector) : "none";
+
+    m_argumentInfoVector.append(adoptRef(new WebCLKernelArgInfo(addressQualifier, accessQualifier, type, name)));
+}
+
+// FIXME: As of now, it returns the qualifier as declared: e.g., if "__private" is declared,
+// it returns "__private", while it is declared as "private", it returns "private".
+// See http://www.khronos.org/bugzilla/show_bug.cgi?id=1079
+String WebCLKernelArgInfoProvider::extractAddressQualifier(Vector<String>& declarationStrVector)
+{
+    DEFINE_STATIC_LOCAL(AtomicString, __Private, ("__private", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, Private, ("private", AtomicString::ConstructFromLiteral));
+
+    DEFINE_STATIC_LOCAL(AtomicString, __Global, ("__global", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, Global, ("global", AtomicString::ConstructFromLiteral));
+
+    DEFINE_STATIC_LOCAL(AtomicString, __Constant, ("__constant", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, Constant, ("constant", AtomicString::ConstructFromLiteral));
+
+    DEFINE_STATIC_LOCAL(AtomicString, __Local, ("__local", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, Local, ("local", AtomicString::ConstructFromLiteral));
+
+    String addressQualifier = __Private;
+    size_t i = 0;
+    for ( ; i < declarationStrVector.size(); ++i) {
+        String candidate = declarationStrVector[i];
+        if (candidate == __Private  || candidate == Private
+         || candidate == __Global   || candidate == Global
+         || candidate == __Constant || candidate == Constant
+         || candidate == __Local    || candidate == Local) {
+            addressQualifier = candidate;
+            break;
+        }
+    }
+
+    if (i < declarationStrVector.size())
+        declarationStrVector.remove(i);
+
+    return addressQualifier;
+}
+
+// FIXME: As of now, it returns the qualifier as declared: e.g., if "__read_only" is declared,
+// it returns "__read_only", while it is declared as "read_only", "read_only" is returned.
+// See http://www.khronos.org/bugzilla/show_bug.cgi?id=1079
+String WebCLKernelArgInfoProvider::extractAccessQualifier(Vector<String>& declarationStrVector)
+{
+    DEFINE_STATIC_LOCAL(AtomicString, __read_only, ("__read_only", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, read_only, ("read_only", AtomicString::ConstructFromLiteral));
+
+    DEFINE_STATIC_LOCAL(AtomicString, __write_only, ("__read_only", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, write_only, ("write_only", AtomicString::ConstructFromLiteral));
+
+    DEFINE_STATIC_LOCAL(AtomicString, __read_write, ("__read_write", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, read_write, ("read_write", AtomicString::ConstructFromLiteral));
+
+    String accessQualifier = __read_only;
+    size_t i = 0;
+    for ( ; i < declarationStrVector.size(); ++i) {
+        String candidate = declarationStrVector[i];
+        if (candidate == __read_only  || candidate == read_only
+         || candidate == __write_only || candidate == write_only
+         || candidate == __read_write || candidate == read_write) {
+            accessQualifier = candidate;
+            break;
+        }
+    }
+
+    if (i < declarationStrVector.size())
+        declarationStrVector.remove(i);
+
+    return accessQualifier;
+}
+
+String WebCLKernelArgInfoProvider::extractName(Vector<String>& declarationStrVector)
+{
+    String last = declarationStrVector.last();
+    declarationStrVector.removeLast();
+    return last;
+}
+
+// FIXME: Support collapsing "unsigned <scalar>" into "u<scalar>", as per OpenCL 1.2 spec.
+String WebCLKernelArgInfoProvider::extractType(Vector<String>& declarationStrVector)
+{
+    String last = declarationStrVector.last();
+    declarationStrVector.removeLast();
+    return last;
+}
+
 WebCLKernel::~WebCLKernel()
 {
     releasePlatformObject();
@@ -99,7 +260,7 @@ WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, CCKernel 
     , m_context(context)
     , m_program(program)
     , m_kernelName(kernelName)
-    , m_argumentList(this)
+    , m_argumentInfoProvider(this)
 {
     context->trackReleaseableWebCLObject(createWeakPtr());
 }
@@ -189,16 +350,6 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
     return WebCLGetInfo();
 }
 
-void WebCLKernel::setDevice(PassRefPtr<WebCLDevice> deviceID)
-{
-    m_deviceID = deviceID;
-}
-
-const WebCLKernel::Argument& WebCLKernel::argument(unsigned index)
-{
-    return m_argumentList.it()[index];
-}
-
 void WebCLKernel::releasePlatformObjectImpl()
 {
     CCerror computeContextErrorCode = m_context->computeContext()->releaseKernel(platformObject());
@@ -266,7 +417,8 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
         return;
     }
 
-    bool hasLocalQualifier = argument(index).hasQualifier(Argument::Local);
+    String accessQualifier = m_argumentInfoProvider.argumentsInfo()[index]->addressQualifier();
+    bool hasLocalQualifier = accessQualifier == "__local" || accessQualifier == "local";
     if (hasLocalQualifier) {
         if (bufferView->getType() != ArrayBufferView::TypeUint32) {
             ec = WebCLException::INVALID_VALUE;
@@ -322,93 +474,21 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
+WebCLProgram* WebCLKernel::program() const
+{
+    return m_program.get();
+}
+
+String WebCLKernel::kernelName() const
+{
+    return m_kernelName;
+};
+
 unsigned WebCLKernel::numberOfArguments()
 {
-    return m_argumentList.it().size();
+    return m_argumentInfoProvider.argumentsInfo().size();
 }
 
-static bool isASCIILineBreak(UChar c)
-{
-    return c == '\r' || c == '\n';
-}
-
-WebCLKernel::ArgumentList::ArgumentList(WebCLKernel* kernel)
-    : m_kernel(kernel)
-{
-}
-
-const Vector<WebCLKernel::Argument>& WebCLKernel::ArgumentList::it()
-{
-    ensureArgumentData();
-    return m_argumentData;
-}
-
-// FIXME: This method has to return an error code.
-void WebCLKernel::ArgumentList::ensureArgumentData()
-{
-    if (m_argumentData.size())
-        return;
-
-    const String& source = m_kernel->m_program->sourceWithCommentsStripped();
-
-    // 1) find "__kernel" string.
-    // 2) find the first open braces past __kernel.
-    // 3) reverseFind the given kernel name string.
-    // 4) if not found go back to (1)
-    // 5) if found, parse its argument list.
-    size_t startIndex = 0;
-    size_t kernelNameIndex = 0;
-    while (1) {
-        size_t kernelDeclarationIndex = source.find("__kernel", startIndex);
-        if (kernelDeclarationIndex == WTF::notFound)
-            return;
-
-        size_t openBrace = source.find("{", kernelDeclarationIndex + 8);
-        kernelNameIndex = source.reverseFind(m_kernel->m_kernelName, openBrace);
-
-        ASSERT(kernelNameIndex > kernelDeclarationIndex);
-        if (kernelNameIndex != WTF::notFound)
-            break;
-
-        startIndex = kernelDeclarationIndex + 8;
-    }
-
-    ASSERT(kernelNameIndex);
-    size_t openBraket = source.find("(", kernelNameIndex);
-    size_t closeBraket = source.find(")", openBraket);
-    String argumentListStr = source.substring(openBraket + 1, closeBraket - openBraket - 1);
-
-    Vector<String> argumentStrVector;
-    argumentListStr.split(",", argumentStrVector);
-    for (size_t i = 0; i < argumentStrVector.size(); ++i) {
-        argumentStrVector[i] = argumentStrVector[i].removeCharacters(isASCIILineBreak);
-        m_argumentData.append(Argument(argumentStrVector[i]));
-    }
-}
-
-// FIXME: A better wat to fix this would be splitting out tokens by space,
-// and handle each token.
-WebCLKernel::Argument::Argument(const String& argumentDeclaration)
-    : m_hasLocalQualifier(argumentDeclaration.contains("__local"))
-    , m_hasGlobalQualifier(argumentDeclaration.contains("__global"))
-    , m_hasConstQualifier(argumentDeclaration.contains("const"))
-{
-}
-
-bool WebCLKernel::Argument::hasQualifier(enum Qualifier qualifier) const
-{
-    switch (qualifier) {
-    case Local:
-        return m_hasLocalQualifier;
-    case Global:
-        return m_hasGlobalQualifier;
-    case Const:
-        return m_hasConstQualifier;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
-}
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)
