@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -25,66 +25,41 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCLKernel_h
-#define WebCLKernel_h
+#ifndef WebCLKernelArgInfoProvider_h
+#define WebCLKernelArgInfoProvider_h
 
 #if ENABLE(WEBCL)
 
-#include "ExceptionCode.h"
-#include "WebCLGetInfo.h"
-#include "WebCLInputChecker.h"
-#include "WebCLKernelArgInfoProvider.h"
 #include "WebCLKernelArgInfo.h"
-#include "WebCLMemoryObject.h"
-#include "WebCLObject.h"
 
 #include <wtf/RefCounted.h>
-
-namespace WTF {
-class ArrayBufferView;
-}
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class WebCLContext;
-class WebCLDevice;
-class WebCLGetInfo;
 class WebCLKernel;
-class WebCLMemoryObject;
-class WebCLProgram;
-class WebCLSampler;
 
-class WebCLKernel : public WebCLObjectImpl<CCKernel> {
+class WebCLKernelArgInfoProvider {
 public:
-    virtual ~WebCLKernel();
-    static PassRefPtr<WebCLKernel> create(WebCLContext*, WebCLProgram*, const String&, ExceptionCode&);
-    static Vector<RefPtr<WebCLKernel> > createKernelsInProgram(WebCLContext*, WebCLProgram*, ExceptionCode&);
+    WebCLKernelArgInfoProvider(WebCLKernel*);
 
-    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
-    WebCLGetInfo getWorkGroupInfo(WebCLDevice*, CCenum, ExceptionCode&);
-
-    void setArg(CCuint index, WebCLMemoryObject*, ExceptionCode&);
-    void setArg(CCuint index, WebCLSampler*, ExceptionCode&);
-    void setArg(CCuint index, ArrayBufferView*, ExceptionCode&);
-
-    WebCLProgram* program() const;
-    String kernelName() const;
-
-    unsigned numberOfArguments();
+    const Vector<RefPtr<WebCLKernelArgInfo> >& argumentsInfo();
 
 private:
-    WebCLKernel(WebCLContext*, WebCLProgram*, CCKernel, const String&);
+    void ensureInfo();
 
-    void releasePlatformObjectImpl();
+    void parseAndAppendDeclaration(const String& argumentDeclaration);
+    String extractAddressQualifier(Vector<String>& declaration);
+    String extractAccessQualifier(Vector<String>& declaration);
+    String extractType(Vector<String>& declaration);
+    String extractName(Vector<String>& declaration);
 
-    RefPtr<WebCLContext> m_context;
-    RefPtr<WebCLProgram> m_program;
-    String m_kernelName;
-
-    WebCLKernelArgInfoProvider m_argumentInfoProvider;
+    WebCLKernel* m_kernel;
+    Vector<RefPtr<WebCLKernelArgInfo> > m_argumentInfoVector;
 };
 
 } // namespace WebCore
 
 #endif
-#endif // WebCLKernel_h
+#endif // WebCLKernelArgInfoProvider_h

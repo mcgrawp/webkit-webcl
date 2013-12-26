@@ -1878,6 +1878,8 @@
 		71FB967B1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FB967A1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
 		7505833317B1ADC9000B55DC /* JSWebCLGLObjectInfoCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7505833217B1ADC3000B55DC /* JSWebCLGLObjectInfoCustom.cpp */; };
+		750ACCA4186CACEE007A75E7 /* WebCLKernelArgInfoProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 750ACCA2186CACE6007A75E7 /* WebCLKernelArgInfoProvider.cpp */; };
+		750ACCA5186CACF4007A75E7 /* WebCLKernelArgInfoProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 750ACCA3186CACE6007A75E7 /* WebCLKernelArgInfoProvider.h */; };
 		750D029411D0E7F300BD1B27 /* RenderInputSpeech.h in Headers */ = {isa = PBXBuildFile; fileRef = 750D029211D0E7F300BD1B27 /* RenderInputSpeech.h */; };
 		754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 754133A7102E00E800075D00 /* InspectorTimelineAgent.h */; };
 		754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */; };
@@ -1900,6 +1902,7 @@
 		75793ED30D0CE85B007FC0AC /* DOMMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */; };
 		75793ED40D0CE85B007FC0AC /* DOMMessageEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */; };
 		75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */; };
+		757ADB8B186CB3ED00494EC1 /* WebCLKernelArgInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 757ADB8A186CB3E900494EC1 /* WebCLKernelArgInfo.h */; };
 		758C8EAF17887B0700FAD9BA /* DOMWindowWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 758C8E5A17887AD600FAD9BA /* DOMWindowWebCLEnvironment.cpp */; };
 		758C8EB017887B0700FAD9BA /* WebCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 758C8E5D17887AD600FAD9BA /* WebCL.cpp */; };
 		758C8EB117887B0700FAD9BA /* WebCLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 758C8E6017887AD600FAD9BA /* WebCLBuffer.cpp */; };
@@ -8370,6 +8373,8 @@
 		71FB967A1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedEnumerationPropertyTearOff.h; sourceTree = "<group>"; };
 		72626E010EF022FE00A07E20 /* FontFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFastPath.cpp; sourceTree = "<group>"; };
 		7505833217B1ADC3000B55DC /* JSWebCLGLObjectInfoCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLGLObjectInfoCustom.cpp; sourceTree = "<group>"; };
+		750ACCA2186CACE6007A75E7 /* WebCLKernelArgInfoProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLKernelArgInfoProvider.cpp; sourceTree = "<group>"; };
+		750ACCA3186CACE6007A75E7 /* WebCLKernelArgInfoProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLKernelArgInfoProvider.h; sourceTree = "<group>"; };
 		750D029211D0E7F300BD1B27 /* RenderInputSpeech.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderInputSpeech.h; sourceTree = "<group>"; };
 		754133A7102E00E800075D00 /* InspectorTimelineAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTimelineAgent.h; sourceTree = "<group>"; };
 		754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTimelineAgent.cpp; sourceTree = "<group>"; };
@@ -8396,6 +8401,7 @@
 		75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEvent.h; sourceTree = "<group>"; };
 		75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMessageEvent.mm; sourceTree = "<group>"; };
 		75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEventInternal.h; sourceTree = "<group>"; };
+		757ADB8A186CB3E900494EC1 /* WebCLKernelArgInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLKernelArgInfo.h; sourceTree = "<group>"; };
 		758978EB127090D60076D5A9 /* SpeechInputResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputResult.h; sourceTree = "<group>"; };
 		758C8E5A17887AD600FAD9BA /* DOMWindowWebCLEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowWebCLEnvironment.cpp; sourceTree = "<group>"; };
 		758C8E5B17887AD600FAD9BA /* DOMWindowWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowWebCLEnvironment.h; sourceTree = "<group>"; };
@@ -15060,6 +15066,9 @@
 		758C8E5917887AD600FAD9BA /* webcl */ = {
 			isa = PBXGroup;
 			children = (
+				757ADB8A186CB3E900494EC1 /* WebCLKernelArgInfo.h */,
+				750ACCA2186CACE6007A75E7 /* WebCLKernelArgInfoProvider.cpp */,
+				750ACCA3186CACE6007A75E7 /* WebCLKernelArgInfoProvider.h */,
 				61386C0118641E510088A4E9 /* WebCLHTMLInterop.cpp */,
 				61386C0218641E510088A4E9 /* WebCLHTMLInterop.h */,
 				95C643821843E19100EB3439 /* WebCLUserEvent.idl */,
@@ -22173,6 +22182,7 @@
 				893C47A71238908B002B3D86 /* FileCallback.h in Headers */,
 				066C772B0AB603B700238CC4 /* FileChooser.h in Headers */,
 				89878562122CA064003AABDA /* FileEntry.h in Headers */,
+				750ACCA5186CACF4007A75E7 /* WebCLKernelArgInfoProvider.h in Headers */,
 				893C480F1248BD3A002B3D86 /* FileEntrySync.h in Headers */,
 				976D6C83122B8A3D001FD1F7 /* FileError.h in Headers */,
 				2EDF369F122C94C8002F7D4E /* FileException.h in Headers */,
@@ -23368,6 +23378,7 @@
 				8AF4E55611DC5A36000ED3DE /* PerformanceNavigation.h in Headers */,
 				86512EDF154A2AEF00A90426 /* PerformanceResourceTiming.h in Headers */,
 				8AF4E55C11DC5A63000ED3DE /* PerformanceTiming.h in Headers */,
+				757ADB8B186CB3ED00494EC1 /* WebCLKernelArgInfo.h in Headers */,
 				49D5DC2E0F423A73008F20FD /* PerspectiveTransformOperation.h in Headers */,
 				D0FF2A5E11F8C45A007E74E0 /* PingLoader.h in Headers */,
 				377C4CDF1014E9F600B9AE42 /* PlaceholderDocument.h in Headers */,
@@ -27013,6 +27024,7 @@
 				B2227B050D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp in Sources */,
 				B2227B060D00BFF10071B782 /* SVGCSSParser.cpp in Sources */,
 				B2227B080D00BFF10071B782 /* SVGCSSStyleSelector.cpp in Sources */,
+				750ACCA4186CACEE007A75E7 /* WebCLKernelArgInfoProvider.cpp in Sources */,
 				B22279A70D00BF220071B782 /* SVGCursorElement.cpp in Sources */,
 				B22279AD0D00BF220071B782 /* SVGDefsElement.cpp in Sources */,
 				B22279B00D00BF220071B782 /* SVGDescElement.cpp in Sources */,

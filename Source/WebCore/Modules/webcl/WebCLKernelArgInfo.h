@@ -25,85 +25,39 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCLObject_h
-#define WebCLObject_h
+#ifndef WebCLKernelArgInfo_h
+#define WebCLKernelArgInfo_h
 
 #if ENABLE(WEBCL)
 
-#include "ComputeContext.h"
-#include "ExceptionCode.h"
-#include "WebCLException.h"
-
 #include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class WebCLObject : public RefCounted<WebCLObject> {
+class WebCLKernelArgInfo : public RefCounted<WebCLKernelArgInfo> {
 public:
-    virtual ~WebCLObject()
+    WebCLKernelArgInfo(const String& addressQualifier, const String& accessQualifier, const String& type, const String& name)
+        : m_addressQualifier(addressQualifier)
+        , m_accessQualifier(accessQualifier)
+        , m_type(type)
+        , m_name(name)
     {
     }
 
-    WeakPtr<WebCLObject> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
-
-    virtual void release() { ASSERT_NOT_REACHED(); }
-
-protected:
-    WebCLObject()
-        : m_weakFactory(this)
-    {
-    }
-
-    WeakPtrFactory<WebCLObject> m_weakFactory;
-};
-
-template <class T>
-class WebCLObjectImpl : public WebCLObject {
-public:
-    virtual ~WebCLObjectImpl() { }
-
-    T platformObject() const { return m_platformObject; }
-    T& platformObjectRef() { return m_platformObject; }
-
-    virtual bool isReleased() const { return m_isReleased; }
-
-    virtual void release() { releasePlatformObject(); }
-
-    virtual void releasePlatformObject()
-    {
-        if (isPlatformObjectNeutralized())
-            return;
-
-        if (platformObject())
-            releasePlatformObjectImpl();
-
-        m_platformObject = 0;
-        m_isReleased = true;
-    }
-
-    virtual bool isPlatformObjectNeutralized() const
-    {
-        ASSERT(!!platformObject() != isReleased());
-        return isReleased();
-    }
-
-protected:
-    WebCLObjectImpl(T object)
-        : m_platformObject(object)
-        , m_isReleased(false)
-    {
-    }
-
-    virtual void releasePlatformObjectImpl() { }
+    String name() const { return m_name; }
+    String typeName() const { return m_type; }
+    String addressQualifier() const { return m_addressQualifier; }
+    String accessQualifier() const { return m_accessQualifier; }
 
 private:
-    T m_platformObject;
-    bool m_isReleased;
+    String m_addressQualifier;
+    String m_accessQualifier;
+    String m_type;
+    String m_name;
 };
 
-} // WebCore
+} // namespace WebCore
 
-#endif // ENABLE(WEBCL)
-
-#endif // WebCLObject_h
+#endif
+#endif // WebCLKernelArgInfo_h
