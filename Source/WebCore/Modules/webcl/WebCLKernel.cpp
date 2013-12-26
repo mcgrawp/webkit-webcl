@@ -56,6 +56,16 @@ static bool isASCIILineBreakOrStarCharacter(UChar c)
     return c == '\r' || c == '\n' || c == '*';
 }
 
+inline bool isEmptySpace(UChar character)
+{
+    return character <= ' ' && (character == ' ' || character == '\n' || character == '\t' || character == '\r' || character == '\f');
+}
+
+inline bool isPrecededByUnderscores(const String& string, size_t index)
+{
+     return string[index - 1] == '_' && string[index - 2] == '_';
+}
+
 WebCLKernelArgInfoProvider::WebCLKernelArgInfoProvider(WebCLKernel* kernel)
     : m_kernel(kernel)
 {
@@ -75,29 +85,44 @@ void WebCLKernelArgInfoProvider::ensureInfo()
 
     const String& source = m_kernel->program()->sourceWithCommentsStripped();
 
-    // 1) find "kernel" string.
-    // 2) find the first open braces past "kernel.
+    // 0) find "kernel" string.
+    // 1) Check if it is a valid kernel declaration.
+    // 2) find the first open braces past "kernel".
     // 3) reverseFind the given kernel name string.
     // 4) if not found go back to (1)
     // 5) if found, parse its argument list.
-    size_t startIndex = 0;
-    size_t kernelNameIndex = 0;
-    while (1) {
 
-        // FIXME: Check the if "kernel" is not a substring, like "akernel" or "__kernel_",
-        // which are valid tokens.
-        size_t kernelDeclarationIndex = source.find("kernel", startIndex);
+    size_t kernelNameIndex = 0;
+    size_t kernelDeclarationIndex = 0;
+    for (size_t startIndex = 0; ; startIndex = kernelDeclarationIndex + 6) {
+
+        kernelDeclarationIndex = source.find("kernel", startIndex);
         if (kernelDeclarationIndex == WTF::notFound)
             CRASH();
 
-        size_t openBrace = source.find("{", kernelDeclarationIndex + 8);
+        // Check if "kernel" is not a substring of a valid token,
+        // e.g. "akernel" or "__kernel_":
+        // 1) After "kernel" there has to be an empty space.
+        // 2) Before "kernel" there has to be either:
+        // 2.1) two underscore characters or
+        // 2.2) none, i.e. "kernel" is the first string in the program source or
+        // 2.3) an empty space.
+        if (!isEmptySpace(source[kernelDeclarationIndex + 6]))
+            continue;
+
+        // if index is not 0.
+        if (kernelDeclarationIndex) {
+             ASSERT(kernelDeclarationIndex >= 2);
+             if (!(isPrecededByUnderscores(source, kernelDeclarationIndex) || isEmptySpace(source[kernelDeclarationIndex - 1])))
+                 continue;
+        }
+
+        size_t openBrace = source.find("{", kernelDeclarationIndex + 6);
         kernelNameIndex = source.reverseFind(m_kernel->kernelName(), openBrace);
 
         ASSERT(kernelNameIndex > kernelDeclarationIndex);
         if (kernelNameIndex != WTF::notFound)
             break;
-
-        startIndex = kernelDeclarationIndex + 8;
     }
 
     ASSERT(kernelNameIndex);
