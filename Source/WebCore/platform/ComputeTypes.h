@@ -55,7 +55,9 @@ typedef cl_device_type CCDeviceType;
 typedef cl_device_id CCDeviceID;
 typedef cl_context_properties CCContextProperties;
 typedef cl_image_format CCImageFormat;
+#if defined(CL_VERSION_1_2)
 typedef cl_image_desc CCImageDescriptor;
+#endif
 typedef cl_sampler CCSampler;
 typedef cl_command_queue CCCommandQueue;
 typedef cl_command_queue_properties CCCommandQueueProperties;
