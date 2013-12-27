@@ -54,7 +54,7 @@ bool isValidGLTextureInfo(unsigned long);
 bool isValidKernelArgIndex(WebCLKernel*, unsigned index);
 bool isValidPitchForArrayBufferView(unsigned long, ArrayBufferView*);
 bool isValidByteLengthForArrayBufferView(unsigned long, ArrayBufferView*);
-bool isValidLengthForRegion(const Vector<CCuint>&, const Vector<CCuint>&, CCuint hostRowPitch, CCuint hostSlicePitch, size_t length);
+bool isValidLengthForRegion(const Vector<size_t>&, const Vector<size_t>&, size_t hostRowPitch, size_t hostSlicePitch, size_t length);
 
 template<class T>
 bool validateWebCLObject(WebCLObjectImpl<T>* object)

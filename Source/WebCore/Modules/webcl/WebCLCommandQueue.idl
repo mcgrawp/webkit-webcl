@@ -153,8 +153,32 @@ typedef unsigned long CLuint;
             CLboolean blockingWrite,
             sequence<CLuint> origin,
             sequence<CLuint> region,
-            CLuint inputRowPitch,
-            ArrayBufferView ptr,
+            CLuint hostRowPitch,
+            ArrayBufferView hostPtr,
+            [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            [Default=Undefined] optional WebCLEvent event);
+
+    [RaisesException] void enqueueWriteImage(WebCLImage image,
+            CLboolean blockingWrite,
+            sequence<CLuint> origin,
+            sequence<CLuint> region,
+            ImageData srcPixels,
+            [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            [Default=Undefined] optional WebCLEvent event);
+
+    [RaisesException] void enqueueWriteImage(WebCLImage image,
+            CLboolean blockingWrite,
+            sequence<CLuint> origin,
+            sequence<CLuint> region,
+            HTMLCanvasElement srcCanvas,
+            [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            [Default=Undefined] optional WebCLEvent event);
+
+    [RaisesException] void enqueueWriteImage(WebCLImage image,
+            CLboolean blockingWrite,
+            sequence<CLuint> origin,
+            sequence<CLuint> region,
+            HTMLImageElement srcImage,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 

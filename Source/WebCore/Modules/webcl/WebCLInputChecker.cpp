@@ -259,12 +259,12 @@ bool isValidByteLengthForArrayBufferView(unsigned long numBytes, ArrayBufferView
     return false;
 }
 
-bool isValidLengthForRegion(const Vector<CCuint>& origin, const Vector<CCuint>& region, CCuint hostRowPitch, CCuint hostSlicePitch, size_t length)
+bool isValidLengthForRegion(const Vector<size_t>& origin, const Vector<size_t>& region, size_t hostRowPitch, size_t hostSlicePitch, size_t length)
 {
     // length must be less than the region being read + offset.
     // The offset in bytes is computed as origin[2] * host_slice_pitch + origin[1] * hostRowPitch + origin[0].
-    CCuint regionArea = region[0] * region[1] * region[2];
-    CCuint offset = origin[0] * hostSlicePitch + origin[1]  * hostRowPitch + origin[2];
+    size_t regionArea = region[0] * region[1] * region[2];
+    size_t offset = origin[2] * hostSlicePitch + origin[1]  * hostRowPitch + origin[0];
     if ((regionArea + offset) > length)
         return false;
     return true;
