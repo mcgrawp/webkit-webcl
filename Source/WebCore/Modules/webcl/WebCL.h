@@ -52,10 +52,14 @@ public:
 
     PassRefPtr<WebCLContext> createContext(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
 
+    void trackReleaseableWebCLObject(WeakPtr<WebCLObject>);
+    void releaseAll();
 private:
     WebCL();
-
     RefPtr<WebCLContextProperties>& defaultProperties(ExceptionCode&);
+
+    Vector<WeakPtr<WebCLObject> > m_descendantWebCLObjects;
+
     RefPtr<WebCLContextProperties> m_defaultProperties;
     Vector<RefPtr<WebCLPlatform> > m_platforms;
 };

@@ -298,6 +298,8 @@ typedef long CLint;
 
     [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(optional WebCLContextProperties properties);
 
+    void releaseAll();
+
     // FIXME: Lacks the last optional WebCLCallback whenFinished parameter.
     [RaisesException] void waitForEvents(sequence<WebCLEvent> events);
 

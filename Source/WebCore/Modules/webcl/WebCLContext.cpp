@@ -36,6 +36,7 @@
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
 #include "SharedBuffer.h"
+#include "WebCL.h"
 #include "WebCLBuffer.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLEvent.h"
@@ -58,7 +59,7 @@ WebCLContext::~WebCLContext()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLContext> WebCLContext::create(PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec)
 {
     ASSERT(properties);
 
@@ -74,15 +75,16 @@ PassRefPtr<WebCLContext> WebCLContext::create(PassRefPtr<WebCLContextProperties>
         return 0;
     }
 
-    RefPtr<WebCLContext> context = adoptRef(new WebCLContext(computeContext, properties));
+    RefPtr<WebCLContext> context = adoptRef(new WebCLContext(webCL, computeContext, properties));
     return context.release();
 }
 
-WebCLContext::WebCLContext(ComputeContext* computeContext, PassRefPtr<WebCLContextProperties> properties)
+WebCLContext::WebCLContext(WebCL* webCL, ComputeContext* computeContext, PassRefPtr<WebCLContextProperties> properties)
     : WebCLObjectImpl(computeContext)
     , m_videoCache(4) // FIXME: Why '4'?
     , m_contextProperties(properties)
 {
+    webCL->trackReleaseableWebCLObject(createWeakPtr());
 }
 
 WebCLGetInfo WebCLContext::getInfo(CCenum paramName, ExceptionCode& ec)

@@ -43,6 +43,7 @@ class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBuffer;
 class ImageData;
+class WebCL;
 class WebCLBuffer;
 class WebCLCommandQueue;
 class WebCLDevice;
@@ -65,7 +66,7 @@ typedef ComputeContext* ComputeContextPtr;
 class WebCLContext : public WebCLObjectImpl<ComputeContextPtr> {
 public:
     virtual ~WebCLContext();
-    static PassRefPtr<WebCLContext> create(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
+    static PassRefPtr<WebCLContext> create(WebCL*, PassRefPtr<WebCLContextProperties>, ExceptionCode&);
 
     PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, CCenum commandQueueProperty, ExceptionCode&);
 
@@ -115,7 +116,7 @@ public:
     void releaseAll();
 
 protected:
-    WebCLContext(ComputeContext*, PassRefPtr<WebCLContextProperties>);
+    WebCLContext(WebCL*, ComputeContext*, PassRefPtr<WebCLContextProperties>);
     // FIXME: Delete the constructor below?
     // WebCLContext(CCContextProperties* contextProperties, unsigned int deviceType, int* error);
 

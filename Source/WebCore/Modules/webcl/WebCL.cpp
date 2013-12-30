@@ -152,12 +152,29 @@ PassRefPtr<WebCLContext> WebCL::createContext(PassRefPtr<WebCLContextProperties>
             return 0;
     }
 
-    RefPtr<WebCLContext> context = WebCLContext::create(refProperties.release(), ec);
+    RefPtr<WebCLContext> context = WebCLContext::create(this, refProperties.release(), ec);
     if (!context) {
         ASSERT(ec != WebCLException::SUCCESS);
         return 0;
     }
     return context.release();
+}
+
+void WebCL::trackReleaseableWebCLObject(WeakPtr<WebCLObject> object)
+{
+    m_descendantWebCLObjects.append(object);
+}
+
+void WebCL::releaseAll()
+{
+    for (size_t i = 0; i < m_descendantWebCLObjects.size(); ++i) {
+        WebCLObject* object = m_descendantWebCLObjects.at(i).get();
+        if (!object)
+            continue;
+
+        WebCLContext* context = static_cast<WebCLContext*>(object);
+        context->releaseAll();
+    }
 }
 
 } // namespace WebCore
