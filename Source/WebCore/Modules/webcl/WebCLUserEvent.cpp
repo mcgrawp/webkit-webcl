@@ -52,13 +52,14 @@ PassRefPtr<WebCLUserEvent> WebCLUserEvent::create(WebCLContext* ctx, ExceptionCo
     return adoptRef(new WebCLUserEvent(ctx, userEvent));
 }
 
-WebCLUserEvent::WebCLUserEvent(WebCLContext* ctx, CCEvent event)
+WebCLUserEvent::WebCLUserEvent(WebCLContext* context, CCEvent event)
     : WebCLEvent(event)
-    , m_context(ctx)
+    , m_context(context)
 {
+    context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
-void WebCLUserEvent::setUserEventStatus(CCint executionStatus, ExceptionCode& ec)
+void WebCLUserEvent::setStatus(CCint executionStatus, ExceptionCode& ec)
 {
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_EVENT;

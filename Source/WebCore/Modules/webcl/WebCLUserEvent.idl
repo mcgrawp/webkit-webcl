@@ -31,5 +31,5 @@ typedef long CLint;
     Conditional=WEBCL,
     JSGenerateToJSObject,
 ] interface WebCLUserEvent : WebCLEvent {
-   [RaisesException] void setUserEventStatus(CLint executionStatus);
+   [RaisesException] void setStatus(CLint executionStatus);
 };

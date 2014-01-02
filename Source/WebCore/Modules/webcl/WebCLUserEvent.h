@@ -41,7 +41,7 @@ public:
     ~WebCLUserEvent();
     static PassRefPtr<WebCLUserEvent> create(WebCLContext*, ExceptionCode&);
 
-    void setUserEventStatus(CCint, ExceptionCode&);
+    void setStatus(CCint, ExceptionCode&);
 private:
     WebCLUserEvent(WebCLContext*, CCEvent);
     void releasePlatformObjectImpl();
