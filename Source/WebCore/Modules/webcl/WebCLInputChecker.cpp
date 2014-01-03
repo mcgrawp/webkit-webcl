@@ -253,7 +253,7 @@ bool isValidByteLengthForArrayBufferView(unsigned long numBytes, ArrayBufferView
     if (!arrayBufferView)
         return false;
 
-    if (arrayBufferView->byteLength() > numBytes && isValidPitchForArrayBufferView(numBytes, arrayBufferView))
+    if (arrayBufferView->byteLength() >= numBytes && isValidPitchForArrayBufferView(numBytes, arrayBufferView))
         return true;
 
     return false;
