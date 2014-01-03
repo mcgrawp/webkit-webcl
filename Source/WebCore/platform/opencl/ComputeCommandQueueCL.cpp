@@ -57,7 +57,7 @@ CCerror ComputeCommandQueue::enqueueBarrier()
 #if defined(CL_VERSION_1_2)
     error = clEnqueueBarrierWithWaitList(m_commandQueue, 0 /*eventsWaitListLength*/, 0 /*eventsWaitList*/, 0 /*event*/);
 #else
-    error = clEnqueueBarrier(commandQueue);
+    error = clEnqueueBarrier(m_commandQueue);
 #endif
     return error;
 }
@@ -68,7 +68,7 @@ CCerror ComputeCommandQueue::enqueueMarker(CCEvent* event)
 #if defined(CL_VERSION_1_2)
     error = clEnqueueMarkerWithWaitList(m_commandQueue, 0 /*eventsWaitListLength*/, 0 /*eventsWaitList*/, event);
 #else
-    error = clEnqueueMarker(commandQueue, event);
+    error = clEnqueueMarker(m_commandQueue, event);
 #endif
     return error;
 }
