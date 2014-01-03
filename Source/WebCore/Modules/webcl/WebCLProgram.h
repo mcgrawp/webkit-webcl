@@ -30,8 +30,10 @@
 
 #if ENABLE(WEBCL)
 
+#include "ComputeProgram.h"
 #include "WebCLCallback.h"
 #include "WebCLObject.h"
+
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -41,7 +43,8 @@ class WebCLDevice;
 class WebCLGetInfo;
 class WebCLKernel;
 
-class WebCLProgram : public WebCLObjectImpl<CCProgram> {
+typedef ComputeProgram* ComputeProgramPtr;
+class WebCLProgram : public WebCLObjectImpl<ComputeProgramPtr> {
 public:
     virtual ~WebCLProgram();
     static PassRefPtr<WebCLProgram> create(WebCLContext*, const String& programSource, ExceptionCode&);
@@ -54,10 +57,12 @@ public:
     PassRefPtr<WebCLKernel> createKernel(const String& kernelName, ExceptionCode&);
     Vector<RefPtr<WebCLKernel> > createKernelsInProgram(ExceptionCode&);
 
+    ComputeProgram* computeProgram() const { return platformObject(); }
+
     const String& sourceWithCommentsStripped();
 
 private:
-    WebCLProgram(WebCLContext*, CCProgram, const String&);
+    WebCLProgram(WebCLContext*, ComputeProgram*, const String&);
     void releasePlatformObjectImpl();
 
     static void callbackProxy(CCProgram, void*);

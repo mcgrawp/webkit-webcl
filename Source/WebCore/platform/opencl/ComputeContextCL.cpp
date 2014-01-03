@@ -30,6 +30,7 @@
 #include "ComputeContext.h"
 
 #include "ComputeCommandQueue.h"
+#include "ComputeProgram.h"
 
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -412,18 +413,9 @@ CCint ComputeContext::setUserEventStatus(CCEvent event, CCint executionStatus)
     return clSetUserEventStatus(event, executionStatus);
 }
 
-CCProgram ComputeContext::createProgram(const String& kernelSource, CCerror& error)
+ComputeProgram* ComputeContext::createProgram(const String& programSource, CCerror& error)
 {
-    const CString& kernelSourceCString = kernelSource.utf8();
-    const char* kernelSourcePtr = kernelSourceCString.data();
-    return clCreateProgramWithSource(m_clContext, 1, &kernelSourcePtr, 0, &error);
-}
-
-CCerror ComputeContext::buildProgram(CCProgram program, const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, int userData)
-{
-    const CString& optionsCString = options.utf8();
-    const char* optionsPtr = optionsCString.data();
-    return clBuildProgram(program, devices.size(), devices.data(), optionsPtr, notifyFunction, &userData);
+    return new ComputeProgram(this, programSource, error);
 }
 
 CCerror ComputeContext::setKernelArg(CCKernel kernel, CCuint argIndex, size_t argSize, const void* argValue)
@@ -517,16 +509,6 @@ CCerror ComputeContext::getPlatformInfoBase(CCPlatformID platformID, CCPlatformI
    return clGetPlatformInfo(platformID, infoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getProgramInfoBase(CCProgram program, CCProgramInfoType infoType, size_t sizeOfData, void* data, size_t* actualSizeOfData)
-{
-    return clGetProgramInfo(program, infoType, sizeOfData, data, actualSizeOfData);
-}
-
-CCerror ComputeContext::getBuildInfoBase(CCProgram program, CCDeviceID device, CCProgramBuildInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
-{
-    return clGetProgramBuildInfo(program, device, infoType, sizeOfData, data, retSize);
-}
-
 CCerror ComputeContext::getEventInfoBase(CCEvent event, CCEventInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
     return clGetEventInfo(event, infoType, sizeOfData, data, retSize);
@@ -585,38 +567,6 @@ CCerror ComputeContext::releaseSampler(CCSampler sampler)
 CCerror ComputeContext::releaseMemoryObject(PlatformComputeObject memmory)
 {
     return clReleaseMemObject(memmory);
-}
-
-CCerror ComputeContext::releaseProgram(CCProgram program)
-{
-    return clReleaseProgram(program);
-}
-
-CCKernel ComputeContext::createKernel(CCProgram program, const String& kernelName, CCerror& error)
-{
-    return clCreateKernel(program, kernelName.utf8().data(), &error);
-}
-
-Vector<CCKernel> ComputeContext::createKernelsInProgram(CCProgram program, CCerror& error)
-{
-    CCuint numberOfKernels = 0;
-    Vector<CCKernel> kernels;
-    error = clCreateKernelsInProgram(program, 0, 0, &numberOfKernels);
-    if (error != CL_SUCCESS)
-        return kernels;
-
-    if (!numberOfKernels) {
-        // FIXME: Having '0' kernels is an error?
-        return kernels;
-    }
-    if (!kernels.tryReserveCapacity(numberOfKernels)) {
-        error = OUT_OF_HOST_MEMORY;
-        return kernels;
-    }
-    kernels.resize(numberOfKernels);
-
-    error = clCreateKernelsInProgram(program, numberOfKernels, kernels.data(), 0);
-    return kernels;
 }
 
 void ComputeContext::populatePropertiesForInteroperabilityWithGL(Vector<CCContextProperties>& properties, PlatformGraphicsContext3D context3D)

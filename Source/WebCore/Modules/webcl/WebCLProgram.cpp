@@ -30,6 +30,7 @@
 #if ENABLE(WEBCL)
 #include "WebCLProgram.h"
 
+#include "ComputeProgram.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
 #include "WebCLGetInfo.h"
@@ -48,17 +49,18 @@ WebCLProgram::~WebCLProgram()
 PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const String& programSource, ExceptionCode& ec)
 {
     CCerror error = 0;
-    CCProgram clProgram = context->computeContext()->createProgram(programSource, error);
-    if (!clProgram) {
-        ASSERT(error != ComputeContext::SUCCESS);
+
+    ComputeProgram* computeProgram = context->computeContext()->createProgram(programSource, ec);
+    if (error != ComputeContext::SUCCESS) {
+        delete computeProgram;
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
 
-    return adoptRef(new WebCLProgram(context, clProgram, programSource));
+    return adoptRef(new WebCLProgram(context, computeProgram, programSource));
 }
 
-WebCLProgram::WebCLProgram(WebCLContext*context, CCProgram program, const String& programSource)
+WebCLProgram::WebCLProgram(WebCLContext*context, ComputeProgram* program, const String& programSource)
     : WebCLObjectImpl(program)
     , m_context(context)
     , m_weakPtrFactory(this)
@@ -110,14 +112,14 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, CCenum infoType, Ex
     case ComputeContext::PROGRAM_BUILD_OPTIONS:
     case ComputeContext::PROGRAM_BUILD_LOG: {
         Vector<char> buffer;
-        error = ComputeContext::getBuildInfo(platformObject(), ccDeviceID, infoType, &buffer);
+        error = platformObject()->getBuildInfo(ccDeviceID, infoType, &buffer);
         if (error == ComputeContext::SUCCESS)
             return WebCLGetInfo(String(buffer.data()));
         break;
     }
     case ComputeContext::PROGRAM_BUILD_STATUS: {
         CCBuildStatus buildStatus;
-        error = ComputeContext::getBuildInfo(platformObject(), ccDeviceID, infoType, &buildStatus);
+        error = platformObject()->getBuildInfo(ccDeviceID, infoType, &buildStatus);
         if (error == ComputeContext::SUCCESS)
             return WebCLGetInfo(buildStatus);
         break;
@@ -232,7 +234,7 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
         callbackProxyPtr = &callbackProxy;
     }
 
-    CCerror err = m_context->computeContext()->buildProgram(platformObject(), ccDevices, buildOptions, callbackProxyPtr, s_thisPointers ? s_thisPointers->size() - 1 : 0);
+    CCerror err = platformObject()->buildProgram(ccDevices, buildOptions, callbackProxyPtr, s_thisPointers ? s_thisPointers->size() - 1 : 0);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -293,8 +295,7 @@ const String& WebCLProgram::sourceWithCommentsStripped()
 
 void WebCLProgram::releasePlatformObjectImpl()
 {
-    CCerror computeContextErrorCode = m_context->computeContext()->releaseProgram(platformObject());
-    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+    delete platformObject();
 }
 
 } // namespace WebCore

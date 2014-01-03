@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class ComputeCommandQueue;
+class ComputeProgram;
 
 class ComputeContext {
     WTF_MAKE_NONCOPYABLE(ComputeContext);
@@ -331,11 +332,11 @@ public:
     static CCerror waitForEvents(const Vector<CCEvent>&);
 
     ComputeCommandQueue* createCommandQueue(CCDeviceID, CCCommandQueueProperties, CCerror&);
+    ComputeProgram* createProgram(const String& programSource, CCerror&);
+
     CCEvent createUserEvent(CCerror&);
     CCint setUserEventStatus(CCEvent, CCint executionStatus);
 
-    CCProgram createProgram(const String& kernelSource, CCerror&);
-    CCerror buildProgram(CCProgram, const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, int userData);
     static CCerror setKernelArg(CCKernel, CCuint argIndex, size_t argSize, const void* argValue);
 
     PlatformComputeObject createBuffer(CCMemoryFlags type, size_t, void* data, CCerror&);
@@ -345,9 +346,6 @@ public:
     PlatformComputeObject createFromGLRenderbuffer(CCMemoryFlags type, GC3Duint renderbufferId, CCerror&);
     CCSampler createSampler(CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
     PlatformComputeObject createFromGLTexture2D(CCMemoryFlags type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror&);
-
-    CCKernel createKernel(CCProgram, const String& kernelName, CCerror&);
-    Vector<CCKernel> createKernelsInProgram(CCProgram, CCerror&);
 
     CCerror supportedImageFormats(CCMemoryFlags, CCMemoryObjectType, Vector<CCImageFormat>&);
 
@@ -360,11 +358,6 @@ public:
     static CCerror getPlatformInfo(CCPlatformID platform, CCPlatformInfoType infoType, T* data)
     {
         return getInfoHelper(ComputeContext::getPlatformInfoBase, platform, infoType, data);
-    }
-    template <typename T>
-    static CCerror getProgramInfo(CCProgram program, CCProgramInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeContext::getProgramInfoBase, program, infoType, data);
     }
     template <typename T>
     static CCerror getEventInfo(CCEvent event, CCEventInfoType infoType, T* data)
@@ -408,17 +401,10 @@ public:
         return getInfoHelper(ComputeContext::getWorkGroupInfoBase, kernel, device, infoType, data);
     }
 
-    template <typename T>
-    static CCerror getBuildInfo(CCProgram program, CCDeviceID device, CCProgramBuildInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeContext::getBuildInfoBase, program, device, infoType, data);
-    }
-
     CCerror releaseEvent(CCEvent);
     CCerror releaseKernel(CCKernel);
     CCerror releaseSampler(CCSampler);
     CCerror releaseMemoryObject(PlatformComputeObject);
-    CCerror releaseProgram(CCProgram);
     // temporary method, just useful because we are refactoring the code
     // just ComputeContext should know about the opencl internals.
     CCContext context() const
@@ -432,7 +418,6 @@ public:
 private:
     static CCerror getDeviceInfoBase(CCDeviceID, CCDeviceInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getPlatformInfoBase(CCPlatformID, CCPlatformInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getProgramInfoBase(CCProgram, CCProgramInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getEventInfoBase(CCEvent, CCEventInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getEventProfilingInfoBase(CCEvent, CCEventProfilingInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getImageInfoBase(PlatformComputeObject, CCImageInfoType, size_t, void *data, size_t* actualSize);
@@ -440,7 +425,6 @@ private:
     static CCerror getKernelInfoBase(CCKernel, CCKernelInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getSamplerInfoBase(CCSampler, CCSamplerInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getMemoryObjectInfoBase(PlatformComputeObject, CCMemInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getBuildInfoBase(CCProgram, CCDeviceID, CCProgramBuildInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getWorkGroupInfoBase(CCKernel, CCDeviceID, CCKernelWorkGroupInfoType, size_t, void *data, size_t* actualSize);
 
     CCContext m_clContext;

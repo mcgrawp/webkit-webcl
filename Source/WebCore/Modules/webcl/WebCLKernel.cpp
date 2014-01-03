@@ -59,7 +59,7 @@ WebCLKernel::~WebCLKernel()
 PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, WebCLProgram* program, const String& kernelName, ExceptionCode& ec)
 {
     CCerror error = ComputeContext::SUCCESS;
-    CCKernel computeContextKernel = context->computeContext()->createKernel(program->platformObject(), kernelName, error);
+    CCKernel computeContextKernel = program->computeProgram()->createKernel(kernelName, error);
     if (!computeContextKernel) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
@@ -72,7 +72,7 @@ PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, WebCLProgram*
 Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* context, WebCLProgram* program, ExceptionCode& ec)
 {
     CCerror error = ComputeContext::SUCCESS;
-    Vector<CCKernel> computeContextKernels = context->computeContext()->createKernelsInProgram(program->platformObject(), error);
+    Vector<CCKernel> computeContextKernels = program->computeProgram()->createKernelsInProgram(error);
     Vector<RefPtr<WebCLKernel> > kernels;
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
