@@ -59,9 +59,9 @@ WebCLKernel::~WebCLKernel()
 PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, WebCLProgram* program, const String& kernelName, ExceptionCode& ec)
 {
     CCerror error = ComputeContext::SUCCESS;
-    CCKernel computeContextKernel = program->computeProgram()->createKernel(kernelName, error);
-    if (!computeContextKernel) {
-        ASSERT(error != ComputeContext::SUCCESS);
+    ComputeKernel* computeContextKernel = program->computeProgram()->createKernel(kernelName, error);
+    if (error != ComputeContext::SUCCESS) {
+        delete computeContextKernel;
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
@@ -72,7 +72,7 @@ PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, WebCLProgram*
 Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* context, WebCLProgram* program, ExceptionCode& ec)
 {
     CCerror error = ComputeContext::SUCCESS;
-    Vector<CCKernel> computeContextKernels = program->computeProgram()->createKernelsInProgram(error);
+    Vector<ComputeKernel*> computeContextKernels = program->computeProgram()->createKernelsInProgram(error);
     Vector<RefPtr<WebCLKernel> > kernels;
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
@@ -81,7 +81,7 @@ Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* c
 
     Vector<char> functionName;
     for (size_t i = 0 ; i < computeContextKernels.size(); i++) {
-        error = ComputeContext::getKernelInfo(computeContextKernels[i], ComputeContext::KERNEL_FUNCTION_NAME, &functionName);
+        error = computeContextKernels[i]->getKernelInfo(ComputeContext::KERNEL_FUNCTION_NAME, &functionName);
         if (error != ComputeContext::SUCCESS) {
             ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
             kernels.clear();
@@ -94,7 +94,7 @@ Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* c
     return kernels;
 }
 
-WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, CCKernel kernel, const String& kernelName)
+WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, ComputeKernel* kernel, const String& kernelName)
     : WebCLObjectImpl(kernel)
     , m_context(context)
     , m_program(program)
@@ -117,7 +117,7 @@ WebCLGetInfo WebCLKernel::getInfo(CCenum kernelInfo, ExceptionCode& ec)
         return WebCLGetInfo(m_kernelName);
     case ComputeContext::KERNEL_NUM_ARGS: {
         CCuint numberOfArgs = 0;
-        err = ComputeContext::getKernelInfo(platformObject(), kernelInfo, &numberOfArgs);
+        err = platformObject()->getKernelInfo(kernelInfo, &numberOfArgs);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(numberOfArgs));
         break;
@@ -155,14 +155,14 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
     case ComputeContext::KERNEL_WORK_GROUP_SIZE:
     case ComputeContext::KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE: {
         size_t kernelInfo = 0;
-        err = ComputeContext::getWorkGroupInfo(platformObject(), ccDevice, paramName, &kernelInfo);
+        err = platformObject()->getWorkGroupInfo(ccDevice, paramName, &kernelInfo);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(kernelInfo));
         break;
     }
     case ComputeContext::KERNEL_COMPILE_WORK_GROUP_SIZE: {
         Vector<size_t> workGroupSize;
-        err = ComputeContext::getWorkGroupInfo(platformObject(), ccDevice, paramName, &workGroupSize);
+        err = platformObject()->getWorkGroupInfo(ccDevice, paramName, &workGroupSize);
         if (err == ComputeContext::SUCCESS) {
             RefPtr<Int32Array> values = Int32Array::create(3);
             for (int i = 0; i < 3; i++)
@@ -174,7 +174,7 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
     case ComputeContext::KERNEL_PRIVATE_MEM_SIZE:
     case ComputeContext::KERNEL_LOCAL_MEM_SIZE: {
         CCulong localMemSize = 0;
-        err = ComputeContext::getWorkGroupInfo(platformObject(), ccDevice, paramName, &localMemSize);
+        err = platformObject()->getWorkGroupInfo(ccDevice, paramName, &localMemSize);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned long>(localMemSize));
         break;
@@ -191,8 +191,7 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
 
 void WebCLKernel::releasePlatformObjectImpl()
 {
-    CCerror computeContextErrorCode = m_context->computeContext()->releaseKernel(platformObject());
-    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+    delete platformObject();
 }
 
 void WebCLKernel::setArg(CCuint index, WebCLMemoryObject* memoryObject, ExceptionCode& ec)
@@ -213,7 +212,7 @@ void WebCLKernel::setArg(CCuint index, WebCLMemoryObject* memoryObject, Exceptio
     }
 
     PlatformComputeObject ccMemoryObject = memoryObject->platformObject();
-    CCerror err = ComputeContext::setKernelArg(platformObject(), index, sizeof(PlatformComputeObject), &ccMemoryObject);
+    CCerror err = platformObject()->setKernelArg(index, sizeof(PlatformComputeObject), &ccMemoryObject);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -235,7 +234,7 @@ void WebCLKernel::setArg(CCuint index, WebCLSampler* sampler, ExceptionCode& ec)
     }
 
     CCSampler ccSampler = sampler->platformObject();
-    CCerror err = ComputeContext::setKernelArg(platformObject(), index, sizeof(CCSampler), &ccSampler);
+    CCerror err = platformObject()->setKernelArg(index, sizeof(CCSampler), &ccSampler);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
@@ -271,7 +270,7 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
         }
 
         unsigned* value = static_cast<Uint32Array*>(bufferView)->data();
-        CCerror err = ComputeContext::setKernelArg(platformObject(), index, static_cast<size_t>(value[0]), 0 /* __local required null'ed data */);
+        CCerror err = platformObject()->setKernelArg(index, static_cast<size_t>(value[0]), 0 /* __local required null'ed data */);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
         return;
     }
@@ -309,7 +308,7 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
     }
 
     size_t bufferDataSize = bufferView->byteLength();
-    CCerror err = ComputeContext::setKernelArg(platformObject(), index, bufferDataSize, bufferData);
+    CCerror err = platformObject()->setKernelArg(index, bufferDataSize, bufferData);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 

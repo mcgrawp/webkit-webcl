@@ -1976,6 +1976,8 @@
 		758C8F8C178A12F200FAD9BA /* JSWebCLSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 758C8F22178A12B300FAD9BA /* JSWebCLSampler.h */; };
 		758C8F8D178A12F200FAD9BA /* JSWorkerContextWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 758C8F23178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.cpp */; };
 		758C8F8E178A12F200FAD9BA /* JSWorkerContextWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 758C8F24178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.h */; };
+		75D7FFD318774FF900FAE029 /* ComputeKernelCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D7FFD11877444400FAE029 /* ComputeKernelCL.cpp */; };
+		75F40FAE1875FE4B0052EE69 /* ComputeKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F40FAD1875FE460052EE69 /* ComputeKernel.h */; };
 		75F40FB0187605820052EE69 /* ComputeProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F40FAF187605790052EE69 /* ComputeProgram.h */; };
 		75F40FB21876080C0052EE69 /* ComputeProgramCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75F40FB1187608090052EE69 /* ComputeProgramCL.cpp */; };
 		762F1ED7159D960A007408F2 /* HTMLDialogElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 762F1ED6159D960A007408F2 /* HTMLDialogElement.h */; };
@@ -8521,6 +8523,8 @@
 		758C8F22178A12B300FAD9BA /* JSWebCLSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLSampler.h; sourceTree = "<group>"; };
 		758C8F23178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContextWebCLEnvironment.cpp; sourceTree = "<group>"; };
 		758C8F24178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContextWebCLEnvironment.h; sourceTree = "<group>"; };
+		75D7FFD11877444400FAE029 /* ComputeKernelCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeKernelCL.cpp; sourceTree = "<group>"; };
+		75F40FAD1875FE460052EE69 /* ComputeKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeKernel.h; sourceTree = "<group>"; };
 		75F40FAF187605790052EE69 /* ComputeProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeProgram.h; sourceTree = "<group>"; };
 		75F40FB1187608090052EE69 /* ComputeProgramCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeProgramCL.cpp; sourceTree = "<group>"; };
 		762F1ED6159D960A007408F2 /* HTMLDialogElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDialogElement.h; sourceTree = "<group>"; };
@@ -15149,6 +15153,7 @@
 		758C8EEA17887BA000FAD9BA /* opencl */ = {
 			isa = PBXGroup;
 			children = (
+				75D7FFD11877444400FAE029 /* ComputeKernelCL.cpp */,
 				75F40FB1187608090052EE69 /* ComputeProgramCL.cpp */,
 				95105AC71850FAA300B0F977 /* ComputeCommandQueueCL.cpp */,
 				758C8EEB17887BA000FAD9BA /* ComputeContextCL.cpp */,
@@ -19616,6 +19621,7 @@
 			isa = PBXGroup;
 			children = (
 				75F40FAF187605790052EE69 /* ComputeProgram.h */,
+				75F40FAD1875FE460052EE69 /* ComputeKernel.h */,
 				95105AC51850FA8700B0F977 /* ComputeCommandQueue.h */,
 				758C8EE517887BA000FAD9BA /* ComputeContext.h */,
 				758C8EE617887BA000FAD9BA /* ComputeExtensions.h */,
@@ -22750,6 +22756,7 @@
 				1A4A2DF00A1B852A00C807F8 /* JSHTMLAnchorElement.h in Headers */,
 				1A4A2DF20A1B852A00C807F8 /* JSHTMLAppletElement.h in Headers */,
 				1AE2AA1F0A1CDAB400B42B25 /* JSHTMLAreaElement.h in Headers */,
+				75F40FAE1875FE4B0052EE69 /* ComputeKernel.h in Headers */,
 				E44614380CD689C500FADA75 /* JSHTMLAudioElement.h in Headers */,
 				A80E7B110A19D606007FB8C5 /* JSHTMLBaseElement.h in Headers */,
 				1AE2AA210A1CDAB400B42B25 /* JSHTMLBaseFontElement.h in Headers */,
@@ -26803,6 +26810,7 @@
 				F392249C126F11AE00A926D9 /* ScriptCallStackFactory.cpp in Sources */,
 				93B70D6F09EB0C7C009D8468 /* ScriptController.cpp in Sources */,
 				97EF7DFE107E55B700D7C49C /* ScriptControllerBase.cpp in Sources */,
+				75D7FFD318774FF900FAE029 /* ComputeKernelCL.cpp in Sources */,
 				A83E1C740E49042C00140B9C /* ScriptControllerMac.mm in Sources */,
 				9F6FC1961122E82A00E80196 /* ScriptDebugServer.cpp in Sources */,
 				4998AED113FB224D0090B1AA /* ScriptedAnimationController.cpp in Sources */,

@@ -25,56 +25,47 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef ComputeProgram_h
-#define ComputeProgram_h
+#include "config.h"
+#include "ComputeKernel.h"
 
-#include "ComputeTypes.h"
-#include "ComputeTypesTraits.h"
-
-#include <wtf/text/WTFString.h>
+#include "ComputeProgram.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
-class ComputeContext;
-class ComputeKernel;
-
-class ComputeProgram {
-public:
-
-    ComputeProgram(ComputeContext*, const String& programSource, CCerror&);
-    ~ComputeProgram();
-
-    CCerror buildProgram(const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, int userData);
-
-    ComputeKernel* createKernel(const String& kernelName, CCerror&);
-    Vector<ComputeKernel*> createKernelsInProgram(CCerror&);
-
-    template <typename T>
-    CCerror getProgramInfo(CCProgramInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeProgram::getProgramInfoBase, m_program, infoType, data);
-    }
-
-    template <typename T>
-    CCerror getBuildInfo(CCDeviceID device, CCProgramBuildInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeProgram::getBuildInfoBase, m_program, device, infoType, data);
-    }
-
-    CCProgram program() const
-    {
-        return m_program;
-    }
-
-    CCerror release();
-
-private:
-    static CCerror getProgramInfoBase(CCProgram, CCProgramInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getBuildInfoBase(CCProgram, CCDeviceID, CCProgramBuildInfoType, size_t, void *data, size_t* actualSize);
-
-    CCProgram m_program;
-};
-
+ComputeKernel::ComputeKernel(ComputeProgram* program, const String& kernelName, CCerror& error)
+{
+    m_kernel = clCreateKernel(program->program(), kernelName.utf8().data(), &error);
 }
 
-#endif
+ComputeKernel::ComputeKernel(CCKernel kernel)
+    : m_kernel(kernel)
+{
+}
+
+ComputeKernel::~ComputeKernel()
+{
+    clReleaseKernel(m_kernel);
+}
+
+CCerror ComputeKernel::setKernelArg(CCuint argIndex, size_t argSize, const void* argValue)
+{
+    return clSetKernelArg(m_kernel, argIndex, argSize, argValue);
+}
+
+CCerror ComputeKernel::getKernelInfoBase(CCKernel kernel, CCKernelInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
+{
+    return clGetKernelInfo(kernel, infoType, sizeOfData, data, retSize);
+}
+
+CCerror ComputeKernel::getWorkGroupInfoBase(CCKernel kernel, CCDeviceID device, CCKernelWorkGroupInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
+{
+    return clGetKernelWorkGroupInfo(kernel, device, infoType, sizeOfData, data, retSize);
+}
+
+CCerror ComputeKernel::release()
+{
+    return clReleaseKernel(m_kernel);
+}
+
+}

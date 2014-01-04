@@ -30,6 +30,7 @@
 #include "ComputeCommandQueue.h"
 
 #include "ComputeContext.h"
+#include "ComputeKernel.h"
 
 namespace WebCore {
 
@@ -43,11 +44,11 @@ ComputeCommandQueue::~ComputeCommandQueue()
     clReleaseCommandQueue(m_commandQueue);
 }
 
-CCerror ComputeCommandQueue::enqueueNDRangeKernel(CCKernel kernelID, CCuint workItemDimensions,
+CCerror ComputeCommandQueue::enqueueNDRangeKernel(ComputeKernel* kernel, CCuint workItemDimensions,
     const Vector<size_t>& globalWorkOffset, const Vector<size_t>& globalWorkSize, const Vector<size_t>& localWorkSize,
     const Vector<CCEvent>& eventWaitList, CCEvent* event)
 {
-    return clEnqueueNDRangeKernel(m_commandQueue, kernelID, workItemDimensions,
+    return clEnqueueNDRangeKernel(m_commandQueue, kernel->kernel(), workItemDimensions,
         globalWorkOffset.data(), globalWorkSize.data(), localWorkSize.data(), eventWaitList.size(), eventWaitList.data(), event);
 }
 

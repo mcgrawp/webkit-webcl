@@ -30,6 +30,7 @@
 
 #if ENABLE(WEBCL)
 
+#include "ComputeKernel.h"
 #include "ExceptionCode.h"
 #include "WebCLGetInfo.h"
 #include "WebCLInputChecker.h"
@@ -54,7 +55,8 @@ class WebCLMemoryObject;
 class WebCLProgram;
 class WebCLSampler;
 
-class WebCLKernel : public WebCLObjectImpl<CCKernel> {
+typedef ComputeKernel* ComputeKernelPtr;
+class WebCLKernel : public WebCLObjectImpl<ComputeKernelPtr> {
 public:
     virtual ~WebCLKernel();
     static PassRefPtr<WebCLKernel> create(WebCLContext*, WebCLProgram*, const String&, ExceptionCode&);
@@ -70,10 +72,12 @@ public:
     WebCLProgram* program() const;
     String kernelName() const;
 
+    ComputeKernel* computeKernel() const { return platformObject(); }
+
     unsigned numberOfArguments();
 
 private:
-    WebCLKernel(WebCLContext*, WebCLProgram*, CCKernel, const String&);
+    WebCLKernel(WebCLContext*, WebCLProgram*, ComputeKernel*, const String&);
 
     void releasePlatformObjectImpl();
 

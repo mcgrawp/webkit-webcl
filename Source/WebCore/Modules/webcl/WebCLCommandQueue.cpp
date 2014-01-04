@@ -564,7 +564,7 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, CCuint workDim
         return;
     }
 
-    CCKernel ccKernel = kernel->platformObject();
+    ComputeKernel* computeKernel = kernel->computeKernel();
 
     if (workDim > 3) {
         ec = WebCLException::INVALID_WORK_DIMENSION;
@@ -601,7 +601,7 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, CCuint workDim
     if (ec != WebCLException::SUCCESS)
         return;
 
-    CCerror computeContextError = platformObject()->enqueueNDRangeKernel(ccKernel,
+    CCerror computeContextError = platformObject()->enqueueNDRangeKernel(computeKernel,
         workDim, globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }

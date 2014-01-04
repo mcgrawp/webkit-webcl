@@ -25,8 +25,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef ComputeProgram_h
-#define ComputeProgram_h
+#ifndef ComputeKernel_h
+#define ComputeKernel_h
 
 #include "ComputeTypes.h"
 #include "ComputeTypesTraits.h"
@@ -35,44 +35,41 @@
 
 namespace WebCore {
 
-class ComputeContext;
-class ComputeKernel;
+class ComputeProgram;
 
-class ComputeProgram {
+class ComputeKernel {
 public:
+    ComputeKernel(ComputeProgram*, const String& kernelName, CCerror&);
+    ComputeKernel(CCKernel);
+    ~ComputeKernel();
 
-    ComputeProgram(ComputeContext*, const String& programSource, CCerror&);
-    ~ComputeProgram();
-
-    CCerror buildProgram(const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, int userData);
-
-    ComputeKernel* createKernel(const String& kernelName, CCerror&);
-    Vector<ComputeKernel*> createKernelsInProgram(CCerror&);
+    CCerror setKernelArg(CCuint argIndex, size_t argSize, const void* argValue);
 
     template <typename T>
-    CCerror getProgramInfo(CCProgramInfoType infoType, T* data)
+    CCerror getKernelInfo(CCKernelInfoType infoType, T* data)
     {
-        return getInfoHelper(ComputeProgram::getProgramInfoBase, m_program, infoType, data);
+        return getInfoHelper(ComputeKernel::getKernelInfoBase, m_kernel, infoType, data);
     }
-
     template <typename T>
-    CCerror getBuildInfo(CCDeviceID device, CCProgramBuildInfoType infoType, T* data)
+    CCerror getWorkGroupInfo(CCDeviceID device, CCKernelWorkGroupInfoType infoType, T* data)
     {
-        return getInfoHelper(ComputeProgram::getBuildInfoBase, m_program, device, infoType, data);
+        return getInfoHelper(ComputeKernel::getWorkGroupInfoBase, m_kernel, device, infoType, data);
     }
 
-    CCProgram program() const
+    CCKernel kernel() const
     {
-        return m_program;
+        return m_kernel;
     }
 
     CCerror release();
 
 private:
-    static CCerror getProgramInfoBase(CCProgram, CCProgramInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getBuildInfoBase(CCProgram, CCDeviceID, CCProgramBuildInfoType, size_t, void *data, size_t* actualSize);
 
-    CCProgram m_program;
+    static CCerror getKernelInfoBase(CCKernel, CCKernelInfoType, size_t, void *data, size_t* actualSize);
+    static CCerror getWorkGroupInfoBase(CCKernel, CCDeviceID, CCKernelWorkGroupInfoType, size_t, void *data, size_t* actualSize);
+private:
+
+    CCKernel m_kernel;
 };
 
 }

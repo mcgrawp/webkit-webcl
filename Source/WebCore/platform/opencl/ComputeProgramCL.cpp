@@ -29,6 +29,7 @@
 #include "ComputeProgram.h"
 
 #include "ComputeContext.h"
+#include "ComputeKernel.h"
 
 namespace WebCore {
 
@@ -51,31 +52,38 @@ CCerror ComputeProgram::buildProgram(const Vector<CCDeviceID>& devices, const St
     return clBuildProgram(m_program, devices.size(), devices.data(), optionsPtr, notifyFunction, &userData);
 }
 
-CCKernel ComputeProgram::createKernel(const String& kernelName, CCerror& error)
+ComputeKernel* ComputeProgram::createKernel(const String& kernelName, CCerror& error)
 {
-    return clCreateKernel(m_program, kernelName.utf8().data(), &error);
+    return new ComputeKernel(this, kernelName.utf8().data(), error);
 }
 
-Vector<CCKernel> ComputeProgram::createKernelsInProgram(CCerror& error)
+Vector<ComputeKernel*> ComputeProgram::createKernelsInProgram(CCerror& error)
 {
+    Vector<ComputeKernel* > computeKernels;
+
     CCuint numberOfKernels = 0;
     Vector<CCKernel> kernels;
     error = clCreateKernelsInProgram(m_program, 0, 0, &numberOfKernels);
     if (error != CL_SUCCESS)
-        return kernels;
+        return computeKernels;
 
     if (!numberOfKernels) {
         // FIXME: Having '0' kernels is an error?
-        return kernels;
+        return computeKernels;
     }
     if (!kernels.tryReserveCapacity(numberOfKernels)) {
         error = OUT_OF_HOST_MEMORY;
-        return kernels;
+        return computeKernels;
     }
     kernels.resize(numberOfKernels);
 
     error = clCreateKernelsInProgram(m_program, numberOfKernels, kernels.data(), 0);
-    return kernels;
+
+    computeKernels.resize(numberOfKernels);
+    for (size_t i = 0; i < numberOfKernels; ++i)
+        computeKernels[i] = new ComputeKernel(kernels[i]);
+
+    return computeKernels;
 }
 
 CCerror ComputeProgram::getProgramInfoBase(CCProgram program, CCProgramInfoType infoType, size_t sizeOfData, void* data, size_t* actualSizeOfData)
