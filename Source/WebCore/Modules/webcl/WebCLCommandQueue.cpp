@@ -769,6 +769,11 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
     targetOriginCopy.append(0);
     regionCopy.append(1);
 
+    if (WebCLInputChecker::isRegionOverlapping(sourceImage, targetImage, sourceOrigin, targetOrigin, region)) {
+        ec = WebCLException::MEM_COPY_OVERLAP;
+        return;
+    }
+
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
         ccEvents.append(events[i]->platformObject());
@@ -812,7 +817,6 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *sourceImage, WebCLB
     // No support for 3D-images, so set default values of 0 for all origin & region arrays at 3rd index.
     sourceOriginCopy.append(0);
     regionCopy.append(1);
-
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
@@ -887,6 +891,11 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer
     PlatformComputeObject ccSourceBuffer = sourceBuffer->platformObject();
     PlatformComputeObject ccTargetBuffer = targetBuffer->platformObject();
 
+    if (WebCLInputChecker::isRegionOverlapping(sourceBuffer, targetBuffer, sourceOffset, targetOffset, sizeInBytes)) {
+        ec = WebCLException::MEM_COPY_OVERLAP;
+        return;
+    }
+
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)
         ccEvents.append(events[i]->platformObject());
@@ -918,15 +927,22 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
     PlatformComputeObject ccSourceBuffer = sourceBuffer->platformObject();
     PlatformComputeObject ccTargetBuffer = targetBuffer->platformObject();
 
+    if (sourceOrigin.size() != 3 || targetOrigin.size() != 3 || region.size() != 3) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+    size_t sourceOffset = sourceOrigin[2] * sourceSlicePitch + sourceOrigin[1] * sourceRowPitch + sourceOrigin[0];
+    size_t targetOffset = targetOrigin[2] * targetSlicePitch + targetOrigin[1] * targetRowPitch + targetOrigin[0];
+    size_t numBytes = region[2] * region[1] * region[0];
+    if (WebCLInputChecker::isRegionOverlapping(sourceBuffer, targetBuffer, sourceOffset, targetOffset, numBytes)) {
+        ec = WebCLException::MEM_COPY_OVERLAP;
+        return;
+    }
+
     Vector<size_t> sourceOriginCopy, targetOriginCopy, regionCopy;
     sourceOriginCopy.appendVector(sourceOrigin);
     targetOriginCopy.appendVector(targetOrigin);
     regionCopy.appendVector(region);
-
-    if (sourceOriginCopy.size() != 3 || targetOriginCopy.size() != 3 || regionCopy.size() != 3) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
 
     Vector<CCEvent> ccEvents;
     for (size_t i = 0; i < events.size(); ++i)

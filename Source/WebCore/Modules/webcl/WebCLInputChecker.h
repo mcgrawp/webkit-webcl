@@ -38,6 +38,8 @@ class ArrayBufferView;
 
 namespace WebCore {
 
+class WebCLBuffer;
+class WebCLImage;
 class WebCLKernel;
 
 namespace WebCLInputChecker {
@@ -55,6 +57,9 @@ bool isValidKernelArgIndex(WebCLKernel*, unsigned index);
 bool isValidPitchForArrayBufferView(unsigned long, ArrayBufferView*);
 bool isValidByteLengthForArrayBufferView(unsigned long, ArrayBufferView*);
 bool isValidLengthForRegion(const Vector<size_t>&, const Vector<size_t>&, size_t hostRowPitch, size_t hostSlicePitch, size_t length);
+
+bool isRegionOverlapping(WebCLImage*, WebCLImage*, const Vector<CCuint>&, const Vector<CCuint>&, const Vector<CCuint>&);
+bool isRegionOverlapping(WebCLBuffer*, WebCLBuffer*, const CCuint, const CCuint, const CCuint);
 
 template<class T>
 bool validateWebCLObject(WebCLObjectImpl<T>* object)

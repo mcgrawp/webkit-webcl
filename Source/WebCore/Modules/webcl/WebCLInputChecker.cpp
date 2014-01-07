@@ -30,6 +30,9 @@
 #if ENABLE(WEBCL)
 
 #include "WebCLInputChecker.h"
+
+#include "WebCLBuffer.h"
+#include "WebCLImage.h"
 #include "WebCLKernel.h"
 #include <wtf/ArrayBufferView.h>
 
@@ -268,6 +271,43 @@ bool isValidLengthForRegion(const Vector<size_t>& origin, const Vector<size_t>& 
     if ((regionArea + offset) > length)
         return false;
     return true;
+}
+
+static bool valueInRange(size_t value, size_t minimum, size_t maximum)
+{
+    return ((value >= minimum) && (value <= maximum));
+}
+
+bool isRegionOverlapping(WebCLImage* source, WebCLImage* destination, const Vector<CCuint>& sourceOrigin,
+    const Vector<CCuint>& destinationOrigin, const Vector<CCuint>& region)
+{
+    if (!source || !destination)
+        return false;
+
+    if (sourceOrigin.size() != 2 || destinationOrigin.size() != 2 || region.size() != 2)
+        return false;
+
+    if (source->platformObject() != destination->platformObject())
+        return false;
+
+    bool xOverlap = valueInRange(destinationOrigin[0], sourceOrigin[0], (region[0] + sourceOrigin[0]))
+        || valueInRange(sourceOrigin[0], destinationOrigin[0], (destinationOrigin[0] + region[0]));
+    bool yOverlap = valueInRange(destinationOrigin[1], sourceOrigin[1], (region[1] + sourceOrigin[1]))
+        || valueInRange(sourceOrigin[1], destinationOrigin[1], (destinationOrigin[1] + region[1]));
+
+    return xOverlap && yOverlap;
+}
+
+bool isRegionOverlapping(WebCLBuffer* srcBuffer, WebCLBuffer* destBuffer, const CCuint srcOffset, const CCuint dstOffset, const CCuint numBytes)
+{
+    if (!srcBuffer || !destBuffer)
+        return false;
+
+    if (srcBuffer->platformObject() != destBuffer->platformObject())
+        return false;
+
+    return valueInRange(dstOffset, srcOffset, (srcOffset + numBytes))
+        || valueInRange(srcOffset, dstOffset, (dstOffset + numBytes));
 }
 
 }
