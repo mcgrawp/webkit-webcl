@@ -418,11 +418,6 @@ ComputeProgram* ComputeContext::createProgram(const String& programSource, CCerr
     return new ComputeProgram(this, programSource, error);
 }
 
-CCerror ComputeContext::setKernelArg(CCKernel kernel, CCuint argIndex, size_t argSize, const void* argValue)
-{
-    return clSetKernelArg(kernel, argIndex, argSize, argValue);
-}
-
 PlatformComputeObject ComputeContext::createBuffer(CCMemoryFlags type, size_t size, void* data, CCerror& error)
 {
     return clCreateBuffer(m_clContext, type, size, data, &error);
@@ -529,16 +524,6 @@ CCerror ComputeContext::getGLTextureInfoBase(PlatformComputeObject image, CCImag
     return clGetGLTextureInfo(image, textureInfoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getKernelInfoBase(CCKernel kernel, CCKernelInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
-{
-    return clGetKernelInfo(kernel, infoType, sizeOfData, data, retSize);
-}
-
-CCerror ComputeContext::getWorkGroupInfoBase(CCKernel kernel, CCDeviceID device, CCKernelWorkGroupInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
-{
-    return clGetKernelWorkGroupInfo(kernel, device, infoType, sizeOfData, data, retSize);
-}
-
 CCerror ComputeContext::getSamplerInfoBase(CCSampler sampler, CCSamplerInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
     return clGetSamplerInfo(sampler, infoType, sizeOfData, data, retSize);
@@ -547,11 +532,6 @@ CCerror ComputeContext::getSamplerInfoBase(CCSampler sampler, CCSamplerInfoType 
 CCerror ComputeContext::getMemoryObjectInfoBase(PlatformComputeObject memObject, CCMemInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
     return clGetMemObjectInfo(memObject, infoType, sizeOfData, data, retSize);
-}
-
-CCerror ComputeContext::releaseKernel(CCKernel kernel)
-{
-    return clReleaseKernel(kernel);
 }
 
 CCerror ComputeContext::releaseEvent(CCEvent ccevent)

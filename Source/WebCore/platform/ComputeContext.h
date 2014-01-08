@@ -337,8 +337,6 @@ public:
     CCEvent createUserEvent(CCerror&);
     CCint setUserEventStatus(CCEvent, CCint executionStatus);
 
-    static CCerror setKernelArg(CCKernel, CCuint argIndex, size_t argSize, const void* argValue);
-
     PlatformComputeObject createBuffer(CCMemoryFlags type, size_t, void* data, CCerror&);
     PlatformComputeObject createSubBuffer(PlatformComputeObject, CCMemoryFlags type, CCBufferCreateType bufferCreatetype, CCBufferRegion* bufferCreateInfo, CCerror&);
     PlatformComputeObject createImage2D(CCMemoryFlags type, size_t width, size_t height, CCuint rowPitch, const CCImageFormat&, void* data, CCerror&);
@@ -380,11 +378,6 @@ public:
         return getInfoHelper(ComputeContext::getGLTextureInfoBase, image, textureInfoType, data);
     }
     template <typename T>
-    static CCerror getKernelInfo(CCKernel kernel, CCKernelInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeContext::getKernelInfoBase, kernel, infoType, data);
-    }
-    template <typename T>
     static CCerror getSamplerInfo(CCSampler sampler, CCSamplerInfoType infoType, T* data)
     {
         return getInfoHelper(ComputeContext::getSamplerInfoBase, sampler, infoType, data);
@@ -395,14 +388,7 @@ public:
         return getInfoHelper(ComputeContext::getMemoryObjectInfoBase, computeObject, infoType, data);
     }
 
-    template <typename T>
-    static CCerror getWorkGroupInfo(CCKernel kernel, CCDeviceID device, CCKernelWorkGroupInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeContext::getWorkGroupInfoBase, kernel, device, infoType, data);
-    }
-
     CCerror releaseEvent(CCEvent);
-    CCerror releaseKernel(CCKernel);
     CCerror releaseSampler(CCSampler);
     CCerror releaseMemoryObject(PlatformComputeObject);
     // temporary method, just useful because we are refactoring the code
@@ -422,10 +408,8 @@ private:
     static CCerror getEventProfilingInfoBase(CCEvent, CCEventProfilingInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getImageInfoBase(PlatformComputeObject, CCImageInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getGLTextureInfoBase(PlatformComputeObject, CCImageTextureInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getKernelInfoBase(CCKernel, CCKernelInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getSamplerInfoBase(CCSampler, CCSamplerInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getMemoryObjectInfoBase(PlatformComputeObject, CCMemInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getWorkGroupInfoBase(CCKernel, CCDeviceID, CCKernelWorkGroupInfoType, size_t, void *data, size_t* actualSize);
 
     CCContext m_clContext;
 };
