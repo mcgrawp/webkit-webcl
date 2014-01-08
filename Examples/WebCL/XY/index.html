@@ -20,8 +20,8 @@ var kSpinB, kSpinW, kPix, cmdQueue, iSpinB, iSpinB1, iSpinW, iSpinW1,
 var SPIN_GLOBAL_SIZE = new Int32Array([n, n2]);
 var SPIN_LOCAL_SIZE = new Int32Array(2);
 var PIX_GLOBAL_SIZE = new Int32Array([n, n]);
-var IMAGE_ORIGIN = new Int32Array([0, 0]);
-var IMAGE_REGION = new Int32Array([n, n2]);
+var IMAGE_ORIGIN = [0, 0];
+var IMAGE_REGION = [n, n2];
 
 function randomSpin() {
     var i;

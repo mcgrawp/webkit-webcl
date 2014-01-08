@@ -152,8 +152,8 @@ __kernel void clRandom1D(__global uchar4* dst,
 
             var args = new Array();
             args[0] = bufferA,
-            args[1] = [length, 5];
-            args[2] = [seed++, 5];
+            args[1] = new Uint32Array([length]);
+            args[2] = new Uint32Array([seed++]);
 
             Framework.setKernelArgs(args);
 

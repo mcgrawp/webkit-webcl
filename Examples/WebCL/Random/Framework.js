@@ -282,12 +282,7 @@ Framework = (function(){
 
             try {
                 for(var i in args) {
-
-                    if(args[i] instanceof Array) {
-                        this.kernel.setArg(i, args[i][0], args[i][1]);
-                    } else {
                         this.kernel.setArg(i, args[i]);
-                    }
                 }
             } catch(e) {
                 console.log(e.message);

@@ -183,8 +183,8 @@ function initPaths(queue, pathA, pathB) {
             path[j + 1 + 8 * i] = y0;
         }
     }
-    var origin = new Int32Array([0, 0]);
-    var region = new Int32Array([4, n]);
+    var origin = [0, 0];
+    var region = [4, n];
     var hostRowPitch = new Uint32Array([0]);
 
     try {
