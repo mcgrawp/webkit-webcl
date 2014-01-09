@@ -30,6 +30,10 @@
 
 #if ENABLE(WEBCL)
 
+#include "WebCLImageDescriptor.h"
+#include "WebCLMemoryObject.h"
+#include "WebCLProgram.h"
+
 #include <wtf/Float32Array.h>
 #include <wtf/Int32Array.h>
 #include <wtf/Int8Array.h>
@@ -44,10 +48,8 @@ class WebCLCommandQueue;
 class WebCLContext;
 class WebCLContextProperties;
 class WebCLDevice;
-class WebCLImageDescriptor;
 class WebCLMemoryObject;
 class WebCLPlatform;
-class WebCLProgram;
 
 // A tagged union representing the result of get queries like
 // getParameter (encompassing getBooleanv, getIntegerv, getFloatv) and

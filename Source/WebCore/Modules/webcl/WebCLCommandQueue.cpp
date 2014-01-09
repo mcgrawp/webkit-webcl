@@ -159,6 +159,7 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool block
 
     CCerror error = platformObject()->enqueueWriteBuffer(ccBuffer, blockingWrite, offset, bufferSize, hostPtr, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint bufferOffset, CCuint numBytes, ArrayBufferView* hostPtr,
@@ -265,6 +266,7 @@ void WebCLCommandQueue::enqueueWriteBufferRectBase(WebCLBuffer* buffer, CCbool b
     CCerror err = platformObject()->enqueueWriteBufferRect(ccBuffer, blockingWrite, bufferOriginCopy,
         hostOriginCopy, regionCopy, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, hostPtr, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
 void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool blockingWrite, const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin,
@@ -370,6 +372,7 @@ void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blocki
 
     CCerror err = platformObject()->enqueueReadBuffer(ccBuffer, blockingRead, bufferOffset, numBytes, hostPtr, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
 void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRead, CCuint bufferOffset, CCuint numBytes,
@@ -450,6 +453,7 @@ void WebCLCommandQueue::enqueueReadImageBase(WebCLImage* image, CCbool blockingR
 
     CCerror err = platformObject()->enqueueReadImage(ccImage, blockingRead, originCopy, regionCopy, hostRowPitch, 0 /* slice_pitch */, hostPtr, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
 void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead, const Vector<CCuint>& origin, const Vector<CCuint>& region,
@@ -531,6 +535,7 @@ void WebCLCommandQueue::enqueueReadBufferRectBase(WebCLBuffer* buffer, CCbool bl
     CCerror err = platformObject()->enqueueReadBufferRect(ccBuffer, blockingRead, bufferOriginCopy, hostOriginCopy,
         regionCopy, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, hostPtr, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
 void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blockingRead,
@@ -634,6 +639,7 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, CCuint workDim
     CCerror computeContextError = platformObject()->enqueueNDRangeKernel(computeKernel,
         workDim, globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
 void WebCLCommandQueue::finish(ExceptionCode& ec)
@@ -712,6 +718,7 @@ void WebCLCommandQueue::enqueueWriteImageBase(WebCLImage* image, CCbool blocking
 
     CCerror err = platformObject()->enqueueWriteImage(ccImage, blockingWrite, originCopy, regionCopy, hostRowPitch, 0 /* input_slice_pitch */, hostPtr, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
@@ -825,8 +832,8 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
 
     CCerror err = platformObject()->enqueueCopyImage(ccSourceImage, ccTargetImage,
         sourceOriginCopy, targetOriginCopy, regionCopy, ccEvents, ccEvent);
-    if (err != ComputeContext::SUCCESS)
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
 void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage* sourceImage, WebCLBuffer* targetBuffer, const Vector<unsigned>&
@@ -876,6 +883,7 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage* sourceImage, WebCLB
     CCerror err = platformObject()->enqueueCopyImageToBuffer(ccSourceImage, ccTargetBuffer,
         sourceOriginCopy, regionCopy, targetOffset, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
 void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer* sourceBuffer, WebCLImage* targetImage, CCuint sourceOffset,
@@ -925,6 +933,7 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer* sourceBuffer, WebC
     CCerror err = platformObject()->enqueueCopyBufferToImage(ccSourceBuffer, ccTargetImage,
         sourceOffset, targetOriginCopy, regionCopy, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
 void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer* targetBuffer, CCuint sourceOffset,
@@ -966,6 +975,7 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer
     CCerror err = platformObject()->enqueueCopyBuffer(ccSourceBuffer, ccTargetBuffer,
         sourceOffset, targetOffset, sizeInBytes, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
 void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBuffer* targetBuffer, const Vector<unsigned>& sourceOrigin,
@@ -1020,6 +1030,7 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
     CCerror err = platformObject()->enqueueCopyBufferRect(ccSourceBuffer, ccTargetBuffer,
         sourceOriginCopy, targetOriginCopy, regionCopy, sourceRowPitch, sourceSlicePitch, targetRowPitch, targetSlicePitch, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
 void WebCLCommandQueue::enqueueBarrier(ExceptionCode& ec)
@@ -1085,6 +1096,7 @@ void WebCLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryO
 
     CCerror err = platformObject()->enqueueAcquireGLObjects(ccMemoryObjectIDs, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
 void WebCLCommandQueue::enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
@@ -1113,6 +1125,7 @@ void WebCLCommandQueue::enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryO
 
     CCerror err = platformObject()->enqueueReleaseGLObjects(ccMemoryObjectIDs, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 #endif
 

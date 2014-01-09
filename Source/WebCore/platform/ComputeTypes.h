@@ -81,6 +81,7 @@ typedef cl_context CCContext;
 
 // FIXME: It has to follow the CCxxx pattern here.
 typedef void (*pfnNotify)(CCProgram, void*);
+typedef void (*pfnEventNotify)(CCEvent, CCint eventCommandExecStatus, void* userData);
 
 typedef cl_device_info CCDeviceInfoType;
 typedef cl_platform_info CCPlatformInfoType;

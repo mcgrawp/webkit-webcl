@@ -335,7 +335,8 @@ public:
     ComputeProgram* createProgram(const String& programSource, CCerror&);
 
     CCEvent createUserEvent(CCerror&);
-    CCint setUserEventStatus(CCEvent, CCint executionStatus);
+    CCerror setUserEventStatus(CCEvent, CCint executionStatus);
+    static CCerror setEventCallback(CCEvent, CCenum eventCommandExecStatus, pfnEventNotify callback, void* userData);
 
     PlatformComputeObject createBuffer(CCMemoryFlags type, size_t, void* data, CCerror&);
     PlatformComputeObject createSubBuffer(PlatformComputeObject, CCMemoryFlags type, CCBufferCreateType bufferCreatetype, CCBufferRegion* bufferCreateInfo, CCerror&);

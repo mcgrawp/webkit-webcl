@@ -30,35 +30,49 @@
 
 #if ENABLE(WEBCL)
 
+#include "WebCLCallback.h"
 #include "WebCLObject.h"
 
 namespace WebCore {
 
 class WebCLGetInfo;
 class WebCLCommandQueue;
-class WebCLCallback;
 
 class WebCLEvent : public WebCLObjectImpl<CCEvent> {
 public:
     virtual ~WebCLEvent();
     static PassRefPtr<WebCLEvent> create();
+
     WebCLGetInfo getInfo(CCenum, ExceptionCode&);
     WebCLGetInfo getProfilingInfo(CCenum, ExceptionCode&);
 
-    void setCallback(CCenum, PassRefPtr<WebCLCallback>, ExceptionCode&);
+    void setCallback(CCenum, WebCLCallback*, ExceptionCode&);
     void setAssociatedCommandQueue(WebCLCommandQueue* commandQueue);
 
+    bool isUserEvent() const;
+
     virtual bool isPlatformObjectNeutralized() const;
+
+    static void processCallbackRegisterQueueForEvent(RefPtr<WebCLEvent>, ExceptionCode&);
 
 protected:
     WebCLEvent(CCEvent);
     virtual void releasePlatformObjectImpl();
 
-    RefPtr<WebCLCallback> m_callback;
     bool m_isUserEvent;
 
 private:
-    static WebCLEvent* thisPointer;
+    typedef Vector<std::pair<CCint, RefPtr<WebCLCallback> > > CallbackDataVector;
+    typedef HashMap<RefPtr<WebCLEvent>, OwnPtr<CallbackDataVector> > WebCLEventCallbackRegisterQueue;
+
+    static void callbackProxy(CCEvent, CCint, void*);
+    static void callbackProxyOnMainThread(void* userData);
+    static WebCLEventCallbackRegisterQueue& callbackRegisterQueue()
+    {
+        DEFINE_STATIC_LOCAL(WebCLEventCallbackRegisterQueue, instance, ());
+        return instance;
+    }
+
     RefPtr<WebCLCommandQueue> m_commandQueue;
 };
 

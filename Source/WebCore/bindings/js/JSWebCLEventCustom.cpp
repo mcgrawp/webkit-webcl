@@ -40,16 +40,15 @@ namespace WebCore {
 
 class WebCLGetInfo;
 
-static PassRefPtr<WebCLCallback> createCallback(ExecState* exec, JSDOMGlobalObject* /* globalObject */, JSValue value)
+static PassRefPtr<WebCLCallback> createCallback(ExecState* exec, JSDOMGlobalObject* globalObject, JSValue value)
 {
     if (value.isUndefinedOrNull()) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return 0;
     }
-    // FIXME:: Need to add support for callback with WebCLEvent interface.
-    // JSObject* object = asObject(value);
-    // JSWebCLCallback::create(object, globalObject);
-    return 0;
+
+    JSObject* object = asObject(value);
+    return JSWebCLCallback::create(object, globalObject);
 }
 
 JSValue JSWebCLEvent::getInfo(JSC::ExecState* exec)
@@ -95,7 +94,7 @@ JSValue JSWebCLEvent::getProfilingInfo(JSC::ExecState* exec)
 
 JSValue JSWebCLEvent::setCallback(JSC::ExecState* exec)
 {
-    if (exec->argumentCount() != 3)
+    if (exec->argumentCount() != 2)
         return throwSyntaxError(exec);
 
     if (exec->hadException())
@@ -106,30 +105,26 @@ JSValue JSWebCLEvent::setCallback(JSC::ExecState* exec)
         return jsUndefined();
 
     ExceptionCode ec = 0;
-    RefPtr<WebCLCallback> callback;
-    if (!exec->argument(1).isUndefinedOrNull()) {
-        JSObject* object = exec->argument(1).getObject();
-        if (!object) {
-            setDOMException(exec, TYPE_MISMATCH_ERR);
-            return jsUndefined();
-        }
-        // FIXME:: Need to add support for callback with WebCLEvent interface.
-        // JSWebCLCallback::create(object, static_cast<JSDOMGlobalObject*>(globalObject()));
-        callback = 0; 
+    if (exec->argument(1).isUndefinedOrNull())
+        return throwSyntaxError(exec);
+
+    JSObject* object = exec->argument(1).getObject();
+    if (!object) {
+        setDOMException(exec, TYPE_MISMATCH_ERR);
+        return jsUndefined();
     }
-    RefPtr<WebCLCallback> finishCallback = createCallback(exec,
+
+    RefPtr<WebCLCallback> callback = createCallback(exec,
         static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(1));
     if (exec->hadException())
         return jsUndefined();
 
-    if (exec->hadException())
-        return jsUndefined();
-
-    m_impl->setCallback(executionStatus, callback.release(), ec);
+    m_impl->setCallback(executionStatus, callback.get(), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
     }
+
     return jsUndefined();
 }
 

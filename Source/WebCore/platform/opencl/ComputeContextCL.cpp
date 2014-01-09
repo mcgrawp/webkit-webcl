@@ -408,6 +408,11 @@ CCEvent ComputeContext::createUserEvent(CCerror& error)
     return clCreateUserEvent(m_clContext, &error);
 }
 
+CCerror ComputeContext::setEventCallback(CCEvent event, CCenum eventCommandExecStatus, pfnEventNotify callback, void* userData)
+{
+    return clSetEventCallback(event, eventCommandExecStatus, callback, userData);
+}
+
 CCint ComputeContext::setUserEventStatus(CCEvent event, CCint executionStatus)
 {
     return clSetUserEventStatus(event, executionStatus);
