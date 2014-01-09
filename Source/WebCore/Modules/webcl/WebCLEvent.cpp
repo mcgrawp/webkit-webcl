@@ -119,6 +119,12 @@ WebCLGetInfo WebCLEvent::getProfilingInfo(CCenum paramName, ExceptionCode& ec)
         ec = WebCLException::INVALID_EVENT;
         return WebCLGetInfo();
     }
+
+    if (m_isUserEvent) {
+        ec = WebCLException::PROFILING_INFO_NOT_AVAILABLE;
+        return WebCLGetInfo();
+    }
+
     CCerror err = 0;
     switch (paramName) {
     case ComputeContext::PROFILING_COMMAND_QUEUED:
