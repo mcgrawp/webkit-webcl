@@ -32,6 +32,7 @@
 #include "WebCLInputChecker.h"
 
 #include "WebCLBuffer.h"
+#include "WebCLContext.h"
 #include "WebCLImage.h"
 #include "WebCLKernel.h"
 #include <wtf/ArrayBufferView.h>
@@ -308,6 +309,11 @@ bool isRegionOverlapping(WebCLBuffer* srcBuffer, WebCLBuffer* destBuffer, const 
 
     return valueInRange(dstOffset, srcOffset, (srcOffset + numBytes))
         || valueInRange(srcOffset, dstOffset, (dstOffset + numBytes));
+}
+
+bool compareContext(WebCLContext* context1, WebCLContext* context2)
+{
+    return context1->platformObject() == context2->platformObject();
 }
 
 }

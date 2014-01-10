@@ -75,6 +75,10 @@ public:
     ComputeKernel* computeKernel() const { return platformObject(); }
 
     unsigned numberOfArguments();
+    WebCLContext* context()
+    {
+        return m_context.get();
+    }
 
 private:
     WebCLKernel(WebCLContext*, WebCLProgram*, ComputeKernel*, const String&);

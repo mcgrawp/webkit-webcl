@@ -128,6 +128,11 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool block
         return;
     }
 
+    if (!WebCLInputChecker::compareContext(m_context.get(), buffer->context())) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return;
+    }
+
     if (!WebCLInputChecker::validateWebCLObject(buffer)) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
@@ -215,6 +220,11 @@ void WebCLCommandQueue::enqueueWriteBufferRectBase(WebCLBuffer* buffer, CCbool b
 {
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
+        return;
+    }
+
+    if (!WebCLInputChecker::compareContext(m_context.get(), buffer->context())) {
+        ec = WebCLException::INVALID_CONTEXT;
         return;
     }
 
@@ -338,6 +348,11 @@ void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blocki
         return;
     }
 
+    if (!WebCLInputChecker::compareContext(m_context.get(), buffer->context())) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return;
+    }
+
     if (!WebCLInputChecker::validateWebCLObject(buffer)) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
@@ -394,6 +409,12 @@ void WebCLCommandQueue::enqueueReadImageBase(WebCLImage* image, CCbool blockingR
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
     }
+
+    if (!WebCLInputChecker::compareContext(m_context.get(), image->context())) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return;
+    }
+
 
     if (!WebCLInputChecker::validateWebCLObject(image)) {
         ec = WebCLException::INVALID_MEM_OBJECT;
@@ -470,6 +491,11 @@ void WebCLCommandQueue::enqueueReadBufferRectBase(WebCLBuffer* buffer, CCbool bl
 {
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
+        return;
+    }
+
+    if (!WebCLInputChecker::compareContext(m_context.get(), buffer->context())) {
+        ec = WebCLException::INVALID_CONTEXT;
         return;
     }
 
@@ -564,6 +590,10 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, CCuint workDim
         return;
     }
 
+    if (!WebCLInputChecker::compareContext(m_context.get(), kernel->context())) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return;
+    }
     ComputeKernel* computeKernel = kernel->computeKernel();
 
     if (workDim > 3) {
@@ -634,6 +664,11 @@ void WebCLCommandQueue::enqueueWriteImageBase(WebCLImage* image, CCbool blocking
 {
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
+        return;
+    }
+
+    if (!WebCLInputChecker::compareContext(m_context.get(), image->context())) {
+        ec = WebCLException::INVALID_CONTEXT;
         return;
     }
 
@@ -745,6 +780,12 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
         return;
     }
 
+    if (!WebCLInputChecker::compareContext(m_context.get(), sourceImage->context())
+        || !WebCLInputChecker::compareContext(m_context.get(), targetImage->context())) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return;
+    }
+
     if (!WebCLInputChecker::validateWebCLObject(sourceImage)
         || !WebCLInputChecker::validateWebCLObject(targetImage)) {
         ec = WebCLException::INVALID_MEM_OBJECT;
@@ -788,11 +829,17 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
-void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage *sourceImage, WebCLBuffer *targetBuffer, const Vector<unsigned>&
+void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage* sourceImage, WebCLBuffer* targetBuffer, const Vector<unsigned>&
     sourceOrigin, const Vector<unsigned>& region, CCuint targetOffset, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
+        return;
+    }
+
+    if (!WebCLInputChecker::compareContext(m_context.get(), sourceImage->context())
+        || !WebCLInputChecker::compareContext(m_context.get(), targetBuffer->context())) {
+        ec = WebCLException::INVALID_CONTEXT;
         return;
     }
 
@@ -845,6 +892,12 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer* sourceBuffer, WebC
         return;
     }
 
+    if (!WebCLInputChecker::compareContext(m_context.get(), sourceBuffer->context())
+        || !WebCLInputChecker::compareContext(m_context.get(), targetImage->context())) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return;
+    }
+
     PlatformComputeObject ccSourceBuffer = sourceBuffer->platformObject();
     PlatformComputeObject ccTargetImage = targetImage->platformObject();
 
@@ -888,6 +941,12 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer
         return;
     }
 
+    if (!WebCLInputChecker::compareContext(m_context.get(), sourceBuffer->context())
+        || !WebCLInputChecker::compareContext(m_context.get(), targetBuffer->context())) {
+        ec = WebCLException::INVALID_CONTEXT;
+        return;
+    }
+
     PlatformComputeObject ccSourceBuffer = sourceBuffer->platformObject();
     PlatformComputeObject ccTargetBuffer = targetBuffer->platformObject();
 
@@ -921,6 +980,12 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
     if (!WebCLInputChecker::validateWebCLObject(sourceBuffer)
         || !WebCLInputChecker::validateWebCLObject(targetBuffer)) {
         ec = WebCLException::INVALID_MEM_OBJECT;
+        return;
+    }
+
+    if (!WebCLInputChecker::compareContext(m_context.get(), sourceBuffer->context())
+        || !WebCLInputChecker::compareContext(m_context.get(), targetBuffer->context())) {
+        ec = WebCLException::INVALID_CONTEXT;
         return;
     }
 

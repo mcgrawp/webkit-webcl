@@ -48,6 +48,10 @@ public:
     WebCLGLObjectInfo* getGLObjectInfo(ExceptionCode&);
 #endif
     bool sharesGLResources() const;
+    WebCLContext* context()
+    {
+        return m_context.get();
+    };
 
 protected:
     WebCLMemoryObject(WebCLContext*, PlatformComputeObject, CCuint sizeInBytes, WebCLMemoryObject* = 0);

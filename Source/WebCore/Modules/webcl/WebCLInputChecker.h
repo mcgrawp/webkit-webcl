@@ -39,6 +39,7 @@ class ArrayBufferView;
 namespace WebCore {
 
 class WebCLBuffer;
+class WebCLContext;
 class WebCLImage;
 class WebCLKernel;
 
@@ -60,6 +61,8 @@ bool isValidLengthForRegion(const Vector<size_t>&, const Vector<size_t>&, size_t
 
 bool isRegionOverlapping(WebCLImage*, WebCLImage*, const Vector<CCuint>&, const Vector<CCuint>&, const Vector<CCuint>&);
 bool isRegionOverlapping(WebCLBuffer*, WebCLBuffer*, const CCuint, const CCuint, const CCuint);
+
+bool compareContext(WebCLContext*, WebCLContext*);
 
 template<class T>
 bool validateWebCLObject(WebCLObjectImpl<T>* object)
