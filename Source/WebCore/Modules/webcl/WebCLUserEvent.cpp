@@ -68,8 +68,7 @@ void WebCLUserEvent::setStatus(CCint executionStatus, ExceptionCode& ec)
         return;
     }
 
-    // Some OpenCL implementations do not thrown an exception when executionStatus is negative
-    if (executionStatus < 0) {
+    if (!(executionStatus < 0 || executionStatus == ComputeContext::COMPLETE)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
