@@ -43,15 +43,16 @@ WebCLMemoryObject::~WebCLMemoryObject()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLMemoryObject> WebCLMemoryObject::create(WebCLContext* context, PlatformComputeObject CCmem)
+PassRefPtr<WebCLMemoryObject> WebCLMemoryObject::create(WebCLContext* context, PlatformComputeObject CCmem, CCuint sizeInBytes)
 {
-    return adoptRef(new WebCLMemoryObject(context, CCmem));
+    return adoptRef(new WebCLMemoryObject(context, CCmem, sizeInBytes));
 }
 
-WebCLMemoryObject::WebCLMemoryObject(WebCLContext* context, PlatformComputeObject CCmem, WebCLMemoryObject* parentBuffer)
+WebCLMemoryObject::WebCLMemoryObject(WebCLContext* context, PlatformComputeObject CCmem, CCuint sizeInBytes, WebCLMemoryObject* parentBuffer)
     : WebCLObjectImpl(CCmem)
     , m_context(context)
     , m_parentMemObject(parentBuffer)
+    , m_sizeInBytes(sizeInBytes)
 {
     context->trackReleaseableWebCLObject(createWeakPtr());
 }
@@ -79,13 +80,8 @@ WebCLGetInfo WebCLMemoryObject::getInfo(CCenum paramName, ExceptionCode& ec)
             return WebCLGetInfo(static_cast<unsigned>(memoryFlags));
         break;
         }
-    case ComputeContext::MEM_SIZE: {
-        size_t memorySizeValue = 0;
-        err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &memorySizeValue);
-        if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<size_t>(memorySizeValue));
-        break;
-        }
+    case ComputeContext::MEM_SIZE:
+        return WebCLGetInfo(m_sizeInBytes);
     case ComputeContext::MEM_CONTEXT:
         return WebCLGetInfo(m_context.get());
     case ComputeContext::MEM_ASSOCIATED_MEMOBJECT:

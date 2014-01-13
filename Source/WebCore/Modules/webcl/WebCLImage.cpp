@@ -152,11 +152,15 @@ void WebCLImage::cacheGLObjectInfo(CCenum type, WebGLObject* glObject)
 #endif
 
 WebCLImage::WebCLImage(WebCLContext* context, PlatformComputeObject image, CCuint width, CCuint height, const CCImageFormat& format)
-    : WebCLMemoryObject(context, image)
+    : WebCLMemoryObject(context, image, 0 /* sizeInBytes */)
     , m_width(width)
     , m_height(height)
     , m_format(format)
 {
+    size_t memorySizeValue = 0;
+    CCint err = ComputeContext::getMemoryObjectInfo(image, ComputeContext::MEM_SIZE, &memorySizeValue);
+    if (err == ComputeContext::SUCCESS)
+        m_sizeInBytes = memorySizeValue;
 }
 
 PassRefPtr<WebCLImageDescriptor> WebCLImage::getInfo(ExceptionCode& ec)

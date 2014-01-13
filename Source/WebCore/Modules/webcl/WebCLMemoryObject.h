@@ -41,7 +41,7 @@ class WebCLGetInfo;
 class WebCLMemoryObject : public WebCLObjectImpl<PlatformComputeObject> {
 public:
     virtual ~WebCLMemoryObject();
-    static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PlatformComputeObject);
+    static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PlatformComputeObject, CCuint sizeInBytes);
 
     WebCLGetInfo getInfo(CCenum, ExceptionCode&);
 #if ENABLE(WEBGL)
@@ -50,12 +50,13 @@ public:
     bool sharesGLResources() const;
 
 protected:
-    WebCLMemoryObject(WebCLContext*, PlatformComputeObject, WebCLMemoryObject* = 0);
+    WebCLMemoryObject(WebCLContext*, PlatformComputeObject, CCuint sizeInBytes, WebCLMemoryObject* = 0);
     virtual void releasePlatformObjectImpl();
 
     RefPtr<WebCLContext> m_context;
     //FIXME: We need to decide what to do with parent mem objects
     WebCLMemoryObject* m_parentMemObject;
+    size_t m_sizeInBytes;
 
 #if ENABLE(WEBGL)
     RefPtr<WebCLGLObjectInfo> m_objectInfo;

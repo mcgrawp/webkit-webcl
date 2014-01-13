@@ -40,7 +40,7 @@ class WebGLBuffer;
 class WebCLBuffer : public WebCLMemoryObject {
 public:
     ~WebCLBuffer();
-    static PassRefPtr<WebCLBuffer> create(WebCLContext*, CCenum, CCuint, void*, ExceptionCode&);
+    static PassRefPtr<WebCLBuffer> create(WebCLContext*, CCenum, CCuint sizeInBytes, void*, ExceptionCode&);
 
 #if ENABLE(WEBGL)
     static PassRefPtr<WebCLBuffer> create(WebCLContext*, CCenum, WebGLBuffer*, ExceptionCode&);
@@ -49,7 +49,7 @@ public:
     PassRefPtr<WebCLBuffer> createSubBuffer(CCenum memFlags, CCuint origin, CCuint sizeInBytes, ExceptionCode&);
 
 private:
-    WebCLBuffer(WebCLContext*, PlatformComputeObject, WebCLBuffer* parentBuffer = 0);
+    WebCLBuffer(WebCLContext*, PlatformComputeObject, CCuint sizeInBytes, WebCLBuffer* parentBuffer = 0);
 
 #if ENABLE(WEBGL)
     void cacheGLObjectInfo(WebGLBuffer*);
