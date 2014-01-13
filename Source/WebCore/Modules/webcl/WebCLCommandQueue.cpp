@@ -105,6 +105,17 @@ WebCLGetInfo WebCLCommandQueue::getInfo(CCenum paramName, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
+static void ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >& events, Vector<CCEvent>& ccEvents, ExceptionCode& ec)
+{
+    for (size_t i = 0; i < events.size(); ++i) {
+        if (!events[i]->platformObject()) {
+            ec = WebCLException::INVALID_EVENT_WAIT_LIST;
+            return;
+        }
+        ccEvents.append(events[i]->platformObject());
+    }
+}
+
 CCEvent* WebCLCommandQueue::ccEventFromWebCLEvent(WebCLEvent* event, ExceptionCode& ec)
 {
     CCEvent* ccEvent = 0;
@@ -150,8 +161,9 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool block
     }
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
@@ -256,8 +268,9 @@ void WebCLCommandQueue::enqueueWriteBufferRectBase(WebCLBuffer* buffer, CCbool b
     }
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
@@ -363,8 +376,9 @@ void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blocki
     PlatformComputeObject ccBuffer = buffer->platformObject();
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
@@ -444,8 +458,9 @@ void WebCLCommandQueue::enqueueReadImageBase(WebCLImage* image, CCbool blockingR
     regionCopy.append(1);
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
@@ -525,8 +540,9 @@ void WebCLCommandQueue::enqueueReadBufferRectBase(WebCLBuffer* buffer, CCbool bl
     }
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
@@ -629,8 +645,9 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, CCuint workDim
     localWorkSizeCopy.appendVector(localWorkSize);
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
@@ -709,8 +726,9 @@ void WebCLCommandQueue::enqueueWriteImageBase(WebCLImage* image, CCbool blocking
     // FIXME :: Check if any part of the region being written, specified by origin and region, is out of bounds of image
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
@@ -823,8 +841,9 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
     }
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
@@ -873,8 +892,9 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage* sourceImage, WebCLB
     regionCopy.append(1);
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
@@ -923,8 +943,9 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer* sourceBuffer, WebC
     regionCopy.append(1);
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
@@ -965,8 +986,9 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer
     }
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
@@ -1020,8 +1042,9 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
     regionCopy.appendVector(region);
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
@@ -1087,8 +1110,9 @@ void WebCLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryO
     }
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
@@ -1116,8 +1140,9 @@ void WebCLCommandQueue::enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryO
     }
 
     Vector<CCEvent> ccEvents;
-    for (size_t i = 0; i < events.size(); ++i)
-        ccEvents.append(events[i]->platformObject());
+    ccEventListFromWebCLEventList(events, ccEvents, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
 
     CCEvent* ccEvent = ccEventFromWebCLEvent(event, ec);
     if (ec != WebCLException::SUCCESS)
