@@ -53,7 +53,10 @@ public:
 protected:
     WebCLEvent(CCEvent);
     virtual void releasePlatformObjectImpl();
+
     RefPtr<WebCLCallback> m_callback;
+    bool m_isUserEvent;
+
 private:
     static WebCLEvent* thisPointer;
     RefPtr<WebCLCommandQueue> m_commandQueue;

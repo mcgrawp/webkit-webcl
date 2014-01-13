@@ -54,6 +54,7 @@ PassRefPtr<WebCLEvent> WebCLEvent::create()
 WebCLEvent::WebCLEvent(CCEvent event)
     : WebCLObjectImpl(event)
     , m_commandQueue(0)
+    , m_isUserEvent(false)
 {
 }
 
@@ -144,6 +145,11 @@ void WebCLEvent::setCallback(CCenum executionStatus, PassRefPtr<WebCLCallback> n
     // FIXME :: Callback implementation is not working. Need to rework.
     // Issue # 102
     return;
+}
+
+bool WebCLEvent::isUserEvent() const
+{
+    return m_isUserEvent;
 }
 
 bool WebCLEvent::isPlatformObjectNeutralized() const

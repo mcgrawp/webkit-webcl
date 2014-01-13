@@ -40,22 +40,23 @@ WebCLUserEvent::~WebCLUserEvent()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLUserEvent> WebCLUserEvent::create(WebCLContext* ctx, ExceptionCode& ec)
+PassRefPtr<WebCLUserEvent> WebCLUserEvent::create(WebCLContext* context, ExceptionCode& ec)
 {
     CCerror userEventError;
-    CCEvent userEvent = ctx->computeContext()->createUserEvent(userEventError);
+    CCEvent userEvent = context->computeContext()->createUserEvent(userEventError);
     if (!userEvent) {
         ASSERT(userEventError != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(userEventError);
         return 0;
     }
-    return adoptRef(new WebCLUserEvent(ctx, userEvent));
+    return adoptRef(new WebCLUserEvent(context, userEvent));
 }
 
 WebCLUserEvent::WebCLUserEvent(WebCLContext* context, CCEvent event)
     : WebCLEvent(event)
     , m_context(context)
 {
+    m_isUserEvent = true;
     context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
