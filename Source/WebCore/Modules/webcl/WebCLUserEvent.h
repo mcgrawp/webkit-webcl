@@ -41,12 +41,15 @@ public:
     ~WebCLUserEvent();
     static PassRefPtr<WebCLUserEvent> create(WebCLContext*, ExceptionCode&);
 
+    enum EventStatusSituation { StatusUnset, StatusSet };
+
     void setStatus(CCint, ExceptionCode&);
 private:
     WebCLUserEvent(WebCLContext*, CCEvent);
     void releasePlatformObjectImpl();
 
     RefPtr<WebCLContext> m_context;
+    enum EventStatusSituation m_eventStatusSituation;
 };
 
 } // namespace WebCore

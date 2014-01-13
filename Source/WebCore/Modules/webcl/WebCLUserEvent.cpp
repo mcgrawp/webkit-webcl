@@ -55,6 +55,7 @@ PassRefPtr<WebCLUserEvent> WebCLUserEvent::create(WebCLContext* context, Excepti
 WebCLUserEvent::WebCLUserEvent(WebCLContext* context, CCEvent event)
     : WebCLEvent(event)
     , m_context(context)
+    , m_eventStatusSituation(StatusUnset)
 {
     m_isUserEvent = true;
     context->trackReleaseableWebCLObject(createWeakPtr());
@@ -72,6 +73,12 @@ void WebCLUserEvent::setStatus(CCint executionStatus, ExceptionCode& ec)
         ec = WebCLException::INVALID_VALUE;
         return;
     }
+
+    if (m_eventStatusSituation == StatusSet) {
+        ec = WebCLException::INVALID_OPERATION;
+        return;
+    }
+    m_eventStatusSituation = StatusSet;
 
     CCerror userEventError = m_context->computeContext()->setUserEventStatus(platformObject(), executionStatus);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(userEventError);
