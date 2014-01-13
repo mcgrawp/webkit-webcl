@@ -105,13 +105,20 @@ WebCLGetInfo WebCLCommandQueue::getInfo(CCenum paramName, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-static void ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >& events, Vector<CCEvent>& ccEvents, ExceptionCode& ec)
+void WebCLCommandQueue::ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >& events, Vector<CCEvent>& ccEvents, ExceptionCode& ec)
 {
     for (size_t i = 0; i < events.size(); ++i) {
         if (!events[i]->platformObject()) {
             ec = WebCLException::INVALID_EVENT_WAIT_LIST;
             return;
         }
+
+        ASSERT(events[i]->context());
+        if (!WebCLInputChecker::compareContext(events[i]->context(), m_context.get())) {
+            ec = WebCLException::INVALID_CONTEXT;
+            return;
+        }
+
         ccEvents.append(events[i]->platformObject());
     }
 }

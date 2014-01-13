@@ -147,6 +147,7 @@ private:
 
     void releasePlatformObjectImpl();
 
+    void ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >&, Vector<CCEvent>&, ExceptionCode&);
     CCEvent* ccEventFromWebCLEvent(WebCLEvent*, ExceptionCode&);
 
     RefPtr<WebCLContext> m_context;

@@ -51,6 +51,8 @@ public:
 
     bool isUserEvent() const;
 
+    virtual WebCLContext* context() const;
+
     virtual bool isPlatformObjectNeutralized() const;
 
     static void processCallbackRegisterQueueForEvent(RefPtr<WebCLEvent>, ExceptionCode&);

@@ -152,6 +152,11 @@ void WebCLEvent::setAssociatedCommandQueue(WebCLCommandQueue* commandQueue)
     m_commandQueue = commandQueue;
 }
 
+WebCLContext* WebCLEvent::context() const
+{
+    return m_commandQueue ? m_commandQueue->m_context.get() : 0;
+}
+
 void WebCLEvent::callbackProxyOnMainThread(void* userData)
 {
     WebCLEvent* callee = static_cast<WebCLEvent*>(userData);

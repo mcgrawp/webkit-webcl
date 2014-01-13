@@ -102,6 +102,11 @@ WebCLGetInfo WebCLUserEvent::getInfo(CCenum name, ExceptionCode& ec)
     return WebCLEvent::getInfo(name, ec);
 }
 
+WebCLContext* WebCLUserEvent::context() const
+{
+    return m_context.get();
+}
+
 void WebCLUserEvent::releasePlatformObjectImpl()
 {
     CCerror computeContextErrorCode = m_context->computeContext()->releaseEvent(platformObject());

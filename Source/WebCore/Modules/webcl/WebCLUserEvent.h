@@ -46,6 +46,8 @@ public:
     void setStatus(CCint, ExceptionCode&);
     virtual WebCLGetInfo getInfo(CCenum name, ExceptionCode& ec);
 
+    virtual WebCLContext* context() const;
+
 private:
     WebCLUserEvent(WebCLContext*, CCEvent);
     void releasePlatformObjectImpl();
