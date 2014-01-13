@@ -44,6 +44,8 @@ public:
     enum EventStatusSituation { StatusUnset, StatusSet };
 
     void setStatus(CCint, ExceptionCode&);
+    virtual WebCLGetInfo getInfo(CCenum name, ExceptionCode& ec);
+
 private:
     WebCLUserEvent(WebCLContext*, CCEvent);
     void releasePlatformObjectImpl();

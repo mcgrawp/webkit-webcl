@@ -32,6 +32,7 @@
 #include "WebCLUserEvent.h"
 
 #include "WebCLContext.h"
+#include "WebCLCommandQueue.h"
 
 namespace WebCore {
 
@@ -81,6 +82,24 @@ void WebCLUserEvent::setStatus(CCint executionStatus, ExceptionCode& ec)
 
     CCerror userEventError = m_context->computeContext()->setUserEventStatus(platformObject(), executionStatus);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(userEventError);
+}
+
+WebCLGetInfo WebCLUserEvent::getInfo(CCenum name, ExceptionCode& ec)
+{
+    if (isPlatformObjectNeutralized()) {
+        ec = WebCLException::INVALID_EVENT;
+        return WebCLGetInfo();
+    }
+
+    switch (name) {
+    case ComputeContext::EVENT_CONTEXT:
+        ASSERT(m_context);
+        return WebCLGetInfo(m_context.get());
+    case ComputeContext::EVENT_COMMAND_QUEUE:
+        return WebCLGetInfo();
+    }
+
+    return WebCLEvent::getInfo(name, ec);
 }
 
 void WebCLUserEvent::releasePlatformObjectImpl()

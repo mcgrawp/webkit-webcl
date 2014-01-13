@@ -31,11 +31,11 @@
 #if ENABLE(WEBCL)
 
 #include "WebCLCallback.h"
+#include "WebCLGetInfo.h"
 #include "WebCLObject.h"
 
 namespace WebCore {
 
-class WebCLGetInfo;
 class WebCLCommandQueue;
 
 class WebCLEvent : public WebCLObjectImpl<CCEvent> {
@@ -43,7 +43,7 @@ public:
     virtual ~WebCLEvent();
     static PassRefPtr<WebCLEvent> create();
 
-    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
+    virtual WebCLGetInfo getInfo(CCenum, ExceptionCode&);
     WebCLGetInfo getProfilingInfo(CCenum, ExceptionCode&);
 
     void setCallback(CCenum, WebCLCallback*, ExceptionCode&);

@@ -67,13 +67,19 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionCode& ec)
     CCerror err = 0;
     switch (paramName) {
     case ComputeContext::EVENT_COMMAND_EXECUTION_STATUS: {
-        CCuint ccExecStatus = 0;
+        if (!platformObject())
+            return WebCLGetInfo(-1);
+
+        CCint ccExecStatus = 0;
         err = ComputeContext::getEventInfo(platformObject(), paramName, &ccExecStatus);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(ccExecStatus));
         break;
     }
     case ComputeContext::EVENT_COMMAND_TYPE: {
+        if (!platformObject())
+            return WebCLGetInfo();
+
         CCCommandType ccCommandType = 0;
         err= ComputeContext::getEventInfo(platformObject(), paramName, &ccCommandType);
         if (err == ComputeContext::SUCCESS)
@@ -81,16 +87,20 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionCode& ec)
         break;
     }
     case ComputeContext::EVENT_CONTEXT: {
-        if (!m_commandQueue)
+        if (!platformObject())
             return WebCLGetInfo();
 
+        ASSERT(m_commandQueue);
         ASSERT(m_commandQueue->m_context);
+        ASSERT(!m_isUserEvent);
         return WebCLGetInfo(m_commandQueue->m_context.get());
     }
     case ComputeContext::EVENT_COMMAND_QUEUE: {
-        if (!m_commandQueue)
+        if (!platformObject())
             return WebCLGetInfo();
 
+        ASSERT(m_commandQueue);
+        ASSERT(!m_isUserEvent);
         return WebCLGetInfo(m_commandQueue.get());
     }
     default:
