@@ -193,7 +193,7 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
             webCLSupportedBuildOptions.add(AtomicString("-cl-unsafe-math-optimizations", AtomicString::ConstructFromLiteral));
             webCLSupportedBuildOptions.add(AtomicString("-cl-finite-math-only", AtomicString::ConstructFromLiteral));
             webCLSupportedBuildOptions.add(AtomicString("-cl-fast-relaxed-math", AtomicString::ConstructFromLiteral));
-            webCLSupportedBuildOptions.add(AtomicString("-W", AtomicString::ConstructFromLiteral));
+            webCLSupportedBuildOptions.add(AtomicString("-w", AtomicString::ConstructFromLiteral));
             webCLSupportedBuildOptions.add(AtomicString("-Werror", AtomicString::ConstructFromLiteral));
         }
 

@@ -243,6 +243,9 @@ void WebCLEvent::processCallbackRegisterQueueForEvent(RefPtr<WebCLEvent> event, 
     if (!vector)
         return;
 
+    // NOTE: we do not iterate over the register queue to set each of the
+    // callbacks. We set the first, and the rest of the callbacks will be executed
+    // altogether.
     pfnEventNotify callbackProxyPtr = &callbackProxy;
     std::pair<CCint, RefPtr<WebCLCallback> > current = vector->at(0);
     CCerror err = ComputeContext::setEventCallback(event->platformObject(), current.first, callbackProxyPtr, event.get());
