@@ -191,7 +191,7 @@ void WebCLEvent::callbackProxy(CCEvent, CCint, void* userData)
     callbackProxyOnMainThread(userData);
 }
 
-void WebCLEvent::setCallback(CCenum commandExecCallbackType, WebCLCallback* callback, ExceptionCode& ec)
+void WebCLEvent::setCallback(CCenum commandExecCallbackType, PassRefPtr<WebCLCallback> callback, ExceptionCode& ec)
 {
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_EVENT;

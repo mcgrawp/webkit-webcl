@@ -31,7 +31,6 @@
 
 #include "JSWebCLEvent.h"
 
-#include "JSWebCLCallback.h"
 #include "JSWebCLCustom.h"
 
 using namespace JSC;
@@ -39,17 +38,6 @@ using namespace JSC;
 namespace WebCore {
 
 class WebCLGetInfo;
-
-static PassRefPtr<WebCLCallback> createCallback(ExecState* exec, JSDOMGlobalObject* globalObject, JSValue value)
-{
-    if (value.isUndefinedOrNull()) {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
-        return 0;
-    }
-
-    JSObject* object = asObject(value);
-    return JSWebCLCallback::create(object, globalObject);
-}
 
 JSValue JSWebCLEvent::getInfo(JSC::ExecState* exec)
 {
@@ -90,44 +78,6 @@ JSValue JSWebCLEvent::getProfilingInfo(JSC::ExecState* exec)
     }
     return toJS(exec, globalObject(), info);
 }
-
-
-JSValue JSWebCLEvent::setCallback(JSC::ExecState* exec)
-{
-    if (exec->argumentCount() != 2)
-        return throwSyntaxError(exec);
-
-    if (exec->hadException())
-        return jsUndefined();
-
-    unsigned executionStatus = exec->argument(0).toInt32(exec);
-    if (exec->hadException())
-        return jsUndefined();
-
-    ExceptionCode ec = 0;
-    if (exec->argument(1).isUndefinedOrNull())
-        return throwSyntaxError(exec);
-
-    JSObject* object = exec->argument(1).getObject();
-    if (!object) {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
-        return jsUndefined();
-    }
-
-    RefPtr<WebCLCallback> callback = createCallback(exec,
-        static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(1));
-    if (exec->hadException())
-        return jsUndefined();
-
-    m_impl->setCallback(executionStatus, callback.get(), ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-
-    return jsUndefined();
-}
-
 
 } // namespace WebCore
 

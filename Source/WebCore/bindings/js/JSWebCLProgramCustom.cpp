@@ -31,15 +31,10 @@
 
 #include "JSWebCLProgram.h"
 
-#include "JSWebCLCallback.h"
 #include "JSWebCLCustom.h"
 #include "JSWebCLDevice.h"
 
-using namespace JSC;
-using namespace std;
-
 namespace WebCore {
-
 
 JSValue JSWebCLProgram::getInfo(JSC::ExecState* exec)
 {
@@ -79,60 +74,6 @@ JSValue JSWebCLProgram::getBuildInfo(JSC::ExecState* exec)
         return jsUndefined();
     }
     return toJS(exec, globalObject(), info);
-}
-
-static PassRefPtr<WebCLCallback> createCallback(ExecState* exec, JSDOMGlobalObject* globalObject,
-    JSValue value)
-{
-    if (value.isUndefinedOrNull()) {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
-        return 0;
-    }
-    JSObject* object = asObject(value);
-    return JSWebCLCallback::create(object, globalObject);
-}
-
-JSValue JSWebCLProgram::build(JSC::ExecState* exec)
-{
-    if (exec->argumentCount() > 1 && !exec->argument(0).isUndefinedOrNull() && !isJSArray(exec->argument(0))) {
-        setDOMException(exec, WebCLException::INVALID_DEVICE);
-        return jsUndefined();
-    }
-
-    Vector<RefPtr<WebCLDevice> > devices = toRefPtrNativeArray<WebCLDevice, JSWebCLDevice>(exec, exec->argument(0), &toWebCLDevice);
-    if (exec->hadException()) {
-        setDOMException(exec, WebCLException::INVALID_DEVICE);
-        return jsUndefined();
-    }
-
-    // FIXME: This is ugly!
-    String options = "";
-    if (exec->argumentCount() > 1 && !exec->argument(1).isUndefinedOrNull())
-        options = exec->argument(1).toString(exec)->value(exec);
-    if (exec->hadException())
-        return jsUndefined();
-
-    ExceptionCode ec = 0;
-    if (!exec->argument(2).getObject())
-        m_impl->build(devices, options, 0 /*WebCLCallback*/, ec);
-    else {
-        if (!exec->argument(2).isUndefinedOrNull()) {
-            JSObject* object = exec->argument(2).getObject();
-            if (!object) {
-                setDOMException(exec, TYPE_MISMATCH_ERR);
-                return jsUndefined();
-            }
-        }
-        RefPtr<WebCLCallback> callback = createCallback(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(2));
-        if (exec->hadException())
-            return jsUndefined();
-        m_impl->build(devices, options, callback.release(), ec);
-    }
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-    return jsUndefined();
 }
 
 } // namespace WebCore

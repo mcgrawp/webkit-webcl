@@ -46,7 +46,7 @@ public:
     virtual WebCLGetInfo getInfo(CCenum, ExceptionCode&);
     WebCLGetInfo getProfilingInfo(CCenum, ExceptionCode&);
 
-    void setCallback(CCenum, WebCLCallback*, ExceptionCode&);
+    void setCallback(CCenum, PassRefPtr<WebCLCallback>, ExceptionCode&);
     void setAssociatedCommandQueue(WebCLCommandQueue* commandQueue);
 
     bool isUserEvent() const;
