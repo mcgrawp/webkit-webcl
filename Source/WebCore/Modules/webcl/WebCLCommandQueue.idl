@@ -227,6 +227,8 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
 
+    [RaisesException] void enqueueWaitForEvents(sequence<WebCLEvent> eventWaitList);
+
     [RaisesException] void enqueueBarrier();
 
     [RaisesException] void enqueueMarker(WebCLEvent event);

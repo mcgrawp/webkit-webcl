@@ -115,6 +115,8 @@ public:
     void enqueueNDRangeKernel(WebCLKernel*, CCuint workDim, const Vector<unsigned>& globalWorkOffsets, const Vector<unsigned>& globalWorkSize,
         const Vector<unsigned>& localWorkSize, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
+    void enqueueWaitForEvents(const Vector<RefPtr<WebCLEvent> >&, ExceptionCode&);
+
     void finish(ExceptionCode&);
     void flush(ExceptionCode&);
 
@@ -147,7 +149,8 @@ private:
 
     void releasePlatformObjectImpl();
 
-    void ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >&, Vector<CCEvent>&, ExceptionCode&);
+    typedef enum {AcceptUserEvent, DoNotAcceptUserEvent} WebCLToCCEventsFilterCriteria;
+    void ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >&, Vector<CCEvent>&, ExceptionCode&, WebCLToCCEventsFilterCriteria = AcceptUserEvent);
     CCEvent* ccEventFromWebCLEvent(WebCLEvent*, ExceptionCode&);
 
     RefPtr<WebCLContext> m_context;

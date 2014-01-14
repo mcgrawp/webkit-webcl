@@ -105,11 +105,16 @@ WebCLGetInfo WebCLCommandQueue::getInfo(CCenum paramName, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-void WebCLCommandQueue::ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >& events, Vector<CCEvent>& ccEvents, ExceptionCode& ec)
+void WebCLCommandQueue::ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >& events, Vector<CCEvent>& ccEvents, ExceptionCode& ec, WebCLToCCEventsFilterCriteria criteria)
 {
     for (size_t i = 0; i < events.size(); ++i) {
         if (!events[i]->platformObject()) {
             ec = WebCLException::INVALID_EVENT_WAIT_LIST;
+            return;
+        }
+
+        if (criteria == DoNotAcceptUserEvent && events[i]->isUserEvent()) {
+            ec = WebCLException::INVALID_EVENT;
             return;
         }
 
@@ -664,6 +669,22 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, CCuint workDim
         workDim, globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, ccEvents, ccEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
     WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
+}
+
+void WebCLCommandQueue::enqueueWaitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)
+{
+    if (!events.size()) {
+        ec = WebCLException::INVALID_EVENT_WAIT_LIST;
+        return;
+    }
+
+    Vector<CCEvent> ccEvents;
+    ccEventListFromWebCLEventList(events, ccEvents, ec, DoNotAcceptUserEvent);
+    if (ec != WebCLException::SUCCESS)
+        return;
+
+    CCerror error = ComputeContext::waitForEvents(ccEvents);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
 }
 
 void WebCLCommandQueue::finish(ExceptionCode& ec)
