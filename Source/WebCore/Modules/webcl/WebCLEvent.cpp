@@ -91,9 +91,9 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionCode& ec)
             return WebCLGetInfo();
 
         ASSERT(m_commandQueue);
-        ASSERT(m_commandQueue->m_context);
+        ASSERT(m_commandQueue->context());
         ASSERT(!m_isUserEvent);
-        return WebCLGetInfo(m_commandQueue->m_context.get());
+        return WebCLGetInfo(m_commandQueue->context());
     }
     case ComputeContext::EVENT_COMMAND_QUEUE: {
         if (!platformObject())
@@ -154,7 +154,7 @@ void WebCLEvent::setAssociatedCommandQueue(WebCLCommandQueue* commandQueue)
 
 WebCLContext* WebCLEvent::context() const
 {
-    return m_commandQueue ? m_commandQueue->m_context.get() : 0;
+    return m_commandQueue ? m_commandQueue->context() : 0;
 }
 
 void WebCLEvent::callbackProxyOnMainThread(void* userData)
@@ -265,7 +265,7 @@ bool WebCLEvent::isPlatformObjectNeutralized() const
 void WebCLEvent::releasePlatformObjectImpl()
 {
     ASSERT(m_commandQueue);
-    CCerror computeContextErrorCode = m_commandQueue->m_context->computeContext()->releaseEvent(platformObject());
+    CCerror computeContextErrorCode = m_commandQueue->context()->computeContext()->releaseEvent(platformObject());
     ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
 }
 

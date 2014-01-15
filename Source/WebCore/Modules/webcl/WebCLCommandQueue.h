@@ -129,10 +129,10 @@ public:
     void enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryObject> >&, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 #endif
 
+    WebCLContext* context() const { return m_context.get(); }
+
 private:
     WebCLCommandQueue(WebCLContext*, ComputeCommandQueue*, WebCLDevice*);
-
-    friend class WebCLEvent;
 
     void enqueueWriteBufferBase(WebCLBuffer*, CCbool blockingWrite, CCuint, CCuint, void* hostPtr, size_t hostPtrLength,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
