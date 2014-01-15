@@ -180,15 +180,6 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInf
     switch (info.getType()) {
     case WebCLGetInfo::kTypeBool:
         return jsBoolean(info.getBool());
-    case WebCLGetInfo::kTypeBoolArray: {
-        MarkedArgumentBuffer list;
-        const Vector<bool>& value = info.getBoolArray();
-        for (size_t ii = 0; ii < value.size(); ++ii)
-            list.append(jsBoolean(value[ii]));
-        return constructArray(exec, static_cast<ArrayAllocationProfile*>(0), list);
-    }
-    case WebCLGetInfo::kTypeFloat:
-        return jsNumber(info.getFloat());
     case WebCLGetInfo::kTypeInt:
         return jsNumber(info.getInt());
     case WebCLGetInfo::kTypeNull:
@@ -199,12 +190,10 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInf
         return jsNumber(info.getUnsignedInt());
     case WebCLGetInfo::kTypeUnsignedLong:
         return jsNumber(info.getUnsignedLong());
-    case WebCLGetInfo::kTypeWebCLFloatArray:
-        return toJS(exec, globalObject, info.getWebCLFloatArray());
-    case WebCLGetInfo::kTypeWebCLImageDescriptor:
-        return toJS(exec, globalObject, info.getWebCLImageDescriptor());
     case WebCLGetInfo::kTypeWebCLIntArray:
         return toJS(exec, globalObject, info.getWebCLIntArray());
+    case WebCLGetInfo::kTypeWebCLImageDescriptor:
+        return toJS(exec, globalObject, info.getWebCLImageDescriptor());
     case WebCLGetInfo::kTypeWebCLProgram:
         return toJS(exec, globalObject, info.getWebCLProgram());
     case WebCLGetInfo::kTypeWebCLContext:

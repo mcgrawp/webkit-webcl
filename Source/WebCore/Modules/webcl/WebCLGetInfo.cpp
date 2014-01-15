@@ -31,15 +31,6 @@
 
 #include "WebCLGetInfo.h"
 
-#include "WebCLCommandQueue.h"
-#include "WebCLContext.h"
-#include "WebCLContextProperties.h"
-#include "WebCLDevice.h"
-#include "WebCLImageDescriptor.h"
-#include "WebCLMemoryObject.h"
-#include "WebCLPlatform.h"
-#include "WebCLProgram.h"
-
 namespace WebCore {
 
 WebCLGetInfo::WebCLGetInfo(bool value)
@@ -48,23 +39,7 @@ WebCLGetInfo::WebCLGetInfo(bool value)
 {
 }
 
-WebCLGetInfo::WebCLGetInfo(const bool* value, int size)
-    : m_type(kTypeBoolArray)
-{
-    if (!value || size <=0)
-        return;
-    m_boolArray.resize(size);
-    for (int ii = 0; ii < size; ++ii)
-        m_boolArray[ii] = value[ii];
-}
-
-WebCLGetInfo::WebCLGetInfo(float value)
-    : m_type(kTypeFloat)
-    , m_float(value)
-{
-}
-
-WebCLGetInfo::WebCLGetInfo(int value)
+WebCLGetInfo::WebCLGetInfo(CCint value)
     : m_type(kTypeInt)
     , m_int(value)
 {
@@ -81,38 +56,26 @@ WebCLGetInfo::WebCLGetInfo(const String& value)
 {
 }
 
-WebCLGetInfo::WebCLGetInfo(unsigned int value)
+WebCLGetInfo::WebCLGetInfo(CCuint value)
     : m_type(kTypeUnsignedInt)
     , m_unsignedInt(value)
 {
 }
 
-WebCLGetInfo::WebCLGetInfo(unsigned long value)
+WebCLGetInfo::WebCLGetInfo(CCulong value)
     : m_type(kTypeUnsignedLong)
     , m_unsignedLong(value)
 {
 }
+
 WebCLGetInfo::WebCLGetInfo(void* value)
     : m_type(kTypeVoidPointer)
     , m_voidPointer(value)
 {
 }
-
-WebCLGetInfo::WebCLGetInfo(PassRefPtr<Float32Array> value)
-    : m_type(kTypeWebCLFloatArray)
-    , m_webclFloatArray(value)
-{
-}
-
 WebCLGetInfo::WebCLGetInfo(PassRefPtr<Int32Array> value)
     : m_type(kTypeWebCLIntArray)
     , m_webclIntArray(value)
-{
-}
-
-WebCLGetInfo::WebCLGetInfo(PassRefPtr<Int8Array> value)
-    : m_type(kTypeWebCLInt8Array)
-    , m_webclInt8Array(value)
 {
 }
 
@@ -185,19 +148,7 @@ bool WebCLGetInfo::getBool() const
     return m_bool;
 }
 
-const Vector<bool>& WebCLGetInfo::getBoolArray() const
-{
-    ASSERT(getType() == kTypeBoolArray);
-    return m_boolArray;
-}
-
-float WebCLGetInfo::getFloat() const
-{
-    ASSERT(getType() == kTypeFloat);
-    return m_float;
-}
-
-int WebCLGetInfo::getInt() const
+CCint WebCLGetInfo::getInt() const
 {
     ASSERT(getType() == kTypeInt);
     return m_int;
@@ -209,13 +160,13 @@ const String& WebCLGetInfo::getString() const
     return m_string;
 }
 
-unsigned int WebCLGetInfo::getUnsignedInt() const
+CCuint WebCLGetInfo::getUnsignedInt() const
 {
     ASSERT(getType() == kTypeUnsignedInt);
     return m_unsignedInt;
 }
 
-unsigned long WebCLGetInfo::getUnsignedLong() const
+CCulong WebCLGetInfo::getUnsignedLong() const
 {
     ASSERT(getType() == kTypeUnsignedLong);
     return m_unsignedLong;
@@ -227,29 +178,16 @@ void* WebCLGetInfo::getVoidPointer() const
     return m_voidPointer;
 }
 
-PassRefPtr<Float32Array> WebCLGetInfo::getWebCLFloatArray() const
-{
-    ASSERT(getType() == kTypeWebCLFloatArray);
-    return m_webclFloatArray;
-}
-
-PassRefPtr<WebCLImageDescriptor> WebCLGetInfo::getWebCLImageDescriptor() const
-{
-    ASSERT(getType() == kTypeWebCLImageDescriptor);
-    return m_webclImageDescriptor;
-}
-
 PassRefPtr<Int32Array> WebCLGetInfo::getWebCLIntArray() const
 {
     ASSERT(getType() == kTypeWebCLIntArray);
     return m_webclIntArray;
 }
 
-
-PassRefPtr<Int8Array> WebCLGetInfo::getWebCLInt8Array() const
+PassRefPtr<WebCLImageDescriptor> WebCLGetInfo::getWebCLImageDescriptor() const
 {
-    ASSERT(getType() == kTypeWebCLInt8Array);
-    return m_webclInt8Array;
+    ASSERT(getType() == kTypeWebCLImageDescriptor);
+    return m_webclImageDescriptor;
 }
 
 PassRefPtr<WebCLContext> WebCLGetInfo::getWebCLContext() const

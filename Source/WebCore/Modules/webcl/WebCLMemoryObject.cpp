@@ -70,29 +70,29 @@ WebCLGetInfo WebCLMemoryObject::getInfo(CCenum paramName, ExceptionCode& ec)
         CCMemoryObjectType memoryType = 0;
         err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &memoryType);
         if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(memoryType));
+            return WebCLGetInfo(static_cast<CCenum>(memoryType));
         break;
         }
     case ComputeContext::MEM_FLAGS: {
         CCMemoryFlags memoryFlags = 0;
         err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &memoryFlags);
         if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(memoryFlags));
+            return WebCLGetInfo(static_cast<CCenum>(memoryFlags));
         break;
         }
     case ComputeContext::MEM_SIZE:
-        return WebCLGetInfo(m_sizeInBytes);
+        return WebCLGetInfo(static_cast<CCuint>(m_sizeInBytes));
+    case ComputeContext::MEM_OFFSET: {
+        size_t memorySizeValue = 0;
+        err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &memorySizeValue);
+        if (err == ComputeContext::SUCCESS)
+            return WebCLGetInfo(static_cast<CCuint>(memorySizeValue));
+        break;
+        }
     case ComputeContext::MEM_CONTEXT:
         return WebCLGetInfo(m_context.get());
     case ComputeContext::MEM_ASSOCIATED_MEMOBJECT:
         return WebCLGetInfo(m_parentMemObject);
-    case ComputeContext::MEM_OFFSET: {
-        size_t memoryOffsetValue = 0;
-        err = ComputeContext::getMemoryObjectInfo(platformObject(), paramName, &memoryOffsetValue);
-        if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<size_t>(memoryOffsetValue));
-        break;
-        }
     default:
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();

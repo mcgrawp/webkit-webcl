@@ -119,7 +119,7 @@ WebCLGetInfo WebCLKernel::getInfo(CCenum kernelInfo, ExceptionCode& ec)
         CCuint numberOfArgs = 0;
         err = platformObject()->getKernelInfo(kernelInfo, &numberOfArgs);
         if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(numberOfArgs));
+            return WebCLGetInfo(static_cast<CCuint>(numberOfArgs));
         break;
     }
     case ComputeContext::KERNEL_PROGRAM:
@@ -153,11 +153,13 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
     CCerror err = 0;
     switch (paramName) {
     case ComputeContext::KERNEL_WORK_GROUP_SIZE:
+    case ComputeContext::KERNEL_PRIVATE_MEM_SIZE:
+    case ComputeContext::KERNEL_LOCAL_MEM_SIZE:
     case ComputeContext::KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE: {
         size_t kernelInfo = 0;
         err = platformObject()->getWorkGroupInfo(ccDevice, paramName, &kernelInfo);
         if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(kernelInfo));
+            return WebCLGetInfo(static_cast<CCuint>(kernelInfo));
         break;
     }
     case ComputeContext::KERNEL_COMPILE_WORK_GROUP_SIZE: {
@@ -169,14 +171,6 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
                 values->set(i, workGroupSize[i]);
             return WebCLGetInfo(values.release());
         }
-        break;
-    }
-    case ComputeContext::KERNEL_PRIVATE_MEM_SIZE:
-    case ComputeContext::KERNEL_LOCAL_MEM_SIZE: {
-        CCulong localMemSize = 0;
-        err = platformObject()->getWorkGroupInfo(ccDevice, paramName, &localMemSize);
-        if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned long>(localMemSize));
         break;
     }
     default:

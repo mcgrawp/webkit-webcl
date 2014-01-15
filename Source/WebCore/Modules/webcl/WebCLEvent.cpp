@@ -73,7 +73,7 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionCode& ec)
         CCint ccExecStatus = 0;
         err = ComputeContext::getEventInfo(platformObject(), paramName, &ccExecStatus);
         if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(ccExecStatus));
+            return WebCLGetInfo(static_cast<CCint>(ccExecStatus));
         break;
     }
     case ComputeContext::EVENT_COMMAND_TYPE: {
@@ -83,7 +83,7 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionCode& ec)
         CCCommandType ccCommandType = 0;
         err= ComputeContext::getEventInfo(platformObject(), paramName, &ccCommandType);
         if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(ccCommandType));
+            return WebCLGetInfo(static_cast<CCenum>(ccCommandType));
         break;
     }
     case ComputeContext::EVENT_CONTEXT: {

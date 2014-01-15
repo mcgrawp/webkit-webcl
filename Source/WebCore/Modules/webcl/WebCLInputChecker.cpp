@@ -58,7 +58,11 @@ bool isValidDeviceInfoType(unsigned long infoType)
     switch (infoType) {
     case ComputeContext::DEVICE_EXTENSIONS:
     case ComputeContext::DEVICE_PROFILE:
+    case ComputeContext::DEVICE_NAME:
+    case ComputeContext::DEVICE_VENDOR:
+    case ComputeContext::DEVICE_VENDOR_ID:
     case ComputeContext::DEVICE_VERSION:
+    case ComputeContext::DRIVER_VERSION:
     case ComputeContext::DEVICE_OPENCL_C_VERSION:
     case ComputeContext::DEVICE_ADDRESS_BITS:
     case ComputeContext::DEVICE_MAX_CONSTANT_ARGS:
@@ -73,13 +77,18 @@ bool isValidDeviceInfoType(unsigned long infoType)
     case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE:
     case ComputeContext::DEVICE_PREFERRED_VECTOR_WIDTH_HALF:
     case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_CHAR:
+    case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_SHORT:
     case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_INT:
     case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_LONG:
     case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_FLOAT:
     case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE:
     case ComputeContext::DEVICE_NATIVE_VECTOR_WIDTH_HALF:
+    case ComputeContext::DEVICE_MAX_CLOCK_FREQUENCY:
     case ComputeContext::DEVICE_IMAGE2D_MAX_HEIGHT:
     case ComputeContext::DEVICE_IMAGE2D_MAX_WIDTH:
+    case ComputeContext::DEVICE_IMAGE3D_MAX_HEIGHT:
+    case ComputeContext::DEVICE_IMAGE3D_MAX_WIDTH:
+    case ComputeContext::DEVICE_IMAGE3D_MAX_DEPTH:
     case ComputeContext::DEVICE_MAX_PARAMETER_SIZE:
     case ComputeContext::DEVICE_MAX_WORK_GROUP_SIZE:
     case ComputeContext::DEVICE_MAX_WORK_ITEM_DIMENSIONS:
@@ -92,7 +101,7 @@ bool isValidDeviceInfoType(unsigned long infoType)
     case ComputeContext::DEVICE_IMAGE_SUPPORT:
     case ComputeContext::DEVICE_TYPE:
     case ComputeContext::DEVICE_QUEUE_PROPERTIES:
-    case ComputeContext::DEVICE_PLATFORM: // Platform ID is not supported.
+    case ComputeContext::DEVICE_PLATFORM:
     case ComputeContext::DEVICE_LOCAL_MEM_TYPE:
     case ComputeContext::DEVICE_MAX_WORK_ITEM_SIZES:
     case ComputeContext::DEVICE_MAX_COMPUTE_UNITS:

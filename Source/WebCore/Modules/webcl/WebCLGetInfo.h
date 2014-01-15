@@ -30,26 +30,21 @@
 
 #if ENABLE(WEBCL)
 
+#include "ComputeTypes.h"
+#include "WebCLCommandQueue.h"
+#include "WebCLContext.h"
+#include "WebCLContextProperties.h"
+#include "WebCLDevice.h"
 #include "WebCLImageDescriptor.h"
 #include "WebCLMemoryObject.h"
+#include "WebCLPlatform.h"
 #include "WebCLProgram.h"
-
-#include <wtf/Float32Array.h>
 #include <wtf/Int32Array.h>
-#include <wtf/Int8Array.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Uint8Array.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class WebCLCommandQueue;
-class WebCLContext;
-class WebCLContextProperties;
-class WebCLDevice;
-class WebCLMemoryObject;
-class WebCLPlatform;
 
 // A tagged union representing the result of get queries like
 // getParameter (encompassing getBooleanv, getIntegerv, getFloatv) and
@@ -60,18 +55,14 @@ class WebCLGetInfo {
 public:
     enum Type {
         kTypeBool,
-        kTypeBoolArray,
-        kTypeFloat,
         kTypeInt,
         kTypeNull,
         kTypeString,
         kTypeUnsignedInt,
         kTypeUnsignedLong,
         kTypeVoidPointer,
-        kTypeWebCLFloatArray,
         kTypeWebCLImageDescriptor,
         kTypeWebCLIntArray,
-        kTypeWebCLInt8Array,
         kTypeWebCLObjectArray,
         kTypeWebCLProgram,
         kTypeWebCLContext,
@@ -84,18 +75,14 @@ public:
     };
 
     WebCLGetInfo();
-    WebCLGetInfo(const bool* value, int size);
     explicit WebCLGetInfo(bool value);
-    explicit WebCLGetInfo(float value);
-    explicit WebCLGetInfo(int value);
+    explicit WebCLGetInfo(CCint value);
     explicit WebCLGetInfo(const String& value);
-    explicit WebCLGetInfo(unsigned int value);
-    explicit WebCLGetInfo(unsigned long value);
+    explicit WebCLGetInfo(CCuint value);
+    explicit WebCLGetInfo(CCulong value);
     explicit WebCLGetInfo(void* value);
     explicit WebCLGetInfo(const Vector<RefPtr<WebCLDevice> >& value);
-    explicit WebCLGetInfo(PassRefPtr<Float32Array> value);
     explicit WebCLGetInfo(PassRefPtr<Int32Array> value);
-    explicit WebCLGetInfo(PassRefPtr<Int8Array> value);
     explicit WebCLGetInfo(WebCLImageDescriptor* value);
     explicit WebCLGetInfo(WebCLProgram* value);
     explicit WebCLGetInfo(WebCLContext* value);
@@ -107,18 +94,16 @@ public:
 
     virtual ~WebCLGetInfo();
     Type getType() const;
+
     bool getBool() const;
-    const Vector<bool>& getBoolArray() const;
-    float getFloat() const;
-    int getInt() const;
+    CCint getInt() const;
     const String& getString() const;
-    unsigned int getUnsignedInt() const;
-    unsigned long getUnsignedLong() const;
+    CCuint getUnsignedInt() const;
+    CCulong getUnsignedLong() const;
+    CCenum getEnum() const;
     void* getVoidPointer() const;
-    PassRefPtr<Float32Array> getWebCLFloatArray() const;
     PassRefPtr<WebCLImageDescriptor> getWebCLImageDescriptor() const;
     PassRefPtr<Int32Array> getWebCLIntArray() const;
-    PassRefPtr<Int8Array> getWebCLInt8Array() const;
     PassRefPtr<WebCLProgram> getWebCLProgram() const;
     PassRefPtr<WebCLContext> getWebCLContext() const;
     PassRefPtr<WebCLCommandQueue> getWebCLCommandQueue() const;
@@ -130,18 +115,15 @@ public:
 
 private:
     Type m_type;
+
     bool m_bool;
-    Vector<bool> m_boolArray;
-    float m_float;
-    int m_int;
+    CCint m_int;
     String m_string;
-    unsigned int m_unsignedInt;
-    unsigned long m_unsignedLong;
+    CCuint m_unsignedInt;
+    CCulong m_unsignedLong;
     void* m_voidPointer;
-    RefPtr<Float32Array> m_webclFloatArray;
     RefPtr<WebCLImageDescriptor> m_webclImageDescriptor;
     RefPtr<Int32Array> m_webclIntArray;
-    RefPtr<Int8Array> m_webclInt8Array;
     RefPtr<WebCLProgram> m_webclProgram;
     RefPtr<WebCLContext> m_webclContext;
     RefPtr<WebCLCommandQueue> m_webCLCommandQueue;

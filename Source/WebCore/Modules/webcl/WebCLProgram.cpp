@@ -121,7 +121,7 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, CCenum infoType, Ex
         CCBuildStatus buildStatus;
         error = platformObject()->getBuildInfo(ccDeviceID, infoType, &buildStatus);
         if (error == ComputeContext::SUCCESS)
-            return WebCLGetInfo(buildStatus);
+            return WebCLGetInfo(static_cast<CCint>(buildStatus));
         break;
     }
     default:

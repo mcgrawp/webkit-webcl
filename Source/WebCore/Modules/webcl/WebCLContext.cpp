@@ -95,7 +95,7 @@ WebCLGetInfo WebCLContext::getInfo(CCenum paramName, ExceptionCode& ec)
 
     switch (paramName) {
     case ComputeContext::CONTEXT_NUM_DEVICES:
-        return WebCLGetInfo(m_contextProperties->devices().size());
+        return WebCLGetInfo(static_cast<CCuint>(m_contextProperties->devices().size()));
     case ComputeContext::CONTEXT_DEVICES:
         return WebCLGetInfo(m_contextProperties->devices());
     case ComputeContext::CONTEXT_PROPERTIES:

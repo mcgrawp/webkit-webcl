@@ -92,7 +92,7 @@ WebCLGetInfo WebCLCommandQueue::getInfo(CCenum paramName, ExceptionCode& ec)
         CCCommandQueueProperties ccCommandQueueProperties = 0;
         err = platformObject()->commandQueueInfo(paramName, &ccCommandQueueProperties);
         if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(ccCommandQueueProperties));
+            return WebCLGetInfo(static_cast<CCenum>(ccCommandQueueProperties));
         break;
     }
     default:

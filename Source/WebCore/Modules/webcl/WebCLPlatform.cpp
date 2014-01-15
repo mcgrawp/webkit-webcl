@@ -70,6 +70,10 @@ WebCLGetInfo WebCLPlatform::getInfo(CCenum platform_info, ExceptionCode& ec)
         return WebCLGetInfo(String("WEBCL_PROFILE"));
     case ComputeContext::PLATFORM_VERSION:
         return WebCLGetInfo(String("WebCL 1.0"));
+    case ComputeContext::PLATFORM_NAME:
+    case ComputeContext::PLATFORM_VENDOR:
+    case ComputeContext::PLATFORM_EXTENSIONS:
+        return WebCLGetInfo(String(""));
     default:
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
