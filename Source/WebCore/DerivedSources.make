@@ -171,6 +171,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webcl/WebCLImageDescriptor.idl \
     $(WebCore)/Modules/webcl/WebCLDevice.idl \
     $(WebCore)/Modules/webcl/WebCLKernel.idl \
+    $(WebCore)/Modules/webcl/WebCLKernelArgInfo.idl \
     $(WebCore)/Modules/webcl/WebCLEvent.idl \
     $(WebCore)/Modules/webcl/WebCLUserEvent.idl \
     $(WebCore)/Modules/webcl/WebCLException.idl \

@@ -1976,6 +1976,8 @@
 		758C8F8C178A12F200FAD9BA /* JSWebCLSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 758C8F22178A12B300FAD9BA /* JSWebCLSampler.h */; };
 		758C8F8D178A12F200FAD9BA /* JSWorkerContextWebCLEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 758C8F23178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.cpp */; };
 		758C8F8E178A12F200FAD9BA /* JSWorkerContextWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 758C8F24178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.h */; };
+		7592F3A918872AE300FFEBC6 /* JSWebCLKernelArgInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7592F3A718872ADA00FFEBC6 /* JSWebCLKernelArgInfo.cpp */; };
+		7592F3AA18872AEE00FFEBC6 /* JSWebCLKernelArgInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 7592F3A818872ADA00FFEBC6 /* JSWebCLKernelArgInfo.h */; };
 		75D7FFD318774FF900FAE029 /* ComputeKernelCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D7FFD11877444400FAE029 /* ComputeKernelCL.cpp */; };
 		75F40FAE1875FE4B0052EE69 /* ComputeKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F40FAD1875FE460052EE69 /* ComputeKernel.h */; };
 		75F40FB0187605820052EE69 /* ComputeProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F40FAF187605790052EE69 /* ComputeProgram.h */; };
@@ -8523,6 +8525,8 @@
 		758C8F22178A12B300FAD9BA /* JSWebCLSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLSampler.h; sourceTree = "<group>"; };
 		758C8F23178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContextWebCLEnvironment.cpp; sourceTree = "<group>"; };
 		758C8F24178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContextWebCLEnvironment.h; sourceTree = "<group>"; };
+		7592F3A718872ADA00FFEBC6 /* JSWebCLKernelArgInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLKernelArgInfo.cpp; sourceTree = "<group>"; };
+		7592F3A818872ADA00FFEBC6 /* JSWebCLKernelArgInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLKernelArgInfo.h; sourceTree = "<group>"; };
 		75D7FFD11877444400FAE029 /* ComputeKernelCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeKernelCL.cpp; sourceTree = "<group>"; };
 		75F40FAD1875FE460052EE69 /* ComputeKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeKernel.h; sourceTree = "<group>"; };
 		75F40FAF187605790052EE69 /* ComputeProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeProgram.h; sourceTree = "<group>"; };
@@ -15165,6 +15169,8 @@
 		758C8EF2178A11F800FAD9BA /* WebCL */ = {
 			isa = PBXGroup;
 			children = (
+				7592F3A718872ADA00FFEBC6 /* JSWebCLKernelArgInfo.cpp */,
+				7592F3A818872ADA00FFEBC6 /* JSWebCLKernelArgInfo.h */,
 				956BD8B4184D12FF00AE33AE /* JSWebCLUserEvent.h */,
 				956BD8B3184D12FF00AE33AE /* JSWebCLUserEvent.cpp */,
 				616C72311847558A003223FB /* JSWebCLCallback.cpp */,
@@ -22606,6 +22612,7 @@
 				B27535750B053814002CE64F /* IntSize.h in Headers */,
 				B27535760B053814002CE64F /* IntSizeHash.h in Headers */,
 				1C81BA0A0E97348300266E07 /* JavaScriptCallFrame.h in Headers */,
+				7592F3AA18872AEE00FFEBC6 /* JSWebCLKernelArgInfo.h in Headers */,
 				418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */,
 				FDA15ECA12B03F50003A583A /* JSAnalyserNode.h in Headers */,
 				49EECF01105070C400099FAB /* JSArrayBuffer.h in Headers */,
@@ -27257,6 +27264,7 @@
 				D086FE9909D53AAB005BC74D /* UnlinkCommand.cpp in Sources */,
 				F55B3DDD1251F12D003EF269 /* URLInputType.cpp in Sources */,
 				A769E96A16689D0C005D4529 /* UserActionElementSet.cpp in Sources */,
+				7592F3A918872AE300FFEBC6 /* JSWebCLKernelArgInfo.cpp in Sources */,
 				65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */,
 				BCACF3BC1072921A00C0C8A3 /* UserContentURLPattern.cpp in Sources */,
 				2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */,

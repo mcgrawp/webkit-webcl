@@ -136,7 +136,7 @@ void WebCLKernelArgInfoProvider::parseAndAppendDeclaration(const String& argumen
     DEFINE_STATIC_LOCAL(AtomicString, image2d_t, ("image2d_t", AtomicString::ConstructFromLiteral));
     String accessQualifier = (type == image2d_t) ? extractAccessQualifier(declarationStrVector) : "none";
 
-    m_argumentInfoVector.append(adoptRef(new WebCLKernelArgInfo(addressQualifier, accessQualifier, type, name)));
+    m_argumentInfoVector.append(WebCLKernelArgInfo::create(addressQualifier, accessQualifier, type, name));
 }
 
 // FIXME: As of now, it returns the qualifier as declared: e.g., if "__private" is declared,

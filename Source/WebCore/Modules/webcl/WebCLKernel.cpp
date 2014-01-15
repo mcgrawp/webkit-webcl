@@ -312,6 +312,21 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 
+WebCLKernelArgInfo* WebCLKernel::getArgInfo(CCuint index, ExceptionCode& ec)
+{
+    if (isPlatformObjectNeutralized()) {
+        ec = WebCLException::INVALID_KERNEL;
+        return 0;
+    }
+
+    if (!WebCLInputChecker::isValidKernelArgIndex(this, index)) {
+        ec = WebCLException::INVALID_ARG_INDEX;
+        return 0;
+    }
+
+    return m_argumentInfoProvider.argumentsInfo().at(index).get();
+}
+
 WebCLProgram* WebCLKernel::program() const
 {
     return m_program.get();

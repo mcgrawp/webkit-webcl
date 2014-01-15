@@ -37,13 +37,7 @@ namespace WebCore {
 
 class WebCLKernelArgInfo : public RefCounted<WebCLKernelArgInfo> {
 public:
-    WebCLKernelArgInfo(const String& addressQualifier, const String& accessQualifier, const String& type, const String& name)
-        : m_addressQualifier(addressQualifier)
-        , m_accessQualifier(accessQualifier)
-        , m_type(type)
-        , m_name(name)
-    {
-    }
+    static PassRefPtr<WebCLKernelArgInfo> create(const String& addressQualifier, const String& accessQualifier, const String& type, const String& name) { return adoptRef(new WebCLKernelArgInfo(addressQualifier, accessQualifier, type, name)); }
 
     String name() const { return m_name; }
     String typeName() const { return m_type; }
@@ -51,6 +45,13 @@ public:
     String accessQualifier() const { return m_accessQualifier; }
 
 private:
+    WebCLKernelArgInfo(const String& addressQualifier, const String& accessQualifier, const String& type, const String& name)
+        : m_addressQualifier(addressQualifier)
+        , m_accessQualifier(accessQualifier)
+        , m_type(type)
+        , m_name(name)
+    {
+    }
     String m_addressQualifier;
     String m_accessQualifier;
     String m_type;

@@ -51,6 +51,7 @@ class WebCLContext;
 class WebCLDevice;
 class WebCLGetInfo;
 class WebCLKernel;
+class WebCLKernelArgInfo;
 class WebCLMemoryObject;
 class WebCLProgram;
 class WebCLSampler;
@@ -68,6 +69,8 @@ public:
     void setArg(CCuint index, WebCLMemoryObject*, ExceptionCode&);
     void setArg(CCuint index, WebCLSampler*, ExceptionCode&);
     void setArg(CCuint index, ArrayBufferView*, ExceptionCode&);
+
+    WebCLKernelArgInfo* getArgInfo(CCuint index, ExceptionCode&);
 
     WebCLProgram* program() const;
     String kernelName() const;
