@@ -168,6 +168,12 @@ AC_ARG_ENABLE(debug_symbols,
     ])
 AC_MSG_RESULT([$enable_debug_symbols])
 
+AC_MSG_CHECKING([whether to enable WebCL support])
+AC_ARG_ENABLE(webcl, AC_HELP_STRING([--enable-webcl], [enable support for WebCL [default=no]]),
+    [],
+    [enable_webcl="yes"])
+AC_MSG_RESULT([$enable_webcl])
+
 AC_MSG_CHECKING([whether to enable WebGL support])
 AC_ARG_ENABLE(webgl, AC_HELP_STRING([--enable-webgl], [enable support for WebGL [default=check]]),
     [],

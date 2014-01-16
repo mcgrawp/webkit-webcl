@@ -28,6 +28,7 @@ Features:
  Spellcheck support                                       : $enable_spellcheck
  Credential storage support                               : $enable_credential_storage
  Web Audio support                                        : $enable_web_audio
+ WebCL                                                    : $enable_webcl
  WebGL                                                    : $enable_webgl
 
 

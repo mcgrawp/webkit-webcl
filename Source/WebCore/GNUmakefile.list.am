@@ -226,6 +226,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDOMWindow.h \
 	DerivedSources/WebCore/JSDOMWindowCSS.cpp \
 	DerivedSources/WebCore/JSDOMWindowCSS.h \
+    DerivedSources/WebCore/JSDOMWindowWebCLEnvironment.cpp \
+    DerivedSources/WebCore/JSDOMWindowWebCLEnvironment.h \
 	DerivedSources/WebCore/JSDynamicsCompressorNode.h \
 	DerivedSources/WebCore/JSDynamicsCompressorNode.cpp \
 	DerivedSources/WebCore/JSElement.cpp \
@@ -784,6 +786,44 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWaveShaperNode.h \
 	DerivedSources/WebCore/JSPeriodicWave.cpp \
 	DerivedSources/WebCore/JSPeriodicWave.h \
+    DerivedSources/WebCore/JSWebCLBuffer.cpp \
+    DerivedSources/WebCore/JSWebCLBuffer.h \
+    DerivedSources/WebCore/JSWebCLCallback.cpp \
+    DerivedSources/WebCore/JSWebCLCallback.h \
+    DerivedSources/WebCore/JSWebCLCommandQueue.cpp \
+    DerivedSources/WebCore/JSWebCLCommandQueue.h \
+    DerivedSources/WebCore/JSWebCLContext.cpp \
+    DerivedSources/WebCore/JSWebCLContext.h \
+    DerivedSources/WebCore/JSWebCLContextProperties.cpp \
+    DerivedSources/WebCore/JSWebCLContextProperties.h \
+    DerivedSources/WebCore/JSWebCLDevice.cpp \
+    DerivedSources/WebCore/JSWebCLDevice.h \
+    DerivedSources/WebCore/JSWebCLEvent.cpp \
+    DerivedSources/WebCore/JSWebCLEvent.h \
+    DerivedSources/WebCore/JSWebCLException.cpp \
+    DerivedSources/WebCore/JSWebCLException.h \
+    DerivedSources/WebCore/JSWebCLGLObjectInfo.cpp \
+    DerivedSources/WebCore/JSWebCLGLObjectInfo.h \
+    DerivedSources/WebCore/JSWebCL.cpp \
+    DerivedSources/WebCore/JSWebCL.h \
+    DerivedSources/WebCore/JSWebCLImageDescriptor.cpp \
+    DerivedSources/WebCore/JSWebCLImageDescriptor.h \
+    DerivedSources/WebCore/JSWebCLImage.cpp \
+    DerivedSources/WebCore/JSWebCLImage.h \
+    DerivedSources/WebCore/JSWebCLKernelArgInfo.cpp \
+    DerivedSources/WebCore/JSWebCLKernelArgInfo.h \
+    DerivedSources/WebCore/JSWebCLKernel.cpp \
+    DerivedSources/WebCore/JSWebCLKernel.h \
+    DerivedSources/WebCore/JSWebCLMemoryObject.cpp \
+    DerivedSources/WebCore/JSWebCLMemoryObject.h \
+    DerivedSources/WebCore/JSWebCLPlatform.cpp \
+    DerivedSources/WebCore/JSWebCLPlatform.h \
+    DerivedSources/WebCore/JSWebCLProgram.cpp \
+    DerivedSources/WebCore/JSWebCLProgram.h \
+    DerivedSources/WebCore/JSWebCLSampler.cpp \
+    DerivedSources/WebCore/JSWebCLSampler.h \
+    DerivedSources/WebCore/JSWebCLUserEvent.cpp \
+    DerivedSources/WebCore/JSWebCLUserEvent.h \
 	DerivedSources/WebCore/JSWebGLActiveInfo.cpp \
 	DerivedSources/WebCore/JSWebGLActiveInfo.h \
 	DerivedSources/WebCore/JSWebGLBuffer.cpp \
@@ -856,6 +896,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWheelEvent.h \
 	DerivedSources/WebCore/JSWorkerGlobalScope.cpp \
 	DerivedSources/WebCore/JSWorkerGlobalScope.h \
+    DerivedSources/WebCore/JSWorkerContextWebCLEnvironment.cpp \
+    DerivedSources/WebCore/JSWorkerContextWebCLEnvironment.h \
 	DerivedSources/WebCore/JSWorker.cpp \
 	DerivedSources/WebCore/JSWorker.h \
 	DerivedSources/WebCore/JSWorkerLocation.cpp \
@@ -1329,6 +1371,27 @@ dom_binding_idls += \
 	$(WebCore)/Modules/webaudio/AnalyserNode.idl \
 	$(WebCore)/Modules/webaudio/WaveShaperNode.idl \
 	$(WebCore)/Modules/webaudio/PeriodicWave.idl \
+    $(WebCore)/Modules/webcl/DOMWindowWebCLEnvironment.idl \
+    $(WebCore)/Modules/webcl/WebCLBuffer.idl \
+    $(WebCore)/Modules/webcl/WebCLCallback.idl \
+    $(WebCore)/Modules/webcl/WebCLCommandQueue.idl \
+    $(WebCore)/Modules/webcl/WebCLContext.idl \
+    $(WebCore)/Modules/webcl/WebCLContextProperties.idl \
+    $(WebCore)/Modules/webcl/WebCLDevice.idl \
+    $(WebCore)/Modules/webcl/WebCLEvent.idl \
+    $(WebCore)/Modules/webcl/WebCLException.idl \
+    $(WebCore)/Modules/webcl/WebCLGLObjectInfo.idl \
+    $(WebCore)/Modules/webcl/WebCL.idl \
+    $(WebCore)/Modules/webcl/WebCLImageDescriptor.idl \
+    $(WebCore)/Modules/webcl/WebCLImage.idl \
+    $(WebCore)/Modules/webcl/WebCLKernelArgInfo.idl \
+    $(WebCore)/Modules/webcl/WebCLKernel.idl \
+    $(WebCore)/Modules/webcl/WebCLMemoryObject.idl \
+    $(WebCore)/Modules/webcl/WebCLPlatform.idl \
+    $(WebCore)/Modules/webcl/WebCLProgram.idl \
+    $(WebCore)/Modules/webcl/WebCLSampler.idl \
+    $(WebCore)/Modules/webcl/WebCLUserEvent.idl \
+    $(WebCore)/Modules/webcl/WorkerContextWebCLEnvironment.idl \
 	$(WebCore)/Modules/webdatabase/DOMWindowWebDatabase.idl \
 	$(WebCore)/Modules/webdatabase/Database.idl \
 	$(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
@@ -2155,6 +2218,57 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webaudio/WaveShaperNode.h \
 	Source/WebCore/Modules/webaudio/PeriodicWave.cpp \
 	Source/WebCore/Modules/webaudio/PeriodicWave.h \
+    Source/WebCore/Modules/webcl/DOMWindowWebCLEnvironment.cpp \
+    Source/WebCore/Modules/webcl/DOMWindowWebCLEnvironment.h \
+    Source/WebCore/Modules/webcl/WebCLBuffer.cpp \
+    Source/WebCore/Modules/webcl/WebCLBuffer.h \
+    Source/WebCore/Modules/webcl/WebCLCallback.h \
+    Source/WebCore/Modules/webcl/WebCLCommandQueue.cpp \
+    Source/WebCore/Modules/webcl/WebCLCommandQueue.h \
+    Source/WebCore/Modules/webcl/WebCLContext.cpp \
+    Source/WebCore/Modules/webcl/WebCLContext.h \
+    Source/WebCore/Modules/webcl/WebCLContextProperties.cpp \
+    Source/WebCore/Modules/webcl/WebCLContextProperties.h \
+    Source/WebCore/Modules/webcl/WebCL.cpp \
+    Source/WebCore/Modules/webcl/WebCLDevice.cpp \
+    Source/WebCore/Modules/webcl/WebCLDevice.h \
+    Source/WebCore/Modules/webcl/WebCLEvent.cpp \
+    Source/WebCore/Modules/webcl/WebCLEvent.h \
+    Source/WebCore/Modules/webcl/WebCLException.cpp \
+    Source/WebCore/Modules/webcl/WebCLException.h \
+    Source/WebCore/Modules/webcl/WebCLExtensionsAccessor.cpp \
+    Source/WebCore/Modules/webcl/WebCLExtensionsAccessor.h \
+    Source/WebCore/Modules/webcl/WebCLGetInfo.cpp \
+    Source/WebCore/Modules/webcl/WebCLGetInfo.h \
+    Source/WebCore/Modules/webcl/WebCLGLObjectInfo.cpp \
+    Source/WebCore/Modules/webcl/WebCLGLObjectInfo.h \
+    Source/WebCore/Modules/webcl/WebCL.h \
+    Source/WebCore/Modules/webcl/WebCLHTMLInterop.cpp \
+    Source/WebCore/Modules/webcl/WebCLHTMLInterop.h \
+    Source/WebCore/Modules/webcl/WebCLImage.cpp \
+    Source/WebCore/Modules/webcl/WebCLImageDescriptor.cpp \
+    Source/WebCore/Modules/webcl/WebCLImageDescriptor.h \
+    Source/WebCore/Modules/webcl/WebCLImage.h \
+    Source/WebCore/Modules/webcl/WebCLInputChecker.cpp \
+    Source/WebCore/Modules/webcl/WebCLInputChecker.h \
+    Source/WebCore/Modules/webcl/WebCLKernelArgInfo.h \
+    Source/WebCore/Modules/webcl/WebCLKernelArgInfoProvider.cpp \
+    Source/WebCore/Modules/webcl/WebCLKernelArgInfoProvider.h \
+    Source/WebCore/Modules/webcl/WebCLKernel.cpp \
+    Source/WebCore/Modules/webcl/WebCLKernel.h \
+    Source/WebCore/Modules/webcl/WebCLMemoryObject.cpp \
+    Source/WebCore/Modules/webcl/WebCLMemoryObject.h \
+    Source/WebCore/Modules/webcl/WebCLObject.h \
+    Source/WebCore/Modules/webcl/WebCLPlatform.cpp \
+    Source/WebCore/Modules/webcl/WebCLPlatform.h \
+    Source/WebCore/Modules/webcl/WebCLProgram.cpp \
+    Source/WebCore/Modules/webcl/WebCLProgram.h \
+    Source/WebCore/Modules/webcl/WebCLSampler.cpp \
+    Source/WebCore/Modules/webcl/WebCLSampler.h \
+    Source/WebCore/Modules/webcl/WebCLUserEvent.cpp \
+    Source/WebCore/Modules/webcl/WebCLUserEvent.h \
+    Source/WebCore/Modules/webcl/WorkerContextWebCLEnvironment.cpp \
+    Source/WebCore/Modules/webcl/WorkerContextWebCLEnvironment.h \
 	Source/WebCore/Modules/webdatabase/AbstractDatabaseServer.h \
 	Source/WebCore/Modules/webdatabase/AbstractSQLStatement.h \
 	Source/WebCore/Modules/webdatabase/AbstractSQLStatementBackend.h \
@@ -2496,6 +2610,18 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSTreeWalkerCustom.cpp \
 	Source/WebCore/bindings/js/JSVideoTrackCustom.cpp \
 	Source/WebCore/bindings/js/JSVideoTrackListCustom.cpp \
+    Source/WebCore/bindings/js/JSWebCLCommandQueueCustom.cpp \
+    Source/WebCore/bindings/js/JSWebCLContextCustom.cpp \
+    Source/WebCore/bindings/js/JSWebCLCustom.cpp \
+    Source/WebCore/bindings/js/JSWebCLCustom.h \
+    Source/WebCore/bindings/js/JSWebCLDeviceCustom.cpp \
+    Source/WebCore/bindings/js/JSWebCLEventCustom.cpp \
+    Source/WebCore/bindings/js/JSWebCLGLObjectInfoCustom.cpp \
+    Source/WebCore/bindings/js/JSWebCLKernelCustom.cpp \
+    Source/WebCore/bindings/js/JSWebCLMemoryObjectCustom.cpp \
+    Source/WebCore/bindings/js/JSWebCLPlatformCustom.cpp \
+    Source/WebCore/bindings/js/JSWebCLProgramCustom.cpp \
+    Source/WebCore/bindings/js/JSWebCLSamplerCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebGLRenderingContextCustom.cpp \
@@ -5550,6 +5676,19 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/soup/SocketStreamError.h \
 	Source/WebCore/platform/network/soup/SocketStreamHandle.h \
 	Source/WebCore/platform/network/soup/SocketStreamHandleSoup.cpp \
+    Source/WebCore/platform/ComputeCommandQueue.h \
+    Source/WebCore/platform/ComputeContext.h \
+    Source/WebCore/platform/ComputeExtensions.h \
+    Source/WebCore/platform/ComputeExtensionsTraits.h \
+    Source/WebCore/platform/ComputeKernel.h \
+    Source/WebCore/platform/ComputeProgram.h \
+    Source/WebCore/platform/ComputeTypes.h \
+    Source/WebCore/platform/ComputeTypesTraits.h \
+    Source/WebCore/platform/opencl/ComputeCommandQueueCL.cpp \
+    Source/WebCore/platform/opencl/ComputeContextCL.cpp \
+    Source/WebCore/platform/opencl/ComputeExtensionsCL.cpp \
+    Source/WebCore/platform/opencl/ComputeKernelCL.cpp \
+    Source/WebCore/platform/opencl/ComputeProgramCL.cpp \
 	Source/WebCore/platform/ScrollableArea.cpp \
 	Source/WebCore/platform/ScrollableArea.h \
 	Source/WebCore/platform/ScrollbarThemeClient.h \
