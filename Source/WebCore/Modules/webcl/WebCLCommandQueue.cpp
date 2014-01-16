@@ -215,7 +215,7 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingW
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, HTMLCanvasElement* srcCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
     if (!hostPtr || !canvasSize) {
@@ -228,7 +228,7 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingW
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, HTMLImageElement* srcImage, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t imageSize = 0;
     WebCLHTMLInterop::extractDataFromImage(srcImage, &hostPtr, imageSize);
     if (!hostPtr || !imageSize) {
@@ -337,7 +337,7 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool block
     HTMLCanvasElement* srcCanvas, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
 
@@ -355,7 +355,7 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool block
     HTMLImageElement* srcImage, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t imageSize = 0;
     WebCLHTMLInterop::extractDataFromImage(srcImage, &hostPtr, imageSize);
 
@@ -421,7 +421,7 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRe
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
 
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, &hostPtr, canvasSize);
     if (!hostPtr || !canvasSize || numBytes > canvasSize) {
@@ -504,7 +504,7 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead,
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
 
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, &hostPtr, canvasSize);
 
@@ -596,7 +596,7 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blocki
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
 
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, &hostPtr, canvasSize);
 
@@ -774,7 +774,7 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrit
         ec = WebCLException::INVALID_VALUE;
         return;
     }
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t length = 0;
     if (ptr) {
         hostPtr = ptr->baseAddress();
@@ -801,7 +801,7 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrit
     HTMLCanvasElement* srcCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
     if (!hostPtr || !canvasSize) {
@@ -815,7 +815,7 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrit
     HTMLImageElement* srcImage , const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t imageSize = 0;
     WebCLHTMLInterop::extractDataFromImage(srcImage, &hostPtr, imageSize);
     if (!hostPtr || !imageSize) {

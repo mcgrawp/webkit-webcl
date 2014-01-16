@@ -154,7 +154,7 @@ Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode&
     return WebCLKernel::createKernelsInProgram(m_context.get(), this, ec);
 }
 
-Vector<WeakPtr<WebCLProgram> >* WebCLProgram::s_thisPointers =  nullptr;
+Vector<WeakPtr<WebCLProgram> >* WebCLProgram::s_thisPointers =  0;
 
 /*  Static function to be sent as callback to OpenCL clBuildProgram.
     Must be static and must map a (CCProgram,userData) to corresponding WebCLProgram.

@@ -262,9 +262,7 @@ if (ENABLE_WEBCL)
         bindings/js/JSWebCLPlatformCustom.cpp
         bindings/js/JSWebCLProgramCustom.cpp
         bindings/js/JSWebCLSamplerCustom.cpp
-        bindings/js/JSWebCLGLCustom.cpp
         bindings/js/JSWebCLGLObjectInfoCustom.cpp
-        bindings/js/JSCustomWebCLFinishCallback.cpp
      )
 endif ()
 

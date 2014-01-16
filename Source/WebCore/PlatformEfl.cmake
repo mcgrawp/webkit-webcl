@@ -270,9 +270,19 @@ endif ()
 
 if (ENABLE_WEBCL)
     list(APPEND WebCore_SOURCES
-        platform/ComputeTypes.h
+        platform/ComputeCommandQueue.h
         platform/ComputeContext.h
+        platform/ComputeExtensions.h
+        platform/ComputeExtensionsTraits.h
+        platform/ComputeKernel.h
+        platform/ComputeProgram.h
+        platform/ComputeTypes.h
+        platform/ComputeTypesTraits.h
+        platform/opencl/ComputeCommandQueueCL.cpp
         platform/opencl/ComputeContextCL.cpp
+        platform/opencl/ComputeExtensionsCL.cpp
+        platform/opencl/ComputeKernelCL.cpp
+        platform/opencl/ComputeProgramCL.cpp
   )
   list(APPEND WebCore_LIBRARIES
     ${OPENCL_LIBRARIES}

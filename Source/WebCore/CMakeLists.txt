@@ -2935,7 +2935,6 @@ endif ()
 
 if (ENABLE_WEBCL)
     list(APPEND WebCore_SOURCES
-        platform/opencl/ComputeExtensionsCL.cpp
         Modules/webcl/DOMWindowWebCLEnvironment.cpp
         Modules/webcl/WebCLMemoryObject.cpp
         Modules/webcl/WebCLBuffer.cpp
@@ -2947,24 +2946,20 @@ if (ENABLE_WEBCL)
         Modules/webcl/WebCLEvent.cpp
         Modules/webcl/WebCLException.cpp
         Modules/webcl/WebCLExtensionsAccessor.cpp
-        Modules/webcl/WebCLFinishCallback.cpp
         Modules/webcl/WebCLGetInfo.cpp
-        Modules/webcl/WebCLGLBuffer.cpp
-        Modules/webcl/WebCLGLCommandQueue.cpp
-        Modules/webcl/WebCLGLContext.cpp
-        Modules/webcl/WebCLGLContextProperties.cpp
-        Modules/webcl/WebCLGL.cpp
-        Modules/webcl/WebCLGLImage.cpp
         Modules/webcl/WebCLGLObjectInfo.cpp
+        Modules/webcl/WebCLHTMLInterop.cpp
         Modules/webcl/WebCLImage.cpp
         Modules/webcl/WebCLImageDescriptor.cpp
         Modules/webcl/WebCLInputChecker.cpp
         Modules/webcl/WebCLKernel.cpp
+        Modules/webcl/WebCLKernelArgInfoProvider.cpp
         Modules/webcl/WebCLPlatform.cpp
         Modules/webcl/WebCLProgram.cpp
         Modules/webcl/WebCLSampler.cpp
         Modules/webcl/WorkerContextWebCLEnvironment.cpp
         Modules/webcl/WebCLInputChecker.cpp
+        Modules/webcl/WebCLUserEvent.cpp
     )
     list(APPEND WebCore_IDL_FILES
         Modules/webcl/DOMWindowWebCLEnvironment.idl
@@ -2975,16 +2970,10 @@ if (ENABLE_WEBCL)
         Modules/webcl/WebCLDevice.idl
         Modules/webcl/WebCLEvent.idl
         Modules/webcl/WebCLException.idl
-        Modules/webcl/WebCLFinishCallback.idl
-        Modules/webcl/WebCLGLBuffer.idl
-        Modules/webcl/WebCLGLCommandQueue.idl
-        Modules/webcl/WebCLGLContext.idl
-        Modules/webcl/WebCLGLContextProperties.idl
-        Modules/webcl/WebCLGL.idl
-        Modules/webcl/WebCLGLImage.idl
-        Modules/webcl/WebCLGLObjectInfo.idl
+        Modules/webcl/WebCLCallback.idl
         Modules/webcl/WebCL.idl
         Modules/webcl/WebCLImageDescriptor.idl
+        Modules/webcl/WebCLGLObjectInfo.idl
         Modules/webcl/WebCLKernel.idl
         Modules/webcl/WebCLPlatform.idl
         Modules/webcl/WebCLProgram.idl
@@ -2992,6 +2981,8 @@ if (ENABLE_WEBCL)
         Modules/webcl/WorkerContextWebCLEnvironment.idl
         Modules/webcl/WebCLBuffer.idl
         Modules/webcl/WebCLImage.idl
+        Modules/webcl/WebCLUserEvent.idl
+        Modules/webcl/WebCLKernelArgInfo.idl
     )
 endif ()
 

@@ -210,7 +210,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, ImageData
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
     if (!hostPtr || !canvasSize) {
@@ -223,7 +223,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLCanva
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLImageElement* srcImage, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t bufferSize = 0;
     WebCLHTMLInterop::extractDataFromImage(srcImage, &hostPtr, bufferSize);
     if (!hostPtr || !bufferSize) {
@@ -266,7 +266,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint widt
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
     if (!hostPtr || !canvasSize) {
@@ -283,7 +283,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLImageElement* srcImage, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    void* hostPtr = nullptr;
+    void* hostPtr = 0;
     size_t bufferSize = 0;
     WebCLHTMLInterop::extractDataFromImage(srcImage, &hostPtr, bufferSize);
     if (!hostPtr || !bufferSize) {
