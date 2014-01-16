@@ -42,6 +42,10 @@
 #include "GLContext.h"
 #endif
 
+#if !PLATFORM(MAC)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 namespace WebCore {
 
 #define COMPILE_ASSERT_MATCHING_ENUM(computeContextName, openCLName) \

@@ -32,6 +32,10 @@
 #include "ComputeContext.h"
 #include "ComputeKernel.h"
 
+#if !PLATFORM(MAC)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 namespace WebCore {
 
 ComputeCommandQueue::ComputeCommandQueue(ComputeContext* context, CCDeviceID deviceId, CCCommandQueueProperties properties, CCerror& error)
