@@ -438,7 +438,7 @@ PlatformComputeObject ComputeContext::createSubBuffer(PlatformComputeObject buff
 PlatformComputeObject ComputeContext::createImage2D(CCMemoryFlags type, size_t width, size_t height, CCuint rowPitch, const CCImageFormat& imageFormat, void* data, CCerror& error)
 {
     PlatformComputeObject clMemoryImage = 0;
-#if defined(CL_VERSION_1_2)
+#if defined(CL_VERSION_1_2) && CL_VERSION_1_2
     CCImageDescriptor clImageDescriptor = {CL_MEM_OBJECT_IMAGE2D, width, height, 0 /*imageDepth*/, 0 /*arraySize*/,
         static_cast<size_t>(rowPitch), 0 /*slicePitch*/, 0 /*numMipLevels*/, 0 /*numSamples*/, 0 /*buffer*/};
     clImageDescriptor.image_width = width;
@@ -476,7 +476,7 @@ PlatformComputeObject ComputeContext::createFromGLTexture2D(CCMemoryFlags type, 
     CCMemoryFlags memoryType = computeMemoryTypeToCL(type);
     PlatformComputeObject memory;
 
-#if defined(CL_VERSION_1_2)
+#if defined(CL_VERSION_1_2) && CL_VERSION_1_2
     memory = clCreateFromGLTexture(m_clContext, memoryType, textureTarget, mipLevel, texture, &error);
 #else
     memory = clCreateFromGLTexture2D(m_clContext, memoryType, textureTarget, mipLevel, texture, &error);

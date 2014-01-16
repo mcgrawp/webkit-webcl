@@ -55,7 +55,7 @@ CCerror ComputeCommandQueue::enqueueNDRangeKernel(ComputeKernel* kernel, CCuint 
 CCerror ComputeCommandQueue::enqueueBarrier()
 {
     CCint error;
-#if defined(CL_VERSION_1_2)
+#if defined(CL_VERSION_1_2) && CL_VERSION_1_2
     error = clEnqueueBarrierWithWaitList(m_commandQueue, 0 /*eventsWaitListLength*/, 0 /*eventsWaitList*/, 0 /*event*/);
 #else
     error = clEnqueueBarrier(m_commandQueue);
@@ -66,7 +66,7 @@ CCerror ComputeCommandQueue::enqueueBarrier()
 CCerror ComputeCommandQueue::enqueueMarker(CCEvent* event)
 {
     CCint error;
-#if defined(CL_VERSION_1_2)
+#if defined(CL_VERSION_1_2) && CL_VERSION_1_2
     error = clEnqueueMarkerWithWaitList(m_commandQueue, 0 /*eventsWaitListLength*/, 0 /*eventsWaitList*/, event);
 #else
     error = clEnqueueMarker(m_commandQueue, event);
