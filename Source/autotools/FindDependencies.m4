@@ -517,6 +517,11 @@ if test "$enable_webkit2" = "yes"; then
    AC_SUBST([ATSPI2_LIBS])
 fi
 
+if test "$enable_webcl" = "yes"; then
+    OPENCL_LIBS="-lOpenCL"
+fi
+AC_SUBST([OPENCL_LIBS])
+
 m4_ifdef([GTK_DOC_CHECK], [
 GTK_DOC_CHECK([1.10])
 ],[

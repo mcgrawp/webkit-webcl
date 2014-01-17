@@ -49,6 +49,7 @@ AM_CONDITIONAL([USE_GLX], [test "$enable_glx" = "yes"])
 # WebKit feature conditionals.
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
+AM_CONDITIONAL([ENABLE_WEBCL],[test "$enable_webcl" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
