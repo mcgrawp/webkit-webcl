@@ -44,7 +44,7 @@ public:
     ComputeProgram(ComputeContext*, const String& programSource, CCerror&);
     ~ComputeProgram();
 
-    CCerror buildProgram(const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, int userData);
+    CCerror buildProgram(const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, void* userData);
 
     ComputeKernel* createKernel(const String& kernelName, CCerror&);
     Vector<ComputeKernel*> createKernelsInProgram(CCerror&);

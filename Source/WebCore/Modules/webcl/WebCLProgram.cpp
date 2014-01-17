@@ -63,7 +63,6 @@ PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const Strin
 WebCLProgram::WebCLProgram(WebCLContext*context, ComputeProgram* program, const String& programSource)
     : WebCLObjectImpl(program)
     , m_context(context)
-    , m_weakPtrFactory(this)
     , m_programSource(programSource)
 {
     context->trackReleaseableWebCLObject(createWeakPtr());
@@ -154,23 +153,32 @@ Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode&
     return WebCLKernel::createKernelsInProgram(m_context.get(), this, ec);
 }
 
-Vector<WeakPtr<WebCLProgram> >* WebCLProgram::s_thisPointers =  0;
-
 /*  Static function to be sent as callback to OpenCL clBuildProgram.
     Must be static and must map a (CCProgram,userData) to corresponding WebCLProgram.
     Here we use the userData as a index to a static Vector. On each call to build with callback,
     append a copy of this pointer to this Vector and send index as userData. On return this static
     member will be used to retrive the WebCLProgram.
     */
-
-void WebCLProgram::callbackProxy(CCProgram program, void* userData)
+void WebCLProgram::callbackProxyOnMainThread(void* userData)
 {
-    UNUSED_PARAM(program);
-    size_t index = *((int*)userData);
-    ASSERT(index < s_thisPointers->size());
-    WeakPtr<WebCLProgram> webCLProgram = WebCLProgram::s_thisPointers->at(index);
-    if (webCLProgram.get())
-        webCLProgram.get()->callEvent();
+    WebCLProgram* callee = static_cast<WebCLProgram*>(userData);
+
+    // spec says "If a callback function is associated with a WebCL
+    // object that is subsequently released, the callback will no longer be invoked.
+    if (!callee || callee->isPlatformObjectNeutralized())
+        return;
+    callee->callEvent();
+}
+
+void WebCLProgram::callbackProxy(CCProgram, void* userData)
+{
+    // Callbacks might get called from non-mainthread. When it happens,
+    // dispatch it to the mainthread, so that it can call JS back safely.
+    if (!isMainThread()) {
+        callOnMainThread(callbackProxyOnMainThread, userData);
+        return;
+    }
+    callbackProxyOnMainThread(userData);
 }
 
 void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const String& buildOptions, PassRefPtr<WebCLCallback> callback, ExceptionCode& ec)
@@ -226,14 +234,16 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
         ccDevices.append(devices[i]->platformObject());
     pfnNotify callbackProxyPtr = 0;
     if (callback) {
+        // If previous callback is still valid, calling build again must throw a INVALID_OPERATION.
+        if (m_callback) {
+            ec = WebCLException::INVALID_OPERATION;
+            return;
+        }
         m_callback = callback;
-        if (!s_thisPointers)
-            s_thisPointers = new Vector<WeakPtr<WebCLProgram> >();
-        s_thisPointers->append(m_weakPtrFactory.createWeakPtr());
         callbackProxyPtr = &callbackProxy;
     }
 
-    CCerror err = platformObject()->buildProgram(ccDevices, buildOptions, callbackProxyPtr, s_thisPointers ? s_thisPointers->size() - 1 : 0);
+    CCerror err = platformObject()->buildProgram(ccDevices, buildOptions, callbackProxyPtr, m_callback ? this : 0);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 

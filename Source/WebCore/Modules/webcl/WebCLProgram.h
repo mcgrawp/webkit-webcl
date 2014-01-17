@@ -65,19 +65,17 @@ private:
     WebCLProgram(WebCLContext*, ComputeProgram*, const String&);
     void releasePlatformObjectImpl();
 
-    static void callbackProxy(CCProgram, void*);
+    static void callbackProxyOnMainThread(void* userData);
+    static void callbackProxy(CCProgram, void* userData);
     void callEvent()
     {
         ASSERT(m_callback);
         m_callback->handleEvent();
+        m_callback = 0;
     };
 
-    static Vector<WeakPtr<WebCLProgram> >* s_thisPointers;
-
     RefPtr<WebCLCallback> m_callback;
-    
     RefPtr<WebCLContext> m_context;
-    WeakPtrFactory<WebCLProgram> m_weakPtrFactory;
     String m_programSource;
     String m_programSourceWithCommentsStripped;
 };
