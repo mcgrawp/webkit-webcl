@@ -144,9 +144,6 @@ void WebCLKernelArgInfoProvider::parseAndAppendDeclaration(const String& argumen
     m_argumentInfoVector.append(WebCLKernelArgInfo::create(addressQualifier, accessQualifier, type, name));
 }
 
-// FIXME: As of now, it returns the qualifier as declared: e.g., if "__private" is declared,
-// it returns "__private", while it is declared as "private", it returns "private".
-// See http://www.khronos.org/bugzilla/show_bug.cgi?id=1079
 String WebCLKernelArgInfoProvider::extractAddressQualifier(Vector<String>& declarationStrVector)
 {
     DEFINE_STATIC_LOCAL(AtomicString, __Private, ("__private", AtomicString::ConstructFromLiteral));
@@ -161,15 +158,20 @@ String WebCLKernelArgInfoProvider::extractAddressQualifier(Vector<String>& decla
     DEFINE_STATIC_LOCAL(AtomicString, __Local, ("__local", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(AtomicString, Local, ("local", AtomicString::ConstructFromLiteral));
 
-    String addressQualifier = __Private;
+    String address = Private;
     size_t i = 0;
     for ( ; i < declarationStrVector.size(); ++i) {
         String candidate = declarationStrVector[i];
-        if (candidate == __Private  || candidate == Private
-         || candidate == __Global   || candidate == Global
-         || candidate == __Constant || candidate == Constant
-         || candidate == __Local    || candidate == Local) {
-            addressQualifier = candidate;
+        if (candidate == __Private || candidate == Private)
+            break;
+        else if (candidate == __Global || candidate == Global) {
+            address = Global;
+            break;
+        } else if (candidate == __Constant || candidate == Constant) {
+            address = Constant;
+            break;
+        } else if (candidate == __Local || candidate == Local) {
+            address = Local;
             break;
         }
     }
@@ -177,12 +179,9 @@ String WebCLKernelArgInfoProvider::extractAddressQualifier(Vector<String>& decla
     if (i < declarationStrVector.size())
         declarationStrVector.remove(i);
 
-    return addressQualifier;
+    return address;
 }
 
-// FIXME: As of now, it returns the qualifier as declared: e.g., if "__read_only" is declared,
-// it returns "__read_only", while it is declared as "read_only", "read_only" is returned.
-// See http://www.khronos.org/bugzilla/show_bug.cgi?id=1079
 String WebCLKernelArgInfoProvider::extractAccessQualifier(Vector<String>& declarationStrVector)
 {
     DEFINE_STATIC_LOCAL(AtomicString, __read_only, ("__read_only", AtomicString::ConstructFromLiteral));
@@ -194,14 +193,17 @@ String WebCLKernelArgInfoProvider::extractAccessQualifier(Vector<String>& declar
     DEFINE_STATIC_LOCAL(AtomicString, __read_write, ("__read_write", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(AtomicString, read_write, ("read_write", AtomicString::ConstructFromLiteral));
 
-    String accessQualifier = __read_only;
+    String access = read_only;
     size_t i = 0;
     for ( ; i < declarationStrVector.size(); ++i) {
         String candidate = declarationStrVector[i];
-        if (candidate == __read_only  || candidate == read_only
-         || candidate == __write_only || candidate == write_only
-         || candidate == __read_write || candidate == read_write) {
-            accessQualifier = candidate;
+        if (candidate == __read_only  || candidate == read_only)
+            break;
+        else if (candidate == __write_only || candidate == write_only) {
+            access = write_only;
+            break;
+        } else if (candidate == __read_write || candidate == read_write) {
+            access = read_write;
             break;
         }
     }
@@ -209,7 +211,7 @@ String WebCLKernelArgInfoProvider::extractAccessQualifier(Vector<String>& declar
     if (i < declarationStrVector.size())
         declarationStrVector.remove(i);
 
-    return accessQualifier;
+    return access;
 }
 
 String WebCLKernelArgInfoProvider::extractName(Vector<String>& declarationStrVector)
