@@ -48,7 +48,9 @@ inline bool isEmptySpace(UChar character)
 
 inline bool isPrecededByUnderscores(const String& string, size_t index)
 {
-     return string[index - 1] == '_' && string[index - 2] == '_';
+    if (index < 2)
+        return false;
+    return string[index - 1] == '_' && string[index - 2] == '_';
 }
 
 WebCLKernelArgInfoProvider::WebCLKernelArgInfoProvider(WebCLKernel* kernel)
@@ -95,10 +97,13 @@ void WebCLKernelArgInfoProvider::ensureInfo()
         if (!isEmptySpace(source[kernelDeclarationIndex + 6]))
             continue;
 
-        // if index is not 0.
-        if (kernelDeclarationIndex) {
-             ASSERT(kernelDeclarationIndex >= 2);
-             if (!(isPrecededByUnderscores(source, kernelDeclarationIndex) || isEmptySpace(source[kernelDeclarationIndex - 1])))
+        // If the kernel declaration is not at the beginning of the program.
+        bool hasTwoUnderscores = isPrecededByUnderscores(source, kernelDeclarationIndex);
+        bool isKernelDeclarationAtBeginning = hasTwoUnderscores ? (kernelDeclarationIndex == 2): (kernelDeclarationIndex == 0);
+
+        if (!isKernelDeclarationAtBeginning) {
+             size_t firstPrecedingIndex = kernelDeclarationIndex - (hasTwoUnderscores ? 3 : 1);
+             if (!isEmptySpace(source[firstPrecedingIndex]))
                  continue;
         }
 
