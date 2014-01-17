@@ -477,7 +477,7 @@ void RenderThemeGtk::platformColorsDidChange()
 #if ENABLE(VIDEO)
 String RenderThemeGtk::extraMediaControlsStyleSheet()
 {
-    return String(mediaControlsGtkUserAgentStyleSheet, sizeof(mediaControlsGtkUserAgentStyleSheet));
+    return String();
 }
 
 #if ENABLE(FULLSCREEN_API)
