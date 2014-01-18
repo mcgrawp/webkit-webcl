@@ -59,20 +59,19 @@ WebCLKernel::~WebCLKernel()
 PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, WebCLProgram* program, const String& kernelName, ExceptionCode& ec)
 {
     CCerror error = ComputeContext::SUCCESS;
-    ComputeKernel* computeContextKernel = program->computeProgram()->createKernel(kernelName, error);
+    ComputeKernel* computeKernel = program->computeProgram()->createKernel(kernelName, error);
     if (error != ComputeContext::SUCCESS) {
-        delete computeContextKernel;
+        delete computeKernel;
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-
-    return adoptRef(new WebCLKernel(context, program, computeContextKernel, kernelName));
+    return adoptRef(new WebCLKernel(context, program, computeKernel, kernelName));
 }
 
 Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* context, WebCLProgram* program, ExceptionCode& ec)
 {
     CCerror error = ComputeContext::SUCCESS;
-    Vector<ComputeKernel*> computeContextKernels = program->computeProgram()->createKernelsInProgram(error);
+    Vector<ComputeKernel*> computeKernels = program->computeProgram()->createKernelsInProgram(error);
     Vector<RefPtr<WebCLKernel> > kernels;
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
@@ -80,15 +79,15 @@ Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* c
     }
 
     Vector<char> functionName;
-    for (size_t i = 0 ; i < computeContextKernels.size(); i++) {
-        error = computeContextKernels[i]->getKernelInfo(ComputeContext::KERNEL_FUNCTION_NAME, &functionName);
+    for (size_t i = 0 ; i < computeKernels.size(); i++) {
+        error = computeKernels[i]->getKernelInfo(ComputeContext::KERNEL_FUNCTION_NAME, &functionName);
         if (error != ComputeContext::SUCCESS) {
             ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
             kernels.clear();
             return kernels;
         }
 
-        kernels.append(adoptRef(new WebCLKernel(context, program, computeContextKernels[i], String(functionName.data()))));
+        kernels.append(adoptRef(new WebCLKernel(context, program, computeKernels[i], String(functionName.data()))));
     }
 
     return kernels;
@@ -250,7 +249,7 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
     }
 
     String accessQualifier = m_argumentInfoProvider.argumentsInfo()[index]->addressQualifier();
-    bool hasLocalQualifier = accessQualifier == "__local" || accessQualifier == "local";
+    bool hasLocalQualifier = accessQualifier == "local";
     if (hasLocalQualifier) {
         if (bufferView->getType() != ArrayBufferView::TypeUint32) {
             ec = WebCLException::INVALID_VALUE;

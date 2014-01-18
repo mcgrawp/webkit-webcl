@@ -129,6 +129,18 @@ void WebCLKernelArgInfoProvider::ensureInfo()
     }
 }
 
+static void prependUnsignedIfNeeded(Vector<String>& declarationStrVector, String& type)
+{
+    for (size_t i = 0; i < declarationStrVector.size(); ++i) {
+        DEFINE_STATIC_LOCAL(AtomicString, Unsigned, ("unsigned", AtomicString::ConstructFromLiteral));
+        if (declarationStrVector[i] == Unsigned) {
+            type = "u" + type;
+            declarationStrVector.remove(i);
+            return;
+        }
+    }
+}
+
 void WebCLKernelArgInfoProvider::parseAndAppendDeclaration(const String& argumentDeclaration)
 {
     Vector<String> declarationStrVector;
@@ -140,6 +152,8 @@ void WebCLKernelArgInfoProvider::parseAndAppendDeclaration(const String& argumen
 
     DEFINE_STATIC_LOCAL(AtomicString, image2d_t, ("image2d_t", AtomicString::ConstructFromLiteral));
     String accessQualifier = (type == image2d_t) ? extractAccessQualifier(declarationStrVector) : "none";
+
+    prependUnsignedIfNeeded(declarationStrVector, type);
 
     m_argumentInfoVector.append(WebCLKernelArgInfo::create(addressQualifier, accessQualifier, type, name));
 }
@@ -221,12 +235,11 @@ String WebCLKernelArgInfoProvider::extractName(Vector<String>& declarationStrVec
     return last;
 }
 
-// FIXME: Support collapsing "unsigned <scalar>" into "u<scalar>", as per OpenCL 1.2 spec.
 String WebCLKernelArgInfoProvider::extractType(Vector<String>& declarationStrVector)
 {
-    String last = declarationStrVector.last();
+    String type = declarationStrVector.last();
     declarationStrVector.removeLast();
-    return last;
+    return type;
 }
 
 } // namespace WebCore
