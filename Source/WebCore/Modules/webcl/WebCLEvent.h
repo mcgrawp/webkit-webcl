@@ -36,9 +36,11 @@
 
 namespace WebCore {
 
+class ComputeEvent;
 class WebCLCommandQueue;
 
-class WebCLEvent : public WebCLObjectImpl<CCEvent> {
+typedef ComputeEvent* ComputeEventPtr;
+class WebCLEvent : public WebCLObjectImpl<ComputeEventPtr> {
 public:
     virtual ~WebCLEvent();
     static PassRefPtr<WebCLEvent> create();
@@ -53,15 +55,15 @@ public:
 
     virtual WebCLContext* context() const;
 
+    bool holdsValidCLObject() const;
+
     virtual bool isPlatformObjectNeutralized() const;
 
     static void processCallbackRegisterQueueForEvent(RefPtr<WebCLEvent>, ExceptionCode&);
 
 protected:
-    WebCLEvent(CCEvent);
+    WebCLEvent(ComputeEvent*);
     virtual void releasePlatformObjectImpl();
-
-    bool m_isUserEvent;
 
 private:
     typedef Vector<std::pair<CCint, RefPtr<WebCLCallback> > > CallbackDataVector;

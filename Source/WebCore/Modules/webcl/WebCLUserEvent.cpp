@@ -31,6 +31,7 @@
 
 #include "WebCLUserEvent.h"
 
+#include "ComputeEvent.h"
 #include "WebCLContext.h"
 #include "WebCLCommandQueue.h"
 
@@ -43,8 +44,8 @@ WebCLUserEvent::~WebCLUserEvent()
 
 PassRefPtr<WebCLUserEvent> WebCLUserEvent::create(WebCLContext* context, ExceptionCode& ec)
 {
-    CCerror userEventError;
-    CCEvent userEvent = context->computeContext()->createUserEvent(userEventError);
+    CCerror userEventError = 0;
+    ComputeEvent* userEvent = context->computeContext()->createUserEvent(userEventError);
     if (!userEvent) {
         ASSERT(userEventError != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(userEventError);
@@ -53,12 +54,11 @@ PassRefPtr<WebCLUserEvent> WebCLUserEvent::create(WebCLContext* context, Excepti
     return adoptRef(new WebCLUserEvent(context, userEvent));
 }
 
-WebCLUserEvent::WebCLUserEvent(WebCLContext* context, CCEvent event)
+WebCLUserEvent::WebCLUserEvent(WebCLContext* context, ComputeEvent* event)
     : WebCLEvent(event)
     , m_context(context)
     , m_eventStatusSituation(StatusUnset)
 {
-    m_isUserEvent = true;
     context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
@@ -80,7 +80,7 @@ void WebCLUserEvent::setStatus(CCint executionStatus, ExceptionCode& ec)
     }
     m_eventStatusSituation = StatusSet;
 
-    CCerror userEventError = m_context->computeContext()->setUserEventStatus(platformObject(), executionStatus);
+    CCerror userEventError = platformObject()->setUserEventStatus(executionStatus);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(userEventError);
 }
 
@@ -107,10 +107,10 @@ WebCLContext* WebCLUserEvent::context() const
     return m_context.get();
 }
 
+// FIXME: Remove this overload.
 void WebCLUserEvent::releasePlatformObjectImpl()
 {
-    CCerror computeContextErrorCode = m_context->computeContext()->releaseEvent(platformObject());
-    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+    delete platformObject();
 }
 
 } // namespace WebCore

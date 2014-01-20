@@ -31,6 +31,7 @@
 
 #include "WebCL.h"
 
+#include "ComputeEvent.h"
 #include "WebCLContext.h"
 #include "WebCLDevice.h"
 #include "WebCLEvent.h"
@@ -65,7 +66,7 @@ Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec)
 
 void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)
 {
-    Vector<CCEvent> ccEvents;
+    Vector<ComputeEvent*> computeEvents;
 
     for (size_t i = 0; i < events.size(); ++i) {
         // FIXME: We currently do not support the asynchronous variant of this method.
@@ -73,15 +74,17 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCo
         // event (2), we would hand the browser.
         // 1 - http://www.khronos.org/bugzilla/show_bug.cgi?id=1092
         // 2 - http://www.khronos.org/bugzilla/show_bug.cgi?id=1086
-        if (!events[i]->platformObject() || events[i]->isUserEvent()) {
+        if (events[i]->isPlatformObjectNeutralized()
+            || !events[i]->holdsValidCLObject()
+            || events[i]->isUserEvent()) {
             ec = WebCLException::INVALID_EVENT;
             return;
         }
 
-        ccEvents.append(events[i]->platformObject());
+        computeEvents.append(events[i]->platformObject());
     }
 
-    CCerror error = ComputeContext::waitForEvents(ccEvents);
+    CCerror error = ComputeContext::waitForEvents(computeEvents);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
 }
 

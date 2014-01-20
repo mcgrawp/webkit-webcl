@@ -49,7 +49,7 @@ public:
     virtual WebCLContext* context() const;
 
 private:
-    WebCLUserEvent(WebCLContext*, CCEvent);
+    WebCLUserEvent(WebCLContext*, ComputeEvent*);
     void releasePlatformObjectImpl();
 
     RefPtr<WebCLContext> m_context;

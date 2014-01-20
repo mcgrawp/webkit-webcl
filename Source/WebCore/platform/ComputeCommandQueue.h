@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class ComputeContext;
+class ComputeEvent;
 class ComputeKernel;
 
 class ComputeCommandQueue {
@@ -45,39 +46,41 @@ public:
     ~ComputeCommandQueue();
 
     CCerror enqueueNDRangeKernel(ComputeKernel*, CCuint globalWorkItemDimensions, const Vector<size_t>& globalWorkOffset,
-        const Vector<size_t>& globalWorkSize, const Vector<size_t>& localWorkSize, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+        const Vector<size_t>& globalWorkSize, const Vector<size_t>& localWorkSize, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
 
     CCerror enqueueBarrier();
-    CCerror enqueueMarker(CCEvent*);
-    CCerror enqueueTask(CCKernel, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+    CCerror enqueueMarker(ComputeEvent*);
+    CCerror enqueueTask(CCKernel, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
 
     CCerror enqueueWriteBuffer(PlatformComputeObject buffer, CCbool blockingWrite, size_t offset, size_t bufferSize,
-        void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+        void* baseAddress, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
     CCerror enqueueWriteBufferRect(PlatformComputeObject, CCbool blockingWrite, const Vector<size_t>& bufferOriginArray,
         const Vector<size_t>& hostOriginArray, const Vector<size_t>& regionArray, size_t bufferRowPitch, size_t bufferSlicePitch, size_t hostRowPitch,
-        size_t hostSlicePitch, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+        size_t hostSlicePitch, void* baseAddress, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
     CCerror enqueueReadBuffer(PlatformComputeObject buffer, CCbool blockingRead, size_t offset, size_t bufferSize,
-        void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+        void* baseAddress, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
     CCerror enqueueReadBufferRect(PlatformComputeObject buffer, CCbool blockingRead, const Vector<size_t>& bufferOriginArray,
         const Vector<size_t>& hostOriginArray, const Vector<size_t>& regionArray, size_t bufferRowPitch, size_t bufferSlicePitch, size_t hostRowPitch,
-        size_t hostSlicePitch, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+        size_t hostSlicePitch, void* baseAddress, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
     CCerror enqueueReadImage(PlatformComputeObject image, CCbool blockingRead, const Vector<size_t>& originArray, const Vector<size_t>& regionArray,
-        size_t rowPitch, size_t slicePitch, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+        size_t rowPitch, size_t slicePitch, void* baseAddress, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
     CCerror enqueueWriteImage(PlatformComputeObject image, CCbool blockingWrite, const Vector<size_t>& originArray, const Vector<size_t>& regionArray,
-        size_t rowPitch, size_t slicePitch, void* baseAddress, const Vector<CCEvent>& eventsWaitList, CCEvent*);
-    CCerror enqueueAcquireGLObjects(const Vector<PlatformComputeObject>&, const Vector<CCEvent>& eventsWaitList, CCEvent*);
-    CCerror enqueueReleaseGLObjects(const Vector<PlatformComputeObject>&, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+        size_t rowPitch, size_t slicePitch, void* baseAddress, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
+    CCerror enqueueAcquireGLObjects(const Vector<PlatformComputeObject>&, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
+    CCerror enqueueReleaseGLObjects(const Vector<PlatformComputeObject>&, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
     CCerror enqueueCopyImage(PlatformComputeObject originImage, PlatformComputeObject targetImage, const Vector<size_t>& sourceOriginArray,
-        const Vector<size_t>& targetOriginArray, const Vector<size_t>& regionArray, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+        const Vector<size_t>& targetOriginArray, const Vector<size_t>& regionArray, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
     CCerror enqueueCopyImageToBuffer(PlatformComputeObject sourceImage, PlatformComputeObject targetBuffer,
-        const Vector<size_t>& sourceOriginArray, const Vector<size_t>& regionArray, size_t targetOffset, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+        const Vector<size_t>& sourceOriginArray, const Vector<size_t>& regionArray, size_t targetOffset, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
     CCerror enqueueCopyBufferToImage(PlatformComputeObject sourceBuffer, PlatformComputeObject targetImage, size_t srcOffset,
-        const Vector<size_t>& targetOriginArray, const Vector<size_t>& regionArray, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+        const Vector<size_t>& targetOriginArray, const Vector<size_t>& regionArray, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
     CCerror enqueueCopyBuffer(PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
-        size_t sourceOffset, size_t targetOffset, size_t sizeInBytes, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+        size_t sourceOffset, size_t targetOffset, size_t sizeInBytes, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
     CCerror enqueueCopyBufferRect(PlatformComputeObject sourceBuffer, PlatformComputeObject targetBuffer,
         const Vector<size_t>& sourceOriginArray, const Vector<size_t>& targetOriginArray, const Vector<size_t>& regionArray, size_t sourceRowPitch, size_t sourceSlicePitch,
-        size_t targetRowPitch, size_t targetSlicePitch, const Vector<CCEvent>& eventsWaitList, CCEvent*);
+        size_t targetRowPitch, size_t targetSlicePitch, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
+
+    CCerror enqueueWaitForEvents(const Vector<ComputeEvent*>&);
 
     template <typename T>
     CCerror commandQueueInfo(CCCommandQueueInfoType infoType, T* data)

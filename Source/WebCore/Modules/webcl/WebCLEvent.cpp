@@ -31,6 +31,7 @@
 
 #include "WebCLEvent.h"
 
+#include "ComputeEvent.h"
 #include "WebCLCallback.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
@@ -46,13 +47,11 @@ WebCLEvent::~WebCLEvent()
 
 PassRefPtr<WebCLEvent> WebCLEvent::create()
 {
-    // the platform object is initialized by enqueue methods
-    return adoptRef(new WebCLEvent(0));
+    return adoptRef(new WebCLEvent(new ComputeEvent));
 }
 
-WebCLEvent::WebCLEvent(CCEvent event)
+WebCLEvent::WebCLEvent(ComputeEvent* event)
     : WebCLObjectImpl(event)
-    , m_isUserEvent(false)
     , m_commandQueue(0)
 {
 }
@@ -67,40 +66,40 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionCode& ec)
     CCerror err = 0;
     switch (paramName) {
     case ComputeContext::EVENT_COMMAND_EXECUTION_STATUS: {
-        if (!platformObject())
+        if (!holdsValidCLObject())
             return WebCLGetInfo(-1);
 
         CCint ccExecStatus = 0;
-        err = ComputeContext::getEventInfo(platformObject(), paramName, &ccExecStatus);
+        err = platformObject()->getEventInfo(paramName, &ccExecStatus);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<CCint>(ccExecStatus));
         break;
     }
     case ComputeContext::EVENT_COMMAND_TYPE: {
-        if (!platformObject())
+        if (!holdsValidCLObject())
             return WebCLGetInfo();
 
         CCCommandType ccCommandType = 0;
-        err= ComputeContext::getEventInfo(platformObject(), paramName, &ccCommandType);
+        err= platformObject()->getEventInfo(paramName, &ccCommandType);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<CCenum>(ccCommandType));
         break;
     }
     case ComputeContext::EVENT_CONTEXT: {
-        if (!platformObject())
+        if (!holdsValidCLObject())
             return WebCLGetInfo();
 
         ASSERT(m_commandQueue);
         ASSERT(m_commandQueue->context());
-        ASSERT(!m_isUserEvent);
+        ASSERT(!isUserEvent());
         return WebCLGetInfo(m_commandQueue->context());
     }
     case ComputeContext::EVENT_COMMAND_QUEUE: {
-        if (!platformObject())
+        if (!holdsValidCLObject())
             return WebCLGetInfo();
 
         ASSERT(m_commandQueue);
-        ASSERT(!m_isUserEvent);
+        ASSERT(!isUserEvent());
         return WebCLGetInfo(m_commandQueue.get());
     }
     default:
@@ -120,7 +119,7 @@ WebCLGetInfo WebCLEvent::getProfilingInfo(CCenum paramName, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    if (m_isUserEvent) {
+    if (isUserEvent()) {
         ec = WebCLException::PROFILING_INFO_NOT_AVAILABLE;
         return WebCLGetInfo();
     }
@@ -132,7 +131,7 @@ WebCLGetInfo WebCLEvent::getProfilingInfo(CCenum paramName, ExceptionCode& ec)
     case ComputeContext::PROFILING_COMMAND_START:
     case ComputeContext::PROFILING_COMMAND_END: {
         CCulong eventProfilingInfo = 0;
-        err = ComputeContext::getEventProfilingInfo(platformObject(), paramName, &eventProfilingInfo);
+        err = platformObject()->getEventProfilingInfo(paramName, &eventProfilingInfo);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<unsigned>(eventProfilingInfo));
         }
@@ -215,9 +214,9 @@ void WebCLEvent::setCallback(CCenum commandExecCallbackType, PassRefPtr<WebCLCal
     callbackRegisterQueue().set(this, vector.release());
 
     CCerror error = ComputeContext::SUCCESS;
-    if (platformObject()) {
+    if (holdsValidCLObject()) {
         pfnEventNotify callbackProxyPtr = &callbackProxy;
-        error = ComputeContext::setEventCallback(platformObject(), commandExecCallbackType, callbackProxyPtr, this);
+        error = platformObject()->setEventCallback(commandExecCallbackType, callbackProxyPtr, this);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return;
     }
@@ -228,13 +227,13 @@ void WebCLEvent::processCallbackRegisterQueueForEvent(RefPtr<WebCLEvent> event, 
     if (!event || ec != ComputeContext::SUCCESS)
         return;
 
-    ASSERT(event->platformObject());
+    ASSERT(event->holdsValidCLObject());
 
     // If 'event' is a user event, then it was a previously valid CCevent
     // was reinitialized by one of the OpenCL command queue methods, and
     // any callback previously registered to it is now invalid.
     // http://www.khronos.org/bugzilla/show_bug.cgi?id=1089
-    if (event->m_isUserEvent) {
+    if (event->isUserEvent()) {
         callbackRegisterQueue().remove(event);
         return;
     }
@@ -248,13 +247,18 @@ void WebCLEvent::processCallbackRegisterQueueForEvent(RefPtr<WebCLEvent> event, 
     // altogether.
     pfnEventNotify callbackProxyPtr = &callbackProxy;
     std::pair<CCint, RefPtr<WebCLCallback> > current = vector->at(0);
-    CCerror err = ComputeContext::setEventCallback(event->platformObject(), current.first, callbackProxyPtr, event.get());
+    CCerror err = event->platformObject()->setEventCallback(current.first, callbackProxyPtr, event.get());
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+}
+
+bool WebCLEvent::holdsValidCLObject() const
+{
+    return platformObject() && platformObject()->event();
 }
 
 bool WebCLEvent::isUserEvent() const
 {
-    return m_isUserEvent;
+    return platformObject() && platformObject()->isUserEvent();
 }
 
 bool WebCLEvent::isPlatformObjectNeutralized() const
@@ -264,9 +268,7 @@ bool WebCLEvent::isPlatformObjectNeutralized() const
 
 void WebCLEvent::releasePlatformObjectImpl()
 {
-    ASSERT(m_commandQueue);
-    CCerror computeContextErrorCode = m_commandQueue->context()->computeContext()->releaseEvent(platformObject());
-    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+    delete platformObject();
 }
 
 } // namespace WebCore

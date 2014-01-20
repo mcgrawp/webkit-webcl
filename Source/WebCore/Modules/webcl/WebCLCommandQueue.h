@@ -150,8 +150,9 @@ private:
     void releasePlatformObjectImpl();
 
     typedef enum {AcceptUserEvent, DoNotAcceptUserEvent} WebCLToCCEventsFilterCriteria;
-    void ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >&, Vector<CCEvent>&, ExceptionCode&, WebCLToCCEventsFilterCriteria = AcceptUserEvent);
-    CCEvent* ccEventFromWebCLEvent(WebCLEvent*, ExceptionCode&);
+    void ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >&, Vector<ComputeEvent*>&, ExceptionCode&, WebCLToCCEventsFilterCriteria = AcceptUserEvent);
+
+    ComputeEvent* computeEventFromWebCLEventIfApplicable(WebCLEvent*, ExceptionCode&);
 
     RefPtr<WebCLContext> m_context;
     RefPtr<WebCLDevice> m_device;

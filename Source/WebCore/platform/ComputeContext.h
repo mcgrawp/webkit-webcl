@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class ComputeCommandQueue;
+class ComputeEvent;
 class ComputeProgram;
 
 class ComputeContext {
@@ -332,14 +333,11 @@ public:
 
     static CCerror getPlatformIDs(Vector<CCPlatformID>&);
     static CCerror getDeviceIDs(CCPlatformID, CCDeviceType, Vector<CCDeviceID>&);
-    static CCerror waitForEvents(const Vector<CCEvent>&);
+    static CCerror waitForEvents(const Vector<ComputeEvent* >&);
 
     ComputeCommandQueue* createCommandQueue(CCDeviceID, CCCommandQueueProperties, CCerror&);
     ComputeProgram* createProgram(const String& programSource, CCerror&);
-
-    CCEvent createUserEvent(CCerror&);
-    CCerror setUserEventStatus(CCEvent, CCint executionStatus);
-    static CCerror setEventCallback(CCEvent, CCenum eventCommandExecStatus, pfnEventNotify callback, void* userData);
+    ComputeEvent* createUserEvent(CCerror&);
 
     PlatformComputeObject createBuffer(CCMemoryFlags type, size_t, void* data, CCerror&);
     PlatformComputeObject createSubBuffer(PlatformComputeObject, CCMemoryFlags type, CCBufferCreateType bufferCreatetype, CCBufferRegion* bufferCreateInfo, CCerror&);
@@ -362,16 +360,6 @@ public:
         return getInfoHelper(ComputeContext::getPlatformInfoBase, platform, infoType, data);
     }
     template <typename T>
-    static CCerror getEventInfo(CCEvent event, CCEventInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeContext::getEventInfoBase, event, infoType, data);
-    }
-    template <typename T>
-    static CCerror getEventProfilingInfo(CCEvent event, CCEventProfilingInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeContext::getEventProfilingInfoBase, event, infoType, data);
-    }
-    template <typename T>
     static CCerror getImageInfo(PlatformComputeObject image, CCImageInfoType infoType, T* data)
     {
         return getInfoHelper(ComputeContext::getImageInfoBase, image, infoType, data);
@@ -392,7 +380,6 @@ public:
         return getInfoHelper(ComputeContext::getMemoryObjectInfoBase, computeObject, infoType, data);
     }
 
-    CCerror releaseEvent(CCEvent);
     CCerror releaseSampler(CCSampler);
     CCerror releaseMemoryObject(PlatformComputeObject);
     // temporary method, just useful because we are refactoring the code
@@ -408,8 +395,6 @@ public:
 private:
     static CCerror getDeviceInfoBase(CCDeviceID, CCDeviceInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getPlatformInfoBase(CCPlatformID, CCPlatformInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getEventInfoBase(CCEvent, CCEventInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getEventProfilingInfoBase(CCEvent, CCEventProfilingInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getImageInfoBase(PlatformComputeObject, CCImageInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getGLTextureInfoBase(PlatformComputeObject, CCImageTextureInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getSamplerInfoBase(CCSampler, CCSamplerInfoType, size_t, void *data, size_t* actualSize);

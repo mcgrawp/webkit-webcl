@@ -30,6 +30,7 @@
 #include "ComputeContext.h"
 
 #include "ComputeCommandQueue.h"
+#include "ComputeEvent.h"
 #include "ComputeProgram.h"
 
 #include <wtf/text/CString.h>
@@ -399,9 +400,16 @@ CCerror ComputeContext::getDeviceIDs(CCPlatformID platform, CCDeviceType deviceT
     return clError;
 }
 
-CCerror ComputeContext::waitForEvents(const Vector<CCEvent>& events)
+// FIXME: Move to ComputeEvent class.
+CCerror ComputeContext::waitForEvents(const Vector<ComputeEvent*>& events)
 {
-    CCint clError = clWaitForEvents(events.size(), events.data());
+    Vector<CCEvent> ccEvents;
+
+    for (size_t i = 0; i < events.size(); ++i) {
+        ASSERT(events[i]->event());
+        ccEvents.append(events[i]->event());
+    }
+    CCint clError = clWaitForEvents(events.size(), ccEvents.data());
     return clError;
 }
 
@@ -410,19 +418,9 @@ ComputeCommandQueue* ComputeContext::createCommandQueue(CCDeviceID deviceId, CCC
     return new ComputeCommandQueue(this, deviceId, properties, error);
 }
 
-CCEvent ComputeContext::createUserEvent(CCerror& error)
+ComputeEvent* ComputeContext::createUserEvent(CCerror& error)
 {
-    return clCreateUserEvent(m_clContext, &error);
-}
-
-CCerror ComputeContext::setEventCallback(CCEvent event, CCenum eventCommandExecStatus, pfnEventNotify callback, void* userData)
-{
-    return clSetEventCallback(event, eventCommandExecStatus, callback, userData);
-}
-
-CCint ComputeContext::setUserEventStatus(CCEvent event, CCint executionStatus)
-{
-    return clSetUserEventStatus(event, executionStatus);
+    return new ComputeEvent(this, error);
 }
 
 ComputeProgram* ComputeContext::createProgram(const String& programSource, CCerror& error)
@@ -516,16 +514,6 @@ CCerror ComputeContext::getPlatformInfoBase(CCPlatformID platformID, CCPlatformI
    return clGetPlatformInfo(platformID, infoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getEventInfoBase(CCEvent event, CCEventInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
-{
-    return clGetEventInfo(event, infoType, sizeOfData, data, retSize);
-}
-
-CCerror ComputeContext::getEventProfilingInfoBase(CCEvent event, CCEventProfilingInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
-{
-    return clGetEventProfilingInfo(event, infoType, sizeOfData, data, retSize);
-}
-
 CCerror ComputeContext::getImageInfoBase(PlatformComputeObject image, CCImageInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
     return clGetImageInfo(image, infoType, sizeOfData, data, retSize);
@@ -544,11 +532,6 @@ CCerror ComputeContext::getSamplerInfoBase(CCSampler sampler, CCSamplerInfoType 
 CCerror ComputeContext::getMemoryObjectInfoBase(PlatformComputeObject memObject, CCMemInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
     return clGetMemObjectInfo(memObject, infoType, sizeOfData, data, retSize);
-}
-
-CCerror ComputeContext::releaseEvent(CCEvent ccevent)
-{
-    return clReleaseEvent(ccevent);
 }
 
 CCerror ComputeContext::releaseSampler(CCSampler sampler)
