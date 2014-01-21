@@ -52,7 +52,7 @@ inline bool WebCLExtensionsAccessor<T>::enableExtension(const String& name)
 }
 
 template <class T>
-Vector<String> WebCLExtensionsAccessor<T>::getSupportedExtensions(ExceptionCode&)
+Vector<String> WebCLExtensionsAccessor<T>::getSupportedExtensions()
 {
     Vector<String> result;
     // WEBCL_html_image is always enabled in WebKit.

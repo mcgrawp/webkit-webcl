@@ -157,24 +157,6 @@ JSValue JSWebCL::createContext(ExecState* exec)
     return toJS(exec, globalObject(), webCLContext.get());
 }
 
-JSValue JSWebCL::getSupportedExtensions(ExecState* exec)
-{
-    WebCL* cl = static_cast<WebCL*>(impl());
-    ExceptionCode ec = 0;
-    Vector<String> value = cl->getSupportedExtensions(ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-
-    MarkedArgumentBuffer list;
-    for (size_t i = 0; i < value.size(); ++i) {
-        // FIXME: use jsStringWithCache?
-        list.append(jsString(exec, value[i]));
-    }
-    return constructArray(exec, 0, globalObject(), list);
-}
-
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInfo& info)
 {
     switch (info.getType()) {

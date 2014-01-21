@@ -55,22 +55,6 @@ JSValue JSWebCLPlatform::getInfo(JSC::ExecState* exec)
     return toJS(exec, globalObject(), info);
 }
 
-JSValue JSWebCLPlatform::getSupportedExtensions(ExecState* exec)
-{
-    WebCLPlatform* platform = static_cast<WebCLPlatform*>(impl());
-    ExceptionCode ec = 0;
-    Vector<String> value = platform->getSupportedExtensions(ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-
-    MarkedArgumentBuffer list;
-    for (size_t ii = 0; ii < value.size(); ++ii)
-        list.append(jsString(exec, value[ii]));
-    return constructArray(exec, 0, globalObject(), list);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

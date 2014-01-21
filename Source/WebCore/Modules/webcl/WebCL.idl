@@ -310,7 +310,7 @@ typedef long CLint;
 
     [RaisesException] sequence<WebCLPlatform> getPlatforms();
 
-    [StrictTypeChecking, Custom] sequence<DOMString> getSupportedExtensions();
+    [StrictTypeChecking] sequence<DOMString> getSupportedExtensions();
     [StrictTypeChecking] boolean enableExtension(DOMString extensionName);
 
     [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(optional WebCLContextProperties properties);

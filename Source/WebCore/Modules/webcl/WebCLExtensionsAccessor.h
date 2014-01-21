@@ -52,7 +52,7 @@ public:
     }
 
     bool enableExtension(const String& name);
-    Vector<String> getSupportedExtensions(ExceptionCode&);
+    Vector<String> getSupportedExtensions();
 
 protected:
     WebCLExtensionsAccessor(T object)
