@@ -36,6 +36,8 @@ namespace WebCore {
 template <class T>
 inline bool WebCLExtensionsAccessor<T>::enableExtension(const String& name)
 {
+    if (equalIgnoringCase(name, "WEBCL_html_image"))
+        return true;
     if (equalIgnoringCase(name, "KHR_gl_sharing")) {
 #if ENABLE(WEBGL)
         m_khrGLSharing = m_accessor ? ComputeExtensions::get().supports("cl_khr_gl_sharing", m_accessor)
@@ -53,6 +55,8 @@ template <class T>
 Vector<String> WebCLExtensionsAccessor<T>::getSupportedExtensions(ExceptionCode&)
 {
     Vector<String> result;
+    // WEBCL_html_image is always enabled in WebKit.
+    result.append("WEBCL_html_image");
 
     if (m_accessor) {
 #if ENABLE(WEBGL)
