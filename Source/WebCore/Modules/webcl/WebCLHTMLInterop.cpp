@@ -39,12 +39,15 @@
 #include "SharedBuffer.h"
 #include <wtf/Uint8ClampedArray.h>
 
+
 namespace WebCore {
 
-void WebCLHTMLInterop::extractDataFromCanvas(HTMLCanvasElement* canvas, void** hostPtr, size_t& canvasSize)
+void WebCLHTMLInterop::extractDataFromCanvas(HTMLCanvasElement* canvas, void*& hostPtr, size_t& canvasSize, ExceptionCode& ec)
 {
-    if (!canvas)
+    if (!canvas) {
+        ec = WebCLException::INVALID_HOST_PTR;
         return;
+    }
     RefPtr<ImageData> imageData;
 #if USE(CG)
     // If CoreGraphics usage is enabled, use it to retrive the data.
@@ -52,32 +55,59 @@ void WebCLHTMLInterop::extractDataFromCanvas(HTMLCanvasElement* canvas, void** h
     imageData = canvas->getImageData();
 #endif
     if (imageData) {
-        *hostPtr = imageData->data()->data();
+        hostPtr = imageData->data()->data();
         canvasSize = imageData->data()->length();
     } else {
         ImageBuffer* buffer = canvas->buffer();
         IntRect rect(0, 0, canvas->width(), canvas->height());
         RefPtr<Uint8ClampedArray> clampedArray = buffer->getUnmultipliedImageData(rect);
-        if (!clampedArray)
+        if (!clampedArray) {
+            ec = WebCLException::INVALID_HOST_PTR;
             return;
-        *hostPtr = clampedArray->data();
+        }
+        hostPtr = clampedArray->data();
         canvasSize = clampedArray->byteLength();
+    }
+    if (!hostPtr || !canvasSize) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return;
     }
 }
 
-void WebCLHTMLInterop::extractDataFromImage(HTMLImageElement* image, void** hostPtr, size_t& imageSize)
+void WebCLHTMLInterop::extractDataFromImage(HTMLImageElement* image, void*& hostPtr, size_t& imageSize, ExceptionCode& ec)
 {
-    if (!image || !image->cachedImage())
+    if (!image || !image->cachedImage()) {
+        ec = WebCLException::INVALID_HOST_PTR;
         return;
+    }
 
     CachedImage* cachedImage = image->cachedImage();
-    if (!cachedImage || !cachedImage->image() || !cachedImage->image()->data())
+    if (!cachedImage || !cachedImage->image() || !cachedImage->image()->data()) {
+        ec = WebCLException::INVALID_HOST_PTR;
         return;
+    }
     unsigned sourcePixelFormat = 4; // source pixel format is treated as 32-bit(4 byte) RGBA regardless of the source.
-    *hostPtr = (void*) cachedImage->image()->data()->data();
+    hostPtr = (void*) cachedImage->image()->data()->data();
     imageSize = image->width() * image->height() * sourcePixelFormat;
+    if (!hostPtr || !imageSize) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return;
+    }
 }
 
+void WebCLHTMLInterop::extractDataFromImageData(ImageData* srcPixels, void*& hostPtr, size_t& pixelSize, ExceptionCode& ec)
+{
+    if (!srcPixels && !srcPixels->data() && !srcPixels->data()->data()) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return;
+    }
+    pixelSize = srcPixels->data()->length();
+    hostPtr = static_cast<void*>(srcPixels->data()->data());
+    if (!hostPtr || !pixelSize) {
+        ec = WebCLException::INVALID_HOST_PTR;
+        return;
+    }
+}
 }
 
 #endif

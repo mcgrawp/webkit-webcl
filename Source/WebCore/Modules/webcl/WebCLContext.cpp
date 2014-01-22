@@ -196,15 +196,13 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint si
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, ImageData* srcPixels, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    if (!srcPixels || !srcPixels->data() || !srcPixels->data()->data()) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    void* hostPtr = 0;
+    size_t pixelSize = 0;
+    WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return 0;
-    }
 
-    void* hostPtr = srcPixels->data()->data();
-    CCuint bufferSize = srcPixels->data()->length();
-
-    return createBufferBase(memoryFlags, bufferSize, hostPtr, ec);
+    return createBufferBase(memoryFlags, pixelSize, hostPtr, ec);
 }
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
@@ -212,11 +210,10 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLCanva
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
-    if (!hostPtr || !canvasSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return 0;
-    }
+
     return createBufferBase(memoryFlags, canvasSize, hostPtr, ec);
 }
 
@@ -225,11 +222,9 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLImage
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
     void* hostPtr = 0;
     size_t bufferSize = 0;
-    WebCLHTMLInterop::extractDataFromImage(srcImage, &hostPtr, bufferSize);
-    if (!hostPtr || !bufferSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, bufferSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return 0;
-    }
 
     return createBufferBase(memoryFlags, bufferSize, hostPtr, ec);
 }
@@ -268,11 +263,9 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
-    if (!hostPtr || !canvasSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return 0;
-    }
 
     CCuint width = srcCanvas->width();
     CCuint height = srcCanvas->height();
@@ -285,11 +278,9 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLImageElement*
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
     void* hostPtr = 0;
     size_t bufferSize = 0;
-    WebCLHTMLInterop::extractDataFromImage(srcImage, &hostPtr, bufferSize);
-    if (!hostPtr || !bufferSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, bufferSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return 0;
-    }
 
     CCuint width = srcImage->width();
     CCuint height = srcImage->height();
@@ -331,16 +322,16 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLVideoElement*
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, ImageData* srcPixels, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    if (!srcPixels || !srcPixels->data() || !srcPixels->data()->data()) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    void* hostPtr = 0;
+    size_t pixelSize = 0;
+    WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return 0;
-    }
+
     CCuint width = srcPixels->width();
     CCuint height = srcPixels->height();
-    Uint8ClampedArray* byteArray = srcPixels->data();
-
     CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, (void*) byteArray->data(), ec);
+    return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, hostPtr, ec);
 }
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescriptor* descriptor, ArrayBufferView* hostPtr, ExceptionCode& ec)

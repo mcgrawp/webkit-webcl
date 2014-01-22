@@ -32,8 +32,6 @@
 #include "WebCLCommandQueue.h"
 
 #include "ComputeEvent.h"
-#include "ImageData.h"
-#include "SharedBuffer.h"
 #include "WebCLBuffer.h"
 #include "WebCLContext.h"
 #include "WebCLEvent.h"
@@ -145,7 +143,7 @@ ComputeEvent* WebCLCommandQueue::computeEventFromWebCLEventIfApplicable(WebCLEve
     return event->platformObject();
 }
 
-void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, CCuint bufferSize, void* hostPtr, size_t hostPtrLength,
+void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, CCuint numBytes, void* hostPtr, size_t hostPtrLength,
     const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (isPlatformObjectNeutralized()) {
@@ -169,7 +167,7 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool block
         return;
     }
 
-    if (hostPtrLength < (offset + bufferSize)) {
+    if (hostPtrLength < (offset + numBytes)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -183,60 +181,56 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool block
     if (ec != WebCLException::SUCCESS)
         return;
 
-    CCerror error = platformObject()->enqueueWriteBuffer(ccBuffer, blockingWrite, offset, bufferSize, hostPtr, computeEvents, computeEvent);
+    CCerror error = platformObject()->enqueueWriteBuffer(ccBuffer, blockingWrite, offset, numBytes, hostPtr, computeEvents, computeEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
     WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
-void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint bufferOffset, CCuint numBytes, ArrayBufferView* hostPtr,
+void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, CCuint numBytes, ArrayBufferView* ptr,
     const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!WebCLInputChecker::isValidByteLengthForArrayBufferView(numBytes, hostPtr)) {
+    if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(numBytes, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
-
-    // FIXME Need to check if (bufferOffset, bufferSize) is out of bound for buffer.
-
-    enqueueWriteBufferBase(buffer, blockingWrite, bufferOffset, numBytes, hostPtr ? hostPtr->baseAddress() : 0, hostPtr ? hostPtr->byteLength() : 0, events, event, ec);
+    enqueueWriteBufferBase(buffer, blockingWrite, offset, numBytes, ptr->baseAddress(), ptr->byteLength(), events, event, ec);
 }
 
-void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, ImageData* imageData, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, ImageData* srcPixels,
+    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    if (!imageData && !imageData->data() && !imageData->data()->data()) {
-        ec = WebCLException::INVALID_VALUE;
+    void* hostPtr = 0;
+    size_t pixelSize = 0;
+    WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return;
-    }
-    unsigned byteLength = imageData->data()->length();
-    unsigned char* bufferArray = imageData->data()->data();
 
-    enqueueWriteBufferBase(buffer, blockingWrite, offset, byteLength, static_cast<void*>(bufferArray), byteLength, events, event, ec);
+    enqueueWriteBufferBase(buffer, blockingWrite, offset, pixelSize, hostPtr, pixelSize, events, event, ec);
 }
 
-void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, HTMLCanvasElement* srcCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, HTMLCanvasElement* srcCanvas,
+    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
-    if (!hostPtr || !canvasSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return;
-    }
+
     enqueueWriteBufferBase(buffer, blockingWrite, offset, canvasSize, hostPtr, canvasSize, events, event, ec);
 }
 
-void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, HTMLImageElement* srcImage, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, HTMLImageElement* srcImage,
+    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
     void* hostPtr = 0;
     size_t imageSize = 0;
-    WebCLHTMLInterop::extractDataFromImage(srcImage, &hostPtr, imageSize);
-    if (!hostPtr || !imageSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, imageSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return;
-    }
 
     enqueueWriteBufferBase(buffer, blockingWrite, offset, imageSize, hostPtr, imageSize, events, event, ec);
 }
@@ -298,24 +292,19 @@ void WebCLCommandQueue::enqueueWriteBufferRectBase(WebCLBuffer* buffer, CCbool b
 
 void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool blockingWrite, const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin,
     const Vector<CCuint>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
-    ArrayBufferView* hostPtr, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionCode& ec)
+    ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!hostPtr) {
+    if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
 
-    if (!WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, hostPtr)) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
-
-    if (!WebCLInputChecker::isValidPitchForArrayBufferView(hostSlicePitch, hostPtr)) {
+    if (!WebCLInputChecker::isValidPitchForArrayBufferView(hostSlicePitch, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
     enqueueWriteBufferRectBase(buffer, blockingWrite, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch,
-        hostPtr->baseAddress(), hostPtr->byteLength(), eventWaitlist, event, ec);
+        ptr->baseAddress(), ptr->byteLength(), eventWaitlist, event, ec);
 }
 
 void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool blockingWrite, const Vector<CCuint>& bufferOrigin,
@@ -323,15 +312,14 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool block
     ImageData* srcPixels, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    if (!srcPixels && !srcPixels->data() && !srcPixels->data()->data()) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    void* hostPtr = 0;
+    size_t pixelSize = 0;
+    WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return;
-    }
-    unsigned byteLength = srcPixels->data()->length();
-    void* hostPtr = static_cast<void*>(srcPixels->data()->data());
 
     enqueueWriteBufferRectBase(buffer, blockingWrite, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch, 0 /* hostRowPitch */, 0 /* hostSlicePitch */,
-        hostPtr, byteLength, eventWaitlist, event, ec);
+        hostPtr, pixelSize, eventWaitlist, event, ec);
 }
 
 void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool blockingWrite, const Vector<CCuint>& bufferOrigin,
@@ -341,12 +329,9 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool block
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
-
-    if (!hostPtr || !canvasSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return;
-    }
 
     enqueueWriteBufferRectBase(buffer, blockingWrite, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch,
         0 /* hostRowPitch */, 0 /* hostSlicePitch */, hostPtr, canvasSize, eventWaitlist, event, ec);
@@ -359,18 +344,15 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool block
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
     void* hostPtr = 0;
     size_t imageSize = 0;
-    WebCLHTMLInterop::extractDataFromImage(srcImage, &hostPtr, imageSize);
-
-    if (!hostPtr || !imageSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, imageSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return;
-    }
+
     enqueueWriteBufferRectBase(buffer, blockingWrite, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch, 0 /* hostRowPitch */, 0 /*hostSlicePitch*/,
         hostPtr, imageSize, eventWaitlist, event, ec);
 }
 
-void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blockingRead, CCuint bufferOffset, CCuint numBytes, void* hostPtr,
-    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blockingRead, CCuint offset, CCuint numBytes, void* hostPtr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
@@ -386,7 +368,6 @@ void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blocki
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
-
     PlatformComputeObject ccBuffer = buffer->platformObject();
 
     Vector<ComputeEvent*> computeEvents;
@@ -398,24 +379,20 @@ void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blocki
     if (ec != WebCLException::SUCCESS)
         return;
 
-    CCerror err = platformObject()->enqueueReadBuffer(ccBuffer, blockingRead, bufferOffset, numBytes, hostPtr, computeEvents, computeEvent);
+    CCerror err = platformObject()->enqueueReadBuffer(ccBuffer, blockingRead, offset, numBytes, hostPtr, computeEvents, computeEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
 
-void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRead, CCuint bufferOffset, CCuint numBytes,
-    ArrayBufferView* hostPtr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRead, CCuint offset, CCuint numBytes,
+    ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!hostPtr || hostPtr->byteLength() < numBytes) {
+    if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(numBytes, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
 
-    if (!WebCLInputChecker::isValidPitchForArrayBufferView(numBytes, hostPtr)) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
-    enqueueReadBufferBase(buffer, blockingRead, bufferOffset, numBytes, hostPtr->baseAddress(), events, event, ec);
+    enqueueReadBufferBase(buffer, blockingRead, offset, numBytes, ptr->baseAddress(), events, event, ec);
 }
 
 void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRead, CCuint offset, CCuint numBytes,
@@ -425,11 +402,10 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRe
 
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, &hostPtr, canvasSize);
-    if (!hostPtr || !canvasSize || numBytes > canvasSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, hostPtr, canvasSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return;
-    }
+
     enqueueReadBufferBase(buffer, blockingRead, offset, numBytes, hostPtr, events, event, ec);
 }
 
@@ -445,7 +421,6 @@ void WebCLCommandQueue::enqueueReadImageBase(WebCLImage* image, CCbool blockingR
         ec = WebCLException::INVALID_CONTEXT;
         return;
     }
-
 
     if (!WebCLInputChecker::validateWebCLObject(image)) {
         ec = WebCLException::INVALID_MEM_OBJECT;
@@ -486,34 +461,26 @@ void WebCLCommandQueue::enqueueReadImageBase(WebCLImage* image, CCbool blockingR
 }
 
 void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead, const Vector<CCuint>& origin, const Vector<CCuint>& region,
-    CCuint rowPitch, ArrayBufferView* hostPtr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!hostPtr || !hostPtr->baseAddress()) {
+    if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
 
-    if (!WebCLInputChecker::isValidPitchForArrayBufferView(rowPitch, hostPtr)) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
-
-    enqueueReadImageBase(image, blockingRead, origin, region, rowPitch, hostPtr->baseAddress(), events, event, ec);
+    enqueueReadImageBase(image, blockingRead, origin, region, hostRowPitch, ptr->baseAddress(), events, event, ec);
 }
 
 void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead, const Vector<CCuint>& origin, const Vector<CCuint>& region,
     HTMLCanvasElement* dstCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, &hostPtr, canvasSize);
-
-    if (!hostPtr || !canvasSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, hostPtr, canvasSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return;
-    }
+
     enqueueReadImageBase(image, blockingRead, origin, region, 0 /* rowPitch */, hostPtr, events, event, ec);
 }
 
@@ -543,15 +510,15 @@ void WebCLCommandQueue::enqueueReadBufferRectBase(WebCLBuffer* buffer, CCbool bl
         return;
     }
 
+    if (bufferOrigin.size() != 3 || hostOrigin.size() != 3 || region.size() != 3) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     Vector<size_t> bufferOriginCopy, hostOriginCopy, regionCopy;
     bufferOriginCopy.appendVector(bufferOrigin);
     hostOriginCopy.appendVector(hostOrigin);
     regionCopy.appendVector(region);
-
-    if (bufferOriginCopy.size() != 3 || hostOriginCopy.size() != 3 || regionCopy.size() != 3) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
 
     Vector<ComputeEvent*> computeEvents;
     ccEventListFromWebCLEventList(events, computeEvents, ec);
@@ -571,25 +538,16 @@ void WebCLCommandQueue::enqueueReadBufferRectBase(WebCLBuffer* buffer, CCbool bl
 void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blockingRead,
     const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin, const Vector<CCuint>& region,
     CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
-    ArrayBufferView* hostPtr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!hostPtr || !hostPtr->baseAddress()) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
-
-    if (!WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, hostPtr)) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
-
-    if (!WebCLInputChecker::isValidPitchForArrayBufferView(hostSlicePitch, hostPtr)) {
+    if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)
+        || !WebCLInputChecker::isValidPitchForArrayBufferView(hostSlicePitch, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
 
     enqueueReadBufferRectBase(buffer, blockingRead, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch,
-        hostRowPitch, hostSlicePitch, hostPtr->baseAddress(), events, event, ec);
+        hostRowPitch, hostSlicePitch, ptr->baseAddress(), events, event, ec);
 }
 
 void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blockingRead,
@@ -597,15 +555,11 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blocki
     CCuint bufferRowPitch, HTMLCanvasElement* dstCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, &hostPtr, canvasSize);
-
-    if (!hostPtr || !canvasSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, hostPtr, canvasSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return;
-    }
 
     enqueueReadBufferRectBase(buffer, blockingRead, bufferOrigin, hostOrigin, region, bufferRowPitch, 0 /* bufferSlicePitch */,
         0 /* hostRowPitch */, 0 /* hostSlicePitch */, hostPtr, events, event, ec);
@@ -772,31 +726,24 @@ void WebCLCommandQueue::enqueueWriteImageBase(WebCLImage* image, CCbool blocking
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
     CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)) {
+    if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
-    void* hostPtr = 0;
-    size_t length = 0;
-    if (ptr) {
-        hostPtr = ptr->baseAddress();
-        length = ptr->byteLength();
-    }
-    enqueueWriteImageBase(image, blockingWrite, origin, region, hostRowPitch, hostPtr, length, events, event, ec);
+    enqueueWriteImageBase(image, blockingWrite, origin, region, hostRowPitch, ptr->baseAddress(), ptr->byteLength(), events, event, ec);
 }
 
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
     ImageData* srcPixels, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
-    if (!srcPixels || !srcPixels->data() || !srcPixels->data()->data()) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    void* hostPtr = 0;
+    size_t pixelSize = 0;
+    WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return;
-    }
-    unsigned byteLength = srcPixels->data()->length();
-    void* hostPtr = static_cast<void*>(srcPixels->data()->data());
 
-    enqueueWriteImageBase(image, blockingWrite, origin, region, 0 /* hostRowPitch */, hostPtr, byteLength, events, event, ec);
+    enqueueWriteImageBase(image, blockingWrite, origin, region, 0 /* hostRowPitch */, hostPtr, pixelSize, events, event, ec);
 }
 
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
@@ -805,11 +752,10 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrit
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, &hostPtr, canvasSize);
-    if (!hostPtr || !canvasSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return;
-    }
+
     enqueueWriteImageBase(image, blockingWrite, origin, region, 0 /* hostRowPitch */, hostPtr, canvasSize, events, event, ec);
 }
 
@@ -819,11 +765,10 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrit
     // FIXME :: Need to check if WEBCL_html_sharing is enabled.
     void* hostPtr = 0;
     size_t imageSize = 0;
-    WebCLHTMLInterop::extractDataFromImage(srcImage, &hostPtr, imageSize);
-    if (!hostPtr || !imageSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, imageSize, ec);
+    if (ec != WebCLException::SUCCESS)
         return;
-    }
+
     enqueueWriteImageBase(image, blockingWrite, origin, region, 0 /* hostRowPitch */, hostPtr, imageSize, events, event, ec);
 }
 
@@ -852,6 +797,11 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
         return;
     }
 
+    if (sourceOrigin.size() != 2 || targetOrigin.size() != 2 || region.size() != 2) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     PlatformComputeObject ccSourceImage = sourceImage->platformObject();
     PlatformComputeObject ccTargetImage = targetImage->platformObject();
 
@@ -859,11 +809,6 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
     sourceOriginCopy.appendVector(sourceOrigin);
     targetOriginCopy.appendVector(targetOrigin);
     regionCopy.appendVector(region);
-
-    if (sourceOriginCopy.size() != 2 || targetOriginCopy.size() != 2 || regionCopy.size() != 2) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
 
     // No support for 3D-images, so set default values of 0 for all origin & region arrays at 3rd index.
     sourceOriginCopy.append(0);
@@ -884,8 +829,7 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
     if (ec != WebCLException::SUCCESS)
         return;
 
-    CCerror err = platformObject()->enqueueCopyImage(ccSourceImage, ccTargetImage,
-        sourceOriginCopy, targetOriginCopy, regionCopy, computeEvents, computeEvent);
+    CCerror err = platformObject()->enqueueCopyImage(ccSourceImage, ccTargetImage, sourceOriginCopy, targetOriginCopy, regionCopy, computeEvents, computeEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
     WebCLEvent::processCallbackRegisterQueueForEvent(event, ec);
 }
@@ -910,17 +854,17 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage* sourceImage, WebCLB
         return;
     }
 
+    if (sourceOrigin.size() != 2 || region.size() != 2) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     PlatformComputeObject ccSourceImage = sourceImage->platformObject();
     PlatformComputeObject ccTargetBuffer = targetBuffer->platformObject();
 
     Vector<size_t> sourceOriginCopy, regionCopy;
     sourceOriginCopy.appendVector(sourceOrigin);
     regionCopy.appendVector(region);
-
-    if (sourceOriginCopy.size() != 2 || regionCopy.size() != 2) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
 
     // No support for 3D-images, so set default values of 0 for all origin & region arrays at 3rd index.
     sourceOriginCopy.append(0);
@@ -961,17 +905,17 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer* sourceBuffer, WebC
         return;
     }
 
+    if (targetOrigin.size() != 2 || region.size() != 2) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     PlatformComputeObject ccSourceBuffer = sourceBuffer->platformObject();
     PlatformComputeObject ccTargetImage = targetImage->platformObject();
 
     Vector<size_t> targetOriginCopy, regionCopy;
     targetOriginCopy.appendVector(targetOrigin);
     regionCopy.appendVector(region);
-
-    if (targetOriginCopy.size() != 2 || regionCopy.size() != 2) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
 
     // No support for 3D-images, so set default values of 0 for all origin & region arrays at 3rd index.
     targetOriginCopy.append(0);
