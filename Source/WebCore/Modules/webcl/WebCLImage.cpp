@@ -177,6 +177,11 @@ PassRefPtr<WebCLImageDescriptor> WebCLImage::getInfo(ExceptionCode& ec)
     return imageDescriptor.release();
 }
 
+CCImageFormat WebCLImage::imageFormat() const
+{
+    return m_format;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

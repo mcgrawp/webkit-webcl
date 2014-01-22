@@ -54,6 +54,7 @@ public:
 #endif
 
     PassRefPtr<WebCLImageDescriptor> getInfo(ExceptionCode&);
+    CCImageFormat imageFormat() const;
 
 private:
     WebCLImage(WebCLContext*, PlatformComputeObject image, CCuint width, CCuint height, const CCImageFormat&);

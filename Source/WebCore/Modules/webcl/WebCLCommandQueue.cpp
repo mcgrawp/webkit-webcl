@@ -847,6 +847,11 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
         return;
     }
 
+    if (!WebCLInputChecker::compareImageFormat(sourceImage->imageFormat(), targetImage->imageFormat())) {
+        ec = WebCLException::IMAGE_FORMAT_MISMATCH;
+        return;
+    }
+
     PlatformComputeObject ccSourceImage = sourceImage->platformObject();
     PlatformComputeObject ccTargetImage = targetImage->platformObject();
 

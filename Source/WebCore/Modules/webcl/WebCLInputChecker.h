@@ -63,6 +63,7 @@ bool isRegionOverlapping(WebCLImage*, WebCLImage*, const Vector<CCuint>&, const 
 bool isRegionOverlapping(WebCLBuffer*, WebCLBuffer*, const CCuint, const CCuint, const CCuint);
 
 bool compareContext(WebCLContext*, WebCLContext*);
+bool compareImageFormat(const CCImageFormat&, const CCImageFormat&);
 
 template<class T>
 bool validateWebCLObject(WebCLObjectImpl<T>* object)

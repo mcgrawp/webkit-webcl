@@ -325,6 +325,12 @@ bool compareContext(WebCLContext* context1, WebCLContext* context2)
     return context1->platformObject() == context2->platformObject();
 }
 
+bool compareImageFormat(const CCImageFormat& srcImageFormat, const CCImageFormat& dstImageFormat)
+{
+    return (srcImageFormat.image_channel_order == dstImageFormat.image_channel_order) &&
+        (srcImageFormat.image_channel_data_type == dstImageFormat.image_channel_data_type);
+}
+
 }
 }
 
