@@ -272,6 +272,7 @@ if (ENABLE_WEBCL)
     list(APPEND WebCore_SOURCES
         platform/ComputeCommandQueue.h
         platform/ComputeContext.h
+        platform/ComputeEvent.h
         platform/ComputeExtensions.h
         platform/ComputeExtensionsTraits.h
         platform/ComputeKernel.h
@@ -280,6 +281,7 @@ if (ENABLE_WEBCL)
         platform/ComputeTypesTraits.h
         platform/opencl/ComputeCommandQueueCL.cpp
         platform/opencl/ComputeContextCL.cpp
+        platform/opencl/ComputeEventCL.cpp
         platform/opencl/ComputeExtensionsCL.cpp
         platform/opencl/ComputeKernelCL.cpp
         platform/opencl/ComputeProgramCL.cpp
