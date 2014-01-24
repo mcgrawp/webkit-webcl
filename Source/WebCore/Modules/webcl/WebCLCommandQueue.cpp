@@ -1054,13 +1054,15 @@ void WebCLCommandQueue::enqueueMarker(WebCLEvent* event, ExceptionCode& ec)
     }
 
     if (!WebCLInputChecker::validateWebCLObject(event)) {
-        ec = WebCLException::INVALID_EVENT;
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
 
     ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    if (ec != WebCLException::SUCCESS) {
+        ec = WebCLException::INVALID_VALUE;
         return;
+    }
 
     CCerror computeContextError = platformObject()->enqueueMarker(computeEvent);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);

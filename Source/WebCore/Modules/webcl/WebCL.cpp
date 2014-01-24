@@ -66,9 +66,23 @@ Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec)
 
 void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)
 {
-    Vector<ComputeEvent*> computeEvents;
+    if (!events.size()) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
 
-    for (size_t i = 0; i < events.size(); ++i) {
+    if (events[0]->isPlatformObjectNeutralized()
+        || !events[0]->holdsValidCLObject()
+        || events[0]->isUserEvent()) {
+        ec = WebCLException::INVALID_EVENT_WAIT_LIST;
+        return;
+    }
+    ASSERT(event[0]->context());
+    WebCLContext* referenceContext  = events[0]->context();
+    Vector<ComputeEvent*> computeEvents;
+    computeEvents.append(events[0]->platformObject());
+
+    for (size_t i = 1; i < events.size(); ++i) {
         // FIXME: We currently do not support the asynchronous variant of this method.
         // So it the event being waited on has not been initialized (1) or is an user
         // event (2), we would hand the browser.
@@ -77,7 +91,12 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCo
         if (events[i]->isPlatformObjectNeutralized()
             || !events[i]->holdsValidCLObject()
             || events[i]->isUserEvent()) {
-            ec = WebCLException::INVALID_EVENT;
+            ec = WebCLException::INVALID_EVENT_WAIT_LIST;
+            return;
+        }
+        ASSERT(event[i]->context());
+        if (!WebCLInputChecker::compareContext(events[i]->context(), referenceContext)) {
+            ec = WebCLException::INVALID_CONTEXT;
             return;
         }
 
