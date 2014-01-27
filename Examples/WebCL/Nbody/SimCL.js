@@ -90,9 +90,10 @@ function InitCL() {
             userData.isGLCLshared = cl.enableExtension("KHR_GL_SHARING");
 
         if(userData.isGLCLshared)
-            context = cl.createContext(userData.gl, {platform:platform, devices:devices, deviceType: userData.gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU});
+            context = cl.createContext(userData.gl, devices);
         else
-            context = cl.createContext({platform:platform, devices:devices, deviceType: userData.gpu ? cl.DEVICE_TYPE_GPU : cl.DEVICE_TYPE_CPU});
+            context = cl.createContext(devices);
+
         if(context === null) {
             console.error("createContext fails");
 

@@ -328,7 +328,7 @@ public:
         GL_MIPMAP_LEVEL = 0x2005,
     };
 
-    ComputeContext(CCContextProperties*, const Vector<CCDeviceID>&, CCerror&);
+    ComputeContext(const Vector<CCContextProperties>&, const Vector<CCDeviceID>&, CCerror&);
     ~ComputeContext();
 
     static CCerror getPlatformIDs(Vector<CCPlatformID>&);

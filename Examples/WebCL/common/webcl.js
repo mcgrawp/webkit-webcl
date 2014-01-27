@@ -122,7 +122,6 @@ window.WebCLCommon = (function (debug) {
             if (devices.length === 0) {
                 throw new Error(NO_DEVICE_FOUND);
             }
-
         },
 
         /**
@@ -131,48 +130,25 @@ window.WebCLCommon = (function (debug) {
          * @param {WebCLContextProperties} props
          * @returns {WebCLContext} context
          */
-        createContext : function (props) {
-            var ctxProps = {};
-            var resource;
-            var extensions;
-
-            /* Populate ctxProps with default values */
-            ctxProps.platform = (props && props.platform) ? props.platform : platforms[0];
-            ctxProps.devices = (props && props.devices) ? props.devices : [devices[0]];
-            ctxProps.deviceType = (props && props.deviceType) ? props.deviceType :  webcl.DEVICE_TYPE_GPU;
-            ctxProps.hint = (props && props.hint) ? props.hint : null;
-
-            /* Checking for possible extensions.
-             * All extensions should be passed using JSON format. For example, using gl_sharing and
-             * KHR_fp64: contextProperties = {extensions: [{"KHR_gl_sharing": gl}, "KHR_fp64"]}
-             */
-            extensions = (props && props.extensions) ? props.extensions : null;
-
+        createContext : function (param1, param2, param3) {
             try {
-                if (extensions) {
-                    for (var i in extensions) {
-                        if (extensions[i].hasOwnProperty(WEBGL_RESOURCE_SHARING)) {
-                            if (webcl.enableExtension(WEBGL_RESOURCE_SHARING)) {
-                                var gl = extensions[i].KHR_gl_sharing;
-                                ctxProps.deviceType = webcl.DEVICE_TYPE_GPU;
-                                context = webcl.createContext(gl, ctxProps);
-                            } else {
-                                throw new Error(EXTENSION_NOT_ENABLED);
-                            }
-                        } else {
-                            if (!webcl.enableExtension(extensions[i])) {
-                                throw new Error(EXTENSION_NOT_ENABLED);
-                            }
-                        }
-                    }
+                if (param3 != undefined)
+                    context = webcl.createContext(param1, param2, param3);
+                else if (param2 != undefined)
+                    context = webcl.createContext(param1, param2);
+                else if (param1 != undefined) {
+                    if (param1 instanceof WebGLRenderingContext && devices.length)
+                        context = webcl.createContext(param1, devices);
+                    else
+                        context = webcl.createContext(param1);
                 } else {
-                    context = webcl.createContext(ctxProps);
+                    if (devices.length)
+                        context = webcl.createContext(devices);
+                    else
+                        context = webcl.createContext();
                 }
-            } catch (e) {
-                if (debug) {
-                    console.error(e);
-                }
-                throw e;
+            } catch(e) {
+                console.error(e);
             }
 
             return context;

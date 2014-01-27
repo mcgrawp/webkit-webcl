@@ -313,7 +313,25 @@ typedef long CLint;
     [StrictTypeChecking] sequence<DOMString> getSupportedExtensions();
     [StrictTypeChecking] boolean enableExtension(DOMString extensionName);
 
-    [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(optional WebCLContextProperties properties);
+    // FIXME: We have to arrange the overloaded method declarations like below because it matters for
+    // the IDL parser/code generator engine.
+    [StrictTypeChecking, RaisesException] WebCLContext createContext(WebGLRenderingContext gl, sequence<WebCLDevice> devices);
+    [StrictTypeChecking, RaisesException] WebCLContext createContext(sequence<WebCLDevice> devices);
+
+    [StrictTypeChecking, RaisesException] WebCLContext createContext(WebGLRenderingContext gl, WebCLDevice device);
+    [StrictTypeChecking, RaisesException] WebCLContext createContext(WebCLDevice device);
+
+    [StrictTypeChecking, RaisesException] WebCLContext createContext(WebGLRenderingContext gl, WebCLPlatform platform, CLenum deviceType);
+    [StrictTypeChecking, RaisesException] WebCLContext createContext(WebCLPlatform platform, CLenum deviceType);
+
+    [StrictTypeChecking, RaisesException] WebCLContext createContext(WebGLRenderingContext gl, WebCLPlatform platform);
+    [StrictTypeChecking, RaisesException] WebCLContext createContext(WebCLPlatform platform);
+
+    [StrictTypeChecking, RaisesException] WebCLContext createContext(WebGLRenderingContext gl, CLenum deviceType);
+    [StrictTypeChecking, RaisesException] WebCLContext createContext(WebGLRenderingContext gl);
+
+    [StrictTypeChecking, RaisesException] WebCLContext createContext(CLenum deviceType);
+    [StrictTypeChecking, RaisesException] WebCLContext createContext();
 
     void releaseAll();
 
@@ -336,7 +354,5 @@ typedef long CLint;
 
     const CLenum GL_TEXTURE_TARGET                         = 0x2004;
     const CLenum GL_MIPMAP_LEVEL                           = 0x2005;
-
-    [StrictTypeChecking, Custom, RaisesException] WebCLContext createContext(WebGLRenderingContext gl, optional WebCLContextProperties properties);
 #endif
 };

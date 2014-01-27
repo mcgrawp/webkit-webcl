@@ -171,20 +171,6 @@ Framework = (function(){
         elm.appendChild(elmSelect);
     };
 
-    var _setContextProperties = function(/* obj {platform: , devices: , deviceType: } */
-            properties) {
-
-
-        //console.log(API);
-        if(API.selectedPlatform == null || API.selectedDevice == null) {
-            throw new Error('You must choose platform and device');
-        }
-
-        CONTEXT_PROPERTIES.platform = ((properties && properties.platform) || this.platforms[0]);
-        CONTEXT_PROPERTIES.devices = ((properties && properties.devices) || this.platforms[0].getDevices());
-        CONTEXT_PROPERTIES.deviceType = ((properties && properties.deviceType) || webcl.DEVICE_TYPE_ALL);
-    };
-
     /**
      * Create a select list with available platforms
      */
@@ -340,12 +326,8 @@ Framework = (function(){
             this.kernelSource = document.getElementById(idSrc).firstChild.textContent;
         },
 
-        createContext : function(/* obj {platform: , devices, deviceType } */
-                properties){
-
-            _setContextProperties(properties);
-
-            this.context = webcl.createContext(CONTEXT_PROPERTIES);
+        createContext : function() {
+            this.context = webcl.createContext();
         },
 
         createProgram : function(/*String scritp tag ID */ idSrc) {
@@ -357,7 +339,7 @@ Framework = (function(){
                 }
 
                 this.loadCLSource(idSrc);
-                this.createContext(null);
+                this.createContext();
                 this.program = this.context.createProgram(this.kernelSource);
                 this.program.build([this.selectedDevice]);
 

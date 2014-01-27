@@ -95,6 +95,7 @@ Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(CCenum deviceType, Except
         return Vector<RefPtr<WebCLDevice> >();
     }
 
+    // FIXME: Spec says "Omitting the device type is equivalent to specifying DEVICE_TYPE_ALL."
     if (!deviceType)
         deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
 

@@ -48,6 +48,7 @@
 #if ENABLE(WEBGL)
 #include "WebGLBuffer.h"
 #include "WebGLRenderbuffer.h"
+#include "WebGLRenderingContext.h"
 #include "WebGLTexture.h"
 #endif
 
@@ -58,30 +59,58 @@ WebCLContext::~WebCLContext()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, PassRefPtr<WebCLContextProperties> properties, ExceptionCode& ec)
+static void setUpComputeContextProperties(WebCLPlatform* platform, WebGLRenderingContext* glContext, Vector<CCContextProperties>& properties)
 {
-    ASSERT(properties);
+    if (platform) {
+        properties.append(ComputeContext::CONTEXT_PLATFORM);
+        properties.append(reinterpret_cast<CCContextProperties>(platform->platformObject()));
+    }
 
+    if (glContext)
+        ComputeContext::populatePropertiesForInteroperabilityWithGL(properties, glContext->graphicsContext3D()->platformGraphicsContext3D());
+
+    // FIXME: If no valid platform or glContext is passed, context create fails.
+    // It does work with a literal {0} though.
+    properties.append(0);
+}
+
+PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, WebGLRenderingContext* glContext, WebCLPlatform* platform, const Vector<RefPtr<WebCLDevice> >& devices, ExceptionCode& ec)
+{
     Vector<CCDeviceID> ccDevices;
-    for (size_t i = 0; i < properties->devices().size(); ++i)
-        ccDevices.append(properties->devices()[i]->platformObject());
+    for (size_t i = 0; i < devices.size(); ++i) {
+        RefPtr<WebCLDevice> device = devices[i];
+        if (!device) {
+            ec = WebCLException::INVALID_DEVICE;
+            return 0;
+        }
+
+        if (device->platform()->platformObject() != platform->platformObject()) {
+            ec = WebCLException::INVALID_DEVICE;
+            return 0;
+        }
+
+        ccDevices.append(devices[i]->platformObject());
+    }
+
+    Vector<CCContextProperties> properties;
+    setUpComputeContextProperties(platform, glContext, properties);
 
     CCerror error = ComputeContext::SUCCESS;
-    ComputeContext* computeContext = new ComputeContext(properties->computeContextProperties().data(), ccDevices, error);
+    ComputeContext* computeContext = new ComputeContext(properties, ccDevices, error);
     if (error != ComputeContext::SUCCESS) {
         delete computeContext;
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
 
-    RefPtr<WebCLContext> context = adoptRef(new WebCLContext(webCL, computeContext, properties));
+    RefPtr<WebCLContext> context = adoptRef(new WebCLContext(webCL, computeContext, devices));
     return context.release();
 }
 
-WebCLContext::WebCLContext(WebCL* webCL, ComputeContext* computeContext, PassRefPtr<WebCLContextProperties> properties)
+WebCLContext::WebCLContext(WebCL* webCL, ComputeContext* computeContext, const Vector<RefPtr<WebCLDevice> >& devices)
     : WebCLObjectImpl(computeContext)
     , m_videoCache(4) // FIXME: Why '4'?
-    , m_contextProperties(properties)
+    , m_devices(devices)
 {
     webCL->trackReleaseableWebCLObject(createWeakPtr());
 }
@@ -95,11 +124,9 @@ WebCLGetInfo WebCLContext::getInfo(CCenum paramName, ExceptionCode& ec)
 
     switch (paramName) {
     case ComputeContext::CONTEXT_NUM_DEVICES:
-        return WebCLGetInfo(static_cast<CCuint>(m_contextProperties->devices().size()));
+        return WebCLGetInfo(static_cast<CCuint>(m_devices.size()));
     case ComputeContext::CONTEXT_DEVICES:
-        return WebCLGetInfo(m_contextProperties->devices());
-    case ComputeContext::CONTEXT_PROPERTIES:
-        return WebCLGetInfo(m_contextProperties.get());
+        return WebCLGetInfo(m_devices);
     default:
         ec = WebCLException::INVALID_VALUE;
     }
@@ -121,7 +148,7 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
 
     RefPtr<WebCLDevice> webCLDevice;
     if (!device) {
-        Vector<RefPtr<WebCLDevice> > webCLDevices = m_contextProperties->devices();
+        Vector<RefPtr<WebCLDevice> > webCLDevices = m_devices;
         // NOTE: This can be slow, depending the number of 'devices' available.
         for (size_t i = 0; i < webCLDevices.size(); ++i) {
             WebCLGetInfo info = webCLDevices[i]->getInfo(ComputeContext::DEVICE_QUEUE_PROPERTIES, ec);

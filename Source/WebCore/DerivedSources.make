@@ -167,7 +167,6 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webcl/WebCLGLObjectInfo.idl \
     $(WebCore)/Modules/webcl/WebCLContext.idl \
     $(WebCore)/Modules/webcl/WebCLImage.idl \
-    $(WebCore)/Modules/webcl/WebCLContextProperties.idl \
     $(WebCore)/Modules/webcl/WebCLImageDescriptor.idl \
     $(WebCore)/Modules/webcl/WebCLDevice.idl \
     $(WebCore)/Modules/webcl/WebCLKernel.idl \

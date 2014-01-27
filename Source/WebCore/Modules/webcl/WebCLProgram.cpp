@@ -37,7 +37,9 @@
 #include "WebCLImageDescriptor.h"
 #include "WebCLInputChecker.h"
 #include "WebCLKernel.h"
+#include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

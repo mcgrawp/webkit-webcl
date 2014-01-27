@@ -33,7 +33,6 @@
 #include "ComputeTypes.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
-#include "WebCLContextProperties.h"
 #include "WebCLDevice.h"
 #include "WebCLImageDescriptor.h"
 #include "WebCLMemoryObject.h"
@@ -71,7 +70,6 @@ public:
         kTypeWebCLDevices,
         kTypeWebCLMemoryObject,
         kTypeWebCLPlatform,
-        kTypeWebCLContextProperties
     };
 
     WebCLGetInfo();
@@ -90,7 +88,6 @@ public:
     explicit WebCLGetInfo(WebCLDevice* value);
     explicit WebCLGetInfo(WebCLMemoryObject* value);
     explicit WebCLGetInfo(WebCLPlatform* value);
-    explicit WebCLGetInfo(WebCLContextProperties* value);
 
     virtual ~WebCLGetInfo();
     Type getType() const;
@@ -111,7 +108,6 @@ public:
     const Vector<RefPtr<WebCLDevice> >& getWebCLDevices() const;
     PassRefPtr<WebCLMemoryObject> getWebCLMemoryObject() const;
     PassRefPtr<WebCLPlatform> getWebCLPlatform() const;
-    PassRefPtr<WebCLContextProperties> getWebCLContextProperties() const;
 
 private:
     Type m_type;
@@ -131,7 +127,6 @@ private:
     Vector<RefPtr<WebCLDevice> > m_webCLDevices;
     RefPtr<WebCLMemoryObject> m_webCLMemoryObject;
     RefPtr<WebCLPlatform> m_webCLPlatform;
-    RefPtr<WebCLContextProperties> m_webCLContextProperties;
 };
 
 } // namespace WebCore

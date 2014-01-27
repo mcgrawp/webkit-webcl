@@ -360,9 +360,9 @@ static cl_mem_flags computeMemoryTypeToCL(int memoryType)
     return clMemoryType;
 }
 
-ComputeContext::ComputeContext(CCContextProperties* contextProperties, const Vector<CCDeviceID>& devices, CCerror& error)
+ComputeContext::ComputeContext(const Vector<CCContextProperties>& contextProperties, const Vector<CCDeviceID>& devices, CCerror& error)
 {
-    m_clContext = clCreateContext(contextProperties, devices.size(), devices.data(), 0, 0, &error);
+    m_clContext = clCreateContext(contextProperties.data(), devices.size(), devices.data(), 0, 0, &error);
 }
 
 ComputeContext::~ComputeContext()

@@ -30,7 +30,6 @@
 
 #if ENABLE(WEBCL)
 
-#include "WebCLContextProperties.h"
 #include "WebCLDevice.h"
 #include "WebCLGetInfo.h"
 #include "WebCLInputChecker.h"
@@ -54,6 +53,8 @@ class WebCLProgram;
 class WebCLSampler;
 class WebCLUserEvent;
 #if ENABLE(WEBGL)
+class WebGLBuffer;
+class WebGLRenderingContext;
 class WebGLRenderbuffer;
 class WebGLTexture;
 #endif
@@ -66,7 +67,8 @@ typedef ComputeContext* ComputeContextPtr;
 class WebCLContext : public WebCLObjectImpl<ComputeContextPtr> {
 public:
     virtual ~WebCLContext();
-    static PassRefPtr<WebCLContext> create(WebCL*, PassRefPtr<WebCLContextProperties>, ExceptionCode&);
+
+    static PassRefPtr<WebCLContext> create(WebCL*, WebGLRenderingContext*, WebCLPlatform*, const Vector<RefPtr<WebCLDevice> >&, ExceptionCode&);
 
     PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, CCenum commandQueueProperty, ExceptionCode&);
 
@@ -115,20 +117,16 @@ public:
     void trackReleaseableWebCLObject(WeakPtr<WebCLObject>);
     void releaseAll();
 
-protected:
-    WebCLContext(WebCL*, ComputeContext*, PassRefPtr<WebCLContextProperties>);
-    // FIXME: Delete the constructor below?
-    // WebCLContext(CCContextProperties* contextProperties, unsigned int deviceType, int* error);
-
 private:
+    WebCLContext(WebCL*, ComputeContext*, const Vector<RefPtr<WebCLDevice> >&);
+
     PassRefPtr<WebCLImage> createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat&, void*, ExceptionCode&);
     PassRefPtr<WebCLBuffer> createBufferBase(CCenum memoryFlags, CCuint size, void* data, ExceptionCode&);
 
     void releasePlatformObjectImpl();
 
-    RefPtr<WebCLCommandQueue> m_commandQueue;
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
-    RefPtr<WebCLContextProperties> m_contextProperties;
+    Vector<RefPtr<WebCLDevice> > m_devices;
 
     Vector<WeakPtr<WebCLObject> > m_descendantWebCLObjects;
 };

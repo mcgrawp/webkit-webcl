@@ -101,13 +101,10 @@ function initGL() {
 
 function createProperContext() {
     try {
-        var contextProperties;
-        if (interop) {
-            contextProperties = {extensions: [{"KHR_gl_sharing": gl}]};
-        }
-
-        context = WebCLCommon.createContext(contextProperties);
-
+        if (interop)
+            context = WebCLCommon.createContext(gl);
+        else
+            context = WebCLCommon.createContext();
     } catch (e) {
         throw e;
     }
@@ -185,7 +182,7 @@ function initPaths(queue, pathA, pathB) {
     }
     var origin = [0, 0];
     var region = [4, n];
-    var hostRowPitch = new Uint32Array([0]);
+    var hostRowPitch = 0;
 
     try {
         queue.enqueueWriteImage(pathA, true, origin, region, hostRowPitch, path);

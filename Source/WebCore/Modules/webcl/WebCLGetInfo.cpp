@@ -127,12 +127,6 @@ WebCLGetInfo::WebCLGetInfo(WebCLPlatform* value)
 {
 }
 
-WebCLGetInfo::WebCLGetInfo(WebCLContextProperties* value)
-    : m_type(kTypeWebCLContextProperties)
-    , m_webCLContextProperties(value)
-{
-}
-
 WebCLGetInfo::~WebCLGetInfo()
 {
 }
@@ -225,12 +219,6 @@ PassRefPtr<WebCLPlatform> WebCLGetInfo::getWebCLPlatform() const
     ASSERT(getType() == kTypeWebCLPlatform);
     return m_webCLPlatform;
 }
-PassRefPtr<WebCLContextProperties> WebCLGetInfo::getWebCLContextProperties() const
-{
-    ASSERT(getType() == kTypeWebCLContextProperties);
-    return m_webCLContextProperties;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

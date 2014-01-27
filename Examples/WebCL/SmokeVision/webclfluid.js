@@ -280,7 +280,7 @@ function setupWebCL() {
 
     WebCLCommon.init("ALL");
     var deviceList = clDeviceQuery();
-    var i, htmlDeviceList, deviceselect, selectedDevice, selectedPlatform, ctxProps;
+    var i, htmlDeviceList, deviceselect, selectedDevice, selectedPlatform;
 
     if (deviceList.length === 0) {
         alert("Unfortunately your browser/system doesn't support WebCL.");
@@ -301,10 +301,7 @@ function setupWebCL() {
         selectedDevice = deviceList[selected].device;
         selectedPlatform = deviceList[selected].platform;
 
-        ctxProps = {platform: selectedPlatform,
-                        devices: [selectedDevice]};
-
-        cl = WebCLCommon.createContext(ctxProps);
+        cl = WebCLCommon.createContext(selectedDevice);
         clQueue = WebCLCommon.createCommandQueue(selectedDevice);
 
         allocateBuffers();

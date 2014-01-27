@@ -84,9 +84,9 @@ function InitCL() {
 
         // Create a compute context
         if (GLCL_SHARE_MODE)
-            context = cl.createContext(userData.gl, {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU});
+            context = cl.createContext(userData.gl, devices);
         else
-            context = cl.createContext({platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU});
+            context = cl.createContext(devices);
         if(context === null) {
             console.error("createContext fails");
             return null;

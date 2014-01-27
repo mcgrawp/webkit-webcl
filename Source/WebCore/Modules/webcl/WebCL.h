@@ -30,16 +30,15 @@
 
 #if ENABLE(WEBCL)
 
-#include "WebCLContextProperties.h"
 #include "WebCLException.h"
 #include "WebCLInputChecker.h"
 #include "WebCLPlatform.h"
 
 namespace WebCore {
 
-class WebCLContextProperties;
 class WebCLContext;
 class WebCLEvent;
+class WebGLRenderingContext;
 
 class WebCL : public RefCounted<WebCL> , public WebCLExtensionsAccessor<> {
 public:
@@ -50,17 +49,27 @@ public:
 
     void waitForEvents(const Vector<RefPtr<WebCLEvent> >&, ExceptionCode&);
 
-    PassRefPtr<WebCLContext> createContext(PassRefPtr<WebCLContextProperties>, ExceptionCode&);
+    PassRefPtr<WebCLContext> createContext(ExceptionCode&);
+    PassRefPtr<WebCLContext> createContext(CCenum deviceType, ExceptionCode&);
+    PassRefPtr<WebCLContext> createContext(WebGLRenderingContext*, ExceptionCode&);
+    PassRefPtr<WebCLContext> createContext(WebGLRenderingContext*, CCenum deviceType, ExceptionCode&);
+
+    PassRefPtr<WebCLContext> createContext(WebCLPlatform*, ExceptionCode&);
+    PassRefPtr<WebCLContext> createContext(WebCLPlatform*, CCenum deviceType, ExceptionCode&);
+    PassRefPtr<WebCLContext> createContext(WebGLRenderingContext*, WebCLPlatform*, ExceptionCode&);
+    PassRefPtr<WebCLContext> createContext(WebGLRenderingContext*, WebCLPlatform*, CCenum deviceType, ExceptionCode&);
+
+    PassRefPtr<WebCLContext> createContext(const Vector<RefPtr<WebCLDevice> >&, ExceptionCode&);
+    PassRefPtr<WebCLContext> createContext(WebCLDevice*, ExceptionCode&);
+    PassRefPtr<WebCLContext> createContext(WebGLRenderingContext*, const Vector<RefPtr<WebCLDevice> >&, ExceptionCode&);
+    PassRefPtr<WebCLContext> createContext(WebGLRenderingContext*, WebCLDevice*, ExceptionCode&);
 
     void trackReleaseableWebCLObject(WeakPtr<WebCLObject>);
     void releaseAll();
 private:
     WebCL();
-    RefPtr<WebCLContextProperties>& defaultProperties(ExceptionCode&);
 
     Vector<WeakPtr<WebCLObject> > m_descendantWebCLObjects;
-
-    RefPtr<WebCLContextProperties> m_defaultProperties;
     Vector<RefPtr<WebCLPlatform> > m_platforms;
 };
 
