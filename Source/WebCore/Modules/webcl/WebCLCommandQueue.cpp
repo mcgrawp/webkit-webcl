@@ -179,7 +179,7 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool block
     }
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
+    ccEventListFromWebCLEventList(events, computeEvents, ec, blockingWrite ? DoNotAcceptUserEvent : AcceptUserEvent);
     if (ec != WebCLException::SUCCESS)
         return;
 
@@ -282,7 +282,7 @@ void WebCLCommandQueue::enqueueWriteBufferRectBase(WebCLBuffer* buffer, CCbool b
     }
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
+    ccEventListFromWebCLEventList(events, computeEvents, ec, blockingWrite ? DoNotAcceptUserEvent : AcceptUserEvent);
     if (ec != WebCLException::SUCCESS)
         return;
 
@@ -377,7 +377,7 @@ void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blocki
     PlatformComputeObject ccBuffer = buffer->platformObject();
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
+    ccEventListFromWebCLEventList(events, computeEvents, ec, blockingRead ? DoNotAcceptUserEvent : AcceptUserEvent);
     if (ec != WebCLException::SUCCESS)
         return;
 
@@ -453,7 +453,7 @@ void WebCLCommandQueue::enqueueReadImageBase(WebCLImage* image, CCbool blockingR
     regionCopy.append(1);
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
+    ccEventListFromWebCLEventList(events, computeEvents, ec, blockingRead ? DoNotAcceptUserEvent : AcceptUserEvent);
     if (ec != WebCLException::SUCCESS)
         return;
 
@@ -527,7 +527,7 @@ void WebCLCommandQueue::enqueueReadBufferRectBase(WebCLBuffer* buffer, CCbool bl
     regionCopy.appendVector(region);
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
+    ccEventListFromWebCLEventList(events, computeEvents, ec, blockingRead ? DoNotAcceptUserEvent : AcceptUserEvent);
     if (ec != WebCLException::SUCCESS)
         return;
 
@@ -716,7 +716,7 @@ void WebCLCommandQueue::enqueueWriteImageBase(WebCLImage* image, CCbool blocking
     // FIXME :: Check if any part of the region being written, specified by origin and region, is out of bounds of image
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
+    ccEventListFromWebCLEventList(events, computeEvents, ec, blockingWrite ? DoNotAcceptUserEvent : AcceptUserEvent);
     if (ec != WebCLException::SUCCESS)
         return;
 

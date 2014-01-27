@@ -64,6 +64,7 @@ Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec)
     return m_platforms;
 }
 
+// FIXME: We currently do not support the asynchronous variant of this method.
 void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)
 {
     if (!events.size()) {
@@ -71,6 +72,8 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCo
         return;
     }
 
+    // So if the event being waited on has not been initialized (1) or is an user
+    // event (2), we would hand the browser.
     if (events[0]->isPlatformObjectNeutralized()
         || !events[0]->holdsValidCLObject()
         || events[0]->isUserEvent()) {
@@ -83,11 +86,6 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCo
     computeEvents.append(events[0]->platformObject());
 
     for (size_t i = 1; i < events.size(); ++i) {
-        // FIXME: We currently do not support the asynchronous variant of this method.
-        // So it the event being waited on has not been initialized (1) or is an user
-        // event (2), we would hand the browser.
-        // 1 - http://www.khronos.org/bugzilla/show_bug.cgi?id=1092
-        // 2 - http://www.khronos.org/bugzilla/show_bug.cgi?id=1086
         if (events[i]->isPlatformObjectNeutralized()
             || !events[i]->holdsValidCLObject()
             || events[i]->isUserEvent()) {
