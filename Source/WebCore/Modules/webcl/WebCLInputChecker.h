@@ -56,7 +56,6 @@ bool isValidCommandQueueProperty(unsigned long);
 bool isValidGLTextureInfo(unsigned long);
 bool isValidKernelArgIndex(WebCLKernel*, unsigned index);
 bool isValidPitchForArrayBufferView(unsigned long, ArrayBufferView*);
-bool isValidByteLengthForArrayBufferView(unsigned long, ArrayBufferView*);
 bool isValidLengthForRegion(const Vector<size_t>&, const Vector<size_t>&, size_t hostRowPitch, size_t hostSlicePitch, size_t length);
 
 bool isRegionOverlapping(WebCLImage*, WebCLImage*, const Vector<CCuint>&, const Vector<CCuint>&, const Vector<CCuint>&);

@@ -52,6 +52,10 @@ public:
     {
         return m_context.get();
     };
+    size_t sizeInBytes() const
+    {
+        return m_sizeInBytes;
+    }
 
 protected:
     WebCLMemoryObject(WebCLContext*, PlatformComputeObject, CCuint sizeInBytes, WebCLMemoryObject* = 0);

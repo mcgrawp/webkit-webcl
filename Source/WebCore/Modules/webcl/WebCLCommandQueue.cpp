@@ -173,7 +173,8 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool block
         return;
     }
 
-    if (hostPtrLength < (offset + numBytes)) {
+    if (hostPtrLength < (offset + numBytes)
+        || buffer->sizeInBytes() < (offset + numBytes)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -276,7 +277,8 @@ void WebCLCommandQueue::enqueueWriteBufferRectBase(WebCLBuffer* buffer, CCbool b
     hostOriginCopy.appendVector(hostOrigin);
     regionCopy.appendVector(region);
 
-    if (!WebCLInputChecker::isValidLengthForRegion(bufferOriginCopy, regionCopy, hostRowPitch, hostSlicePitch, hostPtrLength)) {
+    if (!WebCLInputChecker::isValidLengthForRegion(hostOriginCopy, regionCopy, hostRowPitch, hostSlicePitch, hostPtrLength)
+        || !WebCLInputChecker::isValidLengthForRegion(bufferOriginCopy, regionCopy, bufferRowPitch, bufferSlicePitch, buffer->sizeInBytes())) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -358,7 +360,8 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool block
         hostPtr, imageSize, eventWaitlist, event, ec);
 }
 
-void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blockingRead, CCuint offset, CCuint numBytes, void* hostPtr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blockingRead, CCuint offset, CCuint numBytes, void* hostPtr, size_t hostPtrLength,
+    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
@@ -374,6 +377,13 @@ void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blocki
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
+
+    if (hostPtrLength < (offset + numBytes)
+        || buffer->sizeInBytes() < (offset + numBytes)) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     PlatformComputeObject ccBuffer = buffer->platformObject();
 
     Vector<ComputeEvent*> computeEvents;
@@ -398,7 +408,7 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRe
         return;
     }
 
-    enqueueReadBufferBase(buffer, blockingRead, offset, numBytes, ptr->baseAddress(), events, event, ec);
+    enqueueReadBufferBase(buffer, blockingRead, offset, numBytes, ptr->baseAddress(), ptr->byteLength(), events, event, ec);
 }
 
 void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRead, CCuint offset, CCuint numBytes,
@@ -412,11 +422,11 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRe
     if (ec != WebCLException::SUCCESS)
         return;
 
-    enqueueReadBufferBase(buffer, blockingRead, offset, numBytes, hostPtr, events, event, ec);
+    enqueueReadBufferBase(buffer, blockingRead, offset, numBytes, hostPtr, canvasSize, events, event, ec);
 }
 
 void WebCLCommandQueue::enqueueReadImageBase(WebCLImage* image, CCbool blockingRead, const Vector<CCuint>& origin, const Vector<CCuint>& region,
-    CCuint hostRowPitch, void* hostPtr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    CCuint hostRowPitch, void* hostPtr, size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
@@ -452,6 +462,12 @@ void WebCLCommandQueue::enqueueReadImageBase(WebCLImage* image, CCbool blockingR
     originCopy.append(0);
     regionCopy.append(1);
 
+    if (!WebCLInputChecker::isValidLengthForRegion(originCopy, regionCopy, hostRowPitch, 0 /* hostSlicePitch */, hostPtrLength)
+        || !WebCLInputChecker::isValidLengthForRegion(originCopy, regionCopy, 0 /* bufferRowPitch */, 0 /*bufferSlicePitch */, image->sizeInBytes())) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     Vector<ComputeEvent*> computeEvents;
     ccEventListFromWebCLEventList(events, computeEvents, ec, blockingRead ? DoNotAcceptUserEvent : AcceptUserEvent);
     if (ec != WebCLException::SUCCESS)
@@ -474,7 +490,7 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead,
         return;
     }
 
-    enqueueReadImageBase(image, blockingRead, origin, region, hostRowPitch, ptr->baseAddress(), events, event, ec);
+    enqueueReadImageBase(image, blockingRead, origin, region, hostRowPitch, ptr->baseAddress(), ptr->byteLength(), events, event, ec);
 }
 
 void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead, const Vector<CCuint>& origin, const Vector<CCuint>& region,
@@ -487,13 +503,13 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead,
     if (ec != WebCLException::SUCCESS)
         return;
 
-    enqueueReadImageBase(image, blockingRead, origin, region, 0 /* rowPitch */, hostPtr, events, event, ec);
+    enqueueReadImageBase(image, blockingRead, origin, region, 0 /* rowPitch */, hostPtr, canvasSize, events, event, ec);
 }
 
 void WebCLCommandQueue::enqueueReadBufferRectBase(WebCLBuffer* buffer, CCbool blockingRead,
     const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin, const Vector<CCuint>& region,
     CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
-    void* hostPtr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    void* hostPtr, size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
@@ -526,6 +542,12 @@ void WebCLCommandQueue::enqueueReadBufferRectBase(WebCLBuffer* buffer, CCbool bl
     hostOriginCopy.appendVector(hostOrigin);
     regionCopy.appendVector(region);
 
+    if (!WebCLInputChecker::isValidLengthForRegion(hostOriginCopy, regionCopy, hostRowPitch, hostSlicePitch, hostPtrLength)
+        || !WebCLInputChecker::isValidLengthForRegion(bufferOriginCopy, regionCopy, bufferRowPitch, bufferSlicePitch, buffer->sizeInBytes())) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     Vector<ComputeEvent*> computeEvents;
     ccEventListFromWebCLEventList(events, computeEvents, ec, blockingRead ? DoNotAcceptUserEvent : AcceptUserEvent);
     if (ec != WebCLException::SUCCESS)
@@ -553,7 +575,7 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blocki
     }
 
     enqueueReadBufferRectBase(buffer, blockingRead, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch,
-        hostRowPitch, hostSlicePitch, ptr->baseAddress(), events, event, ec);
+        hostRowPitch, hostSlicePitch, ptr->baseAddress(), ptr->byteLength(), events, event, ec);
 }
 
 void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blockingRead,
@@ -568,7 +590,7 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blocki
         return;
 
     enqueueReadBufferRectBase(buffer, blockingRead, bufferOrigin, hostOrigin, region, bufferRowPitch, 0 /* bufferSlicePitch */,
-        0 /* hostRowPitch */, 0 /* hostSlicePitch */, hostPtr, events, event, ec);
+        0 /* hostRowPitch */, 0 /* hostSlicePitch */, hostPtr, canvasSize, events, event, ec);
 }
 
 void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, CCuint workDim, const Vector<unsigned>& globalWorkOffsets,
@@ -708,12 +730,11 @@ void WebCLCommandQueue::enqueueWriteImageBase(WebCLImage* image, CCbool blocking
     originCopy.append(0);
     regionCopy.append(1);
 
-    if (!WebCLInputChecker::isValidLengthForRegion(originCopy, regionCopy, hostRowPitch, 0, hostPtrLength)) {
+    if (!WebCLInputChecker::isValidLengthForRegion(originCopy, regionCopy, hostRowPitch, 0 /* hostSlicePitch */, hostPtrLength)
+        || !WebCLInputChecker::isValidLengthForRegion(originCopy, regionCopy, 0 /* bufferRowPitch */, 0 /*bufferSlicePitch */, image->sizeInBytes())) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
-
-    // FIXME :: Check if any part of the region being written, specified by origin and region, is out of bounds of image
 
     Vector<ComputeEvent*> computeEvents;
     ccEventListFromWebCLEventList(events, computeEvents, ec, blockingWrite ? DoNotAcceptUserEvent : AcceptUserEvent);
@@ -733,7 +754,6 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrit
     CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)) {
-        ec = WebCLException::INVALID_VALUE;
         return;
     }
     enqueueWriteImageBase(image, blockingWrite, origin, region, hostRowPitch, ptr->baseAddress(), ptr->byteLength(), events, event, ec);

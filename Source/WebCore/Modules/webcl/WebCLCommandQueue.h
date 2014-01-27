@@ -136,16 +136,17 @@ private:
 
     void enqueueWriteBufferBase(WebCLBuffer*, CCbool blockingWrite, CCuint, CCuint, void* hostPtr, size_t hostPtrLength,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
-    void enqueueReadBufferBase(WebCLBuffer*, CCbool blockingRead, CCuint, CCuint, void* hostPtr, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueReadBufferBase(WebCLBuffer*, CCbool blockingRead, CCuint, CCuint, void* hostPtr, size_t hostPtrLength,
+        const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
     void enqueueReadBufferRectBase(WebCLBuffer*, CCbool blockingRead, const Vector<CCuint>&, const Vector<CCuint>&, const Vector<CCuint>&, CCuint, CCuint,
-        CCuint, CCuint, void* hostPtr, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
-    void enqueueReadImageBase(WebCLImage*, CCbool blockingRead, const Vector<CCuint>&, const Vector<CCuint>&, CCuint, void* hostPtr, const Vector<RefPtr<WebCLEvent> >&,
-        WebCLEvent*, ExceptionCode&);
+        CCuint, CCuint, void* hostPtr, size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueReadImageBase(WebCLImage*, CCbool blockingRead, const Vector<CCuint>&, const Vector<CCuint>&, CCuint, void* hostPtr,
+        size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
     void enqueueWriteBufferRectBase(WebCLBuffer*, CCbool blockingWrite, const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin,
         const Vector<CCuint>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
         void* hostPtr, size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
-    void enqueueWriteImageBase(WebCLImage*, CCbool blockingWrite, const Vector<unsigned>&, const Vector<unsigned>&, CCuint hostRowPitch, void* hostPtr, size_t length,
-        const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
+    void enqueueWriteImageBase(WebCLImage*, CCbool blockingWrite, const Vector<unsigned>&, const Vector<unsigned>&, CCuint hostRowPitch, void* hostPtr,
+        size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
     void releasePlatformObjectImpl();
 
