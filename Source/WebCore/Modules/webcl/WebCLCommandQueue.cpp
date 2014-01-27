@@ -641,7 +641,7 @@ void WebCLCommandQueue::enqueueWaitForEvents(const Vector<RefPtr<WebCLEvent> >& 
     }
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec, DoNotAcceptUserEvent);
+    ccEventListFromWebCLEventList(events, computeEvents, ec);
     if (ec != WebCLException::SUCCESS)
         return;
 
