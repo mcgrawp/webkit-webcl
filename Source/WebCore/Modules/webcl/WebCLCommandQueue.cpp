@@ -134,7 +134,13 @@ ComputeEvent* WebCLCommandQueue::computeEventFromWebCLEventIfApplicable(WebCLEve
     if (!event)
         return 0;
 
-    if (event->isPlatformObjectNeutralized()) {
+    // Throw an exception if:
+    // #1 - Event has been released.
+    // #2 - Event has been used before
+    // #3 - Event is a user event.
+    if (event->isPlatformObjectNeutralized()
+        || event->holdsValidCLObject()
+        || event->isUserEvent()) {
         ec = WebCLException::INVALID_EVENT;
         return 0;
     }
