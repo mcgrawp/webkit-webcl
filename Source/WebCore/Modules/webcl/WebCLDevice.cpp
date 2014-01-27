@@ -46,12 +46,12 @@ WebCLDevice::~WebCLDevice()
 {
 }
 
-PassRefPtr<WebCLDevice> WebCLDevice::create(CCDeviceID deviceID, const WebCLPlatform* platform)
+PassRefPtr<WebCLDevice> WebCLDevice::create(CCDeviceID deviceID, WebCLPlatform* platform)
 {
     return adoptRef(new WebCLDevice(deviceID, platform));
 }
 
-WebCLDevice::WebCLDevice(CCDeviceID deviceID, const WebCLPlatform* platform)
+WebCLDevice::WebCLDevice(CCDeviceID deviceID, WebCLPlatform* platform)
     : WebCLObjectImpl(deviceID)
     , WebCLExtensionsAccessor(deviceID)
     , m_platform(platform)
@@ -197,7 +197,7 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_EXECUTION_CAPABILITIES:
         return WebCLGetInfo(static_cast<CCenum>(ComputeContext::EXEC_KERNEL));
     case ComputeContext::DEVICE_PLATFORM:
-        return WebCLGetInfo(const_cast<WebCLPlatform*>(m_platform));
+        return WebCLGetInfo(m_platform);
     default:
         ec = WebCLException::INVALID_VALUE;
     }
@@ -206,7 +206,7 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-void toWebCLDeviceArray(const WebCLPlatform* platform, const Vector<CCDeviceID>& ccDevices, Vector<RefPtr<WebCLDevice> >& devices)
+void toWebCLDeviceArray(WebCLPlatform* platform, const Vector<CCDeviceID>& ccDevices, Vector<RefPtr<WebCLDevice> >& devices)
 {
     for (size_t i = 0; i < ccDevices.size(); i++) {
         RefPtr<WebCLDevice> webCLDevice = WebCLDevice::create(ccDevices[i], platform);
@@ -214,7 +214,7 @@ void toWebCLDeviceArray(const WebCLPlatform* platform, const Vector<CCDeviceID>&
     }
 }
 
-const WebCLPlatform* WebCLDevice::platform()
+WebCLPlatform* WebCLDevice::platform()
 {
     return m_platform;
 }

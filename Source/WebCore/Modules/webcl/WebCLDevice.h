@@ -41,9 +41,9 @@ class WebCLPlatform;
 class WebCLDevice : public WebCLObjectImpl<CCDeviceID> , public WebCLExtensionsAccessor<CCDeviceID> {
 public:
     virtual ~WebCLDevice();
-    static PassRefPtr<WebCLDevice> create(CCDeviceID, const WebCLPlatform*);
+    static PassRefPtr<WebCLDevice> create(CCDeviceID, WebCLPlatform*);
     WebCLGetInfo getInfo(CCenum, ExceptionCode&);
-    const WebCLPlatform* platform();
+    WebCLPlatform* platform();
 
     virtual bool isPlatformObjectNeutralized() const { return false; }
     virtual bool isReleased() const { ASSERT_NOT_REACHED(); return false; }
@@ -51,11 +51,11 @@ public:
     virtual void releasePlatformObject() { ASSERT_NOT_REACHED(); }
 
 private:
-    WebCLDevice(CCDeviceID, const WebCLPlatform*);
-    const WebCLPlatform* m_platform;
+    WebCLDevice(CCDeviceID, WebCLPlatform*);
+    WebCLPlatform* m_platform;
 };
 
-void toWebCLDeviceArray(const WebCLPlatform*, const Vector<CCDeviceID>&, Vector<RefPtr<WebCLDevice> >&);
+void toWebCLDeviceArray(WebCLPlatform*, const Vector<CCDeviceID>&, Vector<RefPtr<WebCLDevice> >&);
 
 } // namespace WebCore
 
