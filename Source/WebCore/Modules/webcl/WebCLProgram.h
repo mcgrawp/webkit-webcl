@@ -64,6 +64,7 @@ public:
 private:
     WebCLProgram(WebCLContext*, ComputeProgram*, const String&);
     void releasePlatformObjectImpl();
+    void ccDeviceListFromWebCLDeviceList(const Vector<RefPtr<WebCLDevice> >&, Vector<CCDeviceID>&, ExceptionCode&);
 
     static void callbackProxyOnMainThread(void* userData);
     static void callbackProxy(CCProgram, void* userData);

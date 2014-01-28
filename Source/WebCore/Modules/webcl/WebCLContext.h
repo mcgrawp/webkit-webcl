@@ -117,6 +117,11 @@ public:
     void trackReleaseableWebCLObject(WeakPtr<WebCLObject>);
     void releaseAll();
 
+    const Vector<RefPtr<WebCLDevice> >& devices() const
+    {
+        return m_devices;
+    }
+
 private:
     WebCLContext(WebCL*, ComputeContext*, const Vector<RefPtr<WebCLDevice> >&);
 

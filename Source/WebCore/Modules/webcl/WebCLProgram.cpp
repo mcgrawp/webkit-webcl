@@ -102,8 +102,7 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, CCenum infoType, Ex
     }
 
     if (!WebCLInputChecker::validateWebCLObject(device)) {
-        // FIXME: Wrong exception?
-        ec = WebCLException::INVALID_PROGRAM;
+        ec = WebCLException::INVALID_DEVICE;
         return WebCLGetInfo();
     }
     CCDeviceID ccDeviceID = device->platformObject();
@@ -232,8 +231,10 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
     }
 
     Vector<CCDeviceID> ccDevices;
-    for (size_t i = 0; i < devices.size(); i++)
-        ccDevices.append(devices[i]->platformObject());
+    ccDeviceListFromWebCLDeviceList(devices, ccDevices, ec);
+    if (ec != WebCLException::SUCCESS)
+        return;
+
     pfnNotify callbackProxyPtr = 0;
     if (callback) {
         // If previous callback is still valid, calling build again must throw a INVALID_OPERATION.
@@ -307,6 +308,27 @@ const String& WebCLProgram::sourceWithCommentsStripped()
 void WebCLProgram::releasePlatformObjectImpl()
 {
     delete platformObject();
+}
+
+void WebCLProgram::ccDeviceListFromWebCLDeviceList(const Vector<RefPtr<WebCLDevice> >& devices, Vector<CCDeviceID>& ccDevices, ExceptionCode& ec)
+{
+    const Vector<RefPtr<WebCLDevice> >& contextDevices = m_context->devices();
+    size_t contextDevicesLength = contextDevices.size();
+    bool validDevice;
+    for (size_t z, i = 0; i < devices.size(); i++) {
+        validDevice = false;
+        // Check if the devices[i] is part of programs WebCLContext.
+        for (z = 0; z < contextDevicesLength; z++)
+            if (contextDevices[z]->platformObject() == devices[i]->platformObject()) {
+                validDevice = true;
+                break;
+            }
+        if (!validDevice) {
+            ec = WebCLException::INVALID_DEVICE;
+            return;
+        }
+        ccDevices.append(devices[i]->platformObject());
+    }
 }
 
 } // namespace WebCore
