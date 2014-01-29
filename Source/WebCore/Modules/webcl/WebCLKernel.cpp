@@ -239,7 +239,7 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
     }
 
     if (!bufferView) {
-        ec = WebCLException::INVALID_VALUE;
+        ec = WebCLException::INVALID_ARG_VALUE;
         return;
     }
 
@@ -252,13 +252,13 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
     bool hasLocalQualifier = accessQualifier == "local";
     if (hasLocalQualifier) {
         if (bufferView->getType() != ArrayBufferView::TypeUint32) {
-            ec = WebCLException::INVALID_VALUE;
+            ec = WebCLException::INVALID_ARG_VALUE;
             return;
         }
 
         Uint32Array* typedArray = static_cast<Uint32Array*>(bufferView);
         if (typedArray->length() != 1) {
-            ec = WebCLException::INVALID_VALUE;
+            ec = WebCLException::INVALID_ARG_VALUE;
             return;
         }
 
@@ -269,30 +269,43 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
     }
 
     void* bufferData = 0;
-
+    size_t arrayLength = 0;
+    bool isLong  = m_argumentInfoProvider.argumentsInfo()[index]->typeName().contains("long");
     // FIXME: Add support for LONG, ULONG, HALF and DOUBLE types.
     // These need Int/Uint64Array, as well as Float16Array.
     switch(bufferView->getType()) {
     case (ArrayBufferView::TypeFloat32): // FLOAT
         bufferData = static_cast<Float32Array*>(bufferView)->data();
+        arrayLength = bufferView->byteLength() / 4;
         break;
     case (ArrayBufferView::TypeUint32): // UINT
         bufferData = static_cast<Uint32Array*>(bufferView)->data();
+        arrayLength = bufferView->byteLength() / 4;
+        // For Long data type, input 
+        if (isLong)
+            arrayLength = arrayLength / 2;
         break;
     case (ArrayBufferView::TypeInt32):  // INT
         bufferData = static_cast<Int32Array*>(bufferView)->data();
+        arrayLength = bufferView->byteLength() / 4;
+        if (isLong)
+            arrayLength = arrayLength / 2;
         break;
     case (ArrayBufferView::TypeUint16): // USHORT
         bufferData = static_cast<Uint16Array*>(bufferView)->data();
+        arrayLength = bufferView->byteLength() / 2;
         break;
     case (ArrayBufferView::TypeInt16): // SHORT
         bufferData = static_cast<Int16Array*>(bufferView)->data();
+        arrayLength = bufferView->byteLength() / 2;
         break;
     case (ArrayBufferView::TypeUint8): // UCHAR
         bufferData = static_cast<Uint8Array*>(bufferView)->data();
+        arrayLength = bufferView->byteLength() / 1;
         break;
     case (ArrayBufferView::TypeInt8): // CHAR
         bufferData = static_cast<Int8Array*>(bufferView)->data();
+        arrayLength = bufferView->byteLength() / 1;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -300,6 +313,10 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
         return;
     }
 
+    if (!isValidVectorLength(arrayLength)) {
+        ec = WebCLException::INVALID_ARG_VALUE;
+        return;
+    }
     size_t bufferDataSize = bufferView->byteLength();
     CCerror err = platformObject()->setKernelArg(index, bufferDataSize, bufferData);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
@@ -333,6 +350,21 @@ String WebCLKernel::kernelName() const
 unsigned WebCLKernel::numberOfArguments()
 {
     return m_argumentInfoProvider.argumentsInfo().size();
+}
+
+bool WebCLKernel::isValidVectorLength(size_t arrayLength)
+{
+    switch (arrayLength) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 8:
+    case 16:
+    case 32:
+        return true;
+    }
+    return false;
 }
 
 } // namespace WebCore

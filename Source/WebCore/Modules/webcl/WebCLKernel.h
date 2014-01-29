@@ -87,6 +87,7 @@ private:
     WebCLKernel(WebCLContext*, WebCLProgram*, ComputeKernel*, const String&);
 
     void releasePlatformObjectImpl();
+    static bool isValidVectorLength(size_t arrayLength);
 
     RefPtr<WebCLContext> m_context;
     RefPtr<WebCLProgram> m_program;
