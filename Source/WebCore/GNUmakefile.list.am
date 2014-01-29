@@ -794,8 +794,6 @@ webcore_built_sources += \
     DerivedSources/WebCore/JSWebCLCommandQueue.h \
     DerivedSources/WebCore/JSWebCLContext.cpp \
     DerivedSources/WebCore/JSWebCLContext.h \
-    DerivedSources/WebCore/JSWebCLContextProperties.cpp \
-    DerivedSources/WebCore/JSWebCLContextProperties.h \
     DerivedSources/WebCore/JSWebCLDevice.cpp \
     DerivedSources/WebCore/JSWebCLDevice.h \
     DerivedSources/WebCore/JSWebCLEvent.cpp \
@@ -1376,7 +1374,6 @@ dom_binding_idls += \
     $(WebCore)/Modules/webcl/WebCLCallback.idl \
     $(WebCore)/Modules/webcl/WebCLCommandQueue.idl \
     $(WebCore)/Modules/webcl/WebCLContext.idl \
-    $(WebCore)/Modules/webcl/WebCLContextProperties.idl \
     $(WebCore)/Modules/webcl/WebCLDevice.idl \
     $(WebCore)/Modules/webcl/WebCLEvent.idl \
     $(WebCore)/Modules/webcl/WebCLException.idl \
@@ -2227,8 +2224,6 @@ webcore_modules_sources += \
     Source/WebCore/Modules/webcl/WebCLCommandQueue.h \
     Source/WebCore/Modules/webcl/WebCLContext.cpp \
     Source/WebCore/Modules/webcl/WebCLContext.h \
-    Source/WebCore/Modules/webcl/WebCLContextProperties.cpp \
-    Source/WebCore/Modules/webcl/WebCLContextProperties.h \
     Source/WebCore/Modules/webcl/WebCL.cpp \
     Source/WebCore/Modules/webcl/WebCLDevice.cpp \
     Source/WebCore/Modules/webcl/WebCLDevice.h \

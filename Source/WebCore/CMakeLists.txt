@@ -2940,7 +2940,6 @@ if (ENABLE_WEBCL)
         Modules/webcl/WebCLBuffer.cpp
         Modules/webcl/WebCLCommandQueue.cpp
         Modules/webcl/WebCLContext.cpp
-        Modules/webcl/WebCLContextProperties.cpp
         Modules/webcl/WebCL.cpp
         Modules/webcl/WebCLDevice.cpp
         Modules/webcl/WebCLEvent.cpp
@@ -2966,7 +2965,6 @@ if (ENABLE_WEBCL)
         Modules/webcl/WebCLMemoryObject.idl
         Modules/webcl/WebCLCommandQueue.idl
         Modules/webcl/WebCLContext.idl
-        Modules/webcl/WebCLContextProperties.idl
         Modules/webcl/WebCLDevice.idl
         Modules/webcl/WebCLEvent.idl
         Modules/webcl/WebCLException.idl
