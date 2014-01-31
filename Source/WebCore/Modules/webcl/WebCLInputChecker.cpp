@@ -261,21 +261,29 @@ bool isValidPitchForArrayBufferView(unsigned long pitch, ArrayBufferView* arrayB
     return !(pitch % bytesPerElement);
 }
 
-bool isValidLengthForRegion(const Vector<size_t>& origin, const Vector<size_t>& region, size_t hostRowPitch, size_t hostSlicePitch, size_t length)
+bool isValidRegionForMemoryObject(const Vector<size_t>& origin, const Vector<size_t>& region, size_t rowPitch, size_t slicePitch, size_t length)
 {
     // If row_pitch is 0, row_pitch is computed as region[0].
-    hostRowPitch = hostRowPitch ? hostRowPitch : region[0];
+    rowPitch = rowPitch ? rowPitch : region[0];
 
     // If slice_pitch is 0, slice_pitch is computed as region[1] * row_pitch.
-    hostSlicePitch = hostSlicePitch ? hostSlicePitch : (region[1] * hostRowPitch);
+    slicePitch = slicePitch ? slicePitch : (region[1] * rowPitch);
 
-    // The offset in bytes is computed as origin[2] * host_slice_pitch + origin[1] * hostRowPitch + origin[0].
     size_t regionArea = region[0] * region[1] * region[2];
     if (!regionArea)
         return false;
 
-    size_t offset = origin[2] * hostSlicePitch + origin[1]  * hostRowPitch + origin[0];
+    // The offset in bytes is computed as origin[2] * host_slice_pitch + origin[1] * rowPitch + origin[0].
+    size_t offset = origin[2] * slicePitch + origin[1]  * rowPitch + origin[0];
     return  (regionArea + offset) <= length;
+}
+
+bool isValidRegionForHostPtr(const Vector<size_t>& region, size_t length)
+{
+    size_t regionArea = region[0] * region[1] * region[2];
+    if (!regionArea)
+        return false;
+    return (regionArea <= length);
 }
 
 static bool valueInRange(size_t value, size_t minimum, size_t maximum)

@@ -173,7 +173,7 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool block
         return;
     }
 
-    if (hostPtrLength < (offset + numBytes)
+    if (hostPtrLength < numBytes
         || buffer->sizeInBytes() < (offset + numBytes)) {
         ec = WebCLException::INVALID_VALUE;
         return;
@@ -277,8 +277,8 @@ void WebCLCommandQueue::enqueueWriteBufferRectBase(WebCLBuffer* buffer, CCbool b
     hostOriginCopy.appendVector(hostOrigin);
     regionCopy.appendVector(region);
 
-    if (!WebCLInputChecker::isValidLengthForRegion(hostOriginCopy, regionCopy, hostRowPitch, hostSlicePitch, hostPtrLength)
-        || !WebCLInputChecker::isValidLengthForRegion(bufferOriginCopy, regionCopy, bufferRowPitch, bufferSlicePitch, buffer->sizeInBytes())) {
+    if (!WebCLInputChecker::isValidRegionForMemoryObject(hostOriginCopy, regionCopy, hostRowPitch, hostSlicePitch, buffer->sizeInBytes())
+        || !WebCLInputChecker::isValidRegionForHostPtr(regionCopy, hostPtrLength)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -378,7 +378,7 @@ void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blocki
         return;
     }
 
-    if (hostPtrLength < (offset + numBytes)
+    if (hostPtrLength < numBytes
         || buffer->sizeInBytes() < (offset + numBytes)) {
         ec = WebCLException::INVALID_VALUE;
         return;
@@ -462,8 +462,8 @@ void WebCLCommandQueue::enqueueReadImageBase(WebCLImage* image, CCbool blockingR
     originCopy.append(0);
     regionCopy.append(1);
 
-    if (!WebCLInputChecker::isValidLengthForRegion(originCopy, regionCopy, hostRowPitch, 0 /* hostSlicePitch */, hostPtrLength)
-        || !WebCLInputChecker::isValidLengthForRegion(originCopy, regionCopy, 0 /* bufferRowPitch */, 0 /*bufferSlicePitch */, image->sizeInBytes())) {
+    if (!WebCLInputChecker::isValidRegionForMemoryObject(originCopy, regionCopy, hostRowPitch, 0 /* hostSlicePitch */, image->sizeInBytes())
+        || !WebCLInputChecker::isValidRegionForHostPtr(regionCopy, hostPtrLength)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -542,8 +542,8 @@ void WebCLCommandQueue::enqueueReadBufferRectBase(WebCLBuffer* buffer, CCbool bl
     hostOriginCopy.appendVector(hostOrigin);
     regionCopy.appendVector(region);
 
-    if (!WebCLInputChecker::isValidLengthForRegion(hostOriginCopy, regionCopy, hostRowPitch, hostSlicePitch, hostPtrLength)
-        || !WebCLInputChecker::isValidLengthForRegion(bufferOriginCopy, regionCopy, bufferRowPitch, bufferSlicePitch, buffer->sizeInBytes())) {
+    if (!WebCLInputChecker::isValidRegionForHostPtr(regionCopy, hostPtrLength)
+        || !WebCLInputChecker::isValidRegionForMemoryObject(bufferOriginCopy, regionCopy, bufferRowPitch, bufferSlicePitch, buffer->sizeInBytes())) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -730,8 +730,8 @@ void WebCLCommandQueue::enqueueWriteImageBase(WebCLImage* image, CCbool blocking
     originCopy.append(0);
     regionCopy.append(1);
 
-    if (!WebCLInputChecker::isValidLengthForRegion(originCopy, regionCopy, hostRowPitch, 0 /* hostSlicePitch */, hostPtrLength)
-        || !WebCLInputChecker::isValidLengthForRegion(originCopy, regionCopy, 0 /* bufferRowPitch */, 0 /*bufferSlicePitch */, image->sizeInBytes())) {
+    if (!WebCLInputChecker::isValidRegionForHostPtr(regionCopy, hostPtrLength)
+        || !WebCLInputChecker::isValidRegionForMemoryObject(originCopy, regionCopy, 0 /* bufferRowPitch */, 0 /*bufferSlicePitch */, image->sizeInBytes())) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -754,6 +754,7 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrit
     CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
     if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)) {
+        ec = WebCLException::INVALID_VALUE;
         return;
     }
     enqueueWriteImageBase(image, blockingWrite, origin, region, hostRowPitch, ptr->baseAddress(), ptr->byteLength(), events, event, ec);
