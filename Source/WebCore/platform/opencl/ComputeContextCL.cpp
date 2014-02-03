@@ -43,9 +43,7 @@
 #include "GLContext.h"
 #endif
 
-#if !PLATFORM(MAC)
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
 
 namespace WebCore {
 
@@ -446,10 +444,6 @@ PlatformComputeObject ComputeContext::createImage2D(CCMemoryFlags type, size_t w
 #if defined(CL_VERSION_1_2) && CL_VERSION_1_2
     CCImageDescriptor clImageDescriptor = {CL_MEM_OBJECT_IMAGE2D, width, height, 0 /*imageDepth*/, 0 /*arraySize*/,
         static_cast<size_t>(rowPitch), 0 /*slicePitch*/, 0 /*numMipLevels*/, 0 /*numSamples*/, 0 /*buffer*/};
-    clImageDescriptor.image_width = width;
-    clImageDescriptor.image_height = height;
-    clImageDescriptor.image_row_pitch = rowPitch;
-
     clMemoryImage = clCreateImage(m_clContext, type, &imageFormat, &clImageDescriptor, data, &error);
 #else
     clMemoryImage = clCreateImage2D(m_clContext, type, &imageFormat, width, height, rowPitch,

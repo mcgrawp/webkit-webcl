@@ -28,6 +28,7 @@
 #ifndef ComputeContext_h
 #define ComputeContext_h
 
+#include "ComputeContext.h"
 #include "ComputeTypes.h"
 #include "ComputeTypesTraits.h"
 #include "GraphicsTypes3D.h"

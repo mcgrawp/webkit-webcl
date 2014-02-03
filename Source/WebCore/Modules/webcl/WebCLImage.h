@@ -45,27 +45,26 @@ class WebGLTexture;
 class WebCLImage : public WebCLMemoryObject {
 public:
     ~WebCLImage();
-    static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat&, void*, ExceptionCode&);
+    static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, PassRefPtr<WebCLImageDescriptor>, void*, ExceptionCode&);
 
 #if ENABLE(WEBGL)
     static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, WebGLRenderbuffer* webGLRenderbuffer, ExceptionCode&);
     static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, CCenum textureTarget, CCenum miplevel, WebGLTexture*, ExceptionCode&);
+
     int getGLTextureInfo(CCenum paramName, ExceptionCode&);
 #endif
 
-    PassRefPtr<WebCLImageDescriptor> getInfo(ExceptionCode&);
-    CCImageFormat imageFormat() const;
+    WebCLImageDescriptor* getInfo(ExceptionCode&);
+    const CCImageFormat& imageFormat() const;
 
 private:
-    WebCLImage(WebCLContext*, PlatformComputeObject image, CCuint width, CCuint height, const CCImageFormat&);
-
-    CCuint m_width;
-    CCuint m_height;
-    CCImageFormat m_format;
+    WebCLImage(WebCLContext*, PlatformComputeObject, PassRefPtr<WebCLImageDescriptor>);
 
 #if ENABLE(WEBGL)
     void cacheGLObjectInfo(CCenum type, WebGLObject*);
 #endif
+
+    RefPtr<WebCLImageDescriptor> m_imageDescriptor;
 };
 
 } // namespace WebCore

@@ -31,6 +31,7 @@
 #if ENABLE(WEBCL)
 
 #include "ComputeTypes.h"
+#include "ComputeContext.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -41,16 +42,8 @@ class WebCLImageDescriptor : public RefCounted<WebCLImageDescriptor>
 public:
     virtual ~WebCLImageDescriptor();
 
-    static PassRefPtr<WebCLImageDescriptor> create();
+    static PassRefPtr<WebCLImageDescriptor> create(CCuint width = 0, CCuint height = 0, CCuint rowPitch = 0, const CCImageFormat& = {ComputeContext::RGBA, ComputeContext::UNORM_INT8});
     static PassRefPtr<WebCLImageDescriptor> create(const CCImageFormat&);
-
-    enum {
-        DEFAULT_CHANNEL_ORDER = 0x10B5,
-        DEFAULT_CHANNEL_TYPE  = 0x10D2,
-        DEFAULT_WIDTH         = 0, // CL_DEVICE_IMAGE2D_MAX_WIDTH
-        DEFAULT_HEIGHT        = 0, // CL_DEVICE_IMAGE2D_MAX_HEIGHT
-        DEFAULT_ROW_PITCH     = 0,
-    };
 
     void setChannelOrder(CCenum);
     CCenum channelOrder() const;
@@ -67,15 +60,15 @@ public:
     void setRowPitch(CCuint);
     CCuint rowPitch() const;
 
-private:
-    WebCLImageDescriptor();
-    WebCLImageDescriptor(const CCImageFormat&);
+    const CCImageFormat& imageFormat() const;
 
-    CCenum m_channelOrder;
-    CCenum m_channelType;
+private:
+    WebCLImageDescriptor(CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat&);
+
     CCuint m_width;
     CCuint m_height;
     CCuint m_rowPitch;
+    CCImageFormat m_imageFormat;
 };
 
 } // namespace WebCore

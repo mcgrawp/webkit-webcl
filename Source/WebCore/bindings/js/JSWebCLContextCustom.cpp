@@ -138,7 +138,6 @@ JSValue JSWebCLContext::createImage(JSC::ExecState* exec)
             return throwSyntaxError(exec);
 
         RefPtr<ArrayBufferView> buffer;
-        // FIXME: Spec has changed to ArrayBufferView - Issue #243.
         if (exec->argumentCount() == 3) {
             if (!exec->argument(2).inherits(&JSArrayBufferView::s_info))
                 return throwSyntaxError(exec);

@@ -42,21 +42,25 @@ WebCLImage::~WebCLImage()
 {
 }
 
-PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat& format, void* data, ExceptionCode& ec)
+PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, PassRefPtr<WebCLImageDescriptor> imageDescriptor, void* data, ExceptionCode& ec)
 {
+    if (!data) {
+        // Sending a Empty Intitalised ArrayBuffer. This wil help in initalisation of buffers created.
+        // FIXME :: This is a slow initialization method. Need to verify against kernel init method.
+        //flags |= ComputeContext::MEM_COPY_HOST_PTR;
+        //CCuint imageSizeInBytes = imageDescriptor->width() * imageDescriptor->height(); /* Considering 4 bytes/pixel */
+        //data = ArrayBuffer::create(imageSizeInBytes, 4)->data();
+    }
+
     CCerror createImage2DError;
-    // Sending a Empty Intitalised ArrayBuffer. This wil help in initalisation of buffers created.
-    // FIXME :: This is a slow initialization method. Need to verify against kernel init method.
-    flags |= ComputeContext::MEM_COPY_HOST_PTR;
-    CCuint imageSizeInBytes = width * height * 4; /* Considering 4 bytes/pixel */
-    PlatformComputeObject ccMemoryImage = context->computeContext()->createImage2D(flags, width, height, rowPitch, format,
-        data ? data : (ArrayBuffer::create(imageSizeInBytes, 1))->data(), createImage2DError);
+    PlatformComputeObject ccMemoryImage = context->computeContext()->createImage2D(flags, imageDescriptor->width(),
+        imageDescriptor->height(), imageDescriptor->rowPitch(), imageDescriptor->imageFormat(), data, createImage2DError);
     if (createImage2DError != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(createImage2DError);
         return 0;
     }
 
-    return adoptRef(new WebCLImage(context, ccMemoryImage, width, height, format));
+    return adoptRef(new WebCLImage(context, ccMemoryImage, imageDescriptor));
 }
 
 #if ENABLE(WEBGL)
@@ -73,9 +77,6 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, W
     GC3Dsizei width = webGLRenderbuffer->getWidth();
     GC3Dsizei height = webGLRenderbuffer->getHeight();
 
-    // FIXME: Format is wrong here. It should have been gotten from WebGLRenderbuffer as well.
-    CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-
     CCerror error;
     PlatformComputeObject ccMemoryID = context->computeContext()->createFromGLRenderbuffer(flags, renderbufferID, error);
     if (!ccMemoryID) {
@@ -84,7 +85,10 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, W
         return 0;
     }
 
-    RefPtr<WebCLImage> imageObject = adoptRef(new WebCLImage(context, ccMemoryID, width, height, imageFormat));
+    // FIXME: Format is wrong here. It should have been gotten from WebGLRenderbuffer as well.
+
+    RefPtr<WebCLImageDescriptor> imageDescriptor = WebCLImageDescriptor::create(width, height);
+    RefPtr<WebCLImage> imageObject = adoptRef(new WebCLImage(context, ccMemoryID, imageDescriptor.release()));
     imageObject->cacheGLObjectInfo(ComputeContext::GL_OBJECT_RENDERBUFFER, webGLRenderbuffer);
     return imageObject.release();
 }
@@ -102,9 +106,6 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, C
     GC3Dsizei width = webGLTexture->getWidth(textureTarget, miplevel);
     GC3Dsizei height = webGLTexture->getHeight(textureTarget, miplevel);
 
-    // FIXME: Format is wrong here. It should have been gotten from WebGLTexture as well.
-    CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-
     CCerror error;
     PlatformComputeObject ccMemoryID = context->computeContext()->createFromGLTexture2D(flags, textureTarget, miplevel, textureID, error);
     if (!ccMemoryID) {
@@ -112,7 +113,10 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, C
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
-    RefPtr<WebCLImage> imageObject = adoptRef(new WebCLImage(context, ccMemoryID, width, height, imageFormat));
+
+    // FIXME: Format is wrong here. It should have been gotten from WebGLTexture as well.
+    RefPtr<WebCLImageDescriptor> imageDescriptor = WebCLImageDescriptor::create(width, height);
+    RefPtr<WebCLImage> imageObject = adoptRef(new WebCLImage(context, ccMemoryID, imageDescriptor));
     imageObject->cacheGLObjectInfo(ComputeContext::GL_OBJECT_TEXTURE2D, webGLTexture);
     return imageObject.release();
 }
@@ -156,11 +160,9 @@ void WebCLImage::cacheGLObjectInfo(CCenum type, WebGLObject* glObject)
 }
 #endif
 
-WebCLImage::WebCLImage(WebCLContext* context, PlatformComputeObject image, CCuint width, CCuint height, const CCImageFormat& format)
+WebCLImage::WebCLImage(WebCLContext* context, PlatformComputeObject image, PassRefPtr<WebCLImageDescriptor> imageDescriptor)
     : WebCLMemoryObject(context, image, 0 /* sizeInBytes */)
-    , m_width(width)
-    , m_height(height)
-    , m_format(format)
+    , m_imageDescriptor(imageDescriptor)
 {
     size_t memorySizeValue = 0;
     CCint err = ComputeContext::getMemoryObjectInfo(image, ComputeContext::MEM_SIZE, &memorySizeValue);
@@ -168,23 +170,19 @@ WebCLImage::WebCLImage(WebCLContext* context, PlatformComputeObject image, CCuin
         m_sizeInBytes = memorySizeValue;
 }
 
-PassRefPtr<WebCLImageDescriptor> WebCLImage::getInfo(ExceptionCode& ec)
+WebCLImageDescriptor* WebCLImage::getInfo(ExceptionCode& ec)
 {
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return 0;
     }
 
-    RefPtr<WebCLImageDescriptor> imageDescriptor = WebCLImageDescriptor::create(m_format);
-    imageDescriptor->setWidth(m_width);
-    imageDescriptor->setHeight(m_height);
-
-    return imageDescriptor.release();
+    return m_imageDescriptor.get();
 }
 
-CCImageFormat WebCLImage::imageFormat() const
+const CCImageFormat& WebCLImage::imageFormat() const
 {
-    return m_format;
+    return m_imageDescriptor->imageFormat();
 }
 
 } // namespace WebCore

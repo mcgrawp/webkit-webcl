@@ -282,7 +282,8 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint widt
     if (data)
         flags |= ComputeContext::MEM_COPY_HOST_PTR;
 
-    return WebCLImage::create(this, flags, width, height, rowPitch, imageFormat, data, ec);
+    RefPtr<WebCLImageDescriptor> imageDescriptor = WebCLImageDescriptor::create(width, height, rowPitch, imageFormat);
+    return WebCLImage::create(this, flags, imageDescriptor.release(), data, ec);
 }
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)

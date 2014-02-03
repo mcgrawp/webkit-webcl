@@ -80,7 +80,7 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCo
         ec = WebCLException::INVALID_EVENT_WAIT_LIST;
         return;
     }
-    ASSERT(event[0]->context());
+    ASSERT(events[0]->context());
     WebCLContext* referenceContext  = events[0]->context();
     Vector<ComputeEvent*> computeEvents;
     computeEvents.append(events[0]->platformObject());
@@ -92,7 +92,7 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCo
             ec = WebCLException::INVALID_EVENT_WAIT_LIST;
             return;
         }
-        ASSERT(event[i]->context());
+        ASSERT(events[i]->context());
         if (!WebCLInputChecker::compareContext(events[i]->context(), referenceContext)) {
             ec = WebCLException::INVALID_CONTEXT;
             return;

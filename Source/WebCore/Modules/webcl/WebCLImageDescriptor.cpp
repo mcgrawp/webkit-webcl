@@ -37,52 +37,42 @@ WebCLImageDescriptor::~WebCLImageDescriptor()
 {
 }
 
-PassRefPtr<WebCLImageDescriptor> WebCLImageDescriptor::create()
+PassRefPtr<WebCLImageDescriptor> WebCLImageDescriptor::create(CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat& imageFormat)
 {
-    return adoptRef(new WebCLImageDescriptor);
+    return adoptRef(new WebCLImageDescriptor(width, height, rowPitch, imageFormat));
 }
 
 PassRefPtr<WebCLImageDescriptor> WebCLImageDescriptor::create(const CCImageFormat& imageFormat)
 {
-    return adoptRef(new WebCLImageDescriptor(imageFormat));
+    return adoptRef(new WebCLImageDescriptor(0 /*width*/, 0 /*height*/, 0 /*rowPitch*/, imageFormat));
 }
 
-WebCLImageDescriptor::WebCLImageDescriptor()
+WebCLImageDescriptor::WebCLImageDescriptor(CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat& imageFormat)
+    : m_width(width)
+    , m_height(height)
+    , m_rowPitch(rowPitch)
+    , m_imageFormat(imageFormat)
 {
-    m_channelOrder = DEFAULT_CHANNEL_ORDER;
-    m_channelType = DEFAULT_CHANNEL_TYPE;
-    m_width = DEFAULT_WIDTH;
-    m_height = DEFAULT_WIDTH;
-    m_rowPitch = DEFAULT_WIDTH;
-}
-
-WebCLImageDescriptor::WebCLImageDescriptor(const CCImageFormat& imageFormat)
-{
-    m_channelOrder = imageFormat.image_channel_order;
-    m_channelType= imageFormat.image_channel_data_type;
-    m_width = DEFAULT_WIDTH;
-    m_height = DEFAULT_HEIGHT;
-    m_rowPitch = DEFAULT_ROW_PITCH;
 }
 
 void WebCLImageDescriptor::setChannelOrder(CCenum channelOrder)
 {
-    m_channelOrder = channelOrder;
+    m_imageFormat.image_channel_order = channelOrder;
 }
 
 CCenum WebCLImageDescriptor::channelOrder() const
 {
-    return m_channelOrder;
+    return m_imageFormat.image_channel_order;
 }
 
 void WebCLImageDescriptor::setChannelType(CCenum channelType)
 {
-    m_channelType = channelType;
+    m_imageFormat.image_channel_data_type = channelType;
 }
 
 CCenum WebCLImageDescriptor::channelType() const
 {
-    return m_channelType;
+    return m_imageFormat.image_channel_data_type;
 }
 
 void WebCLImageDescriptor::setWidth(CCuint width)
@@ -113,6 +103,11 @@ void WebCLImageDescriptor::setRowPitch(CCuint rowPitch)
 CCuint WebCLImageDescriptor::rowPitch() const
 {
     return m_rowPitch;
+}
+
+const CCImageFormat& WebCLImageDescriptor::imageFormat() const
+{
+    return m_imageFormat;
 }
 
 } // namespace WebCore
