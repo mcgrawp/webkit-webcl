@@ -45,11 +45,7 @@ WebCLBuffer::~WebCLBuffer()
 PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, CCuint sizeInBytes, void* data, ExceptionCode& ec)
 {
     CCerror error = ComputeContext::SUCCESS;
-    // Sending a Empty Intitalised ArrayBuffer. This wil help in initalisation of buffers created.
-    // FIXME :: This is a slow initialization method. Need to verify against kernel init method.
-    memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
-    PlatformComputeObject buffer = context->computeContext()->createBuffer(memoryFlags, sizeInBytes,
-        data ? data : (ArrayBuffer::create(sizeInBytes, 1))->data(), error);
+    PlatformComputeObject buffer = context->computeContext()->createBuffer(memoryFlags, sizeInBytes, data, error);
     if (!buffer) {
         ASSERT(error != ComputeContext::SUCCESS);
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);

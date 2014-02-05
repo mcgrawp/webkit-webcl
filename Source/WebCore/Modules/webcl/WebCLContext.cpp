@@ -195,29 +195,32 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBufferBase(CCenum memoryFlags, CCuin
         return 0;
     }
 
-    if (hostPtr)
-        memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
+    ASSERT(hostPtr);
+    memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
 
     return WebCLBuffer::create(this, memoryFlags, size, hostPtr, ec);
 }
 
-PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint size, ArrayBufferView* data, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint size, ArrayBufferView* hostPtr, ExceptionCode& ec)
 {
-    void* hostPtr = 0;
-    if (data) {
-        if (data->byteLength() < size) {
+    RefPtr<ArrayBuffer> buffer;
+    if (hostPtr) {
+        if (hostPtr->byteLength() < size) {
             ec = WebCLException::INVALID_HOST_PTR;
             return 0;
         }
 
-        if (!data->buffer()) {
+        if (!hostPtr->buffer()) {
             ec = WebCLException::INVALID_HOST_PTR;
             return 0;
         }
-        hostPtr = data->buffer()->data();
+        buffer = hostPtr->buffer();
+    } else {
+        // FIXME :: This is a slow initialization method. Need to verify against kernel init method.
+        buffer = ArrayBuffer::create(size, 1);
     }
 
-    return createBufferBase(memoryFlags, size, hostPtr, ec);
+    return createBufferBase(memoryFlags, size, buffer->data(), ec);
 }
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, ImageData* srcPixels, ExceptionCode& ec)
@@ -274,13 +277,8 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint widt
         return 0;
     }
 
-    if (rowPitch && !data) {
-        ec = WebCLException::INVALID_IMAGE_SIZE;
-        return 0;
-    }
-
-    if (data)
-        flags |= ComputeContext::MEM_COPY_HOST_PTR;
+    ASSERT(data);
+    flags |= ComputeContext::MEM_COPY_HOST_PTR;
 
     RefPtr<WebCLImageDescriptor> imageDescriptor = WebCLImageDescriptor::create(width, height, rowPitch, imageFormat);
     return WebCLImage::create(this, flags, imageDescriptor.release(), data, ec);
@@ -362,6 +360,60 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, ImageData* srcPix
     return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, hostPtr, ec);
 }
 
+static unsigned numberOfChannelsForChannelOrder(CCenum order)
+{
+    switch(order) {
+    case ComputeContext::R:
+    case ComputeContext::A:
+    case ComputeContext::INTENSITY:
+    case ComputeContext::LUMINANCE:
+        return 1;
+    case ComputeContext::RG:
+    case ComputeContext::RA:
+    case ComputeContext::Rx:
+        return 2;
+    case ComputeContext::RGB:
+    case ComputeContext::RGx:
+        return 3;
+    case ComputeContext::RGBA:
+    case ComputeContext::BGRA:
+    case ComputeContext::ARGB:
+    case ComputeContext::RGBx:
+        return 4;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+static unsigned bytesPerChannelType(CCenum channelType)
+{
+    switch(channelType) {
+    case ComputeContext::SNORM_INT8:
+    case ComputeContext::UNORM_INT8:
+    case ComputeContext::SIGNED_INT8:
+    case ComputeContext::UNSIGNED_INT8:
+        return 1;
+    case ComputeContext::SNORM_INT16:
+    case ComputeContext::UNORM_INT16:
+    case ComputeContext::SIGNED_INT16:
+    case ComputeContext::UNSIGNED_INT16:
+    case ComputeContext::HALF_FLOAT:
+        return 2;
+    case ComputeContext::SIGNED_INT32:
+    case ComputeContext::UNSIGNED_INT32:
+    case ComputeContext::FLOAT:
+        return 4;
+    case ComputeContext::UNORM_SHORT_565:
+    case ComputeContext::UNORM_SHORT_555:
+    case ComputeContext::UNORM_INT_101010:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescriptor* descriptor, ArrayBufferView* hostPtr, ExceptionCode& ec)
 {
     if (!descriptor) {
@@ -372,21 +424,38 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescrip
     CCuint width =  descriptor->width();
     CCuint height = descriptor->height();
     CCuint rowPitch = descriptor->rowPitch();
+    CCenum channelOrder = descriptor->channelOrder();
+    CCenum channelType = descriptor->channelType();
 
-    if (hostPtr && hostPtr->byteLength() < (rowPitch * height)) {
-        ec = WebCLException::INVALID_HOST_PTR;
+    if (rowPitch && !hostPtr) {
+        ec = WebCLException::INVALID_IMAGE_SIZE;
         return 0;
     }
 
-    CCuint channelOrder = static_cast<CCenum>(descriptor->channelOrder());
-    CCuint channelType = static_cast<CCenum>(descriptor->channelType());
     if (!WebCLInputChecker::isValidChannelOrder(channelOrder) || !WebCLInputChecker::isValidChannelType(channelType)) {
         ec = WebCLException::INVALID_IMAGE_FORMAT_DESCRIPTOR;
         return 0;
     }
 
+    unsigned numberOfChannels = numberOfChannelsForChannelOrder(channelOrder);
+    unsigned bytesPerChannel = bytesPerChannelType(channelType);
+
+    RefPtr<ArrayBuffer> buffer;
+    if (hostPtr) {
+        unsigned byteLength = hostPtr->byteLength();
+        if (byteLength < (rowPitch * height)
+            || byteLength < (width * height * numberOfChannels * bytesPerChannel)) {
+            ec = WebCLException::INVALID_HOST_PTR;
+            return 0;
+        }
+        buffer = hostPtr->buffer();
+    } else {
+        // FIXME :: This is a slow initialization method. Need to verify against kernel init method.
+        buffer = ArrayBuffer::create(width * height * numberOfChannels * bytesPerChannel, 1);
+    }
+
     CCImageFormat imageFormat = {channelOrder, channelType};
-    return createImage2DBase(flags, width, height, rowPitch, imageFormat, hostPtr ? hostPtr->baseAddress() : 0, ec);
+    return createImage2DBase(flags, width, height, rowPitch, imageFormat, buffer->data(), ec);
 }
 
 PassRefPtr<WebCLSampler> WebCLContext::createSampler(CCbool normCoords, CCenum addressingMode, CCenum filterMode, ExceptionCode& ec)

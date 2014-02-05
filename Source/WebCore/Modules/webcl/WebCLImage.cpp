@@ -44,14 +44,6 @@ WebCLImage::~WebCLImage()
 
 PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, PassRefPtr<WebCLImageDescriptor> imageDescriptor, void* data, ExceptionCode& ec)
 {
-    if (!data) {
-        // Sending a Empty Intitalised ArrayBuffer. This wil help in initalisation of buffers created.
-        // FIXME :: This is a slow initialization method. Need to verify against kernel init method.
-        //flags |= ComputeContext::MEM_COPY_HOST_PTR;
-        //CCuint imageSizeInBytes = imageDescriptor->width() * imageDescriptor->height(); /* Considering 4 bytes/pixel */
-        //data = ArrayBuffer::create(imageSizeInBytes, 4)->data();
-    }
-
     CCerror createImage2DError;
     PlatformComputeObject ccMemoryImage = context->computeContext()->createImage2D(flags, imageDescriptor->width(),
         imageDescriptor->height(), imageDescriptor->rowPitch(), imageDescriptor->imageFormat(), data, createImage2DError);
