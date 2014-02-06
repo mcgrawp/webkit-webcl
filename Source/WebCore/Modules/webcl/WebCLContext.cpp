@@ -591,8 +591,6 @@ void WebCLContext::releaseAll()
 
 void WebCLContext::releasePlatformObjectImpl()
 {
-    // FIXME: We should special case WebCLContext release, instead of
-    // deleting the ComputeContext.
     delete platformObject();
 }
 

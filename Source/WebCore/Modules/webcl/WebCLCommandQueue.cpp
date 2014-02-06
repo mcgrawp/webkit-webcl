@@ -1097,8 +1097,7 @@ void WebCLCommandQueue::enqueueMarker(WebCLEvent* event, ExceptionCode& ec)
 
 void WebCLCommandQueue::releasePlatformObjectImpl()
 {
-    CCerror computeContextErrorCode = platformObject()->releaseCommandQueue();
-    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+    delete platformObject();
 }
 
 #if ENABLE(WEBGL)
