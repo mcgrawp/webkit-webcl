@@ -276,6 +276,7 @@ if (ENABLE_WEBCL)
         platform/ComputeExtensions.h
         platform/ComputeExtensionsTraits.h
         platform/ComputeKernel.h
+        platform/ComputeMemoryObject.h
         platform/ComputeProgram.h
         platform/ComputeTypes.h
         platform/ComputeTypesTraits.h
@@ -284,6 +285,7 @@ if (ENABLE_WEBCL)
         platform/opencl/ComputeEventCL.cpp
         platform/opencl/ComputeExtensionsCL.cpp
         platform/opencl/ComputeKernelCL.cpp
+        platform/opencl/ComputeMemoryObjectCL.cpp
         platform/opencl/ComputeProgramCL.cpp
   )
   list(APPEND WebCore_LIBRARIES

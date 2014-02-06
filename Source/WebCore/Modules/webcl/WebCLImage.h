@@ -58,7 +58,7 @@ public:
     const CCImageFormat& imageFormat() const;
 
 private:
-    WebCLImage(WebCLContext*, PlatformComputeObject, PassRefPtr<WebCLImageDescriptor>);
+    WebCLImage(WebCLContext*, ComputeMemoryObject*, PassRefPtr<WebCLImageDescriptor>);
 
 #if ENABLE(WEBGL)
     void cacheGLObjectInfo(CCenum type, WebGLObject*);

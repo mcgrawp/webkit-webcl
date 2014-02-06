@@ -31,6 +31,7 @@
 
 #include "WebCLImage.h"
 
+#include "ComputeMemoryObject.h"
 #include "WebCLContext.h"
 #include "WebCLImageDescriptor.h"
 #include "WebGLRenderbuffer.h"
@@ -44,15 +45,16 @@ WebCLImage::~WebCLImage()
 
 PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, PassRefPtr<WebCLImageDescriptor> imageDescriptor, void* data, ExceptionCode& ec)
 {
-    CCerror createImage2DError;
-    PlatformComputeObject ccMemoryImage = context->computeContext()->createImage2D(flags, imageDescriptor->width(),
-        imageDescriptor->height(), imageDescriptor->rowPitch(), imageDescriptor->imageFormat(), data, createImage2DError);
-    if (createImage2DError != ComputeContext::SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(createImage2DError);
+    CCerror error;
+    ComputeMemoryObject* memoryObject = context->computeContext()->createImage2D(flags, imageDescriptor->width(),
+        imageDescriptor->height(), imageDescriptor->rowPitch(), imageDescriptor->imageFormat(), data, error);
+    if (error != ComputeContext::SUCCESS) {
+        delete memoryObject;
+        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
 
-    return adoptRef(new WebCLImage(context, ccMemoryImage, imageDescriptor));
+    return adoptRef(new WebCLImage(context, memoryObject, imageDescriptor));
 }
 
 #if ENABLE(WEBGL)
@@ -70,9 +72,9 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, W
     GC3Dsizei height = webGLRenderbuffer->getHeight();
 
     CCerror error;
-    PlatformComputeObject ccMemoryID = context->computeContext()->createFromGLRenderbuffer(flags, renderbufferID, error);
-    if (!ccMemoryID) {
-        ASSERT(error != ComputeContext::SUCCESS);
+    ComputeMemoryObject* memoryObject = context->computeContext()->createFromGLRenderbuffer(flags, renderbufferID, error);
+    if (error != ComputeContext::SUCCESS) {
+        delete memoryObject;
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
@@ -80,7 +82,7 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, W
     // FIXME: Format is wrong here. It should have been gotten from WebGLRenderbuffer as well.
 
     RefPtr<WebCLImageDescriptor> imageDescriptor = WebCLImageDescriptor::create(width, height);
-    RefPtr<WebCLImage> imageObject = adoptRef(new WebCLImage(context, ccMemoryID, imageDescriptor.release()));
+    RefPtr<WebCLImage> imageObject = adoptRef(new WebCLImage(context, memoryObject, imageDescriptor.release()));
     imageObject->cacheGLObjectInfo(ComputeContext::GL_OBJECT_RENDERBUFFER, webGLRenderbuffer);
     return imageObject.release();
 }
@@ -99,16 +101,16 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, C
     GC3Dsizei height = webGLTexture->getHeight(textureTarget, miplevel);
 
     CCerror error;
-    PlatformComputeObject ccMemoryID = context->computeContext()->createFromGLTexture2D(flags, textureTarget, miplevel, textureID, error);
-    if (!ccMemoryID) {
-        ASSERT(error != ComputeContext::SUCCESS);
+    ComputeMemoryObject* memoryObject = context->computeContext()->createFromGLTexture2D(flags, textureTarget, miplevel, textureID, error);
+    if (error != ComputeContext::SUCCESS) {
+        delete memoryObject;
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
 
     // FIXME: Format is wrong here. It should have been gotten from WebGLTexture as well.
     RefPtr<WebCLImageDescriptor> imageDescriptor = WebCLImageDescriptor::create(width, height);
-    RefPtr<WebCLImage> imageObject = adoptRef(new WebCLImage(context, ccMemoryID, imageDescriptor));
+    RefPtr<WebCLImage> imageObject = adoptRef(new WebCLImage(context, memoryObject, imageDescriptor));
     imageObject->cacheGLObjectInfo(ComputeContext::GL_OBJECT_TEXTURE2D, webGLTexture);
     return imageObject.release();
 }
@@ -134,7 +136,7 @@ int WebCLImage::getGLTextureInfo(CCenum textureInfoType, ExceptionCode& ec)
     case ComputeContext::GL_TEXTURE_TARGET:
     case ComputeContext::GL_MIPMAP_LEVEL: {
         CCint glTextureInfo = 0;
-        err = ComputeContext::getGLTextureInfo(platformObject(), textureInfoType, &glTextureInfo);
+        err = platformObject()->getGLTextureInfo(textureInfoType, &glTextureInfo);
         if (err == ComputeContext::SUCCESS)
             return glTextureInfo;
         break;
@@ -152,12 +154,12 @@ void WebCLImage::cacheGLObjectInfo(CCenum type, WebGLObject* glObject)
 }
 #endif
 
-WebCLImage::WebCLImage(WebCLContext* context, PlatformComputeObject image, PassRefPtr<WebCLImageDescriptor> imageDescriptor)
+WebCLImage::WebCLImage(WebCLContext* context, ComputeMemoryObject* image, PassRefPtr<WebCLImageDescriptor> imageDescriptor)
     : WebCLMemoryObject(context, image, 0 /* sizeInBytes */)
     , m_imageDescriptor(imageDescriptor)
 {
     size_t memorySizeValue = 0;
-    CCint err = ComputeContext::getMemoryObjectInfo(image, ComputeContext::MEM_SIZE, &memorySizeValue);
+    CCint err = image->getMemoryObjectInfo(ComputeContext::MEM_SIZE, &memorySizeValue);
     if (err == ComputeContext::SUCCESS)
         m_sizeInBytes = memorySizeValue;
 }

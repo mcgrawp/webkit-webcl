@@ -31,6 +31,7 @@
 
 #include "ComputeCommandQueue.h"
 #include "ComputeEvent.h"
+#include "ComputeMemoryObject.h"
 #include "ComputeProgram.h"
 
 #include <wtf/text/CString.h>
@@ -327,37 +328,6 @@ COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::GL_OBJECT_RENDERBUFFER, CL_GL_OBJEC
 COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::GL_TEXTURE_TARGET, CL_GL_TEXTURE_TARGET);
 COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::GL_MIPMAP_LEVEL, CL_GL_MIPMAP_LEVEL);
 
-// FIXME: Remove it when the CL<->GL interoperability turns to be an extension.
-static cl_mem_flags computeMemoryTypeToCL(int memoryType)
-{
-    CCint clMemoryType = CL_INVALID_VALUE;
-    switch (memoryType) {
-    case ComputeContext::MEM_READ_ONLY:
-        clMemoryType = CL_MEM_READ_ONLY;
-        break;
-    case ComputeContext::MEM_WRITE_ONLY:
-        clMemoryType = CL_MEM_WRITE_ONLY;
-        break;
-    case ComputeContext::MEM_READ_WRITE:
-        clMemoryType = CL_MEM_READ_WRITE;
-        break;
-    case ComputeContext::MEM_USE_HOST_PTR:
-        clMemoryType = CL_MEM_USE_HOST_PTR;
-        break;
-    case ComputeContext::MEM_ALLOC_HOST_PTR:
-        clMemoryType = CL_MEM_ALLOC_HOST_PTR;
-        break;
-    case ComputeContext::MEM_COPY_HOST_PTR:
-        clMemoryType = CL_MEM_COPY_HOST_PTR;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return clMemoryType;
-}
-
 ComputeContext::ComputeContext(const Vector<CCContextProperties>& contextProperties, const Vector<CCDeviceID>& devices, CCerror& error)
 {
     m_clContext = clCreateContext(contextProperties.data(), devices.size(), devices.data(), 0, 0, &error);
@@ -426,61 +396,34 @@ ComputeProgram* ComputeContext::createProgram(const String& programSource, CCerr
     return new ComputeProgram(this, programSource, error);
 }
 
-PlatformComputeObject ComputeContext::createBuffer(CCMemoryFlags type, size_t size, void* data, CCerror& error)
+ComputeMemoryObject* ComputeContext::createBuffer(CCMemoryFlags type, size_t size, void* data, CCerror& error)
 {
-    return clCreateBuffer(m_clContext, type, size, data, &error);
+    return new ComputeMemoryObject(this, type, size, data, error);
 }
 
-PlatformComputeObject ComputeContext::createSubBuffer(PlatformComputeObject buffer, CCMemoryFlags type, CCBufferCreateType bufferCreatetype,
-    CCBufferRegion* bufferCreateInfo, CCerror& error)
+ComputeMemoryObject* ComputeContext::createImage2D(CCMemoryFlags flags, size_t width, size_t height, CCuint rowPitch, const CCImageFormat& imageFormat, void* data, CCerror& error)
 {
-    return clCreateSubBuffer(buffer, type, bufferCreatetype, bufferCreateInfo, &error);
+    return new ComputeMemoryObject(this, flags, width, height, rowPitch, imageFormat, data, error);
 }
 
-// FIXME: ComputeContext::createImage
-PlatformComputeObject ComputeContext::createImage2D(CCMemoryFlags type, size_t width, size_t height, CCuint rowPitch, const CCImageFormat& imageFormat, void* data, CCerror& error)
+ComputeMemoryObject* ComputeContext::createFromGLBuffer(CCMemoryFlags flags, GLuint bufferId, CCerror& error)
 {
-    PlatformComputeObject clMemoryImage = 0;
-#if defined(CL_VERSION_1_2) && CL_VERSION_1_2
-    CCImageDescriptor clImageDescriptor = {CL_MEM_OBJECT_IMAGE2D, width, height, 0 /*imageDepth*/, 0 /*arraySize*/,
-        static_cast<size_t>(rowPitch), 0 /*slicePitch*/, 0 /*numMipLevels*/, 0 /*numSamples*/, 0 /*buffer*/};
-    clMemoryImage = clCreateImage(m_clContext, type, &imageFormat, &clImageDescriptor, data, &error);
-#else
-    clMemoryImage = clCreateImage2D(m_clContext, type, &imageFormat, width, height, rowPitch,
-        data, &error);
-#endif
-
-    return clMemoryImage;
+    return new ComputeMemoryObject(this, flags, bufferId, GLBuffer, error);
 }
 
-PlatformComputeObject ComputeContext::createFromGLBuffer(CCMemoryFlags type, GLuint bufferId, CCerror& error)
+ComputeMemoryObject* ComputeContext::createFromGLRenderbuffer(CCMemoryFlags flags, GC3Duint renderbufferId, CCerror& error)
 {
-    CCint memoryType = computeMemoryTypeToCL(type);
-    return clCreateFromGLBuffer(m_clContext, memoryType, bufferId, &error);
+    return new ComputeMemoryObject(this, flags, renderbufferId, GLRenderbuffer, error);
 }
 
-PlatformComputeObject ComputeContext::createFromGLRenderbuffer(CCMemoryFlags type, GC3Duint renderbufferId, CCerror& error)
+ComputeMemoryObject* ComputeContext::createFromGLTexture2D(CCMemoryFlags flags, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror& error)
 {
-    CCint memoryType = computeMemoryTypeToCL(type);
-    return clCreateFromGLRenderbuffer(m_clContext, memoryType, renderbufferId, &error);
+    return new ComputeMemoryObject(this, flags, textureTarget, mipLevel, texture, error);
 }
 
 CCSampler ComputeContext::createSampler(CCbool normalizedCoords, CCAddressingMode addressingMode, CCFilterMode filterMode, CCerror& error)
 {
     return clCreateSampler(m_clContext, normalizedCoords, addressingMode, filterMode, &error);
-}
-
-PlatformComputeObject ComputeContext::createFromGLTexture2D(CCMemoryFlags type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror& error)
-{
-    CCMemoryFlags memoryType = computeMemoryTypeToCL(type);
-    PlatformComputeObject memory;
-
-#if defined(CL_VERSION_1_2) && CL_VERSION_1_2
-    memory = clCreateFromGLTexture(m_clContext, memoryType, textureTarget, mipLevel, texture, &error);
-#else
-    memory = clCreateFromGLTexture2D(m_clContext, memoryType, textureTarget, mipLevel, texture, &error);
-#endif
-    return memory;
 }
 
 CCerror ComputeContext::supportedImageFormats(CCMemoryFlags type, CCMemoryObjectType imageType, Vector<CCImageFormat>& imageFormatsOut)
@@ -508,34 +451,14 @@ CCerror ComputeContext::getPlatformInfoBase(CCPlatformID platformID, CCPlatformI
    return clGetPlatformInfo(platformID, infoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getImageInfoBase(PlatformComputeObject image, CCImageInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
-{
-    return clGetImageInfo(image, infoType, sizeOfData, data, retSize);
-}
-
-CCerror ComputeContext::getGLTextureInfoBase(PlatformComputeObject image, CCImageTextureInfoType textureInfoType, size_t sizeOfData, void* data, size_t* retSize)
-{
-    return clGetGLTextureInfo(image, textureInfoType, sizeOfData, data, retSize);
-}
-
 CCerror ComputeContext::getSamplerInfoBase(CCSampler sampler, CCSamplerInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
     return clGetSamplerInfo(sampler, infoType, sizeOfData, data, retSize);
 }
 
-CCerror ComputeContext::getMemoryObjectInfoBase(PlatformComputeObject memObject, CCMemInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
-{
-    return clGetMemObjectInfo(memObject, infoType, sizeOfData, data, retSize);
-}
-
 CCerror ComputeContext::releaseSampler(CCSampler sampler)
 {
     return clReleaseSampler(sampler);
-}
-
-CCerror ComputeContext::releaseMemoryObject(PlatformComputeObject memmory)
-{
-    return clReleaseMemObject(memmory);
 }
 
 void ComputeContext::populatePropertiesForInteroperabilityWithGL(Vector<CCContextProperties>& properties, PlatformGraphicsContext3D context3D)

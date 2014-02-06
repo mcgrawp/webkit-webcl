@@ -35,13 +35,15 @@
 
 namespace WebCore {
 
+class ComputeMemoryObject;
 class WebCLContext;
 class WebCLGetInfo;
 
-class WebCLMemoryObject : public WebCLObjectImpl<PlatformComputeObject> {
+typedef ComputeMemoryObject* ComputeMemoryObjectPtr;
+class WebCLMemoryObject : public WebCLObjectImpl<ComputeMemoryObjectPtr> {
 public:
     virtual ~WebCLMemoryObject();
-    static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PlatformComputeObject, CCuint sizeInBytes);
+    static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, ComputeMemoryObject*, CCuint sizeInBytes);
 
     WebCLGetInfo getInfo(CCenum, ExceptionCode&);
 #if ENABLE(WEBGL)
@@ -58,7 +60,7 @@ public:
     }
 
 protected:
-    WebCLMemoryObject(WebCLContext*, PlatformComputeObject, CCuint sizeInBytes, WebCLMemoryObject* = 0);
+    WebCLMemoryObject(WebCLContext*, ComputeMemoryObject*, CCuint sizeInBytes, WebCLMemoryObject* = 0);
     virtual void releasePlatformObjectImpl();
 
     RefPtr<WebCLContext> m_context;

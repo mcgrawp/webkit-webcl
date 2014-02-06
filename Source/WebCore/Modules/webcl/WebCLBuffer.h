@@ -49,7 +49,7 @@ public:
     PassRefPtr<WebCLBuffer> createSubBuffer(CCenum memFlags, CCuint origin, CCuint sizeInBytes, ExceptionCode&);
 
 private:
-    WebCLBuffer(WebCLContext*, PlatformComputeObject, CCuint sizeInBytes, WebCLBuffer* parentBuffer = 0);
+    WebCLBuffer(WebCLContext*, ComputeMemoryObject*, CCuint sizeInBytes, WebCLBuffer* parentBuffer = 0);
 
 #if ENABLE(WEBGL)
     void cacheGLObjectInfo(WebGLBuffer*);

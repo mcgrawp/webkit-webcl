@@ -28,6 +28,7 @@
 #include "config.h"
 #include "ComputeKernel.h"
 
+#include "ComputeMemoryObject.h"
 #include "ComputeProgram.h"
 #include <wtf/text/CString.h>
 
@@ -46,6 +47,12 @@ ComputeKernel::ComputeKernel(CCKernel kernel)
 ComputeKernel::~ComputeKernel()
 {
     clReleaseKernel(m_kernel);
+}
+
+CCerror ComputeKernel::setKernelArg(CCuint argIndex, ComputeMemoryObject* memoryObject)
+{
+    PlatformComputeObject computeMemoryObject = memoryObject->memoryObject();
+    return clSetKernelArg(m_kernel, argIndex, sizeof(PlatformComputeObject), &computeMemoryObject);
 }
 
 CCerror ComputeKernel::setKernelArg(CCuint argIndex, size_t argSize, const void* argValue)

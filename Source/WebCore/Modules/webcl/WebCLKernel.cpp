@@ -204,8 +204,7 @@ void WebCLKernel::setArg(CCuint index, WebCLMemoryObject* memoryObject, Exceptio
         return;
     }
 
-    PlatformComputeObject ccMemoryObject = memoryObject->platformObject();
-    CCerror err = platformObject()->setKernelArg(index, sizeof(PlatformComputeObject), &ccMemoryObject);
+    CCerror err = platformObject()->setKernelArg(index, memoryObject->platformObject());
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 

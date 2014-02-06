@@ -41,6 +41,7 @@ namespace WebCore {
 
 class ComputeCommandQueue;
 class ComputeEvent;
+class ComputeMemoryObject;
 class ComputeProgram;
 
 class ComputeContext {
@@ -340,13 +341,13 @@ public:
     ComputeProgram* createProgram(const String& programSource, CCerror&);
     ComputeEvent* createUserEvent(CCerror&);
 
-    PlatformComputeObject createBuffer(CCMemoryFlags type, size_t, void* data, CCerror&);
-    PlatformComputeObject createSubBuffer(PlatformComputeObject, CCMemoryFlags type, CCBufferCreateType bufferCreatetype, CCBufferRegion* bufferCreateInfo, CCerror&);
-    PlatformComputeObject createImage2D(CCMemoryFlags type, size_t width, size_t height, CCuint rowPitch, const CCImageFormat&, void* data, CCerror&);
-    PlatformComputeObject createFromGLBuffer(CCMemoryFlags type, GLuint bufferId, CCerror&);
-    PlatformComputeObject createFromGLRenderbuffer(CCMemoryFlags type, GC3Duint renderbufferId, CCerror&);
+    ComputeMemoryObject* createBuffer(CCMemoryFlags type, size_t, void* data, CCerror&);
+    ComputeMemoryObject* createImage2D(CCMemoryFlags type, size_t width, size_t height, CCuint rowPitch, const CCImageFormat&, void* data, CCerror&);
+    ComputeMemoryObject* createFromGLBuffer(CCMemoryFlags type, GLuint bufferId, CCerror&);
+    ComputeMemoryObject* createFromGLRenderbuffer(CCMemoryFlags type, GC3Duint renderbufferId, CCerror&);
+    ComputeMemoryObject* createFromGLTexture2D(CCMemoryFlags type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror&);
+
     CCSampler createSampler(CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
-    PlatformComputeObject createFromGLTexture2D(CCMemoryFlags type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror&);
 
     CCerror supportedImageFormats(CCMemoryFlags, CCMemoryObjectType, Vector<CCImageFormat>&);
 
@@ -361,30 +362,12 @@ public:
         return getInfoHelper(ComputeContext::getPlatformInfoBase, platform, infoType, data);
     }
     template <typename T>
-    static CCerror getImageInfo(PlatformComputeObject image, CCImageInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeContext::getImageInfoBase, image, infoType, data);
-    }
-    template <typename T>
-    static CCerror getGLTextureInfo(PlatformComputeObject image, CCImageTextureInfoType textureInfoType, T* data)
-    {
-        return getInfoHelper(ComputeContext::getGLTextureInfoBase, image, textureInfoType, data);
-    }
-    template <typename T>
     static CCerror getSamplerInfo(CCSampler sampler, CCSamplerInfoType infoType, T* data)
     {
         return getInfoHelper(ComputeContext::getSamplerInfoBase, sampler, infoType, data);
     }
-    template <typename T>
-    static CCerror getMemoryObjectInfo(PlatformComputeObject computeObject, CCMemInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeContext::getMemoryObjectInfoBase, computeObject, infoType, data);
-    }
 
     CCerror releaseSampler(CCSampler);
-    CCerror releaseMemoryObject(PlatformComputeObject);
-    // temporary method, just useful because we are refactoring the code
-    // just ComputeContext should know about the opencl internals.
     CCContext context() const
     {
         return m_clContext;
@@ -396,10 +379,7 @@ public:
 private:
     static CCerror getDeviceInfoBase(CCDeviceID, CCDeviceInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getPlatformInfoBase(CCPlatformID, CCPlatformInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getImageInfoBase(PlatformComputeObject, CCImageInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getGLTextureInfoBase(PlatformComputeObject, CCImageTextureInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getSamplerInfoBase(CCSampler, CCSamplerInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getMemoryObjectInfoBase(PlatformComputeObject, CCMemInfoType, size_t, void *data, size_t* actualSize);
 
     CCContext m_clContext;
 };

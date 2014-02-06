@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class ComputeMemoryObject;
 class ComputeProgram;
 
 class ComputeKernel {
@@ -43,6 +44,7 @@ public:
     ComputeKernel(CCKernel);
     ~ComputeKernel();
 
+    CCerror setKernelArg(CCuint argIndex, ComputeMemoryObject*);
     CCerror setKernelArg(CCuint argIndex, size_t argSize, const void* argValue);
 
     template <typename T>
