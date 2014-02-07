@@ -116,6 +116,8 @@ public:
 
     void trackReleaseableWebCLObject(WeakPtr<WebCLObject>);
     void releaseAll();
+    static unsigned bytesPerChannelType(CCenum);
+    static unsigned numberOfChannelsForChannelOrder(CCenum);
 
     const Vector<RefPtr<WebCLDevice> >& devices() const
     {

@@ -732,7 +732,7 @@ void WebCLCommandQueue::enqueueWriteImageBase(WebCLImage* image, CCbool blocking
     regionCopy.append(1);
 
     if (!WebCLInputChecker::isValidRegionForHostPtr(regionCopy, hostPtrLength)
-        || !WebCLInputChecker::isValidRegionForMemoryObject(originCopy, regionCopy, 0 /* bufferRowPitch */, 0 /*bufferSlicePitch */, image->sizeInBytes())) {
+        || !WebCLInputChecker::isValidRegionForMemoryObject(originCopy, regionCopy, hostRowPitch, 0 /*bufferSlicePitch */, image->sizeInBytes())) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -830,6 +830,12 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
         return;
     }
 
+    if (!WebCLInputChecker::isValidRegionForImage(sourceImage, sourceOrigin, region)
+        || !WebCLInputChecker::isValidRegionForImage(targetImage, targetOrigin, region)) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     ComputeMemoryObject* computeSourceImage = sourceImage->platformObject();
     ComputeMemoryObject* computeTargetImage = targetImage->platformObject();
 
@@ -887,6 +893,12 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage* sourceImage, WebCLB
         return;
     }
 
+    if (!WebCLInputChecker::isValidRegionForBuffer(targetBuffer->sizeInBytes(), region, targetOffset, sourceImage->imageDescriptor())
+        || !WebCLInputChecker::isValidRegionForImage(sourceImage, sourceOrigin, region)) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     ComputeMemoryObject* computeSourceImage = sourceImage->platformObject();
     ComputeMemoryObject* ccTargetBuffer = targetBuffer->platformObject();
 
@@ -938,6 +950,12 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer* sourceBuffer, WebC
         return;
     }
 
+    if (!WebCLInputChecker::isValidRegionForBuffer(sourceBuffer->sizeInBytes(), region, sourceOffset, targetImage->imageDescriptor())
+        || !WebCLInputChecker::isValidRegionForImage(targetImage, targetOrigin, region)) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
     ComputeMemoryObject* ccSourceBuffer = sourceBuffer->platformObject();
     ComputeMemoryObject* computeTargetImage = targetImage->platformObject();
 
@@ -984,13 +1002,19 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer
         return;
     }
 
-    ComputeMemoryObject* ccSourceBuffer = sourceBuffer->platformObject();
-    ComputeMemoryObject* ccTargetBuffer = targetBuffer->platformObject();
-
     if (WebCLInputChecker::isRegionOverlapping(sourceBuffer, targetBuffer, sourceOffset, targetOffset, sizeInBytes)) {
         ec = WebCLException::MEM_COPY_OVERLAP;
         return;
     }
+
+    if ((sourceOffset + sizeInBytes) > sourceBuffer->sizeInBytes()
+        || (targetOffset + sizeInBytes) > targetBuffer->sizeInBytes()) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
+    ComputeMemoryObject* ccSourceBuffer = sourceBuffer->platformObject();
+    ComputeMemoryObject* ccTargetBuffer = targetBuffer->platformObject();
 
     Vector<ComputeEvent*> computeEvents;
     ccEventListFromWebCLEventList(events, computeEvents, ec);
@@ -1047,6 +1071,13 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
     sourceOriginCopy.appendVector(sourceOrigin);
     targetOriginCopy.appendVector(targetOrigin);
     regionCopy.appendVector(region);
+
+    if (!WebCLInputChecker::isValidRegionForMemoryObject(sourceOriginCopy, regionCopy, sourceRowPitch, sourceSlicePitch, sourceBuffer->sizeInBytes())
+        || !WebCLInputChecker::isValidRegionForMemoryObject(targetOriginCopy, regionCopy, targetSlicePitch, targetRowPitch, targetBuffer->sizeInBytes())) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
 
     Vector<ComputeEvent*> computeEvents;
     ccEventListFromWebCLEventList(events, computeEvents, ec);

@@ -41,6 +41,7 @@ namespace WebCore {
 class WebCLBuffer;
 class WebCLContext;
 class WebCLImage;
+class WebCLImageDescriptor;
 class WebCLKernel;
 
 namespace WebCLInputChecker {
@@ -56,11 +57,13 @@ bool isValidCommandQueueProperty(unsigned long);
 bool isValidGLTextureInfo(unsigned long);
 bool isValidKernelArgIndex(WebCLKernel*, unsigned index);
 bool isValidPitchForArrayBufferView(unsigned long, ArrayBufferView*);
-bool isValidRegionForMemoryObject(const Vector<size_t>&, const Vector<size_t>&, size_t rowPitch, size_t slicePitch, size_t length);
-bool isValidRegionForHostPtr(const Vector<size_t>&, size_t length);
+bool isValidRegionForMemoryObject(const Vector<size_t>& origin, const Vector<size_t>& region, size_t rowPitch, size_t slicePitch, size_t length);
+bool isValidRegionForHostPtr(const Vector<size_t>& region, size_t length);
+bool isValidRegionForImage(WebCLImage*, const Vector<CCuint>& origin, const Vector<CCuint>& region);
+bool isValidRegionForBuffer(const size_t bufferLength, const Vector<CCuint>& region, const size_t offset, const WebCLImageDescriptor*);
 
-bool isRegionOverlapping(WebCLImage*, WebCLImage*, const Vector<CCuint>&, const Vector<CCuint>&, const Vector<CCuint>&);
-bool isRegionOverlapping(WebCLBuffer*, WebCLBuffer*, const CCuint, const CCuint, const CCuint);
+bool isRegionOverlapping(WebCLImage*, WebCLImage*, const Vector<CCuint>& srcOrigin, const Vector<CCuint>& dstOrigin, const Vector<CCuint>& region);
+bool isRegionOverlapping(WebCLBuffer*, WebCLBuffer*, const CCuint srcOffset, const CCuint dstOffset, const CCuint numBytes);
 
 bool compareContext(WebCLContext*, WebCLContext*);
 bool compareImageFormat(const CCImageFormat&, const CCImageFormat&);

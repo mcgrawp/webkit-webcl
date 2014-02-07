@@ -34,6 +34,7 @@
 #include "WebCLBuffer.h"
 #include "WebCLContext.h"
 #include "WebCLImage.h"
+#include "WebCLImageDescriptor.h"
 #include "WebCLKernel.h"
 #include <wtf/ArrayBufferView.h>
 
@@ -276,6 +277,26 @@ bool isValidRegionForMemoryObject(const Vector<size_t>& origin, const Vector<siz
     // The offset in bytes is computed as origin[2] * host_slice_pitch + origin[1] * rowPitch + origin[0].
     size_t offset = origin[2] * slicePitch + origin[1]  * rowPitch + origin[0];
     return  (regionArea + offset) <= length;
+}
+
+bool isValidRegionForImage(WebCLImage* image, const Vector<CCuint>& origin, const Vector<CCuint>& region)
+{
+    size_t height = image->imageDescriptor()->height();
+    size_t width = image->imageDescriptor()->width();
+    size_t regionArea = region[0] * region[1];
+    size_t offsetFromOrigin = origin[1] * height + origin[0];
+
+    return (offsetFromOrigin + regionArea) <= (height * width);
+}
+
+bool isValidRegionForBuffer(const size_t bufferLength, const Vector<CCuint>& region, const size_t offset, const WebCLImageDescriptor* descriptor)
+{
+    // The size in bytes of the region to be copied from buffer is width * height * bytes/image element.
+    size_t bytesCopied = region[0] * region[1]
+        * WebCLContext::bytesPerChannelType(descriptor->channelType())
+        * WebCLContext::numberOfChannelsForChannelOrder(descriptor->channelOrder());
+
+    return (offset+ bytesCopied) <= bufferLength;
 }
 
 bool isValidRegionForHostPtr(const Vector<size_t>& region, size_t length)

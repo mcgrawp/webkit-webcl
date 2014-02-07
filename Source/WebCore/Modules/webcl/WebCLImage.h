@@ -56,6 +56,10 @@ public:
 
     WebCLImageDescriptor* getInfo(ExceptionCode&);
     const CCImageFormat& imageFormat() const;
+    const WebCLImageDescriptor* imageDescriptor() const
+    {
+        return m_imageDescriptor.get();
+    }
 
 private:
     WebCLImage(WebCLContext*, ComputeMemoryObject*, PassRefPtr<WebCLImageDescriptor>);

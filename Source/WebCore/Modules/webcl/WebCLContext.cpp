@@ -360,7 +360,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, ImageData* srcPix
     return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, hostPtr, ec);
 }
 
-static unsigned numberOfChannelsForChannelOrder(CCenum order)
+unsigned WebCLContext::numberOfChannelsForChannelOrder(CCenum order)
 {
     switch(order) {
     case ComputeContext::R:
@@ -386,7 +386,7 @@ static unsigned numberOfChannelsForChannelOrder(CCenum order)
     return 0;
 }
 
-static unsigned bytesPerChannelType(CCenum channelType)
+unsigned WebCLContext::bytesPerChannelType(CCenum channelType)
 {
     switch(channelType) {
     case ComputeContext::SNORM_INT8:
