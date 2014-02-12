@@ -110,7 +110,9 @@ void WebCLKernelArgInfoProvider::ensureInfo()
         size_t openBrace = source.find("{", kernelDeclarationIndex + 6);
         kernelNameIndex = source.reverseFind(m_kernel->kernelName(), openBrace);
 
-        ASSERT(kernelNameIndex > kernelDeclarationIndex);
+        if (kernelNameIndex < kernelDeclarationIndex)
+            continue;
+
         if (kernelNameIndex != WTF::notFound)
             break;
     }
