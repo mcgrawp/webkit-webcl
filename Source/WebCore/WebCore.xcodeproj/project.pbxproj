@@ -1977,6 +1977,8 @@
 		758C8F8E178A12F200FAD9BA /* JSWorkerContextWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 758C8F24178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.h */; };
 		7592F3A918872AE300FFEBC6 /* JSWebCLKernelArgInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7592F3A718872ADA00FFEBC6 /* JSWebCLKernelArgInfo.cpp */; };
 		7592F3AA18872AEE00FFEBC6 /* JSWebCLKernelArgInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 7592F3A818872ADA00FFEBC6 /* JSWebCLKernelArgInfo.h */; };
+		75B5617A18AC75BA00C1EB58 /* ComputeSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B5617818AC75A800C1EB58 /* ComputeSampler.h */; };
+		75B5617B18AC75C600C1EB58 /* ComputeSamplerCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B5617918AC75B700C1EB58 /* ComputeSamplerCL.cpp */; };
 		75D7FFD318774FF900FAE029 /* ComputeKernelCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D7FFD11877444400FAE029 /* ComputeKernelCL.cpp */; };
 		75F40FAE1875FE4B0052EE69 /* ComputeKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F40FAD1875FE460052EE69 /* ComputeKernel.h */; };
 		75F40FB0187605820052EE69 /* ComputeProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F40FAF187605790052EE69 /* ComputeProgram.h */; };
@@ -8525,6 +8527,8 @@
 		758C8F24178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContextWebCLEnvironment.h; sourceTree = "<group>"; };
 		7592F3A718872ADA00FFEBC6 /* JSWebCLKernelArgInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLKernelArgInfo.cpp; sourceTree = "<group>"; };
 		7592F3A818872ADA00FFEBC6 /* JSWebCLKernelArgInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLKernelArgInfo.h; sourceTree = "<group>"; };
+		75B5617818AC75A800C1EB58 /* ComputeSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeSampler.h; sourceTree = "<group>"; };
+		75B5617918AC75B700C1EB58 /* ComputeSamplerCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeSamplerCL.cpp; sourceTree = "<group>"; };
 		75D7FFD11877444400FAE029 /* ComputeKernelCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeKernelCL.cpp; sourceTree = "<group>"; };
 		75F40FAD1875FE460052EE69 /* ComputeKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeKernel.h; sourceTree = "<group>"; };
 		75F40FAF187605790052EE69 /* ComputeProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeProgram.h; sourceTree = "<group>"; };
@@ -15154,6 +15158,7 @@
 		758C8EEA17887BA000FAD9BA /* opencl */ = {
 			isa = PBXGroup;
 			children = (
+				75B5617918AC75B700C1EB58 /* ComputeSamplerCL.cpp */,
 				750E58B518A3E03A001C37AE /* ComputeMemoryObjectCL.cpp */,
 				75F95032188B28040090E6BE /* ComputeEventCL.cpp */,
 				75D7FFD11877444400FAE029 /* ComputeKernelCL.cpp */,
@@ -19623,6 +19628,7 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				75B5617818AC75A800C1EB58 /* ComputeSampler.h */,
 				750E58B318A3DF47001C37AE /* ComputeMemoryObject.h */,
 				75F95030188B27E10090E6BE /* ComputeEvent.h */,
 				75F40FAF187605790052EE69 /* ComputeProgram.h */,
@@ -22109,6 +22115,7 @@
 				81F65FF613788FAA00FF6F2D /* DragState.h in Headers */,
 				498770DC1242C535002226BA /* DrawingBuffer.h in Headers */,
 				E1BA66F11742BD8600C20251 /* DynamicLinkerInterposing.h in Headers */,
+				75B5617A18AC75BA00C1EB58 /* ComputeSampler.h in Headers */,
 				FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */,
 				FD537357137B653B00008DCE /* DynamicsCompressorKernel.h in Headers */,
 				FD6ED2C4136B8E42003CF072 /* DynamicsCompressorNode.h in Headers */,
@@ -25474,6 +25481,7 @@
 				B2C3DA600D006CD600EF6F26 /* Font.cpp in Sources */,
 				B2C3DA620D006CD600EF6F26 /* FontCache.cpp in Sources */,
 				B2AFFC7C0D00A5C10030074D /* FontCacheMac.mm in Sources */,
+				75B5617B18AC75C600C1EB58 /* ComputeSamplerCL.cpp in Sources */,
 				37C2360B1097EDED00EF9F72 /* FontComplexTextMac.cpp in Sources */,
 				B2AFFC7D0D00A5C10030074D /* FontCustomPlatformData.cpp in Sources */,
 				371F4F410D25B9AF00ECE0D5 /* FontData.cpp in Sources */,

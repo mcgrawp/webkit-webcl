@@ -31,11 +31,8 @@
 
 #include "WebCLSampler.h"
 
-#include "WebCLCommandQueue.h"
+#include "ComputeSampler.h"
 #include "WebCLContext.h"
-#include "WebCLImageDescriptor.h"
-#include "WebCLMemoryObject.h"
-#include "WebCLProgram.h"
 
 namespace WebCore {
 
@@ -47,17 +44,17 @@ WebCLSampler::~WebCLSampler()
 PassRefPtr<WebCLSampler> WebCLSampler::create(WebCLContext* context, CCbool normCoords, CCenum addressingMode, CCenum filterMode, ExceptionCode& ec)
 {
     CCerror error;
-    CCSampler ccSampler = context->computeContext()->createSampler(normCoords, addressingMode, filterMode, error);
-    if (!ccSampler) {
-        ASSERT(error != ComputeContext::SUCCESS);
+    ComputeSampler* computeSampler = context->computeContext()->createSampler(normCoords, addressingMode, filterMode, error);
+    if (error != ComputeContext::SUCCESS) {
+        delete computeSampler;
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return 0;
     }
 
-    return adoptRef(new WebCLSampler(context, ccSampler, normCoords, addressingMode, filterMode));
+    return adoptRef(new WebCLSampler(context, computeSampler, normCoords, addressingMode, filterMode));
 }
 
-WebCLSampler::WebCLSampler(WebCLContext* context, CCSampler sampler, CCbool normCoords, CCenum addressingMode, CCenum filterMode)
+WebCLSampler::WebCLSampler(WebCLContext* context, ComputeSampler* sampler, CCbool normCoords, CCenum addressingMode, CCenum filterMode)
     : WebCLObjectImpl(sampler)
     , m_normCoords(normCoords)
     , m_addressingMode(addressingMode)
@@ -93,8 +90,7 @@ WebCLGetInfo WebCLSampler::getInfo(CCenum infoType, ExceptionCode& ec)
 
 void WebCLSampler::releasePlatformObjectImpl()
 {
-    CCerror computeContextErrorCode = m_context->computeContext()->releaseSampler(platformObject());
-    ASSERT_UNUSED(computeContextErrorCode, computeContextErrorCode == ComputeContext::SUCCESS);
+    delete platformObject();
 }
 
 } // namespace WebCore

@@ -25,57 +25,31 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef ComputeKernel_h
-#define ComputeKernel_h
+#include "config.h"
+#include "ComputeSampler.h"
 
-#include "ComputeTypes.h"
-#include "ComputeTypesTraits.h"
-
-#include <wtf/text/WTFString.h>
+#include "ComputeContext.h"
 
 namespace WebCore {
 
-class ComputeMemoryObject;
-class ComputeProgram;
-class ComputeSampler;
-
-class ComputeKernel {
-public:
-    ComputeKernel(ComputeProgram*, const String& kernelName, CCerror&);
-    ComputeKernel(CCKernel);
-    ~ComputeKernel();
-
-    CCerror setKernelArg(CCuint argIndex, ComputeMemoryObject*);
-    CCerror setKernelArg(CCuint argIndex, ComputeSampler*);
-    CCerror setKernelArg(CCuint argIndex, size_t argSize, const void* argValue);
-
-    template <typename T>
-    CCerror getKernelInfo(CCKernelInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeKernel::getKernelInfoBase, m_kernel, infoType, data);
-    }
-    template <typename T>
-    CCerror getWorkGroupInfo(CCDeviceID device, CCKernelWorkGroupInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeKernel::getWorkGroupInfoBase, m_kernel, device, infoType, data);
-    }
-
-    CCKernel kernel() const
-    {
-        return m_kernel;
-    }
-
-    CCerror release();
-
-private:
-
-    static CCerror getKernelInfoBase(CCKernel, CCKernelInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getWorkGroupInfoBase(CCKernel, CCDeviceID, CCKernelWorkGroupInfoType, size_t, void *data, size_t* actualSize);
-private:
-
-    CCKernel m_kernel;
-};
-
+ComputeSampler::ComputeSampler(ComputeContext* context, CCbool normalizedCoords, CCAddressingMode addressingMode, CCFilterMode filterMode, CCerror& error)
+{
+    m_sampler = clCreateSampler(context->context(), normalizedCoords, addressingMode, filterMode, &error);
 }
 
-#endif
+ComputeSampler::~ComputeSampler()
+{
+    clReleaseSampler(m_sampler);
+}
+
+CCerror ComputeSampler::getSamplerInfoBase(CCSampler sampler, CCSamplerInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
+{
+    return clGetSamplerInfo(sampler, infoType, sizeOfData, data, retSize);
+}
+
+CCerror ComputeSampler::release()
+{
+    return clReleaseSampler(m_sampler);
+}
+
+}

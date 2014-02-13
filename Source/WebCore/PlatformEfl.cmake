@@ -278,6 +278,7 @@ if (ENABLE_WEBCL)
         platform/ComputeKernel.h
         platform/ComputeMemoryObject.h
         platform/ComputeProgram.h
+        platform/ComputeSampler.h
         platform/ComputeTypes.h
         platform/ComputeTypesTraits.h
         platform/opencl/ComputeCommandQueueCL.cpp
@@ -287,6 +288,7 @@ if (ENABLE_WEBCL)
         platform/opencl/ComputeKernelCL.cpp
         platform/opencl/ComputeMemoryObjectCL.cpp
         platform/opencl/ComputeProgramCL.cpp
+        platform/opencl/ComputeSamplerCL.cpp
   )
   list(APPEND WebCore_LIBRARIES
     ${OPENCL_LIBRARIES}

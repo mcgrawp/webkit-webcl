@@ -33,6 +33,7 @@
 #include "ComputeEvent.h"
 #include "ComputeMemoryObject.h"
 #include "ComputeProgram.h"
+#include "ComputeSampler.h"
 
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -421,9 +422,9 @@ ComputeMemoryObject* ComputeContext::createFromGLTexture2D(CCMemoryFlags flags, 
     return new ComputeMemoryObject(this, flags, textureTarget, mipLevel, texture, error);
 }
 
-CCSampler ComputeContext::createSampler(CCbool normalizedCoords, CCAddressingMode addressingMode, CCFilterMode filterMode, CCerror& error)
+ComputeSampler* ComputeContext::createSampler(CCbool normalizedCoords, CCAddressingMode addressingMode, CCFilterMode filterMode, CCerror& error)
 {
-    return clCreateSampler(m_clContext, normalizedCoords, addressingMode, filterMode, &error);
+    return new ComputeSampler(this, normalizedCoords, addressingMode, filterMode, error);
 }
 
 CCerror ComputeContext::supportedImageFormats(CCMemoryFlags type, CCMemoryObjectType imageType, Vector<CCImageFormat>& imageFormatsOut)
@@ -449,16 +450,6 @@ CCerror ComputeContext::getDeviceInfoBase(CCDeviceID deviceID, CCDeviceInfoType 
 CCerror ComputeContext::getPlatformInfoBase(CCPlatformID platformID, CCPlatformInfoType infoType, size_t sizeOfData, void* data, size_t *retSize)
 {
    return clGetPlatformInfo(platformID, infoType, sizeOfData, data, retSize);
-}
-
-CCerror ComputeContext::getSamplerInfoBase(CCSampler sampler, CCSamplerInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
-{
-    return clGetSamplerInfo(sampler, infoType, sizeOfData, data, retSize);
-}
-
-CCerror ComputeContext::releaseSampler(CCSampler sampler)
-{
-    return clReleaseSampler(sampler);
 }
 
 void ComputeContext::populatePropertiesForInteroperabilityWithGL(Vector<CCContextProperties>& properties, PlatformGraphicsContext3D context3D)

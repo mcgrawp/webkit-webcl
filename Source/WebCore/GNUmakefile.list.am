@@ -5679,6 +5679,7 @@ webcore_platform_sources += \
     Source/WebCore/platform/ComputeKernel.h \
     Source/WebCore/platform/ComputeMemoryObject.h \
     Source/WebCore/platform/ComputeProgram.h \
+    Source/WebCore/platform/ComputeSampler.h \
     Source/WebCore/platform/ComputeTypes.h \
     Source/WebCore/platform/ComputeTypesTraits.h \
     Source/WebCore/platform/opencl/ComputeCommandQueueCL.cpp \
@@ -5688,6 +5689,7 @@ webcore_platform_sources += \
     Source/WebCore/platform/opencl/ComputeKernelCL.cpp \
     Source/WebCore/platform/opencl/ComputeMemoryObjectCL.cpp \
     Source/WebCore/platform/opencl/ComputeProgramCL.cpp \
+    Source/WebCore/platform/opencl/ComputeSamplerCL.cpp \
 	Source/WebCore/platform/ScrollableArea.cpp \
 	Source/WebCore/platform/ScrollableArea.h \
 	Source/WebCore/platform/ScrollbarThemeClient.h \

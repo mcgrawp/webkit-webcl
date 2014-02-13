@@ -43,6 +43,7 @@ class ComputeCommandQueue;
 class ComputeEvent;
 class ComputeMemoryObject;
 class ComputeProgram;
+class ComputeSampler;
 
 class ComputeContext {
     WTF_MAKE_NONCOPYABLE(ComputeContext);
@@ -340,14 +341,13 @@ public:
     ComputeCommandQueue* createCommandQueue(CCDeviceID, CCCommandQueueProperties, CCerror&);
     ComputeProgram* createProgram(const String& programSource, CCerror&);
     ComputeEvent* createUserEvent(CCerror&);
+    ComputeSampler* createSampler(CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
 
     ComputeMemoryObject* createBuffer(CCMemoryFlags type, size_t, void* data, CCerror&);
     ComputeMemoryObject* createImage2D(CCMemoryFlags type, size_t width, size_t height, CCuint rowPitch, const CCImageFormat&, void* data, CCerror&);
     ComputeMemoryObject* createFromGLBuffer(CCMemoryFlags type, GLuint bufferId, CCerror&);
     ComputeMemoryObject* createFromGLRenderbuffer(CCMemoryFlags type, GC3Duint renderbufferId, CCerror&);
     ComputeMemoryObject* createFromGLTexture2D(CCMemoryFlags type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror&);
-
-    CCSampler createSampler(CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
 
     CCerror supportedImageFormats(CCMemoryFlags, CCMemoryObjectType, Vector<CCImageFormat>&);
 
@@ -361,13 +361,7 @@ public:
     {
         return getInfoHelper(ComputeContext::getPlatformInfoBase, platform, infoType, data);
     }
-    template <typename T>
-    static CCerror getSamplerInfo(CCSampler sampler, CCSamplerInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeContext::getSamplerInfoBase, sampler, infoType, data);
-    }
 
-    CCerror releaseSampler(CCSampler);
     CCContext context() const
     {
         return m_clContext;
@@ -379,7 +373,6 @@ public:
 private:
     static CCerror getDeviceInfoBase(CCDeviceID, CCDeviceInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getPlatformInfoBase(CCPlatformID, CCPlatformInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getSamplerInfoBase(CCSampler, CCSamplerInfoType, size_t, void *data, size_t* actualSize);
 
     CCContext m_clContext;
 };

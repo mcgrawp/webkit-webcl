@@ -30,6 +30,7 @@
 
 #include "ComputeMemoryObject.h"
 #include "ComputeProgram.h"
+#include "ComputeSampler.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -53,6 +54,12 @@ CCerror ComputeKernel::setKernelArg(CCuint argIndex, ComputeMemoryObject* memory
 {
     PlatformComputeObject computeMemoryObject = memoryObject->memoryObject();
     return clSetKernelArg(m_kernel, argIndex, sizeof(PlatformComputeObject), &computeMemoryObject);
+}
+
+CCerror ComputeKernel::setKernelArg(CCuint argIndex, ComputeSampler* sampler)
+{
+    CCSampler ccSampler = sampler->sampler();
+    return clSetKernelArg(m_kernel, argIndex, sizeof(CCSampler), &ccSampler);
 }
 
 CCerror ComputeKernel::setKernelArg(CCuint argIndex, size_t argSize, const void* argValue)

@@ -225,8 +225,8 @@ void WebCLKernel::setArg(CCuint index, WebCLSampler* sampler, ExceptionCode& ec)
         return;
     }
 
-    CCSampler ccSampler = sampler->platformObject();
-    CCerror err = platformObject()->setKernelArg(index, sizeof(CCSampler), &ccSampler);
+    ComputeSampler* computeSampler = sampler->platformObject();
+    CCerror err = platformObject()->setKernelArg(index, computeSampler);
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
 }
 

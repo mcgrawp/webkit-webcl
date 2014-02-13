@@ -25,55 +25,38 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef ComputeKernel_h
-#define ComputeKernel_h
+#ifndef ComputeSampler_h
+#define ComputeSampler_h
 
 #include "ComputeTypes.h"
 #include "ComputeTypesTraits.h"
 
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
-class ComputeMemoryObject;
-class ComputeProgram;
-class ComputeSampler;
+class ComputeContext;
 
-class ComputeKernel {
+class ComputeSampler {
 public:
-    ComputeKernel(ComputeProgram*, const String& kernelName, CCerror&);
-    ComputeKernel(CCKernel);
-    ~ComputeKernel();
+    ComputeSampler(ComputeContext*, CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
+    ~ComputeSampler();
 
-    CCerror setKernelArg(CCuint argIndex, ComputeMemoryObject*);
-    CCerror setKernelArg(CCuint argIndex, ComputeSampler*);
-    CCerror setKernelArg(CCuint argIndex, size_t argSize, const void* argValue);
-
-    template <typename T>
-    CCerror getKernelInfo(CCKernelInfoType infoType, T* data)
+    CCSampler sampler() const
     {
-        return getInfoHelper(ComputeKernel::getKernelInfoBase, m_kernel, infoType, data);
-    }
-    template <typename T>
-    CCerror getWorkGroupInfo(CCDeviceID device, CCKernelWorkGroupInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeKernel::getWorkGroupInfoBase, m_kernel, device, infoType, data);
+        return m_sampler;
     }
 
-    CCKernel kernel() const
+    template <typename T>
+    CCerror getSamplerInfo(CCSamplerInfoType infoType, T* data)
     {
-        return m_kernel;
+        return getInfoHelper(ComputeSampler::getSamplerInfoBase, m_sampler, infoType, data);
     }
 
     CCerror release();
 
 private:
+    static CCerror getSamplerInfoBase(CCSampler, CCSamplerInfoType, size_t, void *data, size_t* actualSize);
 
-    static CCerror getKernelInfoBase(CCKernel, CCKernelInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getWorkGroupInfoBase(CCKernel, CCDeviceID, CCKernelWorkGroupInfoType, size_t, void *data, size_t* actualSize);
-private:
-
-    CCKernel m_kernel;
+    CCSampler m_sampler;
 };
 
 }

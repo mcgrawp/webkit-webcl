@@ -34,16 +34,19 @@
 
 namespace WebCore {
 
+class ComputeSampler;
 class WebCLGetInfo;
 class WebCLContext;
 
-class WebCLSampler : public WebCLObjectImpl<CCSampler> {
+typedef ComputeSampler* ComputeSamplerPtr;
+class WebCLSampler : public WebCLObjectImpl<ComputeSamplerPtr> {
 public:
     virtual ~WebCLSampler();
     static PassRefPtr<WebCLSampler> create(WebCLContext*, CCbool, CCenum, CCenum, ExceptionCode&);
     WebCLGetInfo getInfo(CCenum, ExceptionCode&);
+
 private:
-    WebCLSampler(WebCLContext*, CCSampler, CCbool, CCenum, CCenum);
+    WebCLSampler(WebCLContext*, ComputeSampler*, CCbool, CCenum, CCenum);
     void releasePlatformObjectImpl();
 
     CCbool m_normCoords;
