@@ -251,6 +251,7 @@ typedef unsigned long CLuint;
             sequence<CLuint> dstOrigin,
             sequence<CLuint> region,
             [EnforceRange] CLuint bufferRowPitch,
+            [EnforceRange] CLuint bufferSlicePitch,
             HTMLCanvasElement dstCanvas,
             [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
             [Default=Undefined] optional WebCLEvent event);
