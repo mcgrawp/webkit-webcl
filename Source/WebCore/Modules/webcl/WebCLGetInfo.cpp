@@ -73,7 +73,7 @@ WebCLGetInfo::WebCLGetInfo(void* value)
     , m_voidPointer(value)
 {
 }
-WebCLGetInfo::WebCLGetInfo(PassRefPtr<Int32Array> value)
+WebCLGetInfo::WebCLGetInfo(const Vector<CCuint>& value)
     : m_type(kTypeWebCLIntArray)
     , m_webclIntArray(value)
 {
@@ -172,7 +172,7 @@ void* WebCLGetInfo::getVoidPointer() const
     return m_voidPointer;
 }
 
-PassRefPtr<Int32Array> WebCLGetInfo::getWebCLIntArray() const
+Vector<CCuint> WebCLGetInfo::getWebCLUintArray() const
 {
     ASSERT(getType() == kTypeWebCLIntArray);
     return m_webclIntArray;

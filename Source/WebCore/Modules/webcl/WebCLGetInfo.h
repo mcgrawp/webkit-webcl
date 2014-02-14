@@ -38,7 +38,6 @@
 #include "WebCLMemoryObject.h"
 #include "WebCLPlatform.h"
 #include "WebCLProgram.h"
-#include <wtf/Int32Array.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -80,7 +79,7 @@ public:
     explicit WebCLGetInfo(CCulong value);
     explicit WebCLGetInfo(void* value);
     explicit WebCLGetInfo(const Vector<RefPtr<WebCLDevice> >& value);
-    explicit WebCLGetInfo(PassRefPtr<Int32Array> value);
+    explicit WebCLGetInfo(const Vector<CCuint>& value);
     explicit WebCLGetInfo(WebCLImageDescriptor* value);
     explicit WebCLGetInfo(WebCLProgram* value);
     explicit WebCLGetInfo(WebCLContext* value);
@@ -100,7 +99,7 @@ public:
     CCenum getEnum() const;
     void* getVoidPointer() const;
     PassRefPtr<WebCLImageDescriptor> getWebCLImageDescriptor() const;
-    PassRefPtr<Int32Array> getWebCLIntArray() const;
+    Vector<CCuint> getWebCLUintArray() const;
     PassRefPtr<WebCLProgram> getWebCLProgram() const;
     PassRefPtr<WebCLContext> getWebCLContext() const;
     PassRefPtr<WebCLCommandQueue> getWebCLCommandQueue() const;
@@ -119,7 +118,7 @@ private:
     CCulong m_unsignedLong;
     void* m_voidPointer;
     RefPtr<WebCLImageDescriptor> m_webclImageDescriptor;
-    RefPtr<Int32Array> m_webclIntArray;
+    Vector<CCuint> m_webclIntArray;
     RefPtr<WebCLProgram> m_webclProgram;
     RefPtr<WebCLContext> m_webclContext;
     RefPtr<WebCLCommandQueue> m_webCLCommandQueue;

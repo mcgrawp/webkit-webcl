@@ -89,10 +89,10 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
         Vector<size_t> workItemSizes;
         err = ComputeContext::getDeviceInfo(platformObject(), infoType, &workItemSizes);
         if (err == ComputeContext::SUCCESS) {
-            int values[3] = {0, 0, 0};
+            Vector<CCuint, 3> values;
             for (size_t i = 0; i < workItemSizes.size(); ++i)
-                values[i] = (CCuint) workItemSizes[i];
-            return WebCLGetInfo(Int32Array::create(values, 3));
+                values.append(workItemSizes[i]);
+            return WebCLGetInfo(values);
         }
         break;
     }

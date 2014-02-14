@@ -65,8 +65,13 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInf
         return jsNumber(info.getUnsignedInt());
     case WebCLGetInfo::kTypeUnsignedLong:
         return jsNumber(info.getUnsignedLong());
-    case WebCLGetInfo::kTypeWebCLIntArray:
-        return toJS(exec, globalObject, info.getWebCLIntArray());
+    case WebCLGetInfo::kTypeWebCLIntArray: {
+        MarkedArgumentBuffer list;
+        Vector<CCuint> value = info.getWebCLUintArray();
+        for (size_t i = 0; i < value.size(); ++i)
+            list.append(jsNumber(value[i]));
+        return constructArray(exec, 0, globalObject, list);
+    }
     case WebCLGetInfo::kTypeWebCLImageDescriptor:
         return toJS(exec, globalObject, info.getWebCLImageDescriptor());
     case WebCLGetInfo::kTypeWebCLProgram:

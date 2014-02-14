@@ -165,10 +165,10 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
         Vector<size_t> workGroupSize;
         err = platformObject()->getWorkGroupInfo(ccDevice, paramName, &workGroupSize);
         if (err == ComputeContext::SUCCESS) {
-            RefPtr<Int32Array> values = Int32Array::create(3);
-            for (int i = 0; i < 3; i++)
-                values->set(i, workGroupSize[i]);
-            return WebCLGetInfo(values.release());
+            Vector<CCuint, 3> values;
+            for (size_t i = 0; i < workGroupSize.size(); i++)
+                values.append(workGroupSize[i]);
+            return WebCLGetInfo(values);
         }
         break;
     }
