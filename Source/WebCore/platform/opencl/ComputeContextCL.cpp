@@ -468,4 +468,20 @@ void ComputeContext::populatePropertiesForInteroperabilityWithGL(Vector<CCContex
 #endif
 }
 
+CCerror ComputeContext::CCPackImageData(Image* image, GraphicsContext3D::ImageHtmlDomSource domSource, unsigned width, unsigned height, Vector<uint8_t>& data)
+{
+    GraphicsContext3D::ImageExtractor imageExtractor(image, domSource, false /* non-premultiplied alpha*/, false);
+    if (!imageExtractor.extractSucceeded())
+        return INVALID_HOST_PTR;
+
+    GraphicsContext3D::DataFormat sourceDataFormat = imageExtractor.imageSourceFormat();
+    GraphicsContext3D::AlphaOp alphaOp = imageExtractor.imageAlphaOp();
+    const void* imagePixelData = imageExtractor.imagePixelData();
+    unsigned imageSourceUnpackAlignment = imageExtractor.imageSourceUnpackAlignment();
+
+    if (GraphicsContext3D::packImageData(image, imagePixelData, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, false /* flipY */, alphaOp, sourceDataFormat, width, height, imageSourceUnpackAlignment, data))
+        return SUCCESS;
+    return INVALID_HOST_PTR;
+}
+
 }

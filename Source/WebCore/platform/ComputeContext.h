@@ -369,6 +369,10 @@ public:
 
     static void populatePropertiesForInteroperabilityWithGL(Vector<CCContextProperties>&, PlatformGraphicsContext3D);
 
+    // Using GraphicsContext3D::packImageData for HTML image extension
+    // The source pixel format is treated as 32-bit RGBA (8-bits per component) with non-premultiplied alpha, regardless of the source
+    static CCerror CCPackImageData(Image*, GraphicsContext3D::ImageHtmlDomSource, unsigned width, unsigned height, Vector<uint8_t>&);
+
     // XXX: Create a Pimpl implementation
 private:
     static CCerror getDeviceInfoBase(CCDeviceID, CCDeviceInfoType, size_t, void *data, size_t* actualSize);
