@@ -77,8 +77,10 @@ WebCLGetInfo WebCLMemoryObject::getInfo(CCenum paramName, ExceptionCode& ec)
     case ComputeContext::MEM_FLAGS: {
         CCMemoryFlags memoryFlags = 0;
         err = platformObject()->getMemoryObjectInfo(paramName, &memoryFlags);
+        // Masking out CL_MEM_COPY_HOST_PTR value obtained from OpenCL and expose only MEM_FLAG value used to create memory object, to JS.
+        CCenum memCopyHostPtrMask = 0x07;
         if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<CCenum>(memoryFlags));
+            return WebCLGetInfo(static_cast<CCenum>(memoryFlags & memCopyHostPtrMask));
         break;
         }
     case ComputeContext::MEM_SIZE:

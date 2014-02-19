@@ -167,7 +167,7 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
         if (err == ComputeContext::SUCCESS) {
             Vector<CCuint, 3> values;
             for (size_t i = 0; i < workGroupSize.size(); i++)
-                values.append(workGroupSize[i]);
+                values.uncheckedAppend(workGroupSize[i]);
             return WebCLGetInfo(values);
         }
         break;

@@ -91,7 +91,7 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
         if (err == ComputeContext::SUCCESS) {
             Vector<CCuint, 3> values;
             for (size_t i = 0; i < workItemSizes.size(); ++i)
-                values.append(workItemSizes[i]);
+                values.uncheckedAppend(workItemSizes[i]);
             return WebCLGetInfo(values);
         }
         break;
