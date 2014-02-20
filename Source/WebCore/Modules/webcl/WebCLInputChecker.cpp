@@ -264,19 +264,36 @@ bool isValidDataSizeForArrayBufferView(unsigned long size, ArrayBufferView* arra
 
 bool isValidRegionForMemoryObject(const Vector<size_t>& origin, const Vector<size_t>& region, size_t rowPitch, size_t slicePitch, size_t length)
 {
-    // If row_pitch is 0, row_pitch is computed as region[0].
-    rowPitch = rowPitch ? rowPitch : region[0];
-
-    // If slice_pitch is 0, slice_pitch is computed as region[1] * row_pitch.
-    slicePitch = slicePitch ? slicePitch : (region[1] * rowPitch);
-
     size_t regionArea = region[0] * region[1] * region[2];
     if (!regionArea)
         return false;
 
+    if (rowPitch) {
+        // Validate User given rowPitch, region read = rowPitch * number of rows * number of slices.
+        // The rowPitch is used to move the pointer to the next read the next row. By default its set to
+        // row width. With user sent values we must ensure the read is within the bounds.
+        size_t maximumReadPtrValue = rowPitch * region[1] * region[2];
+        if (maximumReadPtrValue > length)
+            return false;
+    }
+    if (slicePitch) {
+        // Validate User given slicePitch , region read = slicePitch * number of slices.
+        // The slicePitch is used to move the pointer for the next slice. Default value is size of slice
+        // in bytes ( region[1] * rowPitch). Must be validated identical to rowPitch to avoid out of bound memory access.
+        size_t maximumReadPtrValue = slicePitch * region[2];
+        if (maximumReadPtrValue > length)
+            return false;
+    }
+
+    // If row_pitch is 0, row_pitch is computed as region[0].
+    rowPitch = rowPitch ? rowPitch : region[0];
+    // If slice_pitch is 0, slice_pitch is computed as region[1] * row_pitch.
+    slicePitch = slicePitch ? slicePitch : (region[1] * rowPitch);
+
     // The offset in bytes is computed as origin[2] * host_slice_pitch + origin[1] * rowPitch + origin[0].
     size_t offset = origin[2] * slicePitch + origin[1]  * rowPitch + origin[0];
-    return  (regionArea + offset) <= length;
+
+    return (regionArea + offset) <= length;
 }
 
 bool isValidRegionForImage(WebCLImage* image, const Vector<CCuint>& origin, const Vector<CCuint>& region)

@@ -288,8 +288,8 @@ void WebCLCommandQueue::enqueueWriteBufferRectBase(WebCLBuffer* buffer, CCbool b
     hostOriginCopy.appendVector(hostOrigin);
     regionCopy.appendVector(region);
 
-    if (!WebCLInputChecker::isValidRegionForMemoryObject(hostOriginCopy, regionCopy, hostRowPitch, hostSlicePitch, buffer->sizeInBytes())
-        || !WebCLInputChecker::isValidRegionForHostPtr(regionCopy, hostPtrLength)) {
+    if (!WebCLInputChecker::isValidRegionForMemoryObject(bufferOriginCopy, regionCopy, bufferRowPitch, bufferSlicePitch, buffer->sizeInBytes())
+        || !WebCLInputChecker::isValidRegionForMemoryObject(hostOriginCopy, regionCopy, hostRowPitch, hostSlicePitch, hostPtrLength)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -568,7 +568,7 @@ void WebCLCommandQueue::enqueueReadBufferRectBase(WebCLBuffer* buffer, CCbool bl
     hostOriginCopy.appendVector(hostOrigin);
     regionCopy.appendVector(region);
 
-    if (!WebCLInputChecker::isValidRegionForHostPtr(regionCopy, hostPtrLength)
+    if (!WebCLInputChecker::isValidRegionForMemoryObject(hostOriginCopy, regionCopy, hostRowPitch, hostSlicePitch, hostPtrLength)
         || !WebCLInputChecker::isValidRegionForMemoryObject(bufferOriginCopy, regionCopy, bufferRowPitch, bufferSlicePitch, buffer->sizeInBytes())) {
         ec = WebCLException::INVALID_VALUE;
         return;
