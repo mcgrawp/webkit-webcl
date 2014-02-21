@@ -56,7 +56,7 @@ bool isValidChannelOrder(unsigned long);
 bool isValidCommandQueueProperty(unsigned long);
 bool isValidGLTextureInfo(unsigned long);
 bool isValidKernelArgIndex(WebCLKernel*, unsigned index);
-bool isValidPitchForArrayBufferView(unsigned long, ArrayBufferView*);
+bool isValidDataSizeForArrayBufferView(unsigned long size, ArrayBufferView*);
 bool isValidRegionForMemoryObject(const Vector<size_t>& origin, const Vector<size_t>& region, size_t rowPitch, size_t slicePitch, size_t length);
 bool isValidRegionForHostPtr(const Vector<size_t>& region, size_t length);
 bool isValidRegionForImage(WebCLImage*, const Vector<CCuint>& origin, const Vector<CCuint>& region);

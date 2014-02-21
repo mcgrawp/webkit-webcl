@@ -198,7 +198,7 @@ void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool block
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, CCuint numBytes, ArrayBufferView* ptr,
     const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(numBytes, ptr)) {
+    if (!ptr || !WebCLInputChecker::isValidDataSizeForArrayBufferView(numBytes, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -313,12 +313,12 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool block
     const Vector<CCuint>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
     ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)) {
+    if (!ptr || !WebCLInputChecker::isValidDataSizeForArrayBufferView(hostRowPitch, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
 
-    if (!WebCLInputChecker::isValidPitchForArrayBufferView(hostSlicePitch, ptr)) {
+    if (!WebCLInputChecker::isValidDataSizeForArrayBufferView(hostSlicePitch, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -423,7 +423,7 @@ void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blocki
 void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRead, CCuint offset, CCuint numBytes,
     ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(numBytes, ptr)) {
+    if (!ptr || !WebCLInputChecker::isValidDataSizeForArrayBufferView(numBytes, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -508,7 +508,7 @@ void WebCLCommandQueue::enqueueReadImageBase(WebCLImage* image, CCbool blockingR
 void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead, const Vector<CCuint>& origin, const Vector<CCuint>& region,
     CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)) {
+    if (!ptr || !WebCLInputChecker::isValidDataSizeForArrayBufferView(hostRowPitch, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -594,8 +594,8 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blocki
     CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
     ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)
-        || !WebCLInputChecker::isValidPitchForArrayBufferView(hostSlicePitch, ptr)) {
+    if (!ptr || !WebCLInputChecker::isValidDataSizeForArrayBufferView(hostRowPitch, ptr)
+        || !WebCLInputChecker::isValidDataSizeForArrayBufferView(hostSlicePitch, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -782,7 +782,7 @@ void WebCLCommandQueue::enqueueWriteImageBase(WebCLImage* image, CCbool blocking
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
     CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    if (!ptr || !WebCLInputChecker::isValidPitchForArrayBufferView(hostRowPitch, ptr)) {
+    if (!ptr || !WebCLInputChecker::isValidDataSizeForArrayBufferView(hostRowPitch, ptr)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }

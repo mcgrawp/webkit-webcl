@@ -231,7 +231,7 @@ bool isValidKernelArgIndex(WebCLKernel* kernel, unsigned index)
     return index < kernel->numberOfArguments();
 }
 
-bool isValidPitchForArrayBufferView(unsigned long pitch, ArrayBufferView* arrayBufferView)
+bool isValidDataSizeForArrayBufferView(unsigned long size, ArrayBufferView* arrayBufferView)
 {
     ASSERT(arrayBufferView);
 
@@ -259,7 +259,7 @@ bool isValidPitchForArrayBufferView(unsigned long pitch, ArrayBufferView* arrayB
             return false;
     }
 
-    return !(pitch % bytesPerElement);
+    return !(size % bytesPerElement);
 }
 
 bool isValidRegionForMemoryObject(const Vector<size_t>& origin, const Vector<size_t>& region, size_t rowPitch, size_t slicePitch, size_t length)
