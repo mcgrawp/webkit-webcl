@@ -36,15 +36,15 @@ namespace WebCore {
 template <class T>
 inline bool WebCLExtensionsAccessor<T>::enableExtension(const String& name)
 {
-    if (equalIgnoringCase(name, "WEBCL_html_image"))
-        return true;
+    if (equalIgnoringCase(name, "WEBCL_html_image")) {
+        m_htmlImageSharing = true;
+        return m_htmlImageSharing;
+    }
     if (equalIgnoringCase(name, "KHR_gl_sharing")) {
 #if ENABLE(WEBGL)
         m_khrGLSharing = m_accessor ? ComputeExtensions::get().supports("cl_khr_gl_sharing", m_accessor)
                                     : ComputeExtensions::get().supports("cl_khr_gl_sharing");
         return m_khrGLSharing;
-#else
-    UNUSED_PARAM(name);
 #endif
     }
 
@@ -71,6 +71,18 @@ Vector<String> WebCLExtensionsAccessor<T>::getSupportedExtensions()
     }
 
     return result;
+}
+
+template <class T>
+bool WebCLExtensionsAccessor<T>::isEnabledExtension(const String& name) const
+{
+    if (equalIgnoringCase(name, "WEBCL_html_image"))
+        return m_htmlImageSharing;
+
+    if (equalIgnoringCase(name, "KHR_gl_sharing"))
+        return m_khrGLSharing;
+
+    return false;
 }
 
 template class WebCLExtensionsAccessor<CCPlatformID>;

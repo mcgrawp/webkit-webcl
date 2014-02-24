@@ -208,7 +208,10 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingW
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, ImageData* srcPixels,
     const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled(m_context, "WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
     void* hostPtr = 0;
     size_t pixelSize = 0;
     WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, ec);
@@ -221,7 +224,10 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingW
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, HTMLCanvasElement* srcCanvas,
     const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled(m_context, "WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
     void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, ec);
@@ -234,7 +240,10 @@ void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingW
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, HTMLImageElement* srcImage,
     const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled(m_context, "WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
     void* hostPtr = 0;
     size_t imageSize = 0;
     WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, imageSize, ec);
@@ -321,7 +330,10 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool block
     const Vector<CCuint>& hostOrigin, const Vector<CCuint>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch,
     ImageData* srcPixels, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled(m_context, "WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
     void* hostPtr = 0;
     size_t pixelSize = 0;
     WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, ec);
@@ -336,7 +348,10 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool block
     const Vector<CCuint>& hostOrigin, const Vector<CCuint>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch,
     HTMLCanvasElement* srcCanvas, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled(m_context, "WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
     void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, ec);
@@ -351,7 +366,10 @@ void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool block
     const Vector<CCuint>& hostOrigin, const Vector<CCuint>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch,
     HTMLImageElement* srcImage, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled(m_context, "WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
     void* hostPtr = 0;
     size_t imageSize = 0;
     WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, imageSize, ec);
@@ -416,7 +434,10 @@ void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRe
 void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRead, CCuint offset, CCuint numBytes,
     HTMLCanvasElement* dstCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled(m_context, "WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
 
     void* hostPtr = 0;
     size_t canvasSize = 0;
@@ -498,7 +519,10 @@ void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead,
 void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead, const Vector<CCuint>& origin, const Vector<CCuint>& region,
     HTMLCanvasElement* dstCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled(m_context, "WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
     void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, hostPtr, canvasSize, ec);
@@ -584,7 +608,10 @@ void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blocki
     const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin, const Vector<CCuint>& region,
     CCuint bufferRowPitch, CCuint bufferSlicePitch, HTMLCanvasElement* dstCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled(m_context, "WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
     void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, hostPtr, canvasSize, ec);
@@ -765,7 +792,10 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrit
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
     ImageData* srcPixels, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled(m_context, "WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
     void* hostPtr = 0;
     size_t pixelSize = 0;
     WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, ec);
@@ -778,7 +808,10 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrit
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
     HTMLCanvasElement* srcCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled(m_context, "WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
     void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, ec);
@@ -791,7 +824,10 @@ void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrit
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
     HTMLImageElement* srcImage , const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled(m_context, "WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
     void* hostPtr = 0;
     size_t imageSize = 0;
     WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, imageSize, ec);
@@ -1132,6 +1168,11 @@ void WebCLCommandQueue::releasePlatformObjectImpl()
 {
     delete platformObject();
 }
+
+bool WebCLCommandQueue::isExtensionEnabled(RefPtr<WebCLContext> context, const String& name)
+{
+    return context->isExtensionEnabled(name);
+};
 
 #if ENABLE(WEBGL)
 void WebCLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)

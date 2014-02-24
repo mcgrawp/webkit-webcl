@@ -87,6 +87,7 @@ static const char* const exceptionNames[] = {
     "INVALID_MIP_LEVEL",
     "INVALID_GLOBAL_WORK_SIZE",
     "INVALID_PROPERTY",
+    "WEBCL_EXTENSION_NOT_ENABLED",
     "WEBCL_IMPLEMENTATION_FAILURE",
 };
 // Messages are not proper
@@ -141,6 +142,7 @@ static const char* const exceptionDescriptions[] = {
     "WEBCL_IMPL_INVALID_MIP_LEVEL",
     "WEBCL_IMPL_INVALID_GLOBAL_WORK_SIZE",
     "WEBCL_IMPL_INVALID_PROPERTY",
+    "WEBCL_EXTENSION_NOT_ENABLED",
     "WEBCL_IMPLEMENTATION_FAILURE",
 };
 

@@ -33,6 +33,7 @@
 #include "WebCLDevice.h"
 #include "WebCLGetInfo.h"
 #include "WebCLInputChecker.h"
+#include "WebCLCommandQueue.h"
 #include "WebCLObject.h"
 
 namespace WebCore {
@@ -132,7 +133,11 @@ private:
 
     void releasePlatformObjectImpl();
 
+    bool isExtensionEnabled(const String& name) const;
+    friend bool WebCLCommandQueue::isExtensionEnabled(RefPtr<WebCLContext>, const String&);
+
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
+    WebCL* m_webCL;
     Vector<RefPtr<WebCLDevice> > m_devices;
 
     Vector<WeakPtr<WebCLObject> > m_descendantWebCLObjects;

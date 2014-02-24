@@ -110,6 +110,7 @@ PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, WebGLRenderingContex
 WebCLContext::WebCLContext(WebCL* webCL, ComputeContext* computeContext, const Vector<RefPtr<WebCLDevice> >& devices)
     : WebCLObjectImpl(computeContext)
     , m_videoCache(4) // FIXME: Why '4'?
+    , m_webCL(webCL)
     , m_devices(devices)
 {
     webCL->trackReleaseableWebCLObject(createWeakPtr());
@@ -134,6 +135,20 @@ WebCLGetInfo WebCLContext::getInfo(CCenum paramName, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
+bool WebCLContext::isExtensionEnabled(const String& name) const
+{
+    if (m_webCL->isEnabledExtension(name))
+        return true;
+
+    if (m_devices[0]->platform()->isEnabledExtension(name))
+        return true;
+
+    for (size_t i = 0; i < m_devices.size(); i++)
+        if (m_devices[i]->isEnabledExtension(name))
+            return true;
+
+    return false;
+}
 PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* device, CCenum properties, ExceptionCode& ec)
 {
     if (isPlatformObjectNeutralized()) {
@@ -225,7 +240,11 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint si
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, ImageData* srcPixels, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled("WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return 0;
+    }
+
     void* hostPtr = 0;
     size_t pixelSize = 0;
     WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, ec);
@@ -237,7 +256,10 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, ImageData
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled("WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return 0;
+    }
     void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, ec);
@@ -249,7 +271,10 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLCanva
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLImageElement* srcImage, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled("WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return 0;
+    }
     void* hostPtr = 0;
     size_t bufferSize = 0;
     WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, bufferSize, ec);
@@ -286,7 +311,10 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint widt
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement* srcCanvas, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled("WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return 0;
+    }
     void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, ec);
@@ -301,7 +329,10 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLImageElement* srcImage, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled("WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return 0;
+    }
     void* hostPtr = 0;
     size_t bufferSize = 0;
     WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, bufferSize, ec);
@@ -347,7 +378,10 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLVideoElement*
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, ImageData* srcPixels, ExceptionCode& ec)
 {
-    // FIXME :: Need to check if WEBCL_html_sharing is enabled.
+    if (!isExtensionEnabled("WEBCL_html_image")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return 0;
+    }
     void* hostPtr = 0;
     size_t pixelSize = 0;
     WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, ec);

@@ -43,7 +43,7 @@ public:
     }
 
     static const int WebCLExceptionOffset = 1300;
-    static const int WebCLExceptionMax = WebCLExceptionOffset + 50;
+    static const int WebCLExceptionMax = WebCLExceptionOffset + 51;
 
     enum WebCLExceptionCode {
         // setDOMException bails out earlier if 'ec' is equal to 0.
@@ -97,7 +97,8 @@ public:
         INVALID_MIP_LEVEL                        =  WebCLExceptionOffset + 47,
         INVALID_GLOBAL_WORK_SIZE                 =  WebCLExceptionOffset + 48,
         INVALID_PROPERTY                         =  WebCLExceptionOffset + 49,
-        WEBCL_IMPLEMENTATION_FAILURE             =  WebCLExceptionOffset + 50,
+        WEBCL_EXTENSION_NOT_ENABLED              =  WebCLExceptionOffset + 50,
+        WEBCL_IMPLEMENTATION_FAILURE             =  WebCLExceptionOffset + 51,
     };
 
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);

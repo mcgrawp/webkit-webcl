@@ -31,7 +31,6 @@
 #if ENABLE(WEBCL)
 
 #include "ComputeTypes.h"
-#include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
 #include "WebCLDevice.h"
 #include "WebCLImageDescriptor.h"
@@ -43,6 +42,8 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class WebCLCommandQueue;
 
 // A tagged union representing the result of get queries like
 // getParameter (encompassing getBooleanv, getIntegerv, getFloatv) and

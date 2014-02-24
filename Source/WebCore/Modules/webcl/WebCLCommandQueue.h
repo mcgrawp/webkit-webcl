@@ -130,6 +130,7 @@ public:
 #endif
 
     WebCLContext* context() const { return m_context.get(); }
+    bool isExtensionEnabled(RefPtr<WebCLContext> context, const String& name);
 
 private:
     WebCLCommandQueue(WebCLContext*, ComputeCommandQueue*, WebCLDevice*);
