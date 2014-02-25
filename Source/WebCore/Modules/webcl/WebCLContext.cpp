@@ -116,6 +116,14 @@ WebCLContext::WebCLContext(WebCL* webCL, ComputeContext* computeContext, const V
     , m_memoryInitializer(this)
 {
     webCL->trackReleaseableWebCLObject(createWeakPtr());
+    // Cache the extension state to avoid enabling extension after the context creation.
+    webCL->getEnabledExtensions(m_enabledExtensions);
+
+    m_devices[0]->platform()->getEnabledExtensions(m_enabledExtensions);
+
+    for (size_t i = 0; i < m_devices.size(); i++)
+        m_devices[i]->getEnabledExtensions(m_enabledExtensions);
+
 }
 
 WebCLGetInfo WebCLContext::getInfo(CCenum paramName, ExceptionCode& ec)
@@ -139,18 +147,9 @@ WebCLGetInfo WebCLContext::getInfo(CCenum paramName, ExceptionCode& ec)
 
 bool WebCLContext::isExtensionEnabled(const String& name) const
 {
-    if (m_webCL->isEnabledExtension(name))
-        return true;
-
-    if (m_devices[0]->platform()->isEnabledExtension(name))
-        return true;
-
-    for (size_t i = 0; i < m_devices.size(); i++)
-        if (m_devices[i]->isEnabledExtension(name))
-            return true;
-
-    return false;
+    return m_enabledExtensions.contains(name);
 }
+
 PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* device, CCenum properties, ExceptionCode& ec)
 {
     if (isPlatformObjectNeutralized()) {

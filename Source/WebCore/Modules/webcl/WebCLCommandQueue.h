@@ -130,7 +130,7 @@ public:
 #endif
 
     WebCLContext* context() const { return m_context.get(); }
-    bool isExtensionEnabled(RefPtr<WebCLContext> context, const String& name);
+    bool isExtensionEnabled(WebCLContext*, const String& name);
 
     WeakPtr<WebCLCommandQueue> createWeakPtrForLazyInitialization() { return m_weakFactoryForLazyInitialization.createWeakPtr(); }
 

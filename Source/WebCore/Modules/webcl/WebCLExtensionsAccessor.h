@@ -32,6 +32,7 @@
 
 #include "ComputeExtensions.h"
 #include "ExceptionCode.h"
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
@@ -54,18 +55,16 @@ public:
     bool enableExtension(const String& name);
     Vector<String> getSupportedExtensions();
     bool isEnabledExtension(const String& name) const;
+    void getEnabledExtensions(HashSet<String>&) const;
 
 protected:
     WebCLExtensionsAccessor(T object)
         : m_accessor(object)
-        , m_khrGLSharing(false)
-        , m_htmlImageSharing(false)
     {
     }
     T m_accessor;
 
-    bool m_khrGLSharing;
-    bool m_htmlImageSharing;
+    HashSet<String> m_enabledExtensions;
 };
 
 } // WebCore

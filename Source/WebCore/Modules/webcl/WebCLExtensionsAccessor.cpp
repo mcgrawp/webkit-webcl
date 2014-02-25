@@ -37,17 +37,18 @@ template <class T>
 inline bool WebCLExtensionsAccessor<T>::enableExtension(const String& name)
 {
     if (equalIgnoringCase(name, "WEBCL_html_image")) {
-        m_htmlImageSharing = true;
-        return m_htmlImageSharing;
+        m_enabledExtensions.add("WEBCL_html_image");
+        return true;
     }
     if (equalIgnoringCase(name, "KHR_gl_sharing")) {
 #if ENABLE(WEBGL)
-        m_khrGLSharing = m_accessor ? ComputeExtensions::get().supports("cl_khr_gl_sharing", m_accessor)
+        bool khrGLSharing = m_accessor ? ComputeExtensions::get().supports("cl_khr_gl_sharing", m_accessor)
                                     : ComputeExtensions::get().supports("cl_khr_gl_sharing");
-        return m_khrGLSharing;
+        if (khrGLSharing)
+            m_enabledExtensions.add("KHR_gl_sharing");
+        return khrGLSharing;
 #endif
     }
-
     return false;
 }
 
@@ -74,15 +75,16 @@ Vector<String> WebCLExtensionsAccessor<T>::getSupportedExtensions()
 }
 
 template <class T>
+void WebCLExtensionsAccessor<T>::getEnabledExtensions(HashSet<String>& extensions) const
+{
+    for (HashSet<String>::iterator i = m_enabledExtensions.begin(); i != m_enabledExtensions.end(); ++i)
+        extensions.add(*i);
+}
+
+template <class T>
 bool WebCLExtensionsAccessor<T>::isEnabledExtension(const String& name) const
 {
-    if (equalIgnoringCase(name, "WEBCL_html_image"))
-        return m_htmlImageSharing;
-
-    if (equalIgnoringCase(name, "KHR_gl_sharing"))
-        return m_khrGLSharing;
-
-    return false;
+    return m_enabledExtensions.contains(name);
 }
 
 template class WebCLExtensionsAccessor<CCPlatformID>;

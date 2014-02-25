@@ -36,6 +36,7 @@
 #include "WebCLInputChecker.h"
 #include "WebCLMemoryInitializer.h"
 #include "WebCLObject.h"
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
@@ -133,7 +134,7 @@ private:
     PassRefPtr<WebCLBuffer> createBufferBase(CCenum memoryFlags, CCuint size, void* data, ExceptionCode&);
 
     bool isExtensionEnabled(const String& name) const;
-    friend bool WebCLCommandQueue::isExtensionEnabled(RefPtr<WebCLContext>, const String&);
+    friend bool WebCLCommandQueue::isExtensionEnabled(WebCLContext*, const String&);
 
     void postCreateCommandQueue(WebCLCommandQueue*, ExceptionCode&);
     void postCreateBuffer(WebCLBuffer*, ExceptionCode&);
@@ -147,6 +148,7 @@ private:
     Vector<WeakPtr<WebCLObject> > m_descendantWebCLObjects;
 
     WebCLMemoryInitializer m_memoryInitializer;
+    HashSet<String> m_enabledExtensions;
 };
 
 } // namespace WebCore
