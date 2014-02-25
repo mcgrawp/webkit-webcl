@@ -461,23 +461,25 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescrip
     CCenum channelOrder = descriptor->channelOrder();
     CCenum channelType = descriptor->channelType();
 
-    if (rowPitch && !hostPtr) {
-        ec = WebCLException::INVALID_IMAGE_SIZE;
-        return 0;
-    }
-
     if (!WebCLInputChecker::isValidChannelOrder(channelOrder) || !WebCLInputChecker::isValidChannelType(channelType)) {
         ec = WebCLException::INVALID_IMAGE_FORMAT_DESCRIPTOR;
         return 0;
     }
-
     unsigned numberOfChannels = numberOfChannelsForChannelOrder(channelOrder);
     unsigned bytesPerChannel = bytesPerChannelType(channelType);
+
+    // If rowPitch is specified, must be hostPtr != 0 & rowPitch > width * bytesPerPixel.
+    if (rowPitch && (!hostPtr || rowPitch < (width * numberOfChannels * bytesPerChannel))) {
+        ec = WebCLException::INVALID_IMAGE_SIZE;
+        return 0;
+    }
 
     RefPtr<ArrayBuffer> buffer;
     if (hostPtr) {
         unsigned byteLength = hostPtr->byteLength();
-        if (byteLength < (rowPitch * height)
+        // Validate user sent rowPitch to avoid out of bound access of hostPtr.
+        // When rowPitch = 0, rowPitch = width * bytes/pixel, which will be checked by 2nd expression.
+        if ((rowPitch && byteLength < (rowPitch * height))
             || byteLength < (width * height * numberOfChannels * bytesPerChannel)) {
             ec = WebCLException::INVALID_HOST_PTR;
             return 0;
