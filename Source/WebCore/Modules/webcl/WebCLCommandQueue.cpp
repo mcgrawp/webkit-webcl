@@ -46,6 +46,7 @@
 #include "WebCLMemoryObject.h"
 #include "WebCLProgram.h"
 #include <runtime/Int32Array.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -73,6 +74,7 @@ WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, ComputeCommandQueue 
     , m_context(context)
     , m_device(webCLDevice)
     , m_weakFactoryForLazyInitialization(this)
+    , m_isQueueBlockedByFinish(false)
 {
     context->trackReleaseableWebCLObject(createWeakPtr());
 }
@@ -695,17 +697,55 @@ void WebCLCommandQueue::enqueueWaitForEvents(const Vector<RefPtr<WebCLEvent> >& 
     setExceptionFromComputeErrorCode(error, exception);
 }
 
-void WebCLCommandQueue::finish(ExceptionObject& exception)
+void WebCLCommandQueue::finish(PassRefPtr<WebCLCallback> callback, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
+    if (callback) {
+        m_finishCallBack = callback;
+        // Block the Queue, any more calling any operation on the queue will cause exception.
+        m_isQueueBlockedByFinish = true;
+        WTF::ThreadIdentifier threadID = createThread(WebCLCommandQueue::threadStarterWebCL, this, "webCLCommandQueueFinish");
+        detachThread(threadID);
+    } else
+        finishImpl(exception);
+}
+
+void WebCLCommandQueue::threadStarterWebCL(void* data)
+{
+    ExceptionObject exception;
+    WebCLCommandQueue* commandQueue = reinterpret_cast<WebCLCommandQueue*>(data);
+    if (commandQueue)
+        commandQueue->finishImpl(exception);
+
+    if (willThrowException(exception))
+        return;
+    // On the new Thread, wait for finishImpl() AKA OpenCL clFinish to complete.
+    // And then call the callback method on the Main Thread.
+    if (!isMainThread()) {
+        callOnMainThread(callbackProxyOnMainThread, commandQueue);
+        return;
+    }
+    callbackProxyOnMainThread(commandQueue);
+}
+
+void WebCLCommandQueue::finishImpl(ExceptionObject& exception)
+{
     CCerror computeContextError = platformObject()->finish();
     setExceptionFromComputeErrorCode(computeContextError, exception);
 }
 
+void WebCLCommandQueue::callbackProxyOnMainThread(void* userData)
+{
+    WebCLCommandQueue* commandQueue = reinterpret_cast<WebCLCommandQueue*>(userData);
+    ASSERT(commandQueue->m_finishCallBack);
+    commandQueue->m_finishCallBack->handleEvent();
+    // Finish() call returned, unblock the queue.
+    commandQueue->m_isQueueBlockedByFinish = false;
+}
 
 void WebCLCommandQueue::flush(ExceptionObject& exception)
 {

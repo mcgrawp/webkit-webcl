@@ -46,6 +46,7 @@ class WebCLGetInfo;
 class WebCLImage;
 class WebCLKernel;
 class WebCLMemoryObject;
+class WebCLCallback;
 
 typedef ComputeCommandQueue* ComputeCommandQueuePtr;
 class WebCLCommandQueue : public WebCLObjectImpl<ComputeCommandQueuePtr> {
@@ -117,7 +118,7 @@ public:
 
     void enqueueWaitForEvents(const Vector<RefPtr<WebCLEvent> >&, ExceptionObject&);
 
-    void finish(ExceptionObject&);
+    void finish(PassRefPtr<WebCLCallback>, ExceptionObject&);
     void flush(ExceptionObject&);
 
     void enqueueBarrier(ExceptionObject&);
@@ -133,6 +134,12 @@ public:
     bool isExtensionEnabled(WebCLContext*, const String& name) const;
 
     WeakPtr<WebCLCommandQueue> createWeakPtrForLazyInitialization() { return m_weakFactoryForLazyInitialization.createWeakPtr(); }
+
+    // Override for isPlatformObjectNeutralized() to add check for queue blocked by Async Finish() call.
+    bool isPlatformObjectNeutralized() const
+    {
+        return WebCLObjectImpl::isPlatformObjectNeutralized() || m_isQueueBlockedByFinish;
+    };
 
 private:
     WebCLCommandQueue(WebCLContext*, ComputeCommandQueue*, WebCLDevice*);
@@ -151,6 +158,10 @@ private:
     void enqueueWriteImageBase(WebCLImage*, CCbool blockingWrite, const Vector<unsigned>&, const Vector<unsigned>&, CCuint hostRowPitch, void* hostPtr,
         size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionObject&);
 
+    static void threadStarterWebCL(void* data);
+    static void callbackProxyOnMainThread(void* userData);
+    void finishImpl(ExceptionObject&);
+
     typedef enum {AcceptUserEvent, DoNotAcceptUserEvent} WebCLToCCEventsFilterCriteria;
     void ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >&, Vector<ComputeEvent*>&, ExceptionObject&, WebCLToCCEventsFilterCriteria = AcceptUserEvent);
 
@@ -160,6 +171,9 @@ private:
     RefPtr<WebCLDevice> m_device;
 
     WeakPtrFactory<WebCLCommandQueue> m_weakFactoryForLazyInitialization;
+    RefPtr<WebCLCallback> m_finishCallBack;
+
+    bool m_isQueueBlockedByFinish;
 };
 
 } // namespace WebCore
