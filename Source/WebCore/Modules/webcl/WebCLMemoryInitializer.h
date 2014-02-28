@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2014 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -25,42 +25,52 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCLBuffer_h
-#define WebCLBuffer_h
+#ifndef WebCLMemoryInitializer_h
+#define WebCLMemoryInitializer_h
 
 #if ENABLE(WEBCL)
 
-#include "WebCLMemoryObject.h"
+#include "ComputeTypes.h"
+#include "ExceptionCode.h"
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class ComputeProgram;
+class ComputeKernel;
+class WebCLBuffer;
+class WebCLCommandQueue;
 class WebCLContext;
-class WebGLBuffer;
+class WebCLMemoryObject;
 
-class WebCLBuffer : public WebCLMemoryObject {
+class WebCLMemoryInitializer {
 public:
-    ~WebCLBuffer();
-    static PassRefPtr<WebCLBuffer> create(WebCLContext*, CCenum, CCuint sizeInBytes, void*, ExceptionCode&);
+    WebCLMemoryInitializer(WebCLContext*);
+    ~WebCLMemoryInitializer();
 
-#if ENABLE(WEBGL)
-    static PassRefPtr<WebCLBuffer> create(WebCLContext*, CCenum, WebGLBuffer*, ExceptionCode&);
-#endif
-
-    PassRefPtr<WebCLBuffer> createSubBuffer(CCenum memFlags, CCuint origin, CCuint sizeInBytes, ExceptionCode&);
-
-    WeakPtr<WebCLBuffer> createWeakPtrForLazyInitialization() { return m_weakFactoryForLazyInitialization.createWeakPtr(); }
+    void bufferCreated(WebCLBuffer*, ExceptionCode&);
+    void commandQueueCreated(WebCLCommandQueue*, ExceptionCode&);
 
 private:
-    WebCLBuffer(WebCLContext*, ComputeMemoryObject*, CCuint sizeInBytes, WebCLBuffer* parentBuffer = 0);
+    void ensureMemoryInitialization(WebCLMemoryObject*, WebCLCommandQueue*, ExceptionCode&);
 
-#if ENABLE(WEBGL)
-    void cacheGLObjectInfo(WebGLBuffer*);
-#endif
+    void processPendingMemoryInitializationList(ExceptionCode&);
+    WebCLCommandQueue* validCommandQueueForMemoryInitialization() const;
+    void initializeOrQueueMemoryInitializationOfMemoryObject(WebCLBuffer*, ExceptionCode&);
 
-    WeakPtrFactory<WebCLBuffer> m_weakFactoryForLazyInitialization;
+private:
+    WebCLContext* m_context;
+    ComputeProgram* m_program;
+    ComputeKernel* m_kernelChar;
+    ComputeKernel* m_kernelChar16;
+
+    Vector<WeakPtr<WebCLBuffer> > m_buffersPendingMemoryInitialization;
+    Vector<WeakPtr<WebCLCommandQueue> > m_queuesForMemoryInitialization;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBCL)
-#endif // WebCLBuffer_h
+#endif
+#endif // WebCLMemoryInitializer_h

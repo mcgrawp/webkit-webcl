@@ -132,6 +132,8 @@ public:
     WebCLContext* context() const { return m_context.get(); }
     bool isExtensionEnabled(RefPtr<WebCLContext> context, const String& name);
 
+    WeakPtr<WebCLCommandQueue> createWeakPtrForLazyInitialization() { return m_weakFactoryForLazyInitialization.createWeakPtr(); }
+
 private:
     WebCLCommandQueue(WebCLContext*, ComputeCommandQueue*, WebCLDevice*);
 
@@ -158,6 +160,8 @@ private:
 
     RefPtr<WebCLContext> m_context;
     RefPtr<WebCLDevice> m_device;
+
+    WeakPtrFactory<WebCLCommandQueue> m_weakFactoryForLazyInitialization;
 };
 
 } // namespace WebCore

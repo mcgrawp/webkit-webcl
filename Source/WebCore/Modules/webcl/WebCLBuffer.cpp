@@ -76,6 +76,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memory
 
 WebCLBuffer::WebCLBuffer(WebCLContext* context, ComputeMemoryObject* buffer, CCuint sizeInBytes, WebCLBuffer* parentBuffer)
     : WebCLMemoryObject(context, buffer, sizeInBytes, parentBuffer)
+    , m_weakFactoryForLazyInitialization(this)
 {
 }
 

@@ -71,6 +71,7 @@ WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, ComputeCommandQueue 
     : WebCLObjectImpl(computeCommandQueue)
     , m_context(context)
     , m_device(webCLDevice)
+    , m_weakFactoryForLazyInitialization(this)
 {
     context->trackReleaseableWebCLObject(createWeakPtr());
 }

@@ -100,14 +100,14 @@ CCerror ComputeCommandQueue::enqueueMarker(ComputeEvent* event)
     return error;
 }
 
-CCerror ComputeCommandQueue::enqueueTask(CCKernel kernelID, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent* event)
+CCerror ComputeCommandQueue::enqueueTask(ComputeKernel* kernel, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent* event)
 {
     CCEvent* ccEvent = ccEventFromComputeEvent(event);
 
     Vector<CCEvent> ccEventList;
     ccEventListFromComputeEventList(eventsWaitList, ccEventList);
 
-    return clEnqueueTask(m_commandQueue, kernelID, ccEventList.size(), ccEventList.data(), ccEvent);
+    return clEnqueueTask(m_commandQueue, kernel->kernel(), ccEventList.size(), ccEventList.data(), ccEvent);
 }
 
 CCerror ComputeCommandQueue::enqueueWriteBuffer(ComputeMemoryObject* buffer, CCbool blockingWrite,

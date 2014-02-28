@@ -60,7 +60,7 @@ WebCLDevice::WebCLDevice(CCDeviceID deviceID, WebCLPlatform* platform)
 
 WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
 {
-    ASSERT(!isPlatformObjecNeutralized());
+    ASSERT(!isPlatformObjectNeutralized());
 
     if (!WebCLInputChecker::isValidDeviceInfoType(infoType)) {
         ec = WebCLException::INVALID_VALUE;

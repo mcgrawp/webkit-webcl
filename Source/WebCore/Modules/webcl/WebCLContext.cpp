@@ -42,6 +42,7 @@
 #include "WebCLHTMLInterop.h"
 #include "WebCLImage.h"
 #include "WebCLImageDescriptor.h"
+#include "WebCLMemoryInitializer.h"
 #include "WebCLProgram.h"
 #include "WebCLSampler.h"
 #include "WebCLUserEvent.h"
@@ -112,6 +113,7 @@ WebCLContext::WebCLContext(WebCL* webCL, ComputeContext* computeContext, const V
     , m_videoCache(4) // FIXME: Why '4'?
     , m_webCL(webCL)
     , m_devices(devices)
+    , m_memoryInitializer(this)
 {
     webCL->trackReleaseableWebCLObject(createWeakPtr());
 }
@@ -181,7 +183,9 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
     } else
         webCLDevice = device;
 
-    return WebCLCommandQueue::create(this, properties, webCLDevice.get(), ec);
+    RefPtr<WebCLCommandQueue> queue = WebCLCommandQueue::create(this, properties, webCLDevice.get(), ec);
+    postCreateCommandQueue(queue.get(), ec);
+    return queue.release();
 }
 
 PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& programSource, ExceptionCode& ec)
@@ -199,6 +203,22 @@ PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& programSource
     return WebCLProgram::create(this, programSource, ec);
 }
 
+void WebCLContext::postCreateCommandQueue(WebCLCommandQueue* queue, ExceptionCode& ec)
+{
+    if (!queue)
+        return;
+
+    m_memoryInitializer.commandQueueCreated(queue, ec);
+}
+
+void WebCLContext::postCreateBuffer(WebCLBuffer* buffer, ExceptionCode& ec)
+{
+    if (!buffer)
+        return;
+
+    m_memoryInitializer.bufferCreated(buffer, ec);
+}
+
 PassRefPtr<WebCLBuffer> WebCLContext::createBufferBase(CCenum memoryFlags, CCuint size, void* hostPtr, ExceptionCode& ec)
 {
     if (isPlatformObjectNeutralized()) {
@@ -210,10 +230,17 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBufferBase(CCenum memoryFlags, CCuin
         return 0;
     }
 
-    ASSERT(hostPtr);
-    memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
+    bool needsInitialization = !hostPtr;
+    if (hostPtr)
+        memoryFlags |= ComputeContext::MEM_COPY_HOST_PTR;
 
-    return WebCLBuffer::create(this, memoryFlags, size, hostPtr, ec);
+    RefPtr<WebCLBuffer> buffer = WebCLBuffer::create(this, memoryFlags, size, hostPtr, ec);
+    if (needsInitialization && buffer) {
+        ASSERT(ec == WebCLException::SUCCESS);
+        postCreateBuffer(buffer.get(), ec);
+    }
+
+    return buffer.release();
 }
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint size, ArrayBufferView* hostPtr, ExceptionCode& ec)
@@ -230,12 +257,9 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint si
             return 0;
         }
         buffer = hostPtr->buffer();
-    } else {
-        // FIXME :: This is a slow initialization method. Need to verify against kernel init method.
-        buffer = ArrayBuffer::create(size, 1);
     }
 
-    return createBufferBase(memoryFlags, size, buffer->data(), ec);
+    return createBufferBase(memoryFlags, size, buffer ? buffer->data() : 0, ec);
 }
 
 PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, ImageData* srcPixels, ExceptionCode& ec)

@@ -1883,6 +1883,8 @@
 		750D029411D0E7F300BD1B27 /* RenderInputSpeech.h in Headers */ = {isa = PBXBuildFile; fileRef = 750D029211D0E7F300BD1B27 /* RenderInputSpeech.h */; };
 		750E58B418A3DF60001C37AE /* ComputeMemoryObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 750E58B318A3DF47001C37AE /* ComputeMemoryObject.h */; };
 		750E58B618A3E03F001C37AE /* ComputeMemoryObjectCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 750E58B518A3E03A001C37AE /* ComputeMemoryObjectCL.cpp */; };
+		7528153D18B2D93800F35B39 /* WebCLMemoryInitializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7528153C18B2D92C00F35B39 /* WebCLMemoryInitializer.h */; };
+		7528153E18B2D93C00F35B39 /* WebCLMemoryInitializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7528153B18B2D92C00F35B39 /* WebCLMemoryInitializer.cpp */; };
 		754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 754133A7102E00E800075D00 /* InspectorTimelineAgent.h */; };
 		754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */; };
 		75415AFD12958D5E003AD669 /* SpeechInputEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75415AF812958D5E003AD669 /* SpeechInputEvent.h */; };
@@ -8387,6 +8389,8 @@
 		750D029211D0E7F300BD1B27 /* RenderInputSpeech.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderInputSpeech.h; sourceTree = "<group>"; };
 		750E58B318A3DF47001C37AE /* ComputeMemoryObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeMemoryObject.h; sourceTree = "<group>"; };
 		750E58B518A3E03A001C37AE /* ComputeMemoryObjectCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeMemoryObjectCL.cpp; sourceTree = "<group>"; };
+		7528153B18B2D92C00F35B39 /* WebCLMemoryInitializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCLMemoryInitializer.cpp; sourceTree = "<group>"; };
+		7528153C18B2D92C00F35B39 /* WebCLMemoryInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCLMemoryInitializer.h; sourceTree = "<group>"; };
 		754133A7102E00E800075D00 /* InspectorTimelineAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTimelineAgent.h; sourceTree = "<group>"; };
 		754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTimelineAgent.cpp; sourceTree = "<group>"; };
 		75415AF812958D5E003AD669 /* SpeechInputEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputEvent.h; sourceTree = "<group>"; };
@@ -15082,6 +15086,8 @@
 		758C8E5917887AD600FAD9BA /* webcl */ = {
 			isa = PBXGroup;
 			children = (
+				7528153B18B2D92C00F35B39 /* WebCLMemoryInitializer.cpp */,
+				7528153C18B2D92C00F35B39 /* WebCLMemoryInitializer.h */,
 				757ADB8A186CB3E900494EC1 /* WebCLKernelArgInfo.h */,
 				750ACCA2186CACE6007A75E7 /* WebCLKernelArgInfoProvider.cpp */,
 				750ACCA3186CACE6007A75E7 /* WebCLKernelArgInfoProvider.h */,
@@ -21957,6 +21963,7 @@
 				85183B480AA6926100F19FA3 /* DOMHTMLPreElement.h in Headers */,
 				85E711C30AC5D5350053270F /* DOMHTMLPreElementInternal.h in Headers */,
 				A4226E951163D73A008B8397 /* DOMHTMLProgressElement.h in Headers */,
+				7528153D18B2D93800F35B39 /* WebCLMemoryInitializer.h in Headers */,
 				A4226E991163D7CC008B8397 /* DOMHTMLProgressElementInternal.h in Headers */,
 				85183B4A0AA6926100F19FA3 /* DOMHTMLQuoteElement.h in Headers */,
 				85E711C40AC5D5350053270F /* DOMHTMLQuoteElementInternal.h in Headers */,
@@ -25298,6 +25305,7 @@
 				85BA4D180AA688680088052D /* DOMHTMLUListElement.mm in Sources */,
 				A8185F3E09765766005826D9 /* DOMImplementation.cpp in Sources */,
 				93C841FF09CE858300DFF5E5 /* DOMImplementationFront.cpp in Sources */,
+				7528153E18B2D93C00F35B39 /* WebCLMemoryInitializer.cpp in Sources */,
 				BC1A37BA097C715F0019F3D8 /* DOMInternal.mm in Sources */,
 				85FF315B0AAFBFCB00374F38 /* DOMKeyboardEvent.mm in Sources */,
 				850656FF0AAB4763002D15C0 /* DOMMediaList.mm in Sources */,

@@ -51,7 +51,7 @@ public:
 
     CCerror enqueueBarrier();
     CCerror enqueueMarker(ComputeEvent*);
-    CCerror enqueueTask(CCKernel, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
+    CCerror enqueueTask(ComputeKernel*, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);
 
     CCerror enqueueWriteBuffer(ComputeMemoryObject* buffer, CCbool blockingWrite, size_t offset, size_t bufferSize,
         void* baseAddress, const Vector<ComputeEvent*>& eventsWaitList, ComputeEvent*);

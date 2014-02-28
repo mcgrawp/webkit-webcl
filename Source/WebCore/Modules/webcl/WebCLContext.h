@@ -30,10 +30,11 @@
 
 #if ENABLE(WEBCL)
 
+#include "WebCLCommandQueue.h"
 #include "WebCLDevice.h"
 #include "WebCLGetInfo.h"
 #include "WebCLInputChecker.h"
-#include "WebCLCommandQueue.h"
+#include "WebCLMemoryInitializer.h"
 #include "WebCLObject.h"
 
 namespace WebCore {
@@ -136,11 +137,18 @@ private:
     bool isExtensionEnabled(const String& name) const;
     friend bool WebCLCommandQueue::isExtensionEnabled(RefPtr<WebCLContext>, const String&);
 
+    void postCreateCommandQueue(WebCLCommandQueue*, ExceptionCode&);
+    void postCreateBuffer(WebCLBuffer*, ExceptionCode&);
+
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
+
+private:
     WebCL* m_webCL;
     Vector<RefPtr<WebCLDevice> > m_devices;
 
     Vector<WeakPtr<WebCLObject> > m_descendantWebCLObjects;
+
+    WebCLMemoryInitializer m_memoryInitializer;
 };
 
 } // namespace WebCore
