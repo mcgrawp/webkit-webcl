@@ -132,8 +132,6 @@ private:
     PassRefPtr<WebCLImage> createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat&, void*, ExceptionCode&);
     PassRefPtr<WebCLBuffer> createBufferBase(CCenum memoryFlags, CCuint size, void* data, ExceptionCode&);
 
-    void releasePlatformObjectImpl();
-
     bool isExtensionEnabled(const String& name) const;
     friend bool WebCLCommandQueue::isExtensionEnabled(RefPtr<WebCLContext>, const String&);
 

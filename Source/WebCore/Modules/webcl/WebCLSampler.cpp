@@ -88,11 +88,6 @@ WebCLGetInfo WebCLSampler::getInfo(CCenum infoType, ExceptionCode& ec)
     ASSERT_NOT_REACHED();
 }
 
-void WebCLSampler::releasePlatformObjectImpl()
-{
-    delete platformObject();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

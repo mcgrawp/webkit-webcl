@@ -151,8 +151,6 @@ private:
     void enqueueWriteImageBase(WebCLImage*, CCbool blockingWrite, const Vector<unsigned>&, const Vector<unsigned>&, CCuint hostRowPitch, void* hostPtr,
         size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionCode&);
 
-    void releasePlatformObjectImpl();
-
     typedef enum {AcceptUserEvent, DoNotAcceptUserEvent} WebCLToCCEventsFilterCriteria;
     void ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >&, Vector<ComputeEvent*>&, ExceptionCode&, WebCLToCCEventsFilterCriteria = AcceptUserEvent);
 

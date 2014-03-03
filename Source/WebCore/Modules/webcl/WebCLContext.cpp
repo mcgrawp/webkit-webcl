@@ -649,11 +649,6 @@ void WebCLContext::releaseAll()
     release();
 }
 
-void WebCLContext::releasePlatformObjectImpl()
-{
-    delete platformObject();
-}
-
 #if ENABLE(WEBGL)
 PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(CCenum flags, WebGLBuffer* webGLBuffer, ExceptionCode& ec)
 {

@@ -31,6 +31,9 @@
 #if ENABLE(WEBCL)
 
 #include "ComputeContext.h"
+#include "ComputeMemoryObject.h"
+#include "ComputeSampler.h"
+#include "ComputeEvent.h"
 #include "ExceptionCode.h"
 #include "WebCLException.h"
 
@@ -74,9 +77,7 @@ public:
         if (isPlatformObjectNeutralized())
             return;
 
-        if (platformObject())
-            releasePlatformObjectImpl();
-
+        delete m_platformObject;
         m_platformObject = 0;
         m_isReleased = true;
     }

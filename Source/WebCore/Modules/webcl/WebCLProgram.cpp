@@ -306,11 +306,6 @@ const String& WebCLProgram::sourceWithCommentsStripped()
     return m_programSourceWithCommentsStripped;
 }
 
-void WebCLProgram::releasePlatformObjectImpl()
-{
-    delete platformObject();
-}
-
 void WebCLProgram::ccDeviceListFromWebCLDeviceList(const Vector<RefPtr<WebCLDevice> >& devices, Vector<CCDeviceID>& ccDevices, ExceptionCode& ec)
 {
     const Vector<RefPtr<WebCLDevice> >& contextDevices = m_context->devices();

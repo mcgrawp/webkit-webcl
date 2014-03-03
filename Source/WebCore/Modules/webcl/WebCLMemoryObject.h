@@ -61,7 +61,6 @@ public:
 
 protected:
     WebCLMemoryObject(WebCLContext*, ComputeMemoryObject*, CCuint sizeInBytes, WebCLMemoryObject* = 0);
-    virtual void releasePlatformObjectImpl();
 
     RefPtr<WebCLContext> m_context;
     //FIXME: We need to decide what to do with parent mem objects

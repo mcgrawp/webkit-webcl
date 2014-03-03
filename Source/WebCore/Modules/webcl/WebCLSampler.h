@@ -47,7 +47,6 @@ public:
 
 private:
     WebCLSampler(WebCLContext*, ComputeSampler*, CCbool, CCenum, CCenum);
-    void releasePlatformObjectImpl();
 
     CCbool m_normCoords;
     CCenum m_addressingMode;

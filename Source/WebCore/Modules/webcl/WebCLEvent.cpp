@@ -266,11 +266,6 @@ bool WebCLEvent::isPlatformObjectNeutralized() const
     return isReleased();
 }
 
-void WebCLEvent::releasePlatformObjectImpl()
-{
-    delete platformObject();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

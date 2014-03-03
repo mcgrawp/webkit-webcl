@@ -63,7 +63,6 @@ public:
 
 protected:
     WebCLEvent(ComputeEvent*);
-    virtual void releasePlatformObjectImpl();
 
 private:
     typedef Vector<std::pair<CCint, RefPtr<WebCLCallback> > > CallbackDataVector;

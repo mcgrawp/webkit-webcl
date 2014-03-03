@@ -1165,11 +1165,6 @@ void WebCLCommandQueue::enqueueMarker(WebCLEvent* event, ExceptionCode& ec)
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
-void WebCLCommandQueue::releasePlatformObjectImpl()
-{
-    delete platformObject();
-}
-
 bool WebCLCommandQueue::isExtensionEnabled(RefPtr<WebCLContext> context, const String& name)
 {
     return context->isExtensionEnabled(name);

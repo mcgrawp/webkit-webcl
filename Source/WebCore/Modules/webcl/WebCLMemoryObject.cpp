@@ -127,11 +127,6 @@ WebCLGLObjectInfo* WebCLMemoryObject::getGLObjectInfo(ExceptionCode& ec)
 }
 #endif
 
-void WebCLMemoryObject::releasePlatformObjectImpl()
-{
-    delete platformObject();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

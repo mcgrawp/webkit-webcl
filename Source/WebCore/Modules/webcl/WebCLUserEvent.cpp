@@ -107,12 +107,6 @@ WebCLContext* WebCLUserEvent::context() const
     return m_context.get();
 }
 
-// FIXME: Remove this overload.
-void WebCLUserEvent::releasePlatformObjectImpl()
-{
-    delete platformObject();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

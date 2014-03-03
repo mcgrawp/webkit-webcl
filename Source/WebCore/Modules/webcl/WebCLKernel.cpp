@@ -182,11 +182,6 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
     return WebCLGetInfo();
 }
 
-void WebCLKernel::releasePlatformObjectImpl()
-{
-    delete platformObject();
-}
-
 void WebCLKernel::setArg(CCuint index, WebCLMemoryObject* memoryObject, ExceptionCode& ec)
 {
     if (isPlatformObjectNeutralized()) {

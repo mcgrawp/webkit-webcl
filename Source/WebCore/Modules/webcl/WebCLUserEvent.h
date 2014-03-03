@@ -50,7 +50,6 @@ public:
 
 private:
     WebCLUserEvent(WebCLContext*, ComputeEvent*);
-    void releasePlatformObjectImpl();
 
     RefPtr<WebCLContext> m_context;
     enum EventStatusSituation m_eventStatusSituation;
