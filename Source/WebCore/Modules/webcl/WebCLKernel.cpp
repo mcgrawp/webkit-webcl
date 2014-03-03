@@ -142,7 +142,7 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
         return WebCLGetInfo();
     }
 
-    if (!WebCLInputChecker::validateWebCLObject(device)) {
+    if (!device) {
         ec = WebCLException::INVALID_DEVICE;
         return WebCLGetInfo();
     }

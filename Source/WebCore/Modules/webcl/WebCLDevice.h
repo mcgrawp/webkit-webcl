@@ -38,20 +38,19 @@ namespace WebCore {
 class WebCLGetInfo;
 class WebCLPlatform;
 
-class WebCLDevice : public WebCLObjectImpl<CCDeviceID> , public WebCLExtensionsAccessor<CCDeviceID> {
+class WebCLDevice : public RefCounted<WebCLDevice>, public WebCLExtensionsAccessor<CCDeviceID> {
 public:
     virtual ~WebCLDevice();
     static PassRefPtr<WebCLDevice> create(CCDeviceID, WebCLPlatform*);
     WebCLGetInfo getInfo(CCenum, ExceptionCode&);
-    WebCLPlatform* platform();
 
-    virtual bool isPlatformObjectNeutralized() const { return false; }
-    virtual bool isReleased() const { ASSERT_NOT_REACHED(); return false; }
-    virtual void release() { ASSERT_NOT_REACHED();}
-    virtual void releasePlatformObject() { ASSERT_NOT_REACHED(); }
+    // NOTE: Not to be confused with the 'platform'.
+    CCDeviceID platformObject() const { return m_deviceID; }
+    WebCLPlatform* platform() const { return m_platform; }
 
 private:
     WebCLDevice(CCDeviceID, WebCLPlatform*);
+    CCDeviceID m_deviceID;
     WebCLPlatform* m_platform;
 };
 

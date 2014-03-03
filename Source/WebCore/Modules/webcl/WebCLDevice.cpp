@@ -34,11 +34,8 @@
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
 #include "WebCLGetInfo.h"
-#include "WebCLImageDescriptor.h"
 #include "WebCLInputChecker.h"
-#include "WebCLMemoryObject.h"
 #include "WebCLPlatform.h"
-#include "WebCLProgram.h"
 
 namespace WebCore {
 
@@ -52,16 +49,14 @@ PassRefPtr<WebCLDevice> WebCLDevice::create(CCDeviceID deviceID, WebCLPlatform* 
 }
 
 WebCLDevice::WebCLDevice(CCDeviceID deviceID, WebCLPlatform* platform)
-    : WebCLObjectImpl(deviceID)
-    , WebCLExtensionsAccessor(deviceID)
+    : WebCLExtensionsAccessor(deviceID)
+    , m_deviceID(deviceID)
     , m_platform(platform)
 {
 }
 
 WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
 {
-    ASSERT(!isPlatformObjectNeutralized());
-
     if (!WebCLInputChecker::isValidDeviceInfoType(infoType)) {
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
@@ -209,11 +204,6 @@ void toWebCLDeviceArray(WebCLPlatform* platform, const Vector<CCDeviceID>& ccDev
         RefPtr<WebCLDevice> webCLDevice = WebCLDevice::create(ccDevices[i], platform);
         devices.append(webCLDevice);
     }
-}
-
-WebCLPlatform* WebCLDevice::platform()
-{
-    return m_platform;
 }
 
 } // namespace WebCore

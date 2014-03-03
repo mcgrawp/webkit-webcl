@@ -101,10 +101,11 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, CCenum infoType, Ex
         return WebCLGetInfo();
     }
 
-    if (!WebCLInputChecker::validateWebCLObject(device)) {
+    if (!device) {
         ec = WebCLException::INVALID_DEVICE;
         return WebCLGetInfo();
     }
+
     CCDeviceID ccDeviceID = device->platformObject();
 
     CCerror error = 0;

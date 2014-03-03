@@ -52,19 +52,14 @@ PassRefPtr<WebCLPlatform> WebCLPlatform::create(CCPlatformID platformID)
 }
 
 WebCLPlatform::WebCLPlatform(CCPlatformID platformID)
-    : WebCLObjectImpl(platformID)
-    , WebCLExtensionsAccessor(platformID)
+    : WebCLExtensionsAccessor(platformID)
+    , m_platformObject(platformID)
     , m_cachedDeviceType(0)
 {
 }
 
 WebCLGetInfo WebCLPlatform::getInfo(CCenum platform_info, ExceptionCode& ec)
 {
-    if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_PLATFORM;
-        return WebCLGetInfo();
-    }
-
     switch(platform_info) {
     case ComputeContext::PLATFORM_PROFILE:
         return WebCLGetInfo(String("WEBCL_PROFILE"));
@@ -85,11 +80,6 @@ WebCLGetInfo WebCLPlatform::getInfo(CCenum platform_info, ExceptionCode& ec)
 
 Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(CCenum deviceType, ExceptionCode& ec)
 {
-    if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_PLATFORM;
-        return Vector<RefPtr<WebCLDevice> >();
-    }
-
     if (deviceType && !WebCLInputChecker::isValidDeviceType(deviceType)) {
         ec = WebCLException::INVALID_VALUE;
         return Vector<RefPtr<WebCLDevice> >();

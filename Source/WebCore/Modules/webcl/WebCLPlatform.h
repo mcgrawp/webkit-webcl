@@ -39,7 +39,7 @@ namespace WebCore {
 class WebCLDevice;
 class WebCLGetInfo;
 
-class WebCLPlatform : public WebCLObjectImpl<CCPlatformID> , public WebCLExtensionsAccessor<CCPlatformID> {
+class WebCLPlatform : public RefCounted<WebCLPlatform>, public WebCLExtensionsAccessor<CCPlatformID> {
 public:
     virtual ~WebCLPlatform();
     static PassRefPtr<WebCLPlatform> create(CCPlatformID);
@@ -47,17 +47,16 @@ public:
     WebCLGetInfo getInfo (CCenum, ExceptionCode&);
     Vector<RefPtr<WebCLDevice> > getDevices(CCenum, ExceptionCode&);
 
-    virtual bool isPlatformObjectNeutralized() const { return false; }
-    virtual bool isReleased() const { ASSERT_NOT_REACHED(); return false; }
-    virtual void release() { ASSERT_NOT_REACHED();}
-    virtual void releasePlatformObject() { ASSERT_NOT_REACHED(); }
+    CCPlatformID platformObject() const { return m_platformObject; }
 
 private:
     WebCLPlatform(CCPlatformID);
 
     friend CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);
-    Vector<RefPtr<WebCLDevice> > m_webCLDevices;
+    CCPlatformID m_platformObject;
     CCenum m_cachedDeviceType;
+
+    Vector<RefPtr<WebCLDevice> > m_webCLDevices;
 };
 
 CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);
