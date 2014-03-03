@@ -32,13 +32,8 @@
 
 #include "WebCLPlatform.h"
 
-#include "WebCLCommandQueue.h"
-#include "WebCLContext.h"
 #include "WebCLGetInfo.h"
-#include "WebCLImageDescriptor.h"
 #include "WebCLInputChecker.h"
-#include "WebCLMemoryObject.h"
-#include "WebCLProgram.h"
 
 namespace WebCore {
 
@@ -85,9 +80,8 @@ Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(CCenum deviceType, Except
         return Vector<RefPtr<WebCLDevice> >();
     }
 
-    // FIXME: Spec says "Omitting the device type is equivalent to specifying DEVICE_TYPE_ALL."
     if (!deviceType)
-        deviceType = ComputeContext::DEVICE_TYPE_DEFAULT;
+        deviceType = ComputeContext::DEVICE_TYPE_ALL;
 
     // If cached copy of devices are of same type, return from cache.
     if (m_cachedDeviceType == deviceType && m_webCLDevices.size())

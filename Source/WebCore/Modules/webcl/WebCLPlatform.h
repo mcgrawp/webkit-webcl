@@ -36,7 +36,6 @@
 
 namespace WebCore {
 
-class WebCLDevice;
 class WebCLGetInfo;
 
 class WebCLPlatform : public RefCounted<WebCLPlatform>, public WebCLExtensionsAccessor<CCPlatformID> {
