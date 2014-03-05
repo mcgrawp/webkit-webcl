@@ -179,8 +179,19 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
         }
         //FIXME: Spec needs to say what we need to do here
         ASSERT(webCLDevice);
-    } else
-        webCLDevice = device;
+    } else {
+        size_t i;
+        for (i = 0; i < m_devices.size(); i++) {
+            if (m_devices[i]->platformObject() == device->platformObject()) {
+                webCLDevice = device;
+                break;
+            }
+        }
+        if (i == m_devices.size()) {
+            ec = WebCLException::INVALID_DEVICE;
+            return 0;
+        }
+    }
 
     RefPtr<WebCLCommandQueue> queue = WebCLCommandQueue::create(this, properties, webCLDevice.get(), ec);
     postCreateCommandQueue(queue.get(), ec);
