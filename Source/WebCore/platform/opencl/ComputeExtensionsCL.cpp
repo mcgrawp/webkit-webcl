@@ -27,6 +27,7 @@
 
 #include "ComputeExtensions.h"
 #include "ComputeExtensionsTraits.h"
+#include "ComputePlatform.h"
 
 namespace WebCore {
 
@@ -54,8 +55,10 @@ bool ComputeExtensions::supports(const String& name, NullTypePtr nullType)
     return supportsExtension(name);
 }
 
-bool ComputeExtensions::supports(const String& name, CCPlatformID platformID)
+bool ComputeExtensions::supports(const String& name, ComputePlatform* platform)
 {
+    ASSERT(platform);
+    CCPlatformID platformID = platform->platform();
     if (!m_platformExtensions.contains(platformID)) {
         if (!cacheExtensionsForPlatform(platformID))
             return false;
@@ -112,10 +115,14 @@ bool ComputeExtensions::supportsExtension(const WTF::String& name, Type computeT
 
 void ComputeExtensions::cacheGlobalExtensions()
 {
-    Vector<CCPlatformID> ccPlatforms;
-    CCerror error = ComputeContext::getPlatformIDs(ccPlatforms);
+    Vector<RefPtr<ComputePlatform> > computePlatforms;
+    CCerror error = ComputePlatform::getPlatformIDs(computePlatforms);
     if (error != ComputeContext::SUCCESS)
         return;
+
+    Vector<CCPlatformID> ccPlatforms;
+    for (size_t i = 0; i < computePlatforms.size(); ++i)
+        ccPlatforms.append(computePlatforms[i]->platform());
 
     if (!m_platformExtensions.contains(ccPlatforms[0]))
         cacheExtensionsForPlatform(ccPlatforms[0]);
@@ -154,7 +161,7 @@ bool ComputeExtensions::cacheExtensionsForDevice(CCDeviceID deviceID)
 
 bool ComputeExtensions::cacheExtensionsForPlatform(CCPlatformID platformID)
 {
-    return cacheExtensionsHelper(ComputeContext::getPlatformInfo<Vector<char> >, platformID, ComputeContext::PLATFORM_EXTENSIONS, m_platformExtensions); 
+    return cacheExtensionsHelper(ComputePlatform::getPlatformInfo<Vector<char> >, platformID, ComputeContext::PLATFORM_EXTENSIONS, m_platformExtensions);
 }
 
 } // namespace WebCore

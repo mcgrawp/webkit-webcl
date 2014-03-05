@@ -1979,6 +1979,8 @@
 		758C8F8E178A12F200FAD9BA /* JSWorkerContextWebCLEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 758C8F24178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.h */; };
 		7592F3A918872AE300FFEBC6 /* JSWebCLKernelArgInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7592F3A718872ADA00FFEBC6 /* JSWebCLKernelArgInfo.cpp */; };
 		7592F3AA18872AEE00FFEBC6 /* JSWebCLKernelArgInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 7592F3A818872ADA00FFEBC6 /* JSWebCLKernelArgInfo.h */; };
+		759D571018C4C57A00A252D0 /* ComputePlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 759D570F18C4C57100A252D0 /* ComputePlatform.h */; };
+		759D571218C4C58D00A252D0 /* ComputePlatformCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759D571118C4C58900A252D0 /* ComputePlatformCL.cpp */; };
 		75B5617A18AC75BA00C1EB58 /* ComputeSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B5617818AC75A800C1EB58 /* ComputeSampler.h */; };
 		75B5617B18AC75C600C1EB58 /* ComputeSamplerCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B5617918AC75B700C1EB58 /* ComputeSamplerCL.cpp */; };
 		75D7FFD318774FF900FAE029 /* ComputeKernelCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D7FFD11877444400FAE029 /* ComputeKernelCL.cpp */; };
@@ -8531,6 +8533,8 @@
 		758C8F24178A12B300FAD9BA /* JSWorkerContextWebCLEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContextWebCLEnvironment.h; sourceTree = "<group>"; };
 		7592F3A718872ADA00FFEBC6 /* JSWebCLKernelArgInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCLKernelArgInfo.cpp; sourceTree = "<group>"; };
 		7592F3A818872ADA00FFEBC6 /* JSWebCLKernelArgInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebCLKernelArgInfo.h; sourceTree = "<group>"; };
+		759D570F18C4C57100A252D0 /* ComputePlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputePlatform.h; sourceTree = "<group>"; };
+		759D571118C4C58900A252D0 /* ComputePlatformCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputePlatformCL.cpp; sourceTree = "<group>"; };
 		75B5617818AC75A800C1EB58 /* ComputeSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeSampler.h; sourceTree = "<group>"; };
 		75B5617918AC75B700C1EB58 /* ComputeSamplerCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeSamplerCL.cpp; sourceTree = "<group>"; };
 		75D7FFD11877444400FAE029 /* ComputeKernelCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeKernelCL.cpp; sourceTree = "<group>"; };
@@ -15164,6 +15168,7 @@
 		758C8EEA17887BA000FAD9BA /* opencl */ = {
 			isa = PBXGroup;
 			children = (
+				759D571118C4C58900A252D0 /* ComputePlatformCL.cpp */,
 				75B5617918AC75B700C1EB58 /* ComputeSamplerCL.cpp */,
 				750E58B518A3E03A001C37AE /* ComputeMemoryObjectCL.cpp */,
 				75F95032188B28040090E6BE /* ComputeEventCL.cpp */,
@@ -19634,6 +19639,7 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				759D570F18C4C57100A252D0 /* ComputePlatform.h */,
 				75B5617818AC75A800C1EB58 /* ComputeSampler.h */,
 				750E58B318A3DF47001C37AE /* ComputeMemoryObject.h */,
 				75F95030188B27E10090E6BE /* ComputeEvent.h */,
@@ -22133,6 +22139,7 @@
 				3AC648B2129E146500C3EB25 /* EditingBoundary.h in Headers */,
 				9BAB6C6C12550631001626D4 /* EditingStyle.h in Headers */,
 				4B3043CD0AE0373B00A82647 /* Editor.h in Headers */,
+				759D571018C4C57A00A252D0 /* ComputePlatform.h in Headers */,
 				1AF326790D78B9440068F0C4 /* EditorClient.h in Headers */,
 				4BAE95B10B2FA9CE00AED8A0 /* EditorDeleteAction.h in Headers */,
 				93FDAFCA0B11307400E2746F /* EditorInsertAction.h in Headers */,
@@ -25054,6 +25061,7 @@
 				975CA28A130365F800E99AD9 /* Crypto.cpp in Sources */,
 				CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */,
 				FBD6AF8B15EF25E5008B7110 /* CSSBasicShapes.cpp in Sources */,
+				759D571218C4C58D00A252D0 /* ComputePlatformCL.cpp in Sources */,
 				E16A84F914C85CCC002977DF /* CSSBorderImage.cpp in Sources */,
 				BC274B31140EBED800EADFA6 /* CSSBorderImageSliceValue.cpp in Sources */,
 				49AE2D8E134EE50C0072920A /* CSSCalculationValue.cpp in Sources */,

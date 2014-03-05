@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+class ComputePlatform;
+
 // FIXME: When c++11 is enforce in WebCore, nullptr_t should be used here.
 typedef void* NullTypePtr;
 
@@ -46,7 +48,7 @@ public:
 
     // Takes full name of extension; for example "cl_khr_gl_sharing".
     bool supports(const String&, NullTypePtr = 0);
-    bool supports(const String&, CCPlatformID);
+    bool supports(const String&, ComputePlatform*);
     bool supports(const String&, CCDeviceID);
 
 private:

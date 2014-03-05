@@ -48,7 +48,7 @@ struct CacheExtensions
         ComputeExtensionFunctor<Func, Type> func = {getExtensionsFunc};
 
         Vector<char> buffer;
-        CCerror error = func(computeType, property , &buffer);
+        CCerror error = func(computeType, property, &buffer);
         if (error != ComputeContext::SUCCESS)
             return false;
 

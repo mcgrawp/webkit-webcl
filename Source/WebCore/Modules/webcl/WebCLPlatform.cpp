@@ -32,6 +32,7 @@
 
 #include "WebCLPlatform.h"
 
+#include "ComputePlatform.h"
 #include "WebCLGetInfo.h"
 #include "WebCLInputChecker.h"
 
@@ -41,21 +42,21 @@ WebCLPlatform::~WebCLPlatform()
 {
 }
 
-PassRefPtr<WebCLPlatform> WebCLPlatform::create(CCPlatformID platformID)
+PassRefPtr<WebCLPlatform> WebCLPlatform::create(PassRefPtr<ComputePlatform> platform)
 {
-    return adoptRef(new WebCLPlatform(platformID));
+    return adoptRef(new WebCLPlatform(platform));
 }
 
-WebCLPlatform::WebCLPlatform(CCPlatformID platformID)
-    : WebCLExtensionsAccessor(platformID)
-    , m_platformObject(platformID)
+WebCLPlatform::WebCLPlatform(PassRefPtr<ComputePlatform> platform)
+    : WebCLExtensionsAccessor(platform.get())
+    , m_platformObject(platform)
     , m_cachedDeviceType(0)
 {
 }
 
-WebCLGetInfo WebCLPlatform::getInfo(CCenum platform_info, ExceptionCode& ec)
+WebCLGetInfo WebCLPlatform::getInfo(CCenum info, ExceptionCode& ec)
 {
-    switch(platform_info) {
+    switch(info) {
     case ComputeContext::PLATFORM_PROFILE:
         return WebCLGetInfo(String("WEBCL_PROFILE"));
     case ComputeContext::PLATFORM_VERSION:
@@ -63,7 +64,7 @@ WebCLGetInfo WebCLPlatform::getInfo(CCenum platform_info, ExceptionCode& ec)
     case ComputeContext::PLATFORM_NAME:
     case ComputeContext::PLATFORM_VENDOR:
     case ComputeContext::PLATFORM_EXTENSIONS:
-        return WebCLGetInfo(String(""));
+        return WebCLGetInfo(emptyString());
     default:
         ec = WebCLException::INVALID_VALUE;
         return WebCLGetInfo();
@@ -88,7 +89,7 @@ Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(CCenum deviceType, Except
         return m_webCLDevices;
 
     Vector<CCDeviceID> ccDevices;
-    CCerror error = ComputeContext::getDeviceIDs(platformObject(), deviceType, ccDevices);
+    CCerror error = platformObject()->getDeviceIDs(deviceType, ccDevices);
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
         return Vector<RefPtr<WebCLDevice> >();
@@ -105,14 +106,14 @@ Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(CCenum deviceType, Except
 
 CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >& platforms)
 {
-    Vector<CCPlatformID> ccPlatforms;
+    Vector<RefPtr<ComputePlatform> > computePlatforms;
 
-    CCerror error = ComputeContext::getPlatformIDs(ccPlatforms);
+    CCerror error = ComputePlatform::getPlatformIDs(computePlatforms);
     if (error != ComputeContext::SUCCESS)
         return error;
 
-    for (size_t i = 0; i < ccPlatforms.size(); ++i)
-        platforms.append(WebCLPlatform::create(ccPlatforms[i]));
+    for (size_t i = 0; i < computePlatforms.size(); ++i)
+        platforms.append(WebCLPlatform::create(computePlatforms[i].release()));
 
     return error;
 }

@@ -29,6 +29,7 @@
 
 #if ENABLE(WEBCL)
 
+#include "ComputePlatform.h"
 #include "WebCLExtensionsAccessor.h"
 
 namespace WebCore {
@@ -87,7 +88,7 @@ bool WebCLExtensionsAccessor<T>::isEnabledExtension(const String& name) const
     return m_enabledExtensions.contains(name);
 }
 
-template class WebCLExtensionsAccessor<CCPlatformID>;
+template class WebCLExtensionsAccessor<ComputePlatform*>;
 template class WebCLExtensionsAccessor<CCDeviceID>;
 template class WebCLExtensionsAccessor<NullTypePtr>;
 

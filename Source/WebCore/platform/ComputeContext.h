@@ -334,8 +334,6 @@ public:
     ComputeContext(const Vector<CCContextProperties>&, const Vector<CCDeviceID>&, CCerror&);
     ~ComputeContext();
 
-    static CCerror getPlatformIDs(Vector<CCPlatformID>&);
-    static CCerror getDeviceIDs(CCPlatformID, CCDeviceType, Vector<CCDeviceID>&);
     static CCerror waitForEvents(const Vector<ComputeEvent* >&);
 
     ComputeCommandQueue* createCommandQueue(CCDeviceID, CCCommandQueueProperties, CCerror&);
@@ -356,11 +354,6 @@ public:
     {
         return getInfoHelper(ComputeContext::getDeviceInfoBase, device, infoType, data);
     }
-    template <typename T>
-    static CCerror getPlatformInfo(CCPlatformID platform, CCPlatformInfoType infoType, T* data)
-    {
-        return getInfoHelper(ComputeContext::getPlatformInfoBase, platform, infoType, data);
-    }
 
     CCContext context() const
     {
@@ -376,7 +369,6 @@ public:
     // XXX: Create a Pimpl implementation
 private:
     static CCerror getDeviceInfoBase(CCDeviceID, CCDeviceInfoType, size_t, void *data, size_t* actualSize);
-    static CCerror getPlatformInfoBase(CCPlatformID, CCPlatformInfoType, size_t, void *data, size_t* actualSize);
 
     CCContext m_clContext;
 };

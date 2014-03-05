@@ -31,6 +31,7 @@
 
 #include "WebCLContext.h"
 
+#include "ComputePlatform.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
@@ -64,7 +65,8 @@ static void setUpComputeContextProperties(WebCLPlatform* platform, WebGLRenderin
 {
     if (platform) {
         properties.append(ComputeContext::CONTEXT_PLATFORM);
-        properties.append(reinterpret_cast<CCContextProperties>(platform->platformObject()));
+        // FIXME: CCPlatformID should not accessible from here.
+        properties.append(reinterpret_cast<CCContextProperties>(platform->platformObject()->platform()));
     }
 
     if (glContext)

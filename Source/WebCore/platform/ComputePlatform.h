@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2014 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -23,46 +23,44 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING
  * NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+*/
 
-#ifndef WebCLPlatform_h
-#define WebCLPlatform_h
+#ifndef ComputePlatform_h
+#define ComputePlatform_h
 
-#if ENABLE(WEBCL)
+#include "ComputeTypes.h"
+#include "ComputeTypesTraits.h"
 
-#include "WebCLDevice.h"
-#include "WebCLExtensionsAccessor.h"
-#include "WebCLObject.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class ComputePlatform;
-class WebCLGetInfo;
-
-class WebCLPlatform : public RefCounted<WebCLPlatform>, public WebCLExtensionsAccessor<ComputePlatform*> {
+class ComputePlatform : public RefCounted<ComputePlatform> {
 public:
-    virtual ~WebCLPlatform();
-    static PassRefPtr<WebCLPlatform> create(PassRefPtr<ComputePlatform>);
+    ComputePlatform(CCPlatformID);
 
-    WebCLGetInfo getInfo (CCenum, ExceptionCode&);
-    Vector<RefPtr<WebCLDevice> > getDevices(CCenum, ExceptionCode&);
+    static CCerror getPlatformIDs(Vector<RefPtr<ComputePlatform> >&);
+    CCerror getDeviceIDs(CCDeviceType, Vector<CCDeviceID>&);
 
-    ComputePlatform* platformObject() const { return m_platformObject.get(); }
+    CCPlatformID platform() const
+    {
+        return m_platform;
+    }
+
+    // FIXME: Differently from other getXXXInfo methods, this one is static because of the way
+    // it talks to ComputeExtensionsTraits.
+    template <typename T>
+    static CCerror getPlatformInfo(CCPlatformID platformID, CCPlatformInfoType infoType, T* data)
+    {
+        return getInfoHelper(ComputePlatform::getPlatformInfoBase, platformID, infoType, data);
+    }
 
 private:
-    WebCLPlatform(PassRefPtr<ComputePlatform>);
+    static CCerror getPlatformInfoBase(CCPlatformID, CCPlatformInfoType, size_t, void *data, size_t* actualSize);
 
-    friend CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);
-    RefPtr<ComputePlatform> m_platformObject;
-    CCenum m_cachedDeviceType;
-
-    Vector<RefPtr<WebCLDevice> > m_webCLDevices;
+    CCPlatformID m_platform;
 };
 
-CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >&);
-
-} // namespace WebCore
+}
 
 #endif
-
-#endif // WebCLPlatform_h

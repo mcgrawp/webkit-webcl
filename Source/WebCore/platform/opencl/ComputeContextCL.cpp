@@ -339,36 +339,6 @@ ComputeContext::~ComputeContext()
     clReleaseContext(m_clContext);
 }
 
-CCerror ComputeContext::getPlatformIDs(Vector<CCPlatformID>& ccPlatforms)
-{
-    CCuint numberOfPlatforms = 0;
-    CCint clError = clGetPlatformIDs(0, 0, &numberOfPlatforms);
-    if (clError != CL_SUCCESS)
-        return clError;
-
-    if (!ccPlatforms.tryReserveCapacity(numberOfPlatforms))
-        return OUT_OF_HOST_MEMORY;
-    ccPlatforms.resize(numberOfPlatforms);
-
-    clError = clGetPlatformIDs(numberOfPlatforms, ccPlatforms.data(), 0);
-    return clError;
-}
-
-CCerror ComputeContext::getDeviceIDs(CCPlatformID platform, CCDeviceType deviceType, Vector<CCDeviceID>& ccDevices)
-{
-    CCuint numberOfDevices = 0;
-    CCint clError = clGetDeviceIDs(platform, deviceType, 0, 0, &numberOfDevices);
-    if (clError != CL_SUCCESS)
-        return clError;
-
-    if (!ccDevices.tryReserveCapacity(numberOfDevices))
-        return OUT_OF_HOST_MEMORY;
-    ccDevices.resize(numberOfDevices);
-
-    clError = clGetDeviceIDs(platform, deviceType, numberOfDevices, ccDevices.data(), 0);
-    return clError;
-}
-
 // FIXME: Move to ComputeEvent class.
 CCerror ComputeContext::waitForEvents(const Vector<ComputeEvent*>& events)
 {
@@ -445,11 +415,6 @@ CCerror ComputeContext::supportedImageFormats(CCMemoryFlags type, CCMemoryObject
 CCerror ComputeContext::getDeviceInfoBase(CCDeviceID deviceID, CCDeviceInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
 {
    return clGetDeviceInfo(deviceID, infoType, sizeOfData, data, retSize);
-}
-
-CCerror ComputeContext::getPlatformInfoBase(CCPlatformID platformID, CCPlatformInfoType infoType, size_t sizeOfData, void* data, size_t *retSize)
-{
-   return clGetPlatformInfo(platformID, infoType, sizeOfData, data, retSize);
 }
 
 void ComputeContext::populatePropertiesForInteroperabilityWithGL(Vector<CCContextProperties>& properties, PlatformGraphicsContext3D context3D)
