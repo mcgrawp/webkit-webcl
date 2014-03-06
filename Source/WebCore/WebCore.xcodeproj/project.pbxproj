@@ -1983,6 +1983,8 @@
 		759D571218C4C58D00A252D0 /* ComputePlatformCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759D571118C4C58900A252D0 /* ComputePlatformCL.cpp */; };
 		75B5617A18AC75BA00C1EB58 /* ComputeSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B5617818AC75A800C1EB58 /* ComputeSampler.h */; };
 		75B5617B18AC75C600C1EB58 /* ComputeSamplerCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B5617918AC75B700C1EB58 /* ComputeSamplerCL.cpp */; };
+		75C5DB0518C7BAF800D24ACC /* ComputeDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 75C5DB0418C7BAF300D24ACC /* ComputeDevice.h */; };
+		75C5DB0718C7BB0800D24ACC /* ComputeDeviceCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75C5DB0618C7BB0500D24ACC /* ComputeDeviceCL.cpp */; };
 		75D7FFD318774FF900FAE029 /* ComputeKernelCL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D7FFD11877444400FAE029 /* ComputeKernelCL.cpp */; };
 		75F40FAE1875FE4B0052EE69 /* ComputeKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F40FAD1875FE460052EE69 /* ComputeKernel.h */; };
 		75F40FB0187605820052EE69 /* ComputeProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F40FAF187605790052EE69 /* ComputeProgram.h */; };
@@ -8537,6 +8539,8 @@
 		759D571118C4C58900A252D0 /* ComputePlatformCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputePlatformCL.cpp; sourceTree = "<group>"; };
 		75B5617818AC75A800C1EB58 /* ComputeSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeSampler.h; sourceTree = "<group>"; };
 		75B5617918AC75B700C1EB58 /* ComputeSamplerCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeSamplerCL.cpp; sourceTree = "<group>"; };
+		75C5DB0418C7BAF300D24ACC /* ComputeDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeDevice.h; sourceTree = "<group>"; };
+		75C5DB0618C7BB0500D24ACC /* ComputeDeviceCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeDeviceCL.cpp; sourceTree = "<group>"; };
 		75D7FFD11877444400FAE029 /* ComputeKernelCL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeKernelCL.cpp; sourceTree = "<group>"; };
 		75F40FAD1875FE460052EE69 /* ComputeKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeKernel.h; sourceTree = "<group>"; };
 		75F40FAF187605790052EE69 /* ComputeProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeProgram.h; sourceTree = "<group>"; };
@@ -15168,6 +15172,7 @@
 		758C8EEA17887BA000FAD9BA /* opencl */ = {
 			isa = PBXGroup;
 			children = (
+				75C5DB0618C7BB0500D24ACC /* ComputeDeviceCL.cpp */,
 				759D571118C4C58900A252D0 /* ComputePlatformCL.cpp */,
 				75B5617918AC75B700C1EB58 /* ComputeSamplerCL.cpp */,
 				750E58B518A3E03A001C37AE /* ComputeMemoryObjectCL.cpp */,
@@ -19639,6 +19644,7 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				75C5DB0418C7BAF300D24ACC /* ComputeDevice.h */,
 				759D570F18C4C57100A252D0 /* ComputePlatform.h */,
 				75B5617818AC75A800C1EB58 /* ComputeSampler.h */,
 				750E58B318A3DF47001C37AE /* ComputeMemoryObject.h */,
@@ -23267,6 +23273,7 @@
 				97205AB81239291000B17380 /* MediaDocument.h in Headers */,
 				FD6F252D13F5EF0E0065165F /* MediaElementAudioSourceNode.h in Headers */,
 				E44613AD0CD6331000FADA75 /* MediaError.h in Headers */,
+				75C5DB0518C7BAF800D24ACC /* ComputeDevice.h in Headers */,
 				4E1959220A39DABA00220FE5 /* MediaFeatureNames.h in Headers */,
 				07A6D1EC1491137700051D0C /* MediaFragmentURIParser.h in Headers */,
 				A8EA800E0A19516E00A8EF5F /* MediaList.h in Headers */,
@@ -25659,6 +25666,7 @@
 				A43BF5981149290A00C643CA /* HTMLProgressElement.cpp in Sources */,
 				033A6A7E147E07E700509B36 /* HTMLPropertiesCollection.cpp in Sources */,
 				A8CFF7A50A156978000A4234 /* HTMLQuoteElement.cpp in Sources */,
+				75C5DB0718C7BB0800D24ACC /* ComputeDeviceCL.cpp in Sources */,
 				A8D223FD16B52E4E00157288 /* HTMLResourcePreloader.cpp in Sources */,
 				A871DC220A15205700B12A68 /* HTMLScriptElement.cpp in Sources */,
 				977B3874122883E900B81FF8 /* HTMLScriptRunner.cpp in Sources */,

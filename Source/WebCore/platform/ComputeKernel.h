@@ -28,6 +28,7 @@
 #ifndef ComputeKernel_h
 #define ComputeKernel_h
 
+#include "ComputeDevice.h"
 #include "ComputeTypes.h"
 #include "ComputeTypesTraits.h"
 
@@ -55,9 +56,9 @@ public:
         return getInfoHelper(ComputeKernel::getKernelInfoBase, m_kernel, infoType, data);
     }
     template <typename T>
-    CCerror getWorkGroupInfo(CCDeviceID device, CCKernelWorkGroupInfoType infoType, T* data)
+    CCerror getWorkGroupInfo(ComputeDevice* device, CCKernelWorkGroupInfoType infoType, T* data)
     {
-        return getInfoHelper(ComputeKernel::getWorkGroupInfoBase, m_kernel, device, infoType, data);
+        return getInfoHelper(ComputeKernel::getWorkGroupInfoBase, m_kernel, device->device(), infoType, data);
     }
 
     CCKernel kernel() const

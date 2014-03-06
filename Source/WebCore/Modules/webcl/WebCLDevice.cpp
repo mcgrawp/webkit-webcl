@@ -31,6 +31,7 @@
 
 #include "WebCLDevice.h"
 
+#include "ComputeDevice.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
 #include "WebCLGetInfo.h"
@@ -43,14 +44,14 @@ WebCLDevice::~WebCLDevice()
 {
 }
 
-PassRefPtr<WebCLDevice> WebCLDevice::create(CCDeviceID deviceID, WebCLPlatform* platform)
+PassRefPtr<WebCLDevice> WebCLDevice::create(PassRefPtr<ComputeDevice> device, WebCLPlatform* platform)
 {
-    return adoptRef(new WebCLDevice(deviceID, platform));
+    return adoptRef(new WebCLDevice(device, platform));
 }
 
-WebCLDevice::WebCLDevice(CCDeviceID deviceID, WebCLPlatform* platform)
-    : WebCLExtensionsAccessor(deviceID)
-    , m_deviceID(deviceID)
+WebCLDevice::WebCLDevice(PassRefPtr<ComputeDevice> device, WebCLPlatform* platform)
+    : WebCLExtensionsAccessor(device.get())
+    , m_device(device)
     , m_platform(platform)
 {
 }
@@ -75,14 +76,14 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_NAME:
     case ComputeContext::DEVICE_VENDOR:
     case ComputeContext::DEVICE_EXTENSIONS:
-        return WebCLGetInfo(String(""));
+        return WebCLGetInfo(emptyString());
     case ComputeContext::DEVICE_IMAGE_SUPPORT:
     case ComputeContext::DEVICE_AVAILABLE:
     case ComputeContext::DEVICE_COMPILER_AVAILABLE:
         return WebCLGetInfo(true);
     case ComputeContext::DEVICE_MAX_WORK_ITEM_SIZES: { // size_t[]
         Vector<size_t> workItemSizes;
-        err = ComputeContext::getDeviceInfo(platformObject(), infoType, &workItemSizes);
+        err = platformObject()->getDeviceInfo(infoType, &workItemSizes);
         if (err == ComputeContext::SUCCESS) {
             Vector<CCuint, 3> values;
             for (size_t i = 0; i < workItemSizes.size(); ++i)
@@ -100,7 +101,7 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_IMAGE3D_MAX_DEPTH:
     case ComputeContext::DEVICE_IMAGE3D_MAX_WIDTH: {
         size_t infoValue = 0;
-        err = ComputeContext::getDeviceInfo(platformObject(), infoType, &infoValue);
+        err = platformObject()->getDeviceInfo(infoType, &infoValue);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<CCuint>(infoValue));
         break;
@@ -126,7 +127,7 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_ADDRESS_BITS:
     case ComputeContext::DEVICE_MAX_COMPUTE_UNITS: {
         CCuint infoValue = 0;
-        err = ComputeContext::getDeviceInfo(platformObject(), infoType, &infoValue);
+        err = platformObject()->getDeviceInfo(infoType, &infoValue);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<CCuint>(infoValue));
         break;
@@ -137,7 +138,7 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_GLOBAL_MEM_CACHE_SIZE:
     case ComputeContext::DEVICE_MAX_MEM_ALLOC_SIZE: {
         CCulong infoValue = 0;
-        err = ComputeContext::getDeviceInfo(platformObject(), infoType, &infoValue);
+        err = platformObject()->getDeviceInfo(infoType, &infoValue);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<CCulong>(infoValue));
         break;
@@ -146,42 +147,42 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_ENDIAN_LITTLE:
     case ComputeContext::DEVICE_ERROR_CORRECTION_SUPPORT: {
         CCbool infoValue = 0;
-        err = ComputeContext::getDeviceInfo(platformObject(), infoType, &infoValue);
+        err = platformObject()->ComputeDevice::getDeviceInfo(infoType, &infoValue);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<bool>(infoValue));
         break;
     }
     case ComputeContext::DEVICE_GLOBAL_MEM_CACHE_TYPE: {
         CCDeviceMemCachetype type = 0;
-        err = ComputeContext::getDeviceInfo(platformObject(), infoType, &type);
+        err = platformObject()->getDeviceInfo(infoType, &type);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<CCenum>(type));
         break;
     }
     case ComputeContext::DEVICE_TYPE: {
         CCDeviceType type = 0;
-        err = ComputeContext::getDeviceInfo(platformObject(), infoType, &type);
+        err = platformObject()->getDeviceInfo(infoType, &type);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<CCenum>(type));
         break;
     }
     case ComputeContext::DEVICE_SINGLE_FP_CONFIG: {
         CCDeviceFPConfig deviceFPConfig = 0;
-        err = ComputeContext::getDeviceInfo(platformObject(), infoType, &deviceFPConfig);
+        err = platformObject()->getDeviceInfo(infoType, &deviceFPConfig);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<CCenum>(deviceFPConfig));
         break;
     }
     case ComputeContext::DEVICE_LOCAL_MEM_TYPE: {
         CCDeviceLocalMemType localMemoryType = 0;
-        err = ComputeContext::getDeviceInfo(platformObject(), infoType, &localMemoryType);
+        err = platformObject()->getDeviceInfo(infoType, &localMemoryType);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<CCenum>(localMemoryType));
         break;
     }
     case ComputeContext::DEVICE_QUEUE_PROPERTIES: {
         CCCommandQueueProperties queueProperties = 0;
-        err = ComputeContext::getDeviceInfo(platformObject(), infoType,  &queueProperties);
+        err = platformObject()->getDeviceInfo(infoType,  &queueProperties);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<CCenum>(queueProperties));
         break;
@@ -198,10 +199,10 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-void toWebCLDeviceArray(WebCLPlatform* platform, const Vector<CCDeviceID>& ccDevices, Vector<RefPtr<WebCLDevice> >& devices)
+void toWebCLDeviceArray(WebCLPlatform* platform, Vector<RefPtr<ComputeDevice> >& ccDevices, Vector<RefPtr<WebCLDevice> >& devices)
 {
     for (size_t i = 0; i < ccDevices.size(); i++) {
-        RefPtr<WebCLDevice> webCLDevice = WebCLDevice::create(ccDevices[i], platform);
+        RefPtr<WebCLDevice> webCLDevice = WebCLDevice::create(ccDevices[i].release(), platform);
         devices.append(webCLDevice);
     }
 }

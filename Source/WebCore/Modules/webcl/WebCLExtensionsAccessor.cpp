@@ -89,7 +89,7 @@ bool WebCLExtensionsAccessor<T>::isEnabledExtension(const String& name) const
 }
 
 template class WebCLExtensionsAccessor<ComputePlatform*>;
-template class WebCLExtensionsAccessor<CCDeviceID>;
+template class WebCLExtensionsAccessor<ComputeDevice*>;
 template class WebCLExtensionsAccessor<NullTypePtr>;
 
 } // WebCore

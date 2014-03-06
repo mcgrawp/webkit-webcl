@@ -88,7 +88,7 @@ Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(CCenum deviceType, Except
     if (m_cachedDeviceType == deviceType && m_webCLDevices.size())
         return m_webCLDevices;
 
-    Vector<CCDeviceID> ccDevices;
+    Vector<RefPtr<ComputeDevice> > ccDevices;
     CCerror error = platformObject()->getDeviceIDs(deviceType, ccDevices);
     if (error != ComputeContext::SUCCESS) {
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);

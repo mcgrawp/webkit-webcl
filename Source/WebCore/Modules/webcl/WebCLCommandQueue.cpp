@@ -31,6 +31,7 @@
 
 #include "WebCLCommandQueue.h"
 
+#include "ComputeDevice.h"
 #include "ComputeEvent.h"
 #include "ComputeMemoryObject.h"
 #include "WebCLBuffer.h"

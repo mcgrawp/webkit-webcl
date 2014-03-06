@@ -30,6 +30,7 @@
 #if ENABLE(WEBCL)
 #include "WebCLProgram.h"
 
+#include "ComputeDevice.h"
 #include "ComputeProgram.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
@@ -106,7 +107,8 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, CCenum infoType, Ex
         return WebCLGetInfo();
     }
 
-    CCDeviceID ccDeviceID = device->platformObject();
+    ComputeDevice* ccDeviceID = device->platformObject();
+    ASSERT(ccDeviceID);
 
     CCerror error = 0;
     switch (infoType) {
@@ -231,7 +233,7 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
         }
     }
 
-    Vector<CCDeviceID> ccDevices;
+    Vector<ComputeDevice*> ccDevices;
     ccDeviceListFromWebCLDeviceList(devices, ccDevices, ec);
     if (ec != WebCLException::SUCCESS)
         return;
@@ -306,7 +308,7 @@ const String& WebCLProgram::sourceWithCommentsStripped()
     return m_programSourceWithCommentsStripped;
 }
 
-void WebCLProgram::ccDeviceListFromWebCLDeviceList(const Vector<RefPtr<WebCLDevice> >& devices, Vector<CCDeviceID>& ccDevices, ExceptionCode& ec)
+void WebCLProgram::ccDeviceListFromWebCLDeviceList(const Vector<RefPtr<WebCLDevice> >& devices, Vector<ComputeDevice*>& ccDevices, ExceptionCode& ec)
 {
     const Vector<RefPtr<WebCLDevice> >& contextDevices = m_context->devices();
     size_t contextDevicesLength = contextDevices.size();

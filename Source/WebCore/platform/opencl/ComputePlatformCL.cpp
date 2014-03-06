@@ -63,10 +63,19 @@ CCerror ComputePlatform::getPlatformIDs(Vector<RefPtr<ComputePlatform> >& comput
     return CL_SUCCESS;
 }
 
-CCerror ComputePlatform::getDeviceIDs(CCDeviceType deviceType, Vector<CCDeviceID>& computeDevices)
+CCerror ComputePlatform::getDeviceIDs(CCDeviceType deviceType, Vector<RefPtr<ComputeDevice> >& computeDevices)
 {
     CCuint numberOfDevices = 0;
     CCint clError = clGetDeviceIDs(m_platform, deviceType, 0, 0, &numberOfDevices);
+    if (clError != CL_SUCCESS)
+        return clError;
+
+    Vector<CCDeviceID> clDevices;
+    if (!clDevices.tryReserveCapacity(numberOfDevices))
+        return OUT_OF_HOST_MEMORY;
+    clDevices.resize(numberOfDevices);
+
+    clError = clGetDeviceIDs(m_platform, deviceType, numberOfDevices, clDevices.data(), 0);
     if (clError != CL_SUCCESS)
         return clError;
 
@@ -74,7 +83,9 @@ CCerror ComputePlatform::getDeviceIDs(CCDeviceType deviceType, Vector<CCDeviceID
         return OUT_OF_HOST_MEMORY;
     computeDevices.resize(numberOfDevices);
 
-    clError = clGetDeviceIDs(m_platform, deviceType, numberOfDevices, computeDevices.data(), 0);
+    for (size_t i = 0; i < numberOfDevices; ++i)
+        computeDevices[i] = adoptRef(new ComputeDevice(clDevices[i]));
+
     return clError;
 }
 

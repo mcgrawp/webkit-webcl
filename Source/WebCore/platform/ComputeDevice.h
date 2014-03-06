@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2014 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -25,39 +25,45 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCLDevice_h
-#define WebCLDevice_h
+#ifndef ComputeDevice_h
+#define ComputeDevice_h
 
-#if ENABLE(WEBCL)
+#include "ComputeTypes.h"
+#include "ComputeTypesTraits.h"
 
-#include "WebCLExtensionsAccessor.h"
-#include "WebCLObject.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class ComputeDevice;
-class WebCLGetInfo;
-class WebCLPlatform;
-
-class WebCLDevice : public RefCounted<WebCLDevice>, public WebCLExtensionsAccessor<ComputeDevice*> {
+class ComputeDevice : public RefCounted<ComputeDevice> {
 public:
-    virtual ~WebCLDevice();
-    static PassRefPtr<WebCLDevice> create(PassRefPtr<ComputeDevice>, WebCLPlatform*);
-    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
+    ComputeDevice(CCDeviceID);
 
-    // NOTE: Not to be confused with the 'platform'.
-    ComputeDevice* platformObject() const { return m_device.get(); }
-    WebCLPlatform* platform() const { return m_platform; }
+    CCDeviceID device() const
+    {
+        return m_device;
+    }
+
+    template <typename T>
+    CCerror getDeviceInfo(CCDeviceInfoType infoType, T* data)
+    {
+        return getInfoHelper(ComputeDevice::getDeviceInfoBase, m_device, infoType, data);
+    }
+
+    // FIXME: Differently from other getXXXInfo methods, this one is static because of the way
+    // it talks to ComputeExtensionsTraits.
+    template <typename T>
+    static CCerror getDeviceInfo(ComputeDevice* device, CCDeviceInfoType infoType, T* data)
+    {
+        return getInfoHelper(ComputeDevice::getDeviceInfoBase, device->device(), infoType, data);
+    }
 
 private:
-    WebCLDevice(PassRefPtr<ComputeDevice>, WebCLPlatform*);
-    RefPtr<ComputeDevice> m_device;
-    WebCLPlatform* m_platform;
+    static CCerror getDeviceInfoBase(CCDeviceID, CCDeviceInfoType, size_t, void *data, size_t* actualSize);
+
+    CCDeviceID m_device;
 };
 
-void toWebCLDeviceArray(WebCLPlatform*, Vector<RefPtr<ComputeDevice> >&, Vector<RefPtr<WebCLDevice> >&);
+}
 
-} // namespace WebCore
-
-#endif // ENABLE(WEBCL)
-#endif // WebCLDevice_h
+#endif

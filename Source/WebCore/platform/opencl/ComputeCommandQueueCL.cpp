@@ -30,6 +30,7 @@
 #include "ComputeCommandQueue.h"
 
 #include "ComputeContext.h"
+#include "ComputeDevice.h"
 #include "ComputeEvent.h"
 #include "ComputeMemoryObject.h"
 #include "ComputeKernel.h"
@@ -38,9 +39,9 @@
 
 namespace WebCore {
 
-ComputeCommandQueue::ComputeCommandQueue(ComputeContext* context, CCDeviceID deviceId, CCCommandQueueProperties properties, CCerror& error)
+ComputeCommandQueue::ComputeCommandQueue(ComputeContext* context, ComputeDevice* device, CCCommandQueueProperties properties, CCerror& error)
 {
-    m_commandQueue = clCreateCommandQueue(context->context(), deviceId, properties, &error);
+    m_commandQueue = clCreateCommandQueue(context->context(), device->device(), properties, &error);
 }
 
 ComputeCommandQueue::~ComputeCommandQueue()

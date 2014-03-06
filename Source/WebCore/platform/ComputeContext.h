@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class ComputeCommandQueue;
+class ComputeDevice;
 class ComputeEvent;
 class ComputeMemoryObject;
 class ComputeProgram;
@@ -331,12 +332,12 @@ public:
         GL_MIPMAP_LEVEL = 0x2005,
     };
 
-    ComputeContext(const Vector<CCContextProperties>&, const Vector<CCDeviceID>&, CCerror&);
+    ComputeContext(const Vector<CCContextProperties>&, const Vector<ComputeDevice*>&, CCerror&);
     ~ComputeContext();
 
     static CCerror waitForEvents(const Vector<ComputeEvent* >&);
 
-    ComputeCommandQueue* createCommandQueue(CCDeviceID, CCCommandQueueProperties, CCerror&);
+    ComputeCommandQueue* createCommandQueue(ComputeDevice*, CCCommandQueueProperties, CCerror&);
     ComputeProgram* createProgram(const String& programSource, CCerror&);
     ComputeEvent* createUserEvent(CCerror&);
     ComputeSampler* createSampler(CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);

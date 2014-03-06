@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Samsung Electronics Corporation. All rights reserved.
+ * Copyright (C) 2014 Samsung Electronics Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided the following conditions
@@ -25,39 +25,21 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCLDevice_h
-#define WebCLDevice_h
+#include "config.h"
+#include "ComputeDevice.h"
 
-#if ENABLE(WEBCL)
-
-#include "WebCLExtensionsAccessor.h"
-#include "WebCLObject.h"
+#include "ComputeContext.h"
 
 namespace WebCore {
 
-class ComputeDevice;
-class WebCLGetInfo;
-class WebCLPlatform;
+ComputeDevice::ComputeDevice(CCDeviceID device)
+    : m_device(device)
+{
+}
 
-class WebCLDevice : public RefCounted<WebCLDevice>, public WebCLExtensionsAccessor<ComputeDevice*> {
-public:
-    virtual ~WebCLDevice();
-    static PassRefPtr<WebCLDevice> create(PassRefPtr<ComputeDevice>, WebCLPlatform*);
-    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
+CCerror ComputeDevice::getDeviceInfoBase(CCDeviceID device, CCDeviceInfoType infoType, size_t sizeOfData, void *data, size_t* actualSize)
+{
+    return clGetDeviceInfo(device, infoType, sizeOfData, data, actualSize);
+}
 
-    // NOTE: Not to be confused with the 'platform'.
-    ComputeDevice* platformObject() const { return m_device.get(); }
-    WebCLPlatform* platform() const { return m_platform; }
-
-private:
-    WebCLDevice(PassRefPtr<ComputeDevice>, WebCLPlatform*);
-    RefPtr<ComputeDevice> m_device;
-    WebCLPlatform* m_platform;
-};
-
-void toWebCLDeviceArray(WebCLPlatform*, Vector<RefPtr<ComputeDevice> >&, Vector<RefPtr<WebCLDevice> >&);
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBCL)
-#endif // WebCLDevice_h
+}

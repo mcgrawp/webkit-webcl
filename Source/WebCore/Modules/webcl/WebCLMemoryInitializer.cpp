@@ -29,6 +29,7 @@
 #include "WebCLMemoryInitializer.h"
 
 #include "ComputeContext.h"
+#include "ComputeDevice.h"
 #include "ComputeKernel.h"
 #include "ComputeMemoryObject.h"
 #include "ComputeProgram.h"
@@ -74,6 +75,7 @@ WebCLMemoryInitializer::WebCLMemoryInitializer(WebCLContext* context)
 
 WebCLMemoryInitializer::~WebCLMemoryInitializer()
 {
+    // FIXME: Use OwnPtr.
     delete m_program;
     delete m_kernelChar;
     delete m_kernelChar16;
@@ -87,7 +89,7 @@ void WebCLMemoryInitializer::ensureMemoryInitialization(WebCLMemoryObject* memor
         m_program = new ComputeProgram(m_context->computeContext(), programSource, error);
         RETURN_IF_ERROR(error);
 
-        Vector<CCDeviceID> computeDevices;
+        Vector<ComputeDevice*> computeDevices;
         for (size_t i = 0; i < m_context->devices().size(); ++i)
             computeDevices.append(m_context->devices()[i]->platformObject());
         error = m_program->buildProgram(computeDevices, emptyString(), 0 /*pfnNotify*/, 0 /*userData*/);

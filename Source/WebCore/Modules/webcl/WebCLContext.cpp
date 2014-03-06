@@ -31,6 +31,7 @@
 
 #include "WebCLContext.h"
 
+#include "ComputeDevice.h"
 #include "ComputePlatform.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -79,7 +80,7 @@ static void setUpComputeContextProperties(WebCLPlatform* platform, WebGLRenderin
 
 PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, WebGLRenderingContext* glContext, WebCLPlatform* platform, const Vector<RefPtr<WebCLDevice> >& devices, ExceptionCode& ec)
 {
-    Vector<CCDeviceID> ccDevices;
+    Vector<ComputeDevice*> ccDevices;
     for (size_t i = 0; i < devices.size(); ++i) {
         RefPtr<WebCLDevice> device = devices[i];
         if (!device) {

@@ -31,6 +31,7 @@
 
 #include "WebCLKernel.h"
 
+#include "ComputeDevice.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
 #include "WebCLGetInfo.h"
@@ -147,7 +148,8 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
         return WebCLGetInfo();
     }
 
-    CCDeviceID ccDevice = device->platformObject();
+    ComputeDevice* ccDevice = device->platformObject();
+    ASSERT(ccDevice);
 
     CCerror err = 0;
     switch (paramName) {

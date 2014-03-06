@@ -28,6 +28,7 @@
 #ifndef ComputeProgram_h
 #define ComputeProgram_h
 
+#include "ComputeDevice.h"
 #include "ComputeTypes.h"
 #include "ComputeTypesTraits.h"
 
@@ -44,7 +45,7 @@ public:
     ComputeProgram(ComputeContext*, const String& programSource, CCerror&);
     ~ComputeProgram();
 
-    CCerror buildProgram(const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, void* userData);
+    CCerror buildProgram(const Vector<ComputeDevice*>& devices, const String& options, pfnNotify notifyFunction, void* userData);
 
     ComputeKernel* createKernel(const String& kernelName, CCerror&);
     Vector<ComputeKernel*> createKernelsInProgram(CCerror&);
@@ -56,9 +57,9 @@ public:
     }
 
     template <typename T>
-    CCerror getBuildInfo(CCDeviceID device, CCProgramBuildInfoType infoType, T* data)
+    CCerror getBuildInfo(ComputeDevice* device, CCProgramBuildInfoType infoType, T* data)
     {
-        return getInfoHelper(ComputeProgram::getBuildInfoBase, m_program, device, infoType, data);
+        return getInfoHelper(ComputeProgram::getBuildInfoBase, m_program, device->device(), infoType, data);
     }
 
     CCProgram program() const

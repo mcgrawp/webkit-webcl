@@ -23,11 +23,12 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING
  * NEGLIGENCE OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
 #ifndef ComputePlatform_h
 #define ComputePlatform_h
 
+#include "ComputeDevice.h"
 #include "ComputeTypes.h"
 #include "ComputeTypesTraits.h"
 
@@ -40,7 +41,7 @@ public:
     ComputePlatform(CCPlatformID);
 
     static CCerror getPlatformIDs(Vector<RefPtr<ComputePlatform> >&);
-    CCerror getDeviceIDs(CCDeviceType, Vector<CCDeviceID>&);
+    CCerror getDeviceIDs(CCDeviceType, Vector<RefPtr<ComputeDevice> >&);
 
     CCPlatformID platform() const
     {

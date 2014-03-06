@@ -30,6 +30,7 @@
 #include "ComputeContext.h"
 
 #include "ComputeCommandQueue.h"
+#include "ComputeDevice.h"
 #include "ComputeEvent.h"
 #include "ComputeMemoryObject.h"
 #include "ComputeProgram.h"
@@ -329,9 +330,13 @@ COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::GL_OBJECT_RENDERBUFFER, CL_GL_OBJEC
 COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::GL_TEXTURE_TARGET, CL_GL_TEXTURE_TARGET);
 COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::GL_MIPMAP_LEVEL, CL_GL_MIPMAP_LEVEL);
 
-ComputeContext::ComputeContext(const Vector<CCContextProperties>& contextProperties, const Vector<CCDeviceID>& devices, CCerror& error)
+ComputeContext::ComputeContext(const Vector<CCContextProperties>& contextProperties, const Vector<ComputeDevice*>& devices, CCerror& error)
 {
-    m_clContext = clCreateContext(contextProperties.data(), devices.size(), devices.data(), 0, 0, &error);
+    Vector<CCDeviceID> clDevices;
+    for (size_t i = 0; i < devices.size(); ++i)
+        clDevices.append(devices[i]->device());
+
+    m_clContext = clCreateContext(contextProperties.data(), devices.size(), clDevices.data(), 0, 0, &error);
 }
 
 ComputeContext::~ComputeContext()
@@ -352,9 +357,9 @@ CCerror ComputeContext::waitForEvents(const Vector<ComputeEvent*>& events)
     return clError;
 }
 
-ComputeCommandQueue* ComputeContext::createCommandQueue(CCDeviceID deviceId, CCCommandQueueProperties properties, CCerror& error)
+ComputeCommandQueue* ComputeContext::createCommandQueue(ComputeDevice* device, CCCommandQueueProperties properties, CCerror& error)
 {
-    return new ComputeCommandQueue(this, deviceId, properties, error);
+    return new ComputeCommandQueue(this, device, properties, error);
 }
 
 ComputeEvent* ComputeContext::createUserEvent(CCerror& error)

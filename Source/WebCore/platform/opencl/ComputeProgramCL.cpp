@@ -45,11 +45,15 @@ ComputeProgram::~ComputeProgram()
     clReleaseProgram(m_program);
 }
 
-CCerror ComputeProgram::buildProgram(const Vector<CCDeviceID>& devices, const String& options, pfnNotify notifyFunction, void* userData)
+CCerror ComputeProgram::buildProgram(const Vector<ComputeDevice*>& devices, const String& options, pfnNotify notifyFunction, void* userData)
 {
+    Vector<CCDeviceID> clDevices;
+    for (size_t i = 0; i < devices.size(); ++i)
+        clDevices.append(devices[i]->device());
+
     const CString& optionsCString = options.utf8();
     const char* optionsPtr = optionsCString.data();
-    return clBuildProgram(m_program, devices.size(), devices.data(), optionsPtr, notifyFunction, userData);
+    return clBuildProgram(m_program, devices.size(), clDevices.data(), optionsPtr, notifyFunction, userData);
 }
 
 ComputeKernel* ComputeProgram::createKernel(const String& kernelName, CCerror& error)

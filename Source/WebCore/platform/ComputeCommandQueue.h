@@ -37,13 +37,14 @@
 namespace WebCore {
 
 class ComputeContext;
+class ComputeDevice;
 class ComputeEvent;
 class ComputeMemoryObject;
 class ComputeKernel;
 
 class ComputeCommandQueue {
 public:
-    ComputeCommandQueue(ComputeContext*, CCDeviceID, CCCommandQueueProperties, CCerror&);
+    ComputeCommandQueue(ComputeContext*, ComputeDevice*, CCCommandQueueProperties, CCerror&);
     ~ComputeCommandQueue();
 
     CCerror enqueueNDRangeKernel(ComputeKernel*, CCuint globalWorkItemDimensions, const Vector<size_t>& globalWorkOffset,
