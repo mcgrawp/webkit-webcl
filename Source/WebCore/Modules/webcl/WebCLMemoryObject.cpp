@@ -106,6 +106,11 @@ WebCLGetInfo WebCLMemoryObject::getInfo(CCenum paramName, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
+bool WebCLMemoryObject::isExtensionEnabled(WebCLContext* context, const String& name) const
+{
+    return context->isExtensionEnabled(name);
+};
+
 bool WebCLMemoryObject::sharesGLResources() const
 {
 #if ENABLE(WEBGL)
@@ -118,6 +123,11 @@ bool WebCLMemoryObject::sharesGLResources() const
 #if ENABLE(WEBGL)
 WebCLGLObjectInfo* WebCLMemoryObject::getGLObjectInfo(ExceptionCode& ec)
 {
+    if (!isExtensionEnabled(m_context.get(), "KHR_gl_sharing")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return 0;
+    }
+
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_MEM_OBJECT;
         return 0;

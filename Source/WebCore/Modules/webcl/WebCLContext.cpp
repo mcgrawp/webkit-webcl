@@ -78,8 +78,26 @@ static void setUpComputeContextProperties(WebCLPlatform* platform, WebGLRenderin
     properties.append(0);
 }
 
+static inline void getEnabledExtensions(WebCL* webCL, WebCLPlatform* platform, const Vector<RefPtr<WebCLDevice> >& devices, HashSet<String>& enabledExtensions)
+{
+    webCL->getEnabledExtensions(enabledExtensions);
+    platform->getEnabledExtensions(enabledExtensions);
+
+    for (size_t i = 0; i < devices.size(); i++)
+        devices[i]->getEnabledExtensions(enabledExtensions);
+}
+
 PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, WebGLRenderingContext* glContext, WebCLPlatform* platform, const Vector<RefPtr<WebCLDevice> >& devices, ExceptionCode& ec)
 {
+    // Check all the enabled extensions and cache it to avoid enabling after context creation.
+    HashSet<String> enabledExtensions;
+    getEnabledExtensions(webCL, platform, devices, enabledExtensions);
+    // If WebGLRenderingContext is sent and KHR_gl_sharing is not Enabled, throw WEBCL_EXTENSION_NOT_ENABLED.
+    if (glContext && !enabledExtensions.contains("KHR_gl_sharing")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return 0;
+    }
+
     Vector<ComputeDevice*> ccDevices;
     for (size_t i = 0; i < devices.size(); ++i) {
         RefPtr<WebCLDevice> device = devices[i];
@@ -107,26 +125,19 @@ PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, WebGLRenderingContex
         return 0;
     }
 
-    RefPtr<WebCLContext> context = adoptRef(new WebCLContext(webCL, computeContext, devices));
+    RefPtr<WebCLContext> context = adoptRef(new WebCLContext(webCL, computeContext, devices, enabledExtensions));
     return context.release();
 }
 
-WebCLContext::WebCLContext(WebCL* webCL, ComputeContext* computeContext, const Vector<RefPtr<WebCLDevice> >& devices)
+WebCLContext::WebCLContext(WebCL* webCL, ComputeContext* computeContext, const Vector<RefPtr<WebCLDevice> >& devices, HashSet<String>& enabledExtensions)
     : WebCLObjectImpl(computeContext)
     , m_videoCache(4) // FIXME: Why '4'?
     , m_webCL(webCL)
     , m_devices(devices)
     , m_memoryInitializer(this)
+    , m_enabledExtensions(enabledExtensions)
 {
     webCL->trackReleaseableWebCLObject(createWeakPtr());
-    // Cache the extension state to avoid enabling extension after the context creation.
-    webCL->getEnabledExtensions(m_enabledExtensions);
-
-    m_devices[0]->platform()->getEnabledExtensions(m_enabledExtensions);
-
-    for (size_t i = 0; i < m_devices.size(); i++)
-        m_devices[i]->getEnabledExtensions(m_enabledExtensions);
-
 }
 
 WebCLGetInfo WebCLContext::getInfo(CCenum paramName, ExceptionCode& ec)
@@ -665,6 +676,11 @@ void WebCLContext::releaseAll()
 #if ENABLE(WEBGL)
 PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(CCenum flags, WebGLBuffer* webGLBuffer, ExceptionCode& ec)
 {
+    if (!isExtensionEnabled("KHR_gl_sharing")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return 0;
+    }
+
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
@@ -680,6 +696,11 @@ PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(CCenum flags, WebGLBuff
 
 PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderbuffer(CCenum flags, WebGLRenderbuffer* renderbuffer, ExceptionCode& ec)
 {
+    if (!isExtensionEnabled("KHR_gl_sharing")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return 0;
+    }
+
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;
@@ -695,6 +716,11 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderbuffer(CCenum flags, WebG
 
 PassRefPtr<WebCLImage> WebCLContext::createFromGLTexture(CCenum flags, CCenum textureTarget, GC3Dint miplevel, WebGLTexture* texture, ExceptionCode& ec)
 {
+    if (!isExtensionEnabled("KHR_gl_sharing")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return 0;
+    }
+
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_CONTEXT;
         return 0;

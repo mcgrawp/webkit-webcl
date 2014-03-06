@@ -1166,7 +1166,7 @@ void WebCLCommandQueue::enqueueMarker(WebCLEvent* event, ExceptionCode& ec)
     ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
 }
 
-bool WebCLCommandQueue::isExtensionEnabled(WebCLContext* context, const String& name)
+bool WebCLCommandQueue::isExtensionEnabled(WebCLContext* context, const String& name) const
 {
     return context->isExtensionEnabled(name);
 };
@@ -1174,6 +1174,11 @@ bool WebCLCommandQueue::isExtensionEnabled(WebCLContext* context, const String& 
 #if ENABLE(WEBGL)
 void WebCLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
+    if (!isExtensionEnabled(m_context.get(), "KHR_gl_sharing")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
+
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;
@@ -1204,6 +1209,11 @@ void WebCLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryO
 
 void WebCLCommandQueue::enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
 {
+    if (!isExtensionEnabled(m_context.get(), "KHR_gl_sharing")) {
+        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        return;
+    }
+
     if (isPlatformObjectNeutralized()) {
         ec = WebCLException::INVALID_COMMAND_QUEUE;
         return;

@@ -58,6 +58,7 @@ public:
     {
         return m_sizeInBytes;
     }
+    bool isExtensionEnabled(WebCLContext*, const String& name) const;
 
 protected:
     WebCLMemoryObject(WebCLContext*, ComputeMemoryObject*, CCuint sizeInBytes, WebCLMemoryObject* = 0);

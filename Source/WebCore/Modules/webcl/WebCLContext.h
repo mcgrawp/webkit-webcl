@@ -35,6 +35,7 @@
 #include "WebCLGetInfo.h"
 #include "WebCLInputChecker.h"
 #include "WebCLMemoryInitializer.h"
+#include "WebCLMemoryObject.h"
 #include "WebCLObject.h"
 #include <wtf/HashSet.h>
 
@@ -128,13 +129,14 @@ public:
     }
 
 private:
-    WebCLContext(WebCL*, ComputeContext*, const Vector<RefPtr<WebCLDevice> >&);
+    WebCLContext(WebCL*, ComputeContext*, const Vector<RefPtr<WebCLDevice> >&, HashSet<String>&);
 
     PassRefPtr<WebCLImage> createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat&, void*, ExceptionCode&);
     PassRefPtr<WebCLBuffer> createBufferBase(CCenum memoryFlags, CCuint size, void* data, ExceptionCode&);
 
     bool isExtensionEnabled(const String& name) const;
-    friend bool WebCLCommandQueue::isExtensionEnabled(WebCLContext*, const String&);
+    friend bool WebCLCommandQueue::isExtensionEnabled(WebCLContext*, const String&) const;
+    friend bool WebCLMemoryObject::isExtensionEnabled(WebCLContext*, const String&) const;
 
     void postCreateCommandQueue(WebCLCommandQueue*, ExceptionCode&);
     void postCreateBuffer(WebCLBuffer*, ExceptionCode&);
