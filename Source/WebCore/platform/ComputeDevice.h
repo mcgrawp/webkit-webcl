@@ -53,9 +53,9 @@ public:
     // FIXME: Differently from other getXXXInfo methods, this one is static because of the way
     // it talks to ComputeExtensionsTraits.
     template <typename T>
-    static CCerror getDeviceInfo(ComputeDevice* device, CCDeviceInfoType infoType, T* data)
+    static CCerror getDeviceInfo2(CCDeviceID device, CCDeviceInfoType infoType, T* data)
     {
-        return getInfoHelper(ComputeDevice::getDeviceInfoBase, device->device(), infoType, data);
+        return getInfoHelper(ComputeDevice::getDeviceInfoBase, device, infoType, data);
     }
 
 private:

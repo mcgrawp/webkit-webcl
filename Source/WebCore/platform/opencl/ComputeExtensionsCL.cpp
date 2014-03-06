@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "ComputeDevice.h"
 #include "ComputeExtensions.h"
 #include "ComputeExtensionsTraits.h"
 #include "ComputePlatform.h"
@@ -67,8 +68,10 @@ bool ComputeExtensions::supports(const String& name, ComputePlatform* platform)
     return supportsExtension(name, platformID, m_platformExtensions);
 }
 
-bool ComputeExtensions::supports(const String& name, CCDeviceID deviceID)
+bool ComputeExtensions::supports(const String& name, ComputeDevice* device)
 {
+    ASSERT(device);
+    CCDeviceID deviceID = device->device();
     if (!m_deviceExtensions.contains(deviceID)) {
         if (!cacheExtensionsForDevice(deviceID))
             return false;
@@ -156,7 +159,7 @@ void ComputeExtensions::cacheGlobalExtensions()
 
 bool ComputeExtensions::cacheExtensionsForDevice(CCDeviceID deviceID)
 {
-    return cacheExtensionsHelper(ComputeContext::getDeviceInfo<Vector<char> >, deviceID, ComputeContext::DEVICE_EXTENSIONS, m_deviceExtensions); 
+    return cacheExtensionsHelper(ComputeDevice::getDeviceInfo2<Vector<char> >, deviceID, ComputeContext::DEVICE_EXTENSIONS, m_deviceExtensions);
 }
 
 bool ComputeExtensions::cacheExtensionsForPlatform(CCPlatformID platformID)

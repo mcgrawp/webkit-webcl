@@ -417,11 +417,6 @@ CCerror ComputeContext::supportedImageFormats(CCMemoryFlags type, CCMemoryObject
     return clError;
 }
 
-CCerror ComputeContext::getDeviceInfoBase(CCDeviceID deviceID, CCDeviceInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)
-{
-   return clGetDeviceInfo(deviceID, infoType, sizeOfData, data, retSize);
-}
-
 void ComputeContext::populatePropertiesForInteroperabilityWithGL(Vector<CCContextProperties>& properties, PlatformGraphicsContext3D context3D)
 {
 #if PLATFORM(MAC)

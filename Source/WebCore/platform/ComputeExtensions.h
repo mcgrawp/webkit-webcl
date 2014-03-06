@@ -49,7 +49,7 @@ public:
     // Takes full name of extension; for example "cl_khr_gl_sharing".
     bool supports(const String&, NullTypePtr = 0);
     bool supports(const String&, ComputePlatform*);
-    bool supports(const String&, CCDeviceID);
+    bool supports(const String&, ComputeDevice*);
 
 private:
     ComputeExtensions();

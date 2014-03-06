@@ -147,7 +147,7 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_ENDIAN_LITTLE:
     case ComputeContext::DEVICE_ERROR_CORRECTION_SUPPORT: {
         CCbool infoValue = 0;
-        err = platformObject()->ComputeDevice::getDeviceInfo(infoType, &infoValue);
+        err = platformObject()->getDeviceInfo(infoType, &infoValue);
         if (err == ComputeContext::SUCCESS)
             return WebCLGetInfo(static_cast<bool>(infoValue));
         break;
