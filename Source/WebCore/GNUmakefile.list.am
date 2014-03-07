@@ -2251,6 +2251,8 @@ webcore_modules_sources += \
     Source/WebCore/Modules/webcl/WebCLKernelArgInfoProvider.h \
     Source/WebCore/Modules/webcl/WebCLKernel.cpp \
     Source/WebCore/Modules/webcl/WebCLKernel.h \
+    Source/WebCore/Modules/webcl/WebCLMemoryInitializer.cpp \
+    Source/WebCore/Modules/webcl/WebCLMemoryInitializer.h \
     Source/WebCore/Modules/webcl/WebCLMemoryObject.cpp \
     Source/WebCore/Modules/webcl/WebCLMemoryObject.h \
     Source/WebCore/Modules/webcl/WebCLObject.h \
@@ -5673,21 +5675,25 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/soup/SocketStreamHandleSoup.cpp \
     Source/WebCore/platform/ComputeCommandQueue.h \
     Source/WebCore/platform/ComputeContext.h \
+    Source/WebCore/platform/ComputeDevice.h  \
     Source/WebCore/platform/ComputeEvent.h \
     Source/WebCore/platform/ComputeExtensions.h \
     Source/WebCore/platform/ComputeExtensionsTraits.h \
     Source/WebCore/platform/ComputeKernel.h \
     Source/WebCore/platform/ComputeMemoryObject.h \
+    Source/WebCore/platform/ComputePlatform.h \
     Source/WebCore/platform/ComputeProgram.h \
     Source/WebCore/platform/ComputeSampler.h \
     Source/WebCore/platform/ComputeTypes.h \
     Source/WebCore/platform/ComputeTypesTraits.h \
     Source/WebCore/platform/opencl/ComputeCommandQueueCL.cpp \
     Source/WebCore/platform/opencl/ComputeContextCL.cpp \
+    Source/WebCore/platform/opencl/ComputeDeviceCL.cpp \
     Source/WebCore/platform/opencl/ComputeEventCL.cpp \
     Source/WebCore/platform/opencl/ComputeExtensionsCL.cpp \
     Source/WebCore/platform/opencl/ComputeKernelCL.cpp \
     Source/WebCore/platform/opencl/ComputeMemoryObjectCL.cpp \
+    Source/WebCore/platform/opencl/ComputePlatformCL.cpp \
     Source/WebCore/platform/opencl/ComputeProgramCL.cpp \
     Source/WebCore/platform/opencl/ComputeSamplerCL.cpp \
 	Source/WebCore/platform/ScrollableArea.cpp \
