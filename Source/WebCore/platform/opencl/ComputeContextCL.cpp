@@ -33,6 +33,7 @@
 #include "ComputeDevice.h"
 #include "ComputeEvent.h"
 #include "ComputeMemoryObject.h"
+#include "ComputePlatform.h"
 #include "ComputeProgram.h"
 #include "ComputeSampler.h"
 
@@ -330,12 +331,29 @@ COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::GL_OBJECT_RENDERBUFFER, CL_GL_OBJEC
 COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::GL_TEXTURE_TARGET, CL_GL_TEXTURE_TARGET);
 COMPILE_ASSERT_MATCHING_ENUM(ComputeContext::GL_MIPMAP_LEVEL, CL_GL_MIPMAP_LEVEL);
 
-ComputeContext::ComputeContext(const Vector<CCContextProperties>& contextProperties, const Vector<ComputeDevice*>& devices, CCerror& error)
+static void setUpComputeContextProperties(ComputePlatform* platform, GraphicsContext3D* glContext, Vector<CCContextProperties>& properties)
+{
+    if (platform) {
+        properties.append(ComputeContext::CONTEXT_PLATFORM);
+        properties.append(reinterpret_cast<CCContextProperties>(platform->platform()));
+    }
+
+    if (glContext)
+        ComputeContext::populatePropertiesForInteroperabilityWithGL(properties, glContext->platformGraphicsContext3D());
+
+    // FIXME: If no valid platform or glContext is passed, context create fails.
+    // It does work with a literal {0} though.
+    properties.append(0);
+}
+
+ComputeContext::ComputeContext(const Vector<ComputeDevice*>& devices, ComputePlatform* platform, GraphicsContext3D* context3D, CCerror& error)
 {
     Vector<CCDeviceID> clDevices;
     for (size_t i = 0; i < devices.size(); ++i)
         clDevices.append(devices[i]->device());
 
+    Vector<CCContextProperties> contextProperties;
+    setUpComputeContextProperties(platform, context3D, contextProperties);
     m_clContext = clCreateContext(contextProperties.data(), devices.size(), clDevices.data(), 0, 0, &error);
 }
 

@@ -62,22 +62,6 @@ WebCLContext::~WebCLContext()
     releasePlatformObject();
 }
 
-static void setUpComputeContextProperties(WebCLPlatform* platform, WebGLRenderingContext* glContext, Vector<CCContextProperties>& properties)
-{
-    if (platform) {
-        properties.append(ComputeContext::CONTEXT_PLATFORM);
-        // FIXME: CCPlatformID should not accessible from here.
-        properties.append(reinterpret_cast<CCContextProperties>(platform->platformObject()->platform()));
-    }
-
-    if (glContext)
-        ComputeContext::populatePropertiesForInteroperabilityWithGL(properties, glContext->graphicsContext3D()->platformGraphicsContext3D());
-
-    // FIXME: If no valid platform or glContext is passed, context create fails.
-    // It does work with a literal {0} though.
-    properties.append(0);
-}
-
 static inline void getEnabledExtensions(WebCL* webCL, WebCLPlatform* platform, const Vector<RefPtr<WebCLDevice> >& devices, HashSet<String>& enabledExtensions)
 {
     webCL->getEnabledExtensions(enabledExtensions);
@@ -114,11 +98,11 @@ PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, WebGLRenderingContex
         ccDevices.append(devices[i]->platformObject());
     }
 
-    Vector<CCContextProperties> properties;
-    setUpComputeContextProperties(platform, glContext, properties);
-
     CCerror error = ComputeContext::SUCCESS;
-    ComputeContext* computeContext = new ComputeContext(properties, ccDevices, error);
+    ComputePlatform* computePlatform = platform ? platform->platformObject() : 0;
+    GraphicsContext3D* graphicsContext3D = glContext ? glContext->graphicsContext3D() : 0;
+
+    ComputeContext* computeContext = new ComputeContext(ccDevices, computePlatform, graphicsContext3D, error);
     if (error != ComputeContext::SUCCESS) {
         delete computeContext;
         ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);

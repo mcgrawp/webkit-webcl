@@ -43,6 +43,7 @@ class ComputeCommandQueue;
 class ComputeDevice;
 class ComputeEvent;
 class ComputeMemoryObject;
+class ComputePlatform;
 class ComputeProgram;
 class ComputeSampler;
 
@@ -332,7 +333,7 @@ public:
         GL_MIPMAP_LEVEL = 0x2005,
     };
 
-    ComputeContext(const Vector<CCContextProperties>&, const Vector<ComputeDevice*>&, CCerror&);
+    ComputeContext(const Vector<ComputeDevice*>&, ComputePlatform*, GraphicsContext3D*, CCerror&);
     ~ComputeContext();
 
     static CCerror waitForEvents(const Vector<ComputeEvent* >&);
