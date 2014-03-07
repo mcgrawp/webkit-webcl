@@ -59,8 +59,6 @@ public:
 
     virtual bool isPlatformObjectNeutralized() const;
 
-    static void processCallbackRegisterQueueForEvent(RefPtr<WebCLEvent>, ExceptionCode&);
-
 protected:
     WebCLEvent(ComputeEvent*);
 

@@ -192,7 +192,7 @@ void WebCLEvent::callbackProxy(CCEvent, CCint, void* userData)
 
 void WebCLEvent::setCallback(CCenum commandExecCallbackType, PassRefPtr<WebCLCallback> callback, ExceptionCode& ec)
 {
-    if (isPlatformObjectNeutralized()) {
+    if (isPlatformObjectNeutralized() || !holdsValidCLObject()) {
         ec = WebCLException::INVALID_EVENT;
         return;
     }
@@ -214,41 +214,9 @@ void WebCLEvent::setCallback(CCenum commandExecCallbackType, PassRefPtr<WebCLCal
     callbackRegisterQueue().set(this, vector.release());
 
     CCerror error = ComputeContext::SUCCESS;
-    if (holdsValidCLObject()) {
-        pfnEventNotify callbackProxyPtr = &callbackProxy;
-        error = platformObject()->setEventCallback(commandExecCallbackType, callbackProxyPtr, this);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
-        return;
-    }
-}
-
-void WebCLEvent::processCallbackRegisterQueueForEvent(RefPtr<WebCLEvent> event, ExceptionCode& ec)
-{
-    if (!event || ec != ComputeContext::SUCCESS)
-        return;
-
-    ASSERT(event->holdsValidCLObject());
-
-    // If 'event' is a user event, then it was a previously valid CCevent
-    // was reinitialized by one of the OpenCL command queue methods, and
-    // any callback previously registered to it is now invalid.
-    // http://www.khronos.org/bugzilla/show_bug.cgi?id=1089
-    if (event->isUserEvent()) {
-        callbackRegisterQueue().remove(event);
-        return;
-    }
-
-    CallbackDataVector* vector = callbackRegisterQueue().get(event);
-    if (!vector)
-        return;
-
-    // NOTE: we do not iterate over the register queue to set each of the
-    // callbacks. We set the first, and the rest of the callbacks will be executed
-    // altogether.
     pfnEventNotify callbackProxyPtr = &callbackProxy;
-    std::pair<CCint, RefPtr<WebCLCallback> > current = vector->at(0);
-    CCerror err = event->platformObject()->setEventCallback(current.first, callbackProxyPtr, event.get());
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    error = platformObject()->setEventCallback(commandExecCallbackType, callbackProxyPtr, this);
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
 }
 
 bool WebCLEvent::holdsValidCLObject() const
