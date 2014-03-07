@@ -58,8 +58,8 @@ bool isValidGLTextureInfo(unsigned long);
 bool isValidKernelArgIndex(WebCLKernel*, unsigned index);
 bool isValidDataSizeForArrayBufferView(unsigned long size, ArrayBufferView*);
 bool isValidRegionForMemoryObject(const Vector<size_t>& origin, const Vector<size_t>& region, size_t rowPitch, size_t slicePitch, size_t length);
-bool isValidRegionForHostPtr(const Vector<size_t>& region, size_t length);
-bool isValidRegionForImage(WebCLImage*, const Vector<CCuint>& origin, const Vector<CCuint>& region);
+bool isValidRegionForHostPtr(const Vector<CCuint>& region, size_t rowPitch, const WebCLImageDescriptor*, size_t length);
+bool isValidRegionForImage(const WebCLImageDescriptor*, const Vector<CCuint>& origin, const Vector<CCuint>& region);
 bool isValidRegionForBuffer(const size_t bufferLength, const Vector<CCuint>& region, const size_t offset, const WebCLImageDescriptor*);
 
 bool isRegionOverlapping(WebCLImage*, WebCLImage*, const Vector<CCuint>& srcOrigin, const Vector<CCuint>& dstOrigin, const Vector<CCuint>& region);

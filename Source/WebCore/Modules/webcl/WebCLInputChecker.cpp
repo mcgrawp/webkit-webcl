@@ -296,13 +296,15 @@ bool isValidRegionForMemoryObject(const Vector<size_t>& origin, const Vector<siz
     return (regionArea + offset) <= length;
 }
 
-bool isValidRegionForImage(WebCLImage* image, const Vector<CCuint>& origin, const Vector<CCuint>& region)
+bool isValidRegionForImage(const WebCLImageDescriptor* descriptor, const Vector<CCuint>& origin, const Vector<CCuint>& region)
 {
-    size_t height = image->imageDescriptor()->height();
-    size_t width = image->imageDescriptor()->width();
     size_t regionArea = region[0] * region[1];
-    size_t offsetFromOrigin = origin[1] * height + origin[0];
+    if (!regionArea)
+        return false;
 
+    size_t height = descriptor->height();
+    size_t width = descriptor->width();
+    size_t offsetFromOrigin = origin[1] * height + origin[0];
     return (offsetFromOrigin + regionArea) <= (height * width);
 }
 
@@ -316,9 +318,20 @@ bool isValidRegionForBuffer(const size_t bufferLength, const Vector<CCuint>& reg
     return (offset+ bytesCopied) <= bufferLength;
 }
 
-bool isValidRegionForHostPtr(const Vector<size_t>& region, size_t length)
+bool isValidRegionForHostPtr(const Vector<CCuint>& region, size_t rowPitch, const WebCLImageDescriptor* descriptor, size_t length)
 {
-    size_t regionArea = region[0] * region[1] * region[2];
+    /*
+    *  Validate the hostPtr length passed to enqueue*Image* API's. Since hostPtr are not validated by OpenCL
+    *  Out of Bound access may cause crashes. So validating with rowPitch & region being read.
+    *  rowPitch is used to move the pointer to next row for write/read.
+    */
+    size_t imageBytesPerPixel = WebCLContext::bytesPerChannelType(descriptor->channelType())
+        * WebCLContext::numberOfChannelsForChannelOrder(descriptor->channelOrder());
+    rowPitch = rowPitch ? rowPitch : region[0];
+    if (rowPitch * region[1] * imageBytesPerPixel > length)
+        return false;
+
+    size_t regionArea = region[0] * region[1];
     if (!regionArea)
         return false;
     return (regionArea <= length);

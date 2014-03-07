@@ -464,31 +464,30 @@ void WebCLCommandQueue::enqueueReadImageBase(WebCLImage* image, CCbool blockingR
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
-    ComputeMemoryObject* computeMemory = image->platformObject();
 
     if (!hostPtr) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
+    if (origin.size() != 2 || region.size() != 2) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
+    if (!WebCLInputChecker::isValidRegionForImage(image->imageDescriptor(), origin, region)
+        || !WebCLInputChecker::isValidRegionForHostPtr(region, hostRowPitch, image->imageDescriptor(), hostPtrLength)) {
+        ec = WebCLException::INVALID_VALUE;
+        return;
+    }
+
+    ComputeMemoryObject* computeMemory = image->platformObject();
 
     Vector<size_t> originCopy, regionCopy;
     originCopy.appendVector(origin);
     regionCopy.appendVector(region);
-
-    if (originCopy.size() != 2 || regionCopy.size() != 2) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
-
     // No support for 3D-images, so set default values of 0 for all origin & region arrays at 3rd index.
     originCopy.append(0);
     regionCopy.append(1);
-
-    if (!WebCLInputChecker::isValidRegionForMemoryObject(originCopy, regionCopy, hostRowPitch, 0 /* hostSlicePitch */, image->sizeInBytes())
-        || !WebCLInputChecker::isValidRegionForHostPtr(regionCopy, hostPtrLength)) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
-    }
 
     Vector<ComputeEvent*> computeEvents;
     ccEventListFromWebCLEventList(events, computeEvents, ec, blockingRead ? DoNotAcceptUserEvent : AcceptUserEvent);
@@ -736,7 +735,6 @@ void WebCLCommandQueue::enqueueWriteImageBase(WebCLImage* image, CCbool blocking
         ec = WebCLException::INVALID_MEM_OBJECT;
         return;
     }
-    ComputeMemoryObject* computeMemory = image->platformObject();
 
     if (!hostPtr) {
         ec = WebCLException::INVALID_VALUE;
@@ -747,19 +745,21 @@ void WebCLCommandQueue::enqueueWriteImageBase(WebCLImage* image, CCbool blocking
         ec = WebCLException::INVALID_VALUE;
         return;
     }
-    Vector<size_t> originCopy, regionCopy;
-    originCopy.appendVector(origin);
-    regionCopy.appendVector(region);
 
-    // No support for 3D-images, so set default values of 0 for all origin & region arrays at 3rd index.
-    originCopy.append(0);
-    regionCopy.append(1);
-
-    if (!WebCLInputChecker::isValidRegionForHostPtr(regionCopy, hostPtrLength)
-        || !WebCLInputChecker::isValidRegionForMemoryObject(originCopy, regionCopy, hostRowPitch, 0 /*bufferSlicePitch */, image->sizeInBytes())) {
+    if (!WebCLInputChecker::isValidRegionForImage(image->imageDescriptor(), origin, region)
+        || !WebCLInputChecker::isValidRegionForHostPtr(region, hostRowPitch, image->imageDescriptor(), hostPtrLength)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
+
+    ComputeMemoryObject* computeMemory = image->platformObject();
+
+    Vector<size_t> originCopy, regionCopy;
+    originCopy.appendVector(origin);
+    regionCopy.appendVector(region);
+    // No support for 3D-images, so set default values of 0 for all origin & region arrays at 3rd index.
+    originCopy.append(0);
+    regionCopy.append(1);
 
     Vector<ComputeEvent*> computeEvents;
     ccEventListFromWebCLEventList(events, computeEvents, ec, blockingWrite ? DoNotAcceptUserEvent : AcceptUserEvent);
@@ -862,8 +862,8 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
         return;
     }
 
-    if (!WebCLInputChecker::isValidRegionForImage(sourceImage, sourceOrigin, region)
-        || !WebCLInputChecker::isValidRegionForImage(targetImage, targetOrigin, region)) {
+    if (!WebCLInputChecker::isValidRegionForImage(sourceImage->imageDescriptor(), sourceOrigin, region)
+        || !WebCLInputChecker::isValidRegionForImage(targetImage->imageDescriptor(), targetOrigin, region)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -925,7 +925,7 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage* sourceImage, WebCLB
     }
 
     if (!WebCLInputChecker::isValidRegionForBuffer(targetBuffer->sizeInBytes(), region, targetOffset, sourceImage->imageDescriptor())
-        || !WebCLInputChecker::isValidRegionForImage(sourceImage, sourceOrigin, region)) {
+        || !WebCLInputChecker::isValidRegionForImage(sourceImage->imageDescriptor(), sourceOrigin, region)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
@@ -936,7 +936,6 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage* sourceImage, WebCLB
     Vector<size_t> sourceOriginCopy, regionCopy;
     sourceOriginCopy.appendVector(sourceOrigin);
     regionCopy.appendVector(region);
-
     // No support for 3D-images, so set default values of 0 for all origin & region arrays at 3rd index.
     sourceOriginCopy.append(0);
     regionCopy.append(1);
@@ -981,7 +980,7 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer* sourceBuffer, WebC
     }
 
     if (!WebCLInputChecker::isValidRegionForBuffer(sourceBuffer->sizeInBytes(), region, sourceOffset, targetImage->imageDescriptor())
-        || !WebCLInputChecker::isValidRegionForImage(targetImage, targetOrigin, region)) {
+        || !WebCLInputChecker::isValidRegionForImage(targetImage->imageDescriptor(), targetOrigin, region)) {
         ec = WebCLException::INVALID_VALUE;
         return;
     }
