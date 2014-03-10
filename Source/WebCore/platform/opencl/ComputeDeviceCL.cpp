@@ -32,6 +32,23 @@
 
 namespace WebCore {
 
+typedef HashMap<CCDeviceID, RefPtr<ComputeDevice> > ComputeDevicePool;
+static ComputeDevicePool& computeDevicePool()
+{
+    static ComputeDevicePool* s_computeDevicePool = new ComputeDevicePool();
+    return *s_computeDevicePool;
+}
+
+ComputeDevice* ComputeDevice::create(CCDeviceID clDevice)
+{
+    if (computeDevicePool().contains(clDevice))
+        return computeDevicePool().get(clDevice);
+
+    ComputeDevice* device = new ComputeDevice(clDevice);
+    computeDevicePool().add(clDevice, adoptRef(device));
+    return device;
+}
+
 ComputeDevice::ComputeDevice(CCDeviceID device)
     : m_device(device)
 {

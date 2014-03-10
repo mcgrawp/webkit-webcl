@@ -44,12 +44,12 @@ WebCLDevice::~WebCLDevice()
 {
 }
 
-PassRefPtr<WebCLDevice> WebCLDevice::create(PassRefPtr<ComputeDevice> device, WebCLPlatform* platform)
+PassRefPtr<WebCLDevice> WebCLDevice::create(RefPtr<ComputeDevice> device, WebCLPlatform* platform)
 {
     return adoptRef(new WebCLDevice(device, platform));
 }
 
-WebCLDevice::WebCLDevice(PassRefPtr<ComputeDevice> device, WebCLPlatform* platform)
+WebCLDevice::WebCLDevice(RefPtr<ComputeDevice> device, WebCLPlatform* platform)
     : WebCLExtensionsAccessor(device.get())
     , m_device(device)
     , m_platform(platform)
@@ -202,7 +202,7 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
 void toWebCLDeviceArray(WebCLPlatform* platform, Vector<RefPtr<ComputeDevice> >& ccDevices, Vector<RefPtr<WebCLDevice> >& devices)
 {
     for (size_t i = 0; i < ccDevices.size(); i++) {
-        RefPtr<WebCLDevice> webCLDevice = WebCLDevice::create(ccDevices[i].release(), platform);
+        RefPtr<WebCLDevice> webCLDevice = WebCLDevice::create(ccDevices[i], platform);
         devices.append(webCLDevice);
     }
 }

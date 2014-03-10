@@ -32,12 +32,13 @@
 #include "ComputeTypesTraits.h"
 
 #include <wtf/RefCounted.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
 class ComputeDevice : public RefCounted<ComputeDevice> {
 public:
-    ComputeDevice(CCDeviceID);
+    static ComputeDevice* create(CCDeviceID);
 
     CCDeviceID device() const
     {
@@ -59,6 +60,8 @@ public:
     }
 
 private:
+    ComputeDevice(CCDeviceID);
+
     static CCerror getDeviceInfoBase(CCDeviceID, CCDeviceInfoType, size_t, void *data, size_t* actualSize);
 
     CCDeviceID m_device;

@@ -42,12 +42,12 @@ WebCLPlatform::~WebCLPlatform()
 {
 }
 
-PassRefPtr<WebCLPlatform> WebCLPlatform::create(PassRefPtr<ComputePlatform> platform)
+PassRefPtr<WebCLPlatform> WebCLPlatform::create(RefPtr<ComputePlatform> platform)
 {
     return adoptRef(new WebCLPlatform(platform));
 }
 
-WebCLPlatform::WebCLPlatform(PassRefPtr<ComputePlatform> platform)
+WebCLPlatform::WebCLPlatform(RefPtr<ComputePlatform> platform)
     : WebCLExtensionsAccessor(platform.get())
     , m_platformObject(platform)
     , m_cachedDeviceType(0)
@@ -113,7 +113,7 @@ CCerror getPlatforms(Vector<RefPtr<WebCLPlatform> >& platforms)
         return error;
 
     for (size_t i = 0; i < computePlatforms.size(); ++i)
-        platforms.append(WebCLPlatform::create(computePlatforms[i].release()));
+        platforms.append(WebCLPlatform::create(computePlatforms[i]));
 
     return error;
 }

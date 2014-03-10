@@ -38,7 +38,7 @@ namespace WebCore {
 
 class ComputePlatform : public RefCounted<ComputePlatform> {
 public:
-    ComputePlatform(CCPlatformID);
+    static ComputePlatform* create(CCPlatformID);
 
     static CCerror getPlatformIDs(Vector<RefPtr<ComputePlatform> >&);
     CCerror getDeviceIDs(CCDeviceType, Vector<RefPtr<ComputeDevice> >&);
@@ -57,6 +57,8 @@ public:
     }
 
 private:
+    ComputePlatform(CCPlatformID);
+
     static CCerror getPlatformInfoBase(CCPlatformID, CCPlatformInfoType, size_t, void *data, size_t* actualSize);
 
     CCPlatformID m_platform;

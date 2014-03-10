@@ -42,7 +42,7 @@ class WebCLPlatform;
 class WebCLDevice : public RefCounted<WebCLDevice>, public WebCLExtensionsAccessor<ComputeDevice*> {
 public:
     virtual ~WebCLDevice();
-    static PassRefPtr<WebCLDevice> create(PassRefPtr<ComputeDevice>, WebCLPlatform*);
+    static PassRefPtr<WebCLDevice> create(RefPtr<ComputeDevice>, WebCLPlatform*);
     WebCLGetInfo getInfo(CCenum, ExceptionCode&);
 
     // NOTE: Not to be confused with the 'platform'.
@@ -50,7 +50,7 @@ public:
     WebCLPlatform* platform() const { return m_platform; }
 
 private:
-    WebCLDevice(PassRefPtr<ComputeDevice>, WebCLPlatform*);
+    WebCLDevice(RefPtr<ComputeDevice>, WebCLPlatform*);
     RefPtr<ComputeDevice> m_device;
     WebCLPlatform* m_platform;
 };

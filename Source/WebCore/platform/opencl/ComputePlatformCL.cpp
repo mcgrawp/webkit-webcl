@@ -32,6 +32,23 @@
 
 namespace WebCore {
 
+typedef HashMap<CCPlatformID, RefPtr<ComputePlatform> > ComputePlatformPool;
+static ComputePlatformPool& computePlatformPool()
+{
+    static ComputePlatformPool* s_computePlatformPool = new ComputePlatformPool();
+    return *s_computePlatformPool;
+}
+
+ComputePlatform* ComputePlatform::create(CCPlatformID clPlatform)
+{
+    if (computePlatformPool().contains(clPlatform))
+        return computePlatformPool().get(clPlatform);
+
+    ComputePlatform* platform = new ComputePlatform(clPlatform);
+    computePlatformPool().add(clPlatform, adoptRef(platform));
+    return platform;
+}
+
 ComputePlatform::ComputePlatform(CCPlatformID platform)
     : m_platform(platform)
 {
@@ -58,7 +75,7 @@ CCerror ComputePlatform::getPlatformIDs(Vector<RefPtr<ComputePlatform> >& comput
     computePlatforms.resize(numberOfPlatforms);
 
     for (size_t i = 0; i < numberOfPlatforms; ++i)
-        computePlatforms[i] = adoptRef(new ComputePlatform(clPlatforms[i]));
+        computePlatforms[i] = ComputePlatform::create(clPlatforms[i]);
 
     return CL_SUCCESS;
 }
@@ -84,7 +101,7 @@ CCerror ComputePlatform::getDeviceIDs(CCDeviceType deviceType, Vector<RefPtr<Com
     computeDevices.resize(numberOfDevices);
 
     for (size_t i = 0; i < numberOfDevices; ++i)
-        computeDevices[i] = adoptRef(new ComputeDevice(clDevices[i]));
+        computeDevices[i] = ComputeDevice::create(clDevices[i]);
 
     return clError;
 }
