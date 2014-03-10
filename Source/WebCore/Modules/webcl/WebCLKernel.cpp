@@ -52,6 +52,19 @@
 
 namespace WebCore {
 
+inline void uint32toLong(size_t& arrayLength, void* bufferData, ArrayBufferView* bufferView)
+{
+    arrayLength = arrayLength / 2;
+    Vector<CCulong> uLongBuffer(arrayLength);
+    for(size_t i = 0; i < arrayLength * 2; i += 2) {
+        CCuint low, high;
+        low = static_cast<Uint32Array*>(bufferView)->item(i);
+        high = static_cast<Uint32Array*>(bufferView)->item(i+1);
+        uLongBuffer[i/2] = ((CCulong)high << 32) | low;
+    }
+    bufferData = uLongBuffer.releaseBuffer();
+}
+
 WebCLKernel::~WebCLKernel()
 {
     releasePlatformObject();
@@ -278,17 +291,8 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
         bufferData = static_cast<Uint32Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 4;
         // For Long data type, input 
-        if (isLong) {
-            arrayLength = arrayLength / 2;
-            Vector<unsigned long> uLongBuffer(arrayLength);
-            for(size_t i = 0; i < bufferView->byteLength() / 4; i += 2) {
-                uint32_t low, high;
-                low = static_cast<Uint32Array*>(bufferView)->item(i);
-                high = static_cast<Uint32Array*>(bufferView)->item(i+1);
-                uLongBuffer[i/2] = ((unsigned long)high << 32) | low;
-            }
-            bufferData = uLongBuffer.releaseBuffer();
-        }
+        if (isLong)
+            uint32toLong(arrayLength, bufferData, bufferView);
         break;
     case (ArrayBufferView::TypeInt32):  // INT
         bufferData = static_cast<Int32Array*>(bufferView)->data();
