@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebCL kernel test return </title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/kernels.js"></script>
+<script src="../resources/logger.js"></script>
+<script src="../resources/webcl-proxy.js"></script>
+
+<script>
+    var err;                                    // error code returned from API calls
+    var results = new Uint32Array(1);           // results returned from device
+    var output;                                 // output
+    var globalWorkSize = new Int32Array(1);     // global domain size for our calculation
+    var localWorkSize = new Int32Array(1);      // local domain size for our calculation
+
+    function runTest() {
+        try {
+            var proxy = WebCLProxy;
+            if (!proxy) {
+                testFailed("WebCLTest object is not defined ...");
+                return;
+            }
+
+            var platform = proxy.getWCLPlatform();
+            var device = platform.getWCLDevice();
+            var context = platform.createWCLContext();
+            var queue = context.createWCLCommandQueue(device, null);
+
+            var kernelSource = Kernels.kernel_item;
+            if (kernelSource === null) {
+                testFailed("No kernel named: " + "kernel_item");
+                return;
+            }
+
+            var program = context.createWCLProgram(kernelSource);
+            program.build();
+
+            var kernel = program.createWCLKernel("kernel_item");
+            // Get the maximum work group size for executing the kernel on the device
+            var workGroupSize = kernel.getWorkGroupInfo(device, proxy.KERNEL_WORK_GROUP_SIZE);
+
+            //Create buffer for output
+            output = context.createWCLBuffer(proxy.MEM_WRITE_ONLY, Uint32Array.BYTES_PER_ELEMENT, null);
+            globalWorkSize[0] = 1;
+            localWorkSize[0] = 1;
+
+            kernel.setWCLKernelArgs(0, output);
+
+            var ndRangeDict = {};
+            ndRangeDict.kernel = kernel;
+            ndRangeDict.globalWorkOffset = new Int32Array(0);
+            ndRangeDict.globalWorkSize = globalWorkSize;
+            ndRangeDict.localWorkSize = localWorkSize;
+            ndRangeDict.globalWorkOffset[0] = 0;
+            queue.enqueueNDRangeKernel(ndRangeDict);
+
+
+            var readBufferDict = {};
+            readBufferDict.buffer = output;
+            readBufferDict.blockingRead = true;
+            readBufferDict.bufferOffset = 0;
+            readBufferDict.numBytes = Float32Array.BYTES_PER_ELEMENT;
+            readBufferDict.data = results;
+            // Read back the results from the device to verify the output
+            queue.enqueueReadBuffer(readBufferDict);
+
+            // Wait for the command queue to get serviced before reading back results
+            queue.finish();
+            shouldBe("results[0]", '15');
+
+        } catch (e) {
+            testFailed("WebCL kernel result test failed ; Message: " + e.message);
+        }
+    }
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Just test if the kernel is working properly and return the expected result");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

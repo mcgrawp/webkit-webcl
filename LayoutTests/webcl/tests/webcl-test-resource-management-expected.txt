@@ -1,0 +1,9 @@
+Testing WebCL resource management
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+FAIL Failed to create WebCLUserEvent 1.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

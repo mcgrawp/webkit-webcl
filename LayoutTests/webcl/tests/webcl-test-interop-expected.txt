@@ -1,0 +1,9 @@
+A simple test to WebCL <-> WebGL Interoperability
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+ PASS 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

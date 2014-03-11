@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Testing WebCLContextProperties</title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/kernels.js"></script>
+
+<script>
+
+var cl;
+var contextProperties;
+var context;
+var devices;
+var deviceType;
+var platform;
+
+function runTest() {
+
+    try {
+        cl = webcl;
+        if (!cl) {
+            testFailed("WebCL is not available.");
+            return;
+        }
+
+        context = cl.createContext({deviceType: cl.DEVICE_TYPE_DEFAULT});
+        if (!context) {
+            testFailed("Failed to create WebCLContext");
+            return;
+        }
+
+        contextProperties = context.getInfo(cl.CONTEXT_PROPERTIES);
+        devices = contextProperties.devices;
+        platform = contextProperties.platform;
+        deviceType = contextProperties.deviceType;
+        shouldBeTrue("devices.length > 0");
+        shouldBeTrue("devices[0] instanceof WebCLDevice")
+        shouldBeTrue("platform instanceof WebCLPlatform");
+        shouldBeTrue("deviceType === cl.DEVICE_TYPE_DEFAULT");
+
+    } catch (e) {
+        testFailed("Test WebCLContextProperties has failed; Message: " + e.message);
+    }
+}
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description(document.title);
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
