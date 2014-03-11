@@ -42,13 +42,13 @@ WebCLUserEvent::~WebCLUserEvent()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLUserEvent> WebCLUserEvent::create(WebCLContext* context, ExceptionCode& ec)
+PassRefPtr<WebCLUserEvent> WebCLUserEvent::create(WebCLContext* context, ExceptionObject& exception)
 {
     CCerror userEventError = 0;
     ComputeEvent* userEvent = context->computeContext()->createUserEvent(userEventError);
     if (!userEvent) {
         ASSERT(userEventError != ComputeContext::SUCCESS);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(userEventError);
+        setExceptionFromComputeErrorCode(userEventError, exception);
         return 0;
     }
     return adoptRef(new WebCLUserEvent(context, userEvent));
@@ -62,32 +62,32 @@ WebCLUserEvent::WebCLUserEvent(WebCLContext* context, ComputeEvent* event)
     context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
-void WebCLUserEvent::setStatus(CCint executionStatus, ExceptionCode& ec)
+void WebCLUserEvent::setStatus(CCint executionStatus, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_EVENT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT, exception);
         return;
     }
 
     if (!(executionStatus < 0 || executionStatus == ComputeContext::COMPLETE)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     if (m_eventStatusSituation == StatusSet) {
-        ec = WebCLException::INVALID_OPERATION;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_OPERATION, exception);
         return;
     }
     m_eventStatusSituation = StatusSet;
 
     CCerror userEventError = platformObject()->setUserEventStatus(executionStatus);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(userEventError);
+    setExceptionFromComputeErrorCode(userEventError, exception);
 }
 
-WebCLGetInfo WebCLUserEvent::getInfo(CCenum name, ExceptionCode& ec)
+WebCLGetInfo WebCLUserEvent::getInfo(CCenum name, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_EVENT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT, exception);
         return WebCLGetInfo();
     }
 
@@ -99,7 +99,7 @@ WebCLGetInfo WebCLUserEvent::getInfo(CCenum name, ExceptionCode& ec)
         return WebCLGetInfo();
     }
 
-    return WebCLEvent::getInfo(name, ec);
+    return WebCLEvent::getInfo(name, exception);
 }
 
 WebCLContext* WebCLUserEvent::context() const

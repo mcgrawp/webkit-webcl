@@ -41,13 +41,13 @@ WebCLSampler::~WebCLSampler()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLSampler> WebCLSampler::create(WebCLContext* context, CCbool normCoords, CCenum addressingMode, CCenum filterMode, ExceptionCode& ec)
+PassRefPtr<WebCLSampler> WebCLSampler::create(WebCLContext* context, CCbool normCoords, CCenum addressingMode, CCenum filterMode, ExceptionObject& exception)
 {
     CCerror error;
     ComputeSampler* computeSampler = context->computeContext()->createSampler(normCoords, addressingMode, filterMode, error);
     if (error != ComputeContext::SUCCESS) {
         delete computeSampler;
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
 
@@ -64,10 +64,10 @@ WebCLSampler::WebCLSampler(WebCLContext* context, ComputeSampler* sampler, CCboo
     context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
-WebCLGetInfo WebCLSampler::getInfo(CCenum infoType, ExceptionCode& ec)
+WebCLGetInfo WebCLSampler::getInfo(CCenum infoType, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_SAMPLER;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_SAMPLER, exception);
         return WebCLGetInfo();
     }
 
@@ -81,7 +81,7 @@ WebCLGetInfo WebCLSampler::getInfo(CCenum infoType, ExceptionCode& ec)
     case ComputeContext::SAMPLER_FILTER_MODE:
         return WebCLGetInfo(m_filterMode);
     default:
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return WebCLGetInfo();
     }
 

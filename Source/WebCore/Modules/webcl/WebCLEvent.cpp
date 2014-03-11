@@ -56,10 +56,10 @@ WebCLEvent::WebCLEvent(ComputeEvent* event)
 {
 }
 
-WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionCode& ec)
+WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_EVENT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT, exception);
         return WebCLGetInfo();
     }
 
@@ -103,24 +103,24 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionCode& ec)
         return WebCLGetInfo(m_commandQueue.get());
     }
     default:
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return WebCLGetInfo();
     }
 
     ASSERT(err != ComputeContext::SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
     return WebCLGetInfo();
 }
 
-WebCLGetInfo WebCLEvent::getProfilingInfo(CCenum paramName, ExceptionCode& ec)
+WebCLGetInfo WebCLEvent::getProfilingInfo(CCenum paramName, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_EVENT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT, exception);
         return WebCLGetInfo();
     }
 
     if (isUserEvent()) {
-        ec = WebCLException::PROFILING_INFO_NOT_AVAILABLE;
+        setExceptionFromComputeErrorCode(ComputeContext::PROFILING_INFO_NOT_AVAILABLE, exception);
         return WebCLGetInfo();
     }
 
@@ -137,12 +137,12 @@ WebCLGetInfo WebCLEvent::getProfilingInfo(CCenum paramName, ExceptionCode& ec)
         }
         break;
     default:
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return WebCLGetInfo();
     }
 
     ASSERT(err != ComputeContext::SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
     return WebCLGetInfo();
 }
 
@@ -190,15 +190,15 @@ void WebCLEvent::callbackProxy(CCEvent, CCint, void* userData)
     callbackProxyOnMainThread(userData);
 }
 
-void WebCLEvent::setCallback(CCenum commandExecCallbackType, PassRefPtr<WebCLCallback> callback, ExceptionCode& ec)
+void WebCLEvent::setCallback(CCenum commandExecCallbackType, PassRefPtr<WebCLCallback> callback, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized() || !holdsValidCLObject()) {
-        ec = WebCLException::INVALID_EVENT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT, exception);
         return;
     }
 
    if (commandExecCallbackType != ComputeContext::COMPLETE) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
    }
 
@@ -216,7 +216,7 @@ void WebCLEvent::setCallback(CCenum commandExecCallbackType, PassRefPtr<WebCLCal
     CCerror error = ComputeContext::SUCCESS;
     pfnEventNotify callbackProxyPtr = &callbackProxy;
     error = platformObject()->setEventCallback(commandExecCallbackType, callbackProxyPtr, this);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+    setExceptionFromComputeErrorCode(error, exception);
 }
 
 bool WebCLEvent::holdsValidCLObject() const

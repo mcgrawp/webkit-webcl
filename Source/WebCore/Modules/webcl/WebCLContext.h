@@ -72,36 +72,36 @@ class WebCLContext : public WebCLObjectImpl<ComputeContextPtr> {
 public:
     virtual ~WebCLContext();
 
-    static PassRefPtr<WebCLContext> create(WebCL*, WebGLRenderingContext*, WebCLPlatform*, const Vector<RefPtr<WebCLDevice> >&, ExceptionCode&);
+    static PassRefPtr<WebCLContext> create(WebCL*, WebGLRenderingContext*, WebCLPlatform*, const Vector<RefPtr<WebCLDevice> >&, ExceptionObject&);
 
-    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, CCenum commandQueueProperty, ExceptionCode&);
+    PassRefPtr<WebCLCommandQueue> createCommandQueue(WebCLDevice*, CCenum commandQueueProperty, ExceptionObject&);
 
-    PassRefPtr<WebCLImage> createImage(CCenum flag, WebCLImageDescriptor*, ArrayBufferView*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage(CCenum flag, WebCLImageDescriptor*, ArrayBufferView*, ExceptionObject&);
 
-    PassRefPtr<WebCLProgram> createProgram(const String& programSource, ExceptionCode&);
+    PassRefPtr<WebCLProgram> createProgram(const String& programSource, ExceptionObject&);
 
-    PassRefPtr<WebCLSampler> createSampler(CCbool normalizedCoords, CCenum addressingMode, CCenum filterMode, ExceptionCode&);
+    PassRefPtr<WebCLSampler> createSampler(CCbool normalizedCoords, CCenum addressingMode, CCenum filterMode, ExceptionObject&);
 
-    PassRefPtr<WebCLUserEvent> createUserEvent(ExceptionCode&);
+    PassRefPtr<WebCLUserEvent> createUserEvent(ExceptionObject&);
 
-    WebCLGetInfo getInfo(CCenum flag, ExceptionCode&);
+    WebCLGetInfo getInfo(CCenum flag, ExceptionObject&);
 
-    Vector<RefPtr<WebCLImageDescriptor> > getSupportedImageFormats(CCenum memFlag, ExceptionCode&);
+    Vector<RefPtr<WebCLImageDescriptor> > getSupportedImageFormats(CCenum memFlag, ExceptionObject&);
 
-    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlags, CCuint sizeInBytes, ArrayBufferView*, ExceptionCode&);
-    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlag, ImageData*, ExceptionCode&);
-    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlag, HTMLCanvasElement*, ExceptionCode&);
-    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlag, HTMLImageElement*, ExceptionCode&);
+    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlags, CCuint sizeInBytes, ArrayBufferView*, ExceptionObject&);
+    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlag, ImageData*, ExceptionObject&);
+    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlag, HTMLCanvasElement*, ExceptionObject&);
+    PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlag, HTMLImageElement*, ExceptionObject&);
 
-    PassRefPtr<WebCLImage> createImage(CCenum memFlag, ImageData*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createImage(CCenum memFlag, HTMLCanvasElement*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createImage(CCenum memFlag, HTMLImageElement*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createImage(CCenum memFlag, HTMLVideoElement*, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage(CCenum memFlag, ImageData*, ExceptionObject&);
+    PassRefPtr<WebCLImage> createImage(CCenum memFlag, HTMLCanvasElement*, ExceptionObject&);
+    PassRefPtr<WebCLImage> createImage(CCenum memFlag, HTMLImageElement*, ExceptionObject&);
+    PassRefPtr<WebCLImage> createImage(CCenum memFlag, HTMLVideoElement*, ExceptionObject&);
 
 #if ENABLE(WEBGL)
-    PassRefPtr<WebCLBuffer> createFromGLBuffer(CCenum, WebGLBuffer*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createFromGLRenderbuffer(CCenum, WebGLRenderbuffer*, ExceptionCode&);
-    PassRefPtr<WebCLImage> createFromGLTexture(CCenum memoryFlags, CCenum textureTarget, GC3Dint miplevel, WebGLTexture*, ExceptionCode&);
+    PassRefPtr<WebCLBuffer> createFromGLBuffer(CCenum, WebGLBuffer*, ExceptionObject&);
+    PassRefPtr<WebCLImage> createFromGLRenderbuffer(CCenum, WebGLRenderbuffer*, ExceptionObject&);
+    PassRefPtr<WebCLImage> createFromGLTexture(CCenum memoryFlags, CCenum textureTarget, GC3Dint miplevel, WebGLTexture*, ExceptionObject&);
 #endif
 
     class LRUImageBufferCache {
@@ -131,15 +131,15 @@ public:
 private:
     WebCLContext(WebCL*, ComputeContext*, const Vector<RefPtr<WebCLDevice> >&, HashSet<String>&);
 
-    PassRefPtr<WebCLImage> createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat&, void*, ExceptionCode&);
-    PassRefPtr<WebCLBuffer> createBufferBase(CCenum memoryFlags, CCuint size, void* data, ExceptionCode&);
+    PassRefPtr<WebCLImage> createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat&, void*, ExceptionObject&);
+    PassRefPtr<WebCLBuffer> createBufferBase(CCenum memoryFlags, CCuint size, void* data, ExceptionObject&);
 
     bool isExtensionEnabled(const String& name) const;
     friend bool WebCLCommandQueue::isExtensionEnabled(WebCLContext*, const String&) const;
     friend bool WebCLMemoryObject::isExtensionEnabled(WebCLContext*, const String&) const;
 
-    void postCreateCommandQueue(WebCLCommandQueue*, ExceptionCode&);
-    void postCreateBuffer(WebCLBuffer*, ExceptionCode&);
+    void postCreateCommandQueue(WebCLCommandQueue*, ExceptionObject&);
+    void postCreateBuffer(WebCLBuffer*, ExceptionObject&);
 
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
 

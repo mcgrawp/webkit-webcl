@@ -43,14 +43,14 @@ WebCLImage::~WebCLImage()
 {
 }
 
-PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, PassRefPtr<WebCLImageDescriptor> imageDescriptor, void* data, ExceptionCode& ec)
+PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, PassRefPtr<WebCLImageDescriptor> imageDescriptor, void* data, ExceptionObject& exception)
 {
     CCerror error;
     ComputeMemoryObject* memoryObject = context->computeContext()->createImage2D(flags, imageDescriptor->width(),
         imageDescriptor->height(), imageDescriptor->rowPitch(), imageDescriptor->imageFormat(), data, error);
     if (error != ComputeContext::SUCCESS) {
         delete memoryObject;
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
 
@@ -58,13 +58,13 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, P
 }
 
 #if ENABLE(WEBGL)
-PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, WebGLRenderbuffer* webGLRenderbuffer, ExceptionCode& ec)
+PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, WebGLRenderbuffer* webGLRenderbuffer, ExceptionObject& exception)
 {
     ASSERT(webGLRenderbuffer);
 
     GLuint renderbufferID = webGLRenderbuffer->object();
     if (!renderbufferID) {
-        ec = WebCLException::INVALID_GL_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_GL_OBJECT, exception);
         return 0;
     }
 
@@ -75,7 +75,7 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, W
     ComputeMemoryObject* memoryObject = context->computeContext()->createFromGLRenderbuffer(flags, renderbufferID, error);
     if (error != ComputeContext::SUCCESS) {
         delete memoryObject;
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
 
@@ -88,12 +88,12 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, W
 }
 
 PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, CCenum textureTarget, CCenum miplevel,
-                                           WebGLTexture* webGLTexture, ExceptionCode& ec)
+                                           WebGLTexture* webGLTexture, ExceptionObject& exception)
 {
     ASSERT(webGLTexture);
     GLuint textureID = webGLTexture->object();
     if (!textureID) {
-        ec = WebCLException::INVALID_GL_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_GL_OBJECT, exception);
         return 0;
     }
 
@@ -104,7 +104,7 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, C
     ComputeMemoryObject* memoryObject = context->computeContext()->createFromGLTexture2D(flags, textureTarget, miplevel, textureID, error);
     if (error != ComputeContext::SUCCESS) {
         delete memoryObject;
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
 
@@ -115,15 +115,15 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, C
     return imageObject.release();
 }
 
-int WebCLImage::getGLTextureInfo(CCenum textureInfoType, ExceptionCode& ec)
+int WebCLImage::getGLTextureInfo(CCenum textureInfoType, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return 0;
     }
 
     if (!WebCLInputChecker::isValidGLTextureInfo(textureInfoType)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return 0;
     }
 
@@ -144,7 +144,7 @@ int WebCLImage::getGLTextureInfo(CCenum textureInfoType, ExceptionCode& ec)
     }
 
     ASSERT(err != ComputeContext::SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
     return 0;
 }
 
@@ -164,10 +164,10 @@ WebCLImage::WebCLImage(WebCLContext* context, ComputeMemoryObject* image, PassRe
         m_sizeInBytes = memorySizeValue;
 }
 
-WebCLImageDescriptor* WebCLImage::getInfo(ExceptionCode& ec)
+WebCLImageDescriptor* WebCLImage::getInfo(ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return 0;
     }
 

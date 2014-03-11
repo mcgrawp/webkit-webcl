@@ -57,25 +57,25 @@ WebCLKernel::~WebCLKernel()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, WebCLProgram* program, const String& kernelName, ExceptionCode& ec)
+PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, WebCLProgram* program, const String& kernelName, ExceptionObject& exception)
 {
     CCerror error = ComputeContext::SUCCESS;
     ComputeKernel* computeKernel = program->computeProgram()->createKernel(kernelName, error);
     if (error != ComputeContext::SUCCESS) {
         delete computeKernel;
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
     return adoptRef(new WebCLKernel(context, program, computeKernel, kernelName));
 }
 
-Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* context, WebCLProgram* program, ExceptionCode& ec)
+Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* context, WebCLProgram* program, ExceptionObject& exception)
 {
     CCerror error = ComputeContext::SUCCESS;
     Vector<ComputeKernel*> computeKernels = program->computeProgram()->createKernelsInProgram(error);
     Vector<RefPtr<WebCLKernel> > kernels;
     if (error != ComputeContext::SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return kernels;
     }
 
@@ -83,7 +83,7 @@ Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* c
     for (size_t i = 0 ; i < computeKernels.size(); i++) {
         error = computeKernels[i]->getKernelInfo(ComputeContext::KERNEL_FUNCTION_NAME, &functionName);
         if (error != ComputeContext::SUCCESS) {
-            ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+            setExceptionFromComputeErrorCode(error, exception);
             kernels.clear();
             return kernels;
         }
@@ -104,10 +104,10 @@ WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, ComputeKe
     context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
-WebCLGetInfo WebCLKernel::getInfo(CCenum kernelInfo, ExceptionCode& ec)
+WebCLGetInfo WebCLKernel::getInfo(CCenum kernelInfo, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_KERNEL;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_KERNEL, exception);
         return WebCLGetInfo();
     }
 
@@ -127,24 +127,24 @@ WebCLGetInfo WebCLKernel::getInfo(CCenum kernelInfo, ExceptionCode& ec)
     case ComputeContext::KERNEL_CONTEXT:
         return WebCLGetInfo(m_context.get());
     default:
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return WebCLGetInfo();
     }
 
     ASSERT(err != ComputeContext::SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
     return WebCLGetInfo();
 }
 
-WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName, ExceptionCode& ec)
+WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_KERNEL;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_KERNEL, exception);
         return WebCLGetInfo();
     }
 
     if (!device) {
-        ec = WebCLException::INVALID_DEVICE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_DEVICE, exception);
         return WebCLGetInfo();
     }
 
@@ -175,72 +175,72 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
         break;
     }
     default:
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return WebCLGetInfo();
     }
 
     ASSERT(err != ComputeContext::SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
     return WebCLGetInfo();
 }
 
-void WebCLKernel::setArg(CCuint index, WebCLMemoryObject* memoryObject, ExceptionCode& ec)
+void WebCLKernel::setArg(CCuint index, WebCLMemoryObject* memoryObject, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_KERNEL;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_KERNEL, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(memoryObject)) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
 
     if (!WebCLInputChecker::isValidKernelArgIndex(this, index)) {
-        ec = WebCLException::INVALID_ARG_INDEX;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_INDEX, exception);
         return;
     }
 
     CCerror err = platformObject()->setKernelArg(index, memoryObject->platformObject());
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
-void WebCLKernel::setArg(CCuint index, WebCLSampler* sampler, ExceptionCode& ec)
+void WebCLKernel::setArg(CCuint index, WebCLSampler* sampler, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_KERNEL;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_KERNEL, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(sampler)) {
-        ec = WebCLException::INVALID_SAMPLER;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_SAMPLER, exception);
         return;
     }
 
     if (!WebCLInputChecker::isValidKernelArgIndex(this, index)) {
-        ec = WebCLException::INVALID_ARG_INDEX;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_INDEX, exception);
         return;
     }
 
     ComputeSampler* computeSampler = sampler->platformObject();
     CCerror err = platformObject()->setKernelArg(index, computeSampler);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
-void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCode& ec)
+void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_KERNEL;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_KERNEL, exception);
         return;
     }
 
     if (!bufferView) {
-        ec = WebCLException::INVALID_ARG_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::isValidKernelArgIndex(this, index)) {
-        ec = WebCLException::INVALID_ARG_INDEX;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_INDEX, exception);
         return;
     }
 
@@ -248,19 +248,19 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
     bool hasLocalQualifier = accessQualifier == "local";
     if (hasLocalQualifier) {
         if (bufferView->getType() != JSC::TypeUint32) {
-            ec = WebCLException::INVALID_ARG_VALUE;
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
             return;
         }
 
         Uint32Array* typedArray = static_cast<Uint32Array*>(bufferView);
         if (typedArray->length() != 1) {
-            ec = WebCLException::INVALID_ARG_VALUE;
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
             return;
         }
 
         unsigned* value = static_cast<Uint32Array*>(bufferView)->data();
         CCerror err = platformObject()->setKernelArg(index, static_cast<size_t>(value[0]), 0 /* __local required null'ed data */);
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+        setExceptionFromComputeErrorCode(err, exception);
         return;
     }
 
@@ -305,28 +305,28 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
         break;
     default:
         ASSERT_NOT_REACHED();
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     if (!isValidVectorLength(arrayLength)) {
-        ec = WebCLException::INVALID_ARG_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
         return;
     }
     size_t bufferDataSize = bufferView->byteLength();
     CCerror err = platformObject()->setKernelArg(index, bufferDataSize, bufferData);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
-WebCLKernelArgInfo* WebCLKernel::getArgInfo(CCuint index, ExceptionCode& ec)
+WebCLKernelArgInfo* WebCLKernel::getArgInfo(CCuint index, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_KERNEL;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_KERNEL, exception);
         return 0;
     }
 
     if (!WebCLInputChecker::isValidKernelArgIndex(this, index)) {
-        ec = WebCLException::INVALID_ARG_INDEX;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_INDEX, exception);
         return 0;
     }
 

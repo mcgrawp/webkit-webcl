@@ -43,7 +43,7 @@ class WebCLDevice : public RefCounted<WebCLDevice>, public WebCLExtensionsAccess
 public:
     virtual ~WebCLDevice();
     static PassRefPtr<WebCLDevice> create(RefPtr<ComputeDevice>, WebCLPlatform*);
-    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
+    WebCLGetInfo getInfo(CCenum, ExceptionObject&);
 
     // NOTE: Not to be confused with the 'platform'.
     ComputeDevice* platformObject() const { return m_device.get(); }

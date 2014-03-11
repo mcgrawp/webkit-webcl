@@ -54,13 +54,13 @@ WebCLCommandQueue::~WebCLCommandQueue()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, CCenum properties, WebCLDevice* webCLDevice, ExceptionCode& ec)
+PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, CCenum properties, WebCLDevice* webCLDevice, ExceptionObject& exception)
 {
     CCerror error = ComputeContext::SUCCESS;
     ComputeCommandQueue* computeCommandQueue = context->computeContext()->createCommandQueue(webCLDevice->platformObject(), properties, error);
     if (error != ComputeContext::SUCCESS) {
         delete computeCommandQueue;
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
 
@@ -77,10 +77,10 @@ WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, ComputeCommandQueue 
     context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
-WebCLGetInfo WebCLCommandQueue::getInfo(CCenum paramName, ExceptionCode& ec)
+WebCLGetInfo WebCLCommandQueue::getInfo(CCenum paramName, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return WebCLGetInfo();
     }
 
@@ -99,33 +99,33 @@ WebCLGetInfo WebCLCommandQueue::getInfo(CCenum paramName, ExceptionCode& ec)
         break;
     }
     default:
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return WebCLGetInfo();
     }
 
     ASSERT(err != ComputeContext::SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
     return WebCLGetInfo();
 }
 
-void WebCLCommandQueue::ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >& events, Vector<ComputeEvent*>& computeEvents, ExceptionCode& ec, WebCLToCCEventsFilterCriteria criteria)
+void WebCLCommandQueue::ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLEvent> >& events, Vector<ComputeEvent*>& computeEvents, ExceptionObject& exception, WebCLToCCEventsFilterCriteria criteria)
 {
     for (size_t i = 0; i < events.size(); ++i) {
         RefPtr<WebCLEvent> event = events[i];
         if (event->isPlatformObjectNeutralized()
             || !event->holdsValidCLObject()) {
-            ec = WebCLException::INVALID_EVENT_WAIT_LIST;
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT_WAIT_LIST, exception);
             return;
         }
 
         if (criteria == DoNotAcceptUserEvent && event->isUserEvent()) {
-            ec = WebCLException::INVALID_EVENT;
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT, exception);
             return;
         }
 
         ASSERT(event->context());
         if (!WebCLInputChecker::compareContext(event->context(), m_context.get())) {
-            ec = WebCLException::INVALID_CONTEXT;
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
             return;
         }
 
@@ -133,7 +133,7 @@ void WebCLCommandQueue::ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLE
     }
 }
 
-ComputeEvent* WebCLCommandQueue::computeEventFromWebCLEventIfApplicable(WebCLEvent* event, ExceptionCode& ec)
+ComputeEvent* WebCLCommandQueue::computeEventFromWebCLEventIfApplicable(WebCLEvent* event, ExceptionObject& exception)
 {
     if (!event)
         return 0;
@@ -145,7 +145,7 @@ ComputeEvent* WebCLCommandQueue::computeEventFromWebCLEventIfApplicable(WebCLEve
     if (event->isPlatformObjectNeutralized()
         || event->holdsValidCLObject()
         || event->isUserEvent()) {
-        ec = WebCLException::INVALID_EVENT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT, exception);
         return 0;
     }
 
@@ -154,133 +154,133 @@ ComputeEvent* WebCLCommandQueue::computeEventFromWebCLEventIfApplicable(WebCLEve
 }
 
 void WebCLCommandQueue::enqueueWriteBufferBase(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, CCuint numBytes, void* hostPtr, size_t hostPtrLength,
-    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::compareContext(m_context.get(), buffer->context())) {
-        ec = WebCLException::INVALID_CONTEXT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(buffer)) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
     ComputeMemoryObject* computeMemory = buffer->platformObject();
 
     if (!hostPtr) {
-        ec = WebCLException::INVALID_HOST_PTR;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
         return;
     }
 
     if (hostPtrLength < numBytes
         || buffer->sizeInBytes() < (offset + numBytes)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec, blockingWrite ? DoNotAcceptUserEvent : AcceptUserEvent);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception, blockingWrite ? DoNotAcceptUserEvent : AcceptUserEvent);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror error = platformObject()->enqueueWriteBuffer(computeMemory, blockingWrite, offset, numBytes, hostPtr, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+    setExceptionFromComputeErrorCode(error, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, CCuint numBytes, ArrayBufferView* ptr,
-    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!ptr || !WebCLInputChecker::isValidDataSizeForArrayBufferView(numBytes, ptr)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
-    enqueueWriteBufferBase(buffer, blockingWrite, offset, numBytes, ptr->baseAddress(), ptr->byteLength(), events, event, ec);
+    enqueueWriteBufferBase(buffer, blockingWrite, offset, numBytes, ptr->baseAddress(), ptr->byteLength(), events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, ImageData* srcPixels,
-    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "WEBCL_html_image")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
     void* hostPtr = 0;
     size_t pixelSize = 0;
-    WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, ec);
-    if (ec != WebCLException::SUCCESS)
+    WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, exception);
+    if (willThrowException(exception))
         return;
 
-    enqueueWriteBufferBase(buffer, blockingWrite, offset, pixelSize, hostPtr, pixelSize, events, event, ec);
+    enqueueWriteBufferBase(buffer, blockingWrite, offset, pixelSize, hostPtr, pixelSize, events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, HTMLCanvasElement* srcCanvas,
-    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "WEBCL_html_image")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, ec);
-    if (ec != WebCLException::SUCCESS)
+    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, exception);
+    if (willThrowException(exception))
         return;
 
-    enqueueWriteBufferBase(buffer, blockingWrite, offset, canvasSize, hostPtr, canvasSize, events, event, ec);
+    enqueueWriteBufferBase(buffer, blockingWrite, offset, canvasSize, hostPtr, canvasSize, events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteBuffer(WebCLBuffer* buffer, CCbool blockingWrite, CCuint offset, HTMLImageElement* srcImage,
-    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "WEBCL_html_image")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
     void* hostPtr = 0;
     size_t imageSize = 0;
-    WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, imageSize, ec);
-    if (ec != WebCLException::SUCCESS)
+    WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, imageSize, exception);
+    if (willThrowException(exception))
         return;
 
-    enqueueWriteBufferBase(buffer, blockingWrite, offset, imageSize, hostPtr, imageSize, events, event, ec);
+    enqueueWriteBufferBase(buffer, blockingWrite, offset, imageSize, hostPtr, imageSize, events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteBufferRectBase(WebCLBuffer* buffer, CCbool blockingWrite, const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin,
     const Vector<CCuint>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
-    void* hostPtr, size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    void* hostPtr, size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::compareContext(m_context.get(), buffer->context())) {
-        ec = WebCLException::INVALID_CONTEXT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(buffer)) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
     ComputeMemoryObject* computeMemory = buffer->platformObject();
 
     if (!hostPtr) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     if (bufferOrigin.size() != 3 || hostOrigin.size() != 3 || region.size() != 3) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
@@ -291,192 +291,192 @@ void WebCLCommandQueue::enqueueWriteBufferRectBase(WebCLBuffer* buffer, CCbool b
 
     if (!WebCLInputChecker::isValidRegionForMemoryObject(bufferOriginCopy, regionCopy, bufferRowPitch, bufferSlicePitch, buffer->sizeInBytes())
         || !WebCLInputChecker::isValidRegionForMemoryObject(hostOriginCopy, regionCopy, hostRowPitch, hostSlicePitch, hostPtrLength)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec, blockingWrite ? DoNotAcceptUserEvent : AcceptUserEvent);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception, blockingWrite ? DoNotAcceptUserEvent : AcceptUserEvent);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror err = platformObject()->enqueueWriteBufferRect(computeMemory, blockingWrite, bufferOriginCopy,
         hostOriginCopy, regionCopy, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, hostPtr, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool blockingWrite, const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin,
     const Vector<CCuint>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
-    ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionCode& ec)
+    ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!ptr || !WebCLInputChecker::isValidDataSizeForArrayBufferView(hostRowPitch, ptr)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::isValidDataSizeForArrayBufferView(hostSlicePitch, ptr)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
     enqueueWriteBufferRectBase(buffer, blockingWrite, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch,
-        ptr->baseAddress(), ptr->byteLength(), eventWaitlist, event, ec);
+        ptr->baseAddress(), ptr->byteLength(), eventWaitlist, event, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool blockingWrite, const Vector<CCuint>& bufferOrigin,
     const Vector<CCuint>& hostOrigin, const Vector<CCuint>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch,
-    ImageData* srcPixels, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionCode& ec)
+    ImageData* srcPixels, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "WEBCL_html_image")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
     void* hostPtr = 0;
     size_t pixelSize = 0;
-    WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, ec);
-    if (ec != WebCLException::SUCCESS)
+    WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, exception);
+    if (willThrowException(exception))
         return;
 
     enqueueWriteBufferRectBase(buffer, blockingWrite, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch, 0 /* hostRowPitch */, 0 /* hostSlicePitch */,
-        hostPtr, pixelSize, eventWaitlist, event, ec);
+        hostPtr, pixelSize, eventWaitlist, event, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool blockingWrite, const Vector<CCuint>& bufferOrigin,
     const Vector<CCuint>& hostOrigin, const Vector<CCuint>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch,
-    HTMLCanvasElement* srcCanvas, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionCode& ec)
+    HTMLCanvasElement* srcCanvas, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "WEBCL_html_image")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, ec);
-    if (ec != WebCLException::SUCCESS)
+    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, exception);
+    if (willThrowException(exception))
         return;
 
     enqueueWriteBufferRectBase(buffer, blockingWrite, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch,
-        0 /* hostRowPitch */, 0 /* hostSlicePitch */, hostPtr, canvasSize, eventWaitlist, event, ec);
+        0 /* hostRowPitch */, 0 /* hostSlicePitch */, hostPtr, canvasSize, eventWaitlist, event, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteBufferRect(WebCLBuffer* buffer, CCbool blockingWrite, const Vector<CCuint>& bufferOrigin,
     const Vector<CCuint>& hostOrigin, const Vector<CCuint>& region, CCuint bufferRowPitch, CCuint bufferSlicePitch,
-    HTMLImageElement* srcImage, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionCode& ec)
+    HTMLImageElement* srcImage, const Vector<RefPtr<WebCLEvent> >& eventWaitlist, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "WEBCL_html_image")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
     void* hostPtr = 0;
     size_t imageSize = 0;
-    WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, imageSize, ec);
-    if (ec != WebCLException::SUCCESS)
+    WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, imageSize, exception);
+    if (willThrowException(exception))
         return;
 
     enqueueWriteBufferRectBase(buffer, blockingWrite, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch, 0 /* hostRowPitch */, 0 /*hostSlicePitch*/,
-        hostPtr, imageSize, eventWaitlist, event, ec);
+        hostPtr, imageSize, eventWaitlist, event, exception);
 }
 
 void WebCLCommandQueue::enqueueReadBufferBase(WebCLBuffer* buffer, CCbool blockingRead, CCuint offset, CCuint numBytes, void* hostPtr, size_t hostPtrLength,
-    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::compareContext(m_context.get(), buffer->context())) {
-        ec = WebCLException::INVALID_CONTEXT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(buffer)) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
 
     if (hostPtrLength < numBytes
         || buffer->sizeInBytes() < (offset + numBytes)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     ComputeMemoryObject* computeMemory = buffer->platformObject();
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec, blockingRead ? DoNotAcceptUserEvent : AcceptUserEvent);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception, blockingRead ? DoNotAcceptUserEvent : AcceptUserEvent);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror err = platformObject()->enqueueReadBuffer(computeMemory, blockingRead, offset, numBytes, hostPtr, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
 void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRead, CCuint offset, CCuint numBytes,
-    ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!ptr || !WebCLInputChecker::isValidDataSizeForArrayBufferView(numBytes, ptr)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
-    enqueueReadBufferBase(buffer, blockingRead, offset, numBytes, ptr->baseAddress(), ptr->byteLength(), events, event, ec);
+    enqueueReadBufferBase(buffer, blockingRead, offset, numBytes, ptr->baseAddress(), ptr->byteLength(), events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueReadBuffer(WebCLBuffer* buffer, CCbool blockingRead, CCuint offset, CCuint numBytes,
-    HTMLCanvasElement* dstCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    HTMLCanvasElement* dstCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "WEBCL_html_image")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
 
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, hostPtr, canvasSize, ec);
-    if (ec != WebCLException::SUCCESS)
+    WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, hostPtr, canvasSize, exception);
+    if (willThrowException(exception))
         return;
 
-    enqueueReadBufferBase(buffer, blockingRead, offset, numBytes, hostPtr, canvasSize, events, event, ec);
+    enqueueReadBufferBase(buffer, blockingRead, offset, numBytes, hostPtr, canvasSize, events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueReadImageBase(WebCLImage* image, CCbool blockingRead, const Vector<CCuint>& origin, const Vector<CCuint>& region,
-    CCuint hostRowPitch, void* hostPtr, size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    CCuint hostRowPitch, void* hostPtr, size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::compareContext(m_context.get(), image->context())) {
-        ec = WebCLException::INVALID_CONTEXT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(image)) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
 
     if (!hostPtr) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
     if (origin.size() != 2 || region.size() != 2) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::isValidRegionForImage(image->imageDescriptor(), origin, region)
         || !WebCLInputChecker::isValidRegionForHostPtr(region, hostRowPitch, image->imageDescriptor(), hostPtrLength)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
@@ -490,73 +490,73 @@ void WebCLCommandQueue::enqueueReadImageBase(WebCLImage* image, CCbool blockingR
     regionCopy.append(1);
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec, blockingRead ? DoNotAcceptUserEvent : AcceptUserEvent);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception, blockingRead ? DoNotAcceptUserEvent : AcceptUserEvent);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror err = platformObject()->enqueueReadImage(computeMemory, blockingRead, originCopy, regionCopy, hostRowPitch, 0 /* slice_pitch */, hostPtr, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
 void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead, const Vector<CCuint>& origin, const Vector<CCuint>& region,
-    CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!ptr || !WebCLInputChecker::isValidDataSizeForArrayBufferView(hostRowPitch, ptr)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
-    enqueueReadImageBase(image, blockingRead, origin, region, hostRowPitch, ptr->baseAddress(), ptr->byteLength(), events, event, ec);
+    enqueueReadImageBase(image, blockingRead, origin, region, hostRowPitch, ptr->baseAddress(), ptr->byteLength(), events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueReadImage(WebCLImage* image, CCbool blockingRead, const Vector<CCuint>& origin, const Vector<CCuint>& region,
-    HTMLCanvasElement* dstCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    HTMLCanvasElement* dstCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "WEBCL_html_image")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, hostPtr, canvasSize, ec);
-    if (ec != WebCLException::SUCCESS)
+    WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, hostPtr, canvasSize, exception);
+    if (willThrowException(exception))
         return;
 
-    enqueueReadImageBase(image, blockingRead, origin, region, 0 /* rowPitch */, hostPtr, canvasSize, events, event, ec);
+    enqueueReadImageBase(image, blockingRead, origin, region, 0 /* rowPitch */, hostPtr, canvasSize, events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueReadBufferRectBase(WebCLBuffer* buffer, CCbool blockingRead,
     const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin, const Vector<CCuint>& region,
     CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
-    void* hostPtr, size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    void* hostPtr, size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::compareContext(m_context.get(), buffer->context())) {
-        ec = WebCLException::INVALID_CONTEXT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(buffer)) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
     ComputeMemoryObject* computeMemory = buffer->platformObject();
 
     if (!hostPtr) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     if (bufferOrigin.size() != 3 || hostOrigin.size() != 3 || region.size() != 3) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
@@ -567,93 +567,93 @@ void WebCLCommandQueue::enqueueReadBufferRectBase(WebCLBuffer* buffer, CCbool bl
 
     if (!WebCLInputChecker::isValidRegionForMemoryObject(hostOriginCopy, regionCopy, hostRowPitch, hostSlicePitch, hostPtrLength)
         || !WebCLInputChecker::isValidRegionForMemoryObject(bufferOriginCopy, regionCopy, bufferRowPitch, bufferSlicePitch, buffer->sizeInBytes())) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec, blockingRead ? DoNotAcceptUserEvent : AcceptUserEvent);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception, blockingRead ? DoNotAcceptUserEvent : AcceptUserEvent);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror err = platformObject()->enqueueReadBufferRect(computeMemory, blockingRead, bufferOriginCopy, hostOriginCopy,
         regionCopy, bufferRowPitch, bufferSlicePitch, hostRowPitch, hostSlicePitch, hostPtr, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
 void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blockingRead,
     const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin, const Vector<CCuint>& region,
     CCuint bufferRowPitch, CCuint bufferSlicePitch, CCuint hostRowPitch, CCuint hostSlicePitch,
-    ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!ptr || !WebCLInputChecker::isValidDataSizeForArrayBufferView(hostRowPitch, ptr)
         || !WebCLInputChecker::isValidDataSizeForArrayBufferView(hostSlicePitch, ptr)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     enqueueReadBufferRectBase(buffer, blockingRead, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch,
-        hostRowPitch, hostSlicePitch, ptr->baseAddress(), ptr->byteLength(), events, event, ec);
+        hostRowPitch, hostSlicePitch, ptr->baseAddress(), ptr->byteLength(), events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueReadBufferRect(WebCLBuffer* buffer, CCbool blockingRead,
     const Vector<CCuint>& bufferOrigin, const Vector<CCuint>& hostOrigin, const Vector<CCuint>& region,
-    CCuint bufferRowPitch, CCuint bufferSlicePitch, HTMLCanvasElement* dstCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    CCuint bufferRowPitch, CCuint bufferSlicePitch, HTMLCanvasElement* dstCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "WEBCL_html_image")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, hostPtr, canvasSize, ec);
-    if (ec != WebCLException::SUCCESS)
+    WebCLHTMLInterop::extractDataFromCanvas(dstCanvas, hostPtr, canvasSize, exception);
+    if (willThrowException(exception))
         return;
 
     enqueueReadBufferRectBase(buffer, blockingRead, bufferOrigin, hostOrigin, region, bufferRowPitch, bufferSlicePitch,
-        0 /* hostRowPitch */, 0 /* hostSlicePitch */, hostPtr, canvasSize, events, event, ec);
+        0 /* hostRowPitch */, 0 /* hostSlicePitch */, hostPtr, canvasSize, events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, CCuint workDim, const Vector<unsigned>& globalWorkOffsets,
     const Vector<unsigned>& globalWorkSize, const Vector<unsigned>& localWorkSize, const Vector<RefPtr<WebCLEvent> >& events,
-    WebCLEvent* event, ExceptionCode& ec)
+    WebCLEvent* event, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(kernel)) {
-        ec = WebCLException::INVALID_KERNEL;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_KERNEL, exception);
         return;
     }
 
     if (!WebCLInputChecker::compareContext(m_context.get(), kernel->context())) {
-        ec = WebCLException::INVALID_CONTEXT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
         return;
     }
     ComputeKernel* computeKernel = kernel->computeKernel();
 
     if (workDim > 3) {
-        ec = WebCLException::INVALID_WORK_DIMENSION;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_WORK_DIMENSION, exception);
         return;
     }
 
     if (workDim != globalWorkSize.size()) {
-        ec = WebCLException::INVALID_GLOBAL_WORK_SIZE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_GLOBAL_WORK_SIZE, exception);
         return;
     }
 
     if (globalWorkOffsets.size() && workDim != globalWorkOffsets.size()) {
-        ec = WebCLException::INVALID_GLOBAL_OFFSET;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_GLOBAL_OFFSET, exception);
         return;
     }
     if (localWorkSize.size() && workDim != localWorkSize.size()) {
-        ec = WebCLException::INVALID_WORK_GROUP_SIZE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_WORK_GROUP_SIZE, exception);
         return;
     }
 
@@ -666,89 +666,89 @@ void WebCLCommandQueue::enqueueNDRangeKernel(WebCLKernel* kernel, CCuint workDim
     localWorkSizeCopy.appendVector(localWorkSize);
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror computeContextError = platformObject()->enqueueNDRangeKernel(computeKernel,
         workDim, globalWorkOffsetCopy, globalWorkSizeCopy, localWorkSizeCopy, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
+    setExceptionFromComputeErrorCode(computeContextError, exception);
 }
 
-void WebCLCommandQueue::enqueueWaitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueWaitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionObject& exception)
 {
     if (!events.size()) {
-        ec = WebCLException::INVALID_EVENT_WAIT_LIST;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT_WAIT_LIST, exception);
         return;
     }
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror error = platformObject()->enqueueWaitForEvents(computeEvents);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+    setExceptionFromComputeErrorCode(error, exception);
 }
 
-void WebCLCommandQueue::finish(ExceptionCode& ec)
+void WebCLCommandQueue::finish(ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     CCerror computeContextError = platformObject()->finish();
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
+    setExceptionFromComputeErrorCode(computeContextError, exception);
 }
 
 
-void WebCLCommandQueue::flush(ExceptionCode& ec)
+void WebCLCommandQueue::flush(ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     CCerror computeContextError = platformObject()->flush();
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
+    setExceptionFromComputeErrorCode(computeContextError, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteImageBase(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
-    CCuint hostRowPitch, void* hostPtr, const size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    CCuint hostRowPitch, void* hostPtr, const size_t hostPtrLength, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::compareContext(m_context.get(), image->context())) {
-        ec = WebCLException::INVALID_CONTEXT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(image)) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
 
     if (!hostPtr) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     if (origin.size() != 2 || region.size() != 2) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::isValidRegionForImage(image->imageDescriptor(), origin, region)
         || !WebCLInputChecker::isValidRegionForHostPtr(region, hostRowPitch, image->imageDescriptor(), hostPtrLength)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
@@ -762,110 +762,109 @@ void WebCLCommandQueue::enqueueWriteImageBase(WebCLImage* image, CCbool blocking
     regionCopy.append(1);
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec, blockingWrite ? DoNotAcceptUserEvent : AcceptUserEvent);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception, blockingWrite ? DoNotAcceptUserEvent : AcceptUserEvent);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror err = platformObject()->enqueueWriteImage(computeMemory, blockingWrite, originCopy, regionCopy, hostRowPitch, 0 /* input_slice_pitch */, hostPtr, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
-    CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    CCuint hostRowPitch, ArrayBufferView* ptr, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!ptr || !WebCLInputChecker::isValidDataSizeForArrayBufferView(hostRowPitch, ptr)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
-    enqueueWriteImageBase(image, blockingWrite, origin, region, hostRowPitch, ptr->baseAddress(), ptr->byteLength(), events, event, ec);
+    enqueueWriteImageBase(image, blockingWrite, origin, region, hostRowPitch, ptr->baseAddress(), ptr->byteLength(), events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
-    ImageData* srcPixels, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    ImageData* srcPixels, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "WEBCL_html_image")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
     void* hostPtr = 0;
     size_t pixelSize = 0;
-    WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, ec);
-    if (ec != WebCLException::SUCCESS)
+    WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, exception);
+    if (willThrowException(exception))
         return;
 
-    enqueueWriteImageBase(image, blockingWrite, origin, region, 0 /* hostRowPitch */, hostPtr, pixelSize, events, event, ec);
+    enqueueWriteImageBase(image, blockingWrite, origin, region, 0 /* hostRowPitch */, hostPtr, pixelSize, events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
-    HTMLCanvasElement* srcCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    HTMLCanvasElement* srcCanvas, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "WEBCL_html_image")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
     void* hostPtr = 0;
     size_t canvasSize = 0;
-    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, ec);
-    if (ec != WebCLException::SUCCESS)
+    WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, exception);
+    if (willThrowException(exception))
         return;
 
-    enqueueWriteImageBase(image, blockingWrite, origin, region, 0 /* hostRowPitch */, hostPtr, canvasSize, events, event, ec);
+    enqueueWriteImageBase(image, blockingWrite, origin, region, 0 /* hostRowPitch */, hostPtr, canvasSize, events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueWriteImage(WebCLImage* image, CCbool blockingWrite, const Vector<unsigned>& origin, const Vector<unsigned>& region,
-    HTMLImageElement* srcImage , const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    HTMLImageElement* srcImage , const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "WEBCL_html_image")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
     void* hostPtr = 0;
     size_t imageSize = 0;
-    WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, imageSize, ec);
-    if (ec != WebCLException::SUCCESS)
+    WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, imageSize, exception);
+    if (willThrowException(exception))
         return;
 
-    enqueueWriteImageBase(image, blockingWrite, origin, region, 0 /* hostRowPitch */, hostPtr, imageSize, events, event, ec);
+    enqueueWriteImageBase(image, blockingWrite, origin, region, 0 /* hostRowPitch */, hostPtr, imageSize, events, event, exception);
 }
 
 void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* targetImage, const Vector<unsigned>& sourceOrigin,
-    const Vector<unsigned>& targetOrigin, const Vector<unsigned>& region, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    const Vector<unsigned>& targetOrigin, const Vector<unsigned>& region, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::compareContext(m_context.get(), sourceImage->context())
         || !WebCLInputChecker::compareContext(m_context.get(), targetImage->context())) {
-        ec = WebCLException::INVALID_CONTEXT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(sourceImage)
         || !WebCLInputChecker::validateWebCLObject(targetImage)) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
 
     if (!WebCLInputChecker::compareImageFormat(sourceImage->imageFormat(), targetImage->imageFormat())) {
-        ec = WebCLException::IMAGE_FORMAT_MISMATCH;
+        setExceptionFromComputeErrorCode(ComputeContext::IMAGE_FORMAT_MISMATCH, exception);
         return;
     }
 
     if (sourceOrigin.size() != 2 || targetOrigin.size() != 2 || region.size() != 2) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::isValidRegionForImage(sourceImage->imageDescriptor(), sourceOrigin, region)
         || !WebCLInputChecker::isValidRegionForImage(targetImage->imageDescriptor(), targetOrigin, region)) {
-        ec = WebCLException::INVALID_VALUE;
-        return;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
     }
 
     ComputeMemoryObject* computeSourceImage = sourceImage->platformObject();
@@ -882,51 +881,51 @@ void WebCLCommandQueue::enqueueCopyImage(WebCLImage* sourceImage, WebCLImage* ta
     regionCopy.append(1);
 
     if (WebCLInputChecker::isRegionOverlapping(sourceImage, targetImage, sourceOrigin, targetOrigin, region)) {
-        ec = WebCLException::MEM_COPY_OVERLAP;
+        setExceptionFromComputeErrorCode(ComputeContext::MEM_COPY_OVERLAP, exception);
         return;
     }
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror err = platformObject()->enqueueCopyImage(computeSourceImage, computeTargetImage, sourceOriginCopy, targetOriginCopy, regionCopy, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
 void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage* sourceImage, WebCLBuffer* targetBuffer, const Vector<unsigned>&
-    sourceOrigin, const Vector<unsigned>& region, CCuint targetOffset, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    sourceOrigin, const Vector<unsigned>& region, CCuint targetOffset, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::compareContext(m_context.get(), sourceImage->context())
         || !WebCLInputChecker::compareContext(m_context.get(), targetBuffer->context())) {
-        ec = WebCLException::INVALID_CONTEXT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(sourceImage)
         || !WebCLInputChecker::validateWebCLObject(targetBuffer)) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
 
     if (sourceOrigin.size() != 2 || region.size() != 2) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::isValidRegionForBuffer(targetBuffer->sizeInBytes(), region, targetOffset, sourceImage->imageDescriptor())
         || !WebCLInputChecker::isValidRegionForImage(sourceImage->imageDescriptor(), sourceOrigin, region)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
@@ -941,47 +940,47 @@ void WebCLCommandQueue::enqueueCopyImageToBuffer(WebCLImage* sourceImage, WebCLB
     regionCopy.append(1);
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror err = platformObject()->enqueueCopyImageToBuffer(computeSourceImage, ccTargetBuffer,
         sourceOriginCopy, regionCopy, targetOffset, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
 void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer* sourceBuffer, WebCLImage* targetImage, CCuint sourceOffset,
-    const Vector<unsigned>& targetOrigin, const Vector<unsigned>& region, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    const Vector<unsigned>& targetOrigin, const Vector<unsigned>& region, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(sourceBuffer)
         || !WebCLInputChecker::validateWebCLObject(targetImage)) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
 
     if (!WebCLInputChecker::compareContext(m_context.get(), sourceBuffer->context())
         || !WebCLInputChecker::compareContext(m_context.get(), targetImage->context())) {
-        ec = WebCLException::INVALID_CONTEXT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
         return;
     }
 
     if (targetOrigin.size() != 2 || region.size() != 2) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::isValidRegionForBuffer(sourceBuffer->sizeInBytes(), region, sourceOffset, targetImage->imageDescriptor())
         || !WebCLInputChecker::isValidRegionForImage(targetImage->imageDescriptor(), targetOrigin, region)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
@@ -997,47 +996,47 @@ void WebCLCommandQueue::enqueueCopyBufferToImage(WebCLBuffer* sourceBuffer, WebC
     regionCopy.append(1);
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror err = platformObject()->enqueueCopyBufferToImage(ccSourceBuffer, computeTargetImage,
         sourceOffset, targetOriginCopy, regionCopy, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
 void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer* targetBuffer, CCuint sourceOffset,
-    CCuint targetOffset, CCuint sizeInBytes, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    CCuint targetOffset, CCuint sizeInBytes, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(sourceBuffer)
         || !WebCLInputChecker::validateWebCLObject(targetBuffer)) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
 
     if (!WebCLInputChecker::compareContext(m_context.get(), sourceBuffer->context())
         || !WebCLInputChecker::compareContext(m_context.get(), targetBuffer->context())) {
-        ec = WebCLException::INVALID_CONTEXT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
         return;
     }
 
     if (WebCLInputChecker::isRegionOverlapping(sourceBuffer, targetBuffer, sourceOffset, targetOffset, sizeInBytes)) {
-        ec = WebCLException::MEM_COPY_OVERLAP;
+        setExceptionFromComputeErrorCode(ComputeContext::MEM_COPY_OVERLAP, exception);
         return;
     }
 
     if ((sourceOffset + sizeInBytes) > sourceBuffer->sizeInBytes()
         || (targetOffset + sizeInBytes) > targetBuffer->sizeInBytes()) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
@@ -1045,37 +1044,37 @@ void WebCLCommandQueue::enqueueCopyBuffer(WebCLBuffer* sourceBuffer, WebCLBuffer
     ComputeMemoryObject* ccTargetBuffer = targetBuffer->platformObject();
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror err = platformObject()->enqueueCopyBuffer(ccSourceBuffer, ccTargetBuffer,
         sourceOffset, targetOffset, sizeInBytes, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
 void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBuffer* targetBuffer, const Vector<unsigned>& sourceOrigin,
     const Vector<unsigned>& targetOrigin, const Vector<unsigned>& region, CCuint sourceRowPitch, CCuint sourceSlicePitch, CCuint targetRowPitch,
-    CCuint targetSlicePitch, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+    CCuint targetSlicePitch, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(sourceBuffer)
         || !WebCLInputChecker::validateWebCLObject(targetBuffer)) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
 
     if (!WebCLInputChecker::compareContext(m_context.get(), sourceBuffer->context())
         || !WebCLInputChecker::compareContext(m_context.get(), targetBuffer->context())) {
-        ec = WebCLException::INVALID_CONTEXT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
         return;
     }
 
@@ -1083,14 +1082,14 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
     ComputeMemoryObject* ccTargetBuffer = targetBuffer->platformObject();
 
     if (sourceOrigin.size() != 3 || targetOrigin.size() != 3 || region.size() != 3) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
     size_t sourceOffset = sourceOrigin[2] * sourceSlicePitch + sourceOrigin[1] * sourceRowPitch + sourceOrigin[0];
     size_t targetOffset = targetOrigin[2] * targetSlicePitch + targetOrigin[1] * targetRowPitch + targetOrigin[0];
     size_t numBytes = region[2] * region[1] * region[0];
     if (WebCLInputChecker::isRegionOverlapping(sourceBuffer, targetBuffer, sourceOffset, targetOffset, numBytes)) {
-        ec = WebCLException::MEM_COPY_OVERLAP;
+        setExceptionFromComputeErrorCode(ComputeContext::MEM_COPY_OVERLAP, exception);
         return;
     }
 
@@ -1101,56 +1100,56 @@ void WebCLCommandQueue::enqueueCopyBufferRect(WebCLBuffer* sourceBuffer, WebCLBu
 
     if (!WebCLInputChecker::isValidRegionForMemoryObject(sourceOriginCopy, regionCopy, sourceRowPitch, sourceSlicePitch, sourceBuffer->sizeInBytes())
         || !WebCLInputChecker::isValidRegionForMemoryObject(targetOriginCopy, regionCopy, targetSlicePitch, targetRowPitch, targetBuffer->sizeInBytes())) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror err = platformObject()->enqueueCopyBufferRect(ccSourceBuffer, ccTargetBuffer,
         sourceOriginCopy, targetOriginCopy, regionCopy, sourceRowPitch, sourceSlicePitch, targetRowPitch, targetSlicePitch, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
-void WebCLCommandQueue::enqueueBarrier(ExceptionCode& ec)
+void WebCLCommandQueue::enqueueBarrier(ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     CCerror computeContextError = platformObject()->enqueueBarrier();
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
+    setExceptionFromComputeErrorCode(computeContextError, exception);
 }
 
-void WebCLCommandQueue::enqueueMarker(WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueMarker(WebCLEvent* event, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     if (!WebCLInputChecker::validateWebCLObject(event)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS) {
-        ec = WebCLException::INVALID_VALUE;
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception)) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
     CCerror computeContextError = platformObject()->enqueueMarker(computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
+    setExceptionFromComputeErrorCode(computeContextError, exception);
 }
 
 bool WebCLCommandQueue::isExtensionEnabled(WebCLContext* context, const String& name) const
@@ -1159,72 +1158,72 @@ bool WebCLCommandQueue::isExtensionEnabled(WebCLContext* context, const String& 
 };
 
 #if ENABLE(WEBGL)
-void WebCLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "KHR_gl_sharing")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
 
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     Vector<ComputeMemoryObject*> computeMemoryObjects;
     for (size_t i = 0; i < memoryObjects.size(); ++i) {
         if (!memoryObjects[i]->sharesGLResources()) {
-            ec = WebCLException::INVALID_GL_OBJECT;
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_GL_OBJECT, exception);
             return;
         }
         computeMemoryObjects.append(memoryObjects[i]->platformObject());
     }
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror err = platformObject()->enqueueAcquireGLObjects(computeMemoryObjects, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
-void WebCLCommandQueue::enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionCode& ec)
+void WebCLCommandQueue::enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryObject> >& memoryObjects, const Vector<RefPtr<WebCLEvent> >& events, WebCLEvent* event, ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "KHR_gl_sharing")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return;
     }
 
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_COMMAND_QUEUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_COMMAND_QUEUE, exception);
         return;
     }
 
     Vector<ComputeMemoryObject*> computeMemoryObjects;
     for (size_t i = 0; i < memoryObjects.size(); ++i) {
         if (!memoryObjects[i]->sharesGLResources()) {
-            ec = WebCLException::INVALID_GL_OBJECT;
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_GL_OBJECT, exception);
             return;
         }
         computeMemoryObjects.append(memoryObjects[i]->platformObject());
     }
 
     Vector<ComputeEvent*> computeEvents;
-    ccEventListFromWebCLEventList(events, computeEvents, ec);
-    if (ec != WebCLException::SUCCESS)
+    ccEventListFromWebCLEventList(events, computeEvents, exception);
+    if (willThrowException(exception))
         return;
 
-    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, ec);
-    if (ec != WebCLException::SUCCESS)
+    ComputeEvent* computeEvent = computeEventFromWebCLEventIfApplicable(event, exception);
+    if (willThrowException(exception))
         return;
 
     CCerror err = platformObject()->enqueueReleaseGLObjects(computeMemoryObjects, computeEvents, computeEvent);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 #endif
 

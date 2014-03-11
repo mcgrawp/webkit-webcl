@@ -41,56 +41,56 @@
 
 namespace WebCore {
 
-void WebCLHTMLInterop::extractDataFromCanvas(HTMLCanvasElement* canvas, void*& hostPtr, size_t& canvasSize, ExceptionCode& ec)
+void WebCLHTMLInterop::extractDataFromCanvas(HTMLCanvasElement* canvas, void*& hostPtr, size_t& canvasSize, ExceptionObject& exception)
 {
     if (!canvas) {
-        ec = WebCLException::INVALID_HOST_PTR;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
         return;
     }
     Vector<uint8_t> data;
     CCerror error = ComputeContext::CCPackImageData(canvas->copiedImage(), GraphicsContext3D::HtmlDomCanvas, canvas->width(), canvas->height(), data);
     if (error != ComputeContext::SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return;
     }
     hostPtr = data.data();
     canvasSize = data.size();
     if (!hostPtr || !canvasSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
         return;
     }
 }
 
-void WebCLHTMLInterop::extractDataFromImage(HTMLImageElement* image, void*& hostPtr, size_t& imageSize, ExceptionCode& ec)
+void WebCLHTMLInterop::extractDataFromImage(HTMLImageElement* image, void*& hostPtr, size_t& imageSize, ExceptionObject& exception)
 {
     if (!image || !image->cachedImage()) {
-        ec = WebCLException::INVALID_HOST_PTR;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
         return;
     }
     Vector<uint8_t> data;
     CCerror error = ComputeContext::CCPackImageData(image->cachedImage()->image(), GraphicsContext3D::HtmlDomImage, image->width(), image->height(), data);
     if (error != ComputeContext::SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return;
     }
     hostPtr = data.data();
     imageSize = data.size();
     if (!hostPtr || !imageSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
         return;
     }
 }
 
-void WebCLHTMLInterop::extractDataFromImageData(ImageData* srcPixels, void*& hostPtr, size_t& pixelSize, ExceptionCode& ec)
+void WebCLHTMLInterop::extractDataFromImageData(ImageData* srcPixels, void*& hostPtr, size_t& pixelSize, ExceptionObject& exception)
 {
     if (!srcPixels && !srcPixels->data() && !srcPixels->data()->data()) {
-        ec = WebCLException::INVALID_HOST_PTR;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
         return;
     }
     pixelSize = srcPixels->data()->length();
     hostPtr = static_cast<void*>(srcPixels->data()->data());
     if (!hostPtr || !pixelSize) {
-        ec = WebCLException::INVALID_HOST_PTR;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
         return;
     }
 }
