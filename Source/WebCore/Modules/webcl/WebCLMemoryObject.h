@@ -45,9 +45,9 @@ public:
     virtual ~WebCLMemoryObject();
     static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, ComputeMemoryObject*, CCuint sizeInBytes);
 
-    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
+    WebCLGetInfo getInfo(CCenum, ExceptionObject&);
 #if ENABLE(WEBGL)
-    WebCLGLObjectInfo* getGLObjectInfo(ExceptionCode&);
+    WebCLGLObjectInfo* getGLObjectInfo(ExceptionObject&);
 #endif
     bool sharesGLResources() const;
     WebCLContext* context()

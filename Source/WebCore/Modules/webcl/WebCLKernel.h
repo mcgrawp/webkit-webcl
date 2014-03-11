@@ -31,7 +31,7 @@
 #if ENABLE(WEBCL)
 
 #include "ComputeKernel.h"
-#include "ExceptionCode.h"
+#include "WebCLException.h"
 #include "WebCLGetInfo.h"
 #include "WebCLInputChecker.h"
 #include "WebCLKernelArgInfoProvider.h"
@@ -60,17 +60,17 @@ typedef ComputeKernel* ComputeKernelPtr;
 class WebCLKernel : public WebCLObjectImpl<ComputeKernelPtr> {
 public:
     virtual ~WebCLKernel();
-    static PassRefPtr<WebCLKernel> create(WebCLContext*, WebCLProgram*, const String&, ExceptionCode&);
-    static Vector<RefPtr<WebCLKernel> > createKernelsInProgram(WebCLContext*, WebCLProgram*, ExceptionCode&);
+    static PassRefPtr<WebCLKernel> create(WebCLContext*, WebCLProgram*, const String&, ExceptionObject&);
+    static Vector<RefPtr<WebCLKernel> > createKernelsInProgram(WebCLContext*, WebCLProgram*, ExceptionObject&);
 
-    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
-    WebCLGetInfo getWorkGroupInfo(WebCLDevice*, CCenum, ExceptionCode&);
+    WebCLGetInfo getInfo(CCenum, ExceptionObject&);
+    WebCLGetInfo getWorkGroupInfo(WebCLDevice*, CCenum, ExceptionObject&);
 
-    void setArg(CCuint index, WebCLMemoryObject*, ExceptionCode&);
-    void setArg(CCuint index, WebCLSampler*, ExceptionCode&);
-    void setArg(CCuint index, ArrayBufferView*, ExceptionCode&);
+    void setArg(CCuint index, WebCLMemoryObject*, ExceptionObject&);
+    void setArg(CCuint index, WebCLSampler*, ExceptionObject&);
+    void setArg(CCuint index, ArrayBufferView*, ExceptionObject&);
 
-    WebCLKernelArgInfo* getArgInfo(CCuint index, ExceptionCode&);
+    WebCLKernelArgInfo* getArgInfo(CCuint index, ExceptionObject&);
 
     WebCLProgram* program() const;
     String kernelName() const;

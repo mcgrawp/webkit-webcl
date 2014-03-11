@@ -49,14 +49,14 @@ WebCLProgram::~WebCLProgram()
     releasePlatformObject();
 }
 
-PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const String& programSource, ExceptionCode& ec)
+PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const String& programSource, ExceptionObject& exception)
 {
     CCerror error = 0;
 
-    ComputeProgram* computeProgram = context->computeContext()->createProgram(programSource, ec);
+    ComputeProgram* computeProgram = context->computeContext()->createProgram(programSource, exception);
     if (error != ComputeContext::SUCCESS) {
         delete computeProgram;
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
 
@@ -71,39 +71,39 @@ WebCLProgram::WebCLProgram(WebCLContext*context, ComputeProgram* program, const 
     context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
-WebCLGetInfo WebCLProgram::getInfo(CCenum infoType, ExceptionCode& ec)
+WebCLGetInfo WebCLProgram::getInfo(CCenum infoType, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_PROGRAM;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_PROGRAM, exception);
         return WebCLGetInfo();
     }
 
     switch (infoType) {
     case ComputeContext::PROGRAM_NUM_DEVICES:
-        return m_context->getInfo(ComputeContext::CONTEXT_NUM_DEVICES, ec);
+        return m_context->getInfo(ComputeContext::CONTEXT_NUM_DEVICES, exception);
     case ComputeContext::PROGRAM_SOURCE:
         return WebCLGetInfo(m_programSource);
     case ComputeContext::PROGRAM_CONTEXT:
         return WebCLGetInfo(m_context.get());
     case ComputeContext::PROGRAM_DEVICES:
-        return m_context->getInfo(ComputeContext::CONTEXT_DEVICES, ec);
+        return m_context->getInfo(ComputeContext::CONTEXT_DEVICES, exception);
     default:
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return WebCLGetInfo();
     }
 
     ASSERT_NOT_REACHED();
 }
 
-WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, CCenum infoType, ExceptionCode& ec)
+WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, CCenum infoType, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_PROGRAM;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_PROGRAM, exception);
         return WebCLGetInfo();
     }
 
     if (!device) {
-        ec = WebCLException::INVALID_DEVICE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_DEVICE, exception);
         return WebCLGetInfo();
     }
 
@@ -128,33 +128,33 @@ WebCLGetInfo WebCLProgram::getBuildInfo(WebCLDevice* device, CCenum infoType, Ex
         break;
     }
     default:
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return WebCLGetInfo();
     }
 
     ASSERT(error != ComputeContext::SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+    setExceptionFromComputeErrorCode(error, exception);
     return WebCLGetInfo();
 }
 
-PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, ExceptionCode& ec)
+PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_PROGRAM;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_PROGRAM, exception);
         return 0;
     }
 
-    return WebCLKernel::create(m_context.get(), this, kernelName, ec);
+    return WebCLKernel::create(m_context.get(), this, kernelName, exception);
 }
 
-Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionCode& ec)
+Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_PROGRAM;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_PROGRAM, exception);
         return Vector<RefPtr<WebCLKernel> >();
     }
 
-    return WebCLKernel::createKernelsInProgram(m_context.get(), this, ec);
+    return WebCLKernel::createKernelsInProgram(m_context.get(), this, exception);
 }
 
 /*  Static function to be sent as callback to OpenCL clBuildProgram.
@@ -185,10 +185,10 @@ void WebCLProgram::callbackProxy(CCProgram, void* userData)
     callbackProxyOnMainThread(userData);
 }
 
-void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const String& buildOptions, PassRefPtr<WebCLCallback> callback, ExceptionCode& ec)
+void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const String& buildOptions, PassRefPtr<WebCLCallback> callback, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_PROGRAM;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_PROGRAM, exception);
         return;
     }
 
@@ -213,7 +213,7 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
         for (size_t i = 0; i < webCLBuildOptionsVector.size(); i++) {
             // Every build option must start with a hyphen.
             if (!webCLBuildOptionsVector[i].startsWith("-")) {
-                ec = WebCLException::INVALID_BUILD_OPTIONS;
+                setExceptionFromComputeErrorCode(ComputeContext::INVALID_BUILD_OPTIONS, exception);
                 return;
             }
             if (webCLSupportedBuildOptions.contains(webCLBuildOptionsVector[i]))
@@ -228,21 +228,21 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
                 i = --j;
                 continue;
             }
-            ec = WebCLException::INVALID_BUILD_OPTIONS;
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_BUILD_OPTIONS, exception);
             return;
         }
     }
 
     Vector<ComputeDevice*> ccDevices;
-    ccDeviceListFromWebCLDeviceList(devices, ccDevices, ec);
-    if (ec != WebCLException::SUCCESS)
+    ccDeviceListFromWebCLDeviceList(devices, ccDevices, exception);
+    if (willThrowException(exception))
         return;
 
     pfnNotify callbackProxyPtr = 0;
     if (callback) {
         // If previous callback is still valid, calling build again must throw a INVALID_OPERATION.
         if (m_callback) {
-            ec = WebCLException::INVALID_OPERATION;
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_OPERATION, exception);
             return;
         }
         m_callback = callback;
@@ -250,7 +250,7 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
     }
 
     CCerror err = platformObject()->buildProgram(ccDevices, buildOptions, callbackProxyPtr, m_callback ? this : 0);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
 }
 
 // FIXME: Guard this change under !VALIDATOR_INTEGRATION.
@@ -308,7 +308,7 @@ const String& WebCLProgram::sourceWithCommentsStripped()
     return m_programSourceWithCommentsStripped;
 }
 
-void WebCLProgram::ccDeviceListFromWebCLDeviceList(const Vector<RefPtr<WebCLDevice> >& devices, Vector<ComputeDevice*>& ccDevices, ExceptionCode& ec)
+void WebCLProgram::ccDeviceListFromWebCLDeviceList(const Vector<RefPtr<WebCLDevice> >& devices, Vector<ComputeDevice*>& ccDevices, ExceptionObject& exception)
 {
     const Vector<RefPtr<WebCLDevice> >& contextDevices = m_context->devices();
     size_t contextDevicesLength = contextDevices.size();
@@ -322,7 +322,7 @@ void WebCLProgram::ccDeviceListFromWebCLDeviceList(const Vector<RefPtr<WebCLDevi
                 break;
             }
         if (!validDevice) {
-            ec = WebCLException::INVALID_DEVICE;
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_DEVICE, exception);
             return;
         }
         ccDevices.append(devices[i]->platformObject());

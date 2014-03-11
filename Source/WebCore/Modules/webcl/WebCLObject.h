@@ -34,7 +34,6 @@
 #include "ComputeMemoryObject.h"
 #include "ComputeSampler.h"
 #include "ComputeEvent.h"
-#include "ExceptionCode.h"
 #include "WebCLException.h"
 
 #include <wtf/RefCounted.h>

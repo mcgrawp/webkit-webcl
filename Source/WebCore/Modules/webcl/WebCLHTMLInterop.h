@@ -40,9 +40,9 @@ class ImageData;
 
 class WebCLHTMLInterop {
 public:
-    static void extractDataFromCanvas(HTMLCanvasElement*, void*& hostPtr, size_t& canvasSize, ExceptionCode&);
-    static void extractDataFromImage(HTMLImageElement*, void*& hostPtr, size_t& canvasSize, ExceptionCode&);
-    static void extractDataFromImageData(ImageData*, void*& hostPtr, size_t& pixelSize, ExceptionCode&);
+    static void extractDataFromCanvas(HTMLCanvasElement*, void*& hostPtr, size_t& canvasSize, ExceptionObject&);
+    static void extractDataFromImage(HTMLImageElement*, void*& hostPtr, size_t& canvasSize, ExceptionObject&);
+    static void extractDataFromImageData(ImageData*, void*& hostPtr, size_t& pixelSize, ExceptionObject&);
 };
 }
 

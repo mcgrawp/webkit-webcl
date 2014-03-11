@@ -47,15 +47,15 @@ typedef ComputeProgram* ComputeProgramPtr;
 class WebCLProgram : public WebCLObjectImpl<ComputeProgramPtr> {
 public:
     virtual ~WebCLProgram();
-    static PassRefPtr<WebCLProgram> create(WebCLContext*, const String& programSource, ExceptionCode&);
+    static PassRefPtr<WebCLProgram> create(WebCLContext*, const String& programSource, ExceptionObject&);
 
-    WebCLGetInfo getInfo(CCenum flag, ExceptionCode&);
-    WebCLGetInfo getBuildInfo(WebCLDevice*, CCenum flag, ExceptionCode&);
+    WebCLGetInfo getInfo(CCenum flag, ExceptionObject&);
+    WebCLGetInfo getBuildInfo(WebCLDevice*, CCenum flag, ExceptionObject&);
 
-    void build(const Vector<RefPtr<WebCLDevice> >&, const String& buildOptions, PassRefPtr<WebCLCallback>, ExceptionCode&);
+    void build(const Vector<RefPtr<WebCLDevice> >&, const String& buildOptions, PassRefPtr<WebCLCallback>, ExceptionObject&);
 
-    PassRefPtr<WebCLKernel> createKernel(const String& kernelName, ExceptionCode&);
-    Vector<RefPtr<WebCLKernel> > createKernelsInProgram(ExceptionCode&);
+    PassRefPtr<WebCLKernel> createKernel(const String& kernelName, ExceptionObject&);
+    Vector<RefPtr<WebCLKernel> > createKernelsInProgram(ExceptionObject&);
 
     ComputeProgram* computeProgram() const { return platformObject(); }
 
@@ -63,7 +63,7 @@ public:
 
 private:
     WebCLProgram(WebCLContext*, ComputeProgram*, const String&);
-    void ccDeviceListFromWebCLDeviceList(const Vector<RefPtr<WebCLDevice> >&, Vector<ComputeDevice*>&, ExceptionCode&);
+    void ccDeviceListFromWebCLDeviceList(const Vector<RefPtr<WebCLDevice> >&, Vector<ComputeDevice*>&, ExceptionObject&);
 
     static void callbackProxyOnMainThread(void* userData);
     static void callbackProxy(CCProgram, void* userData);

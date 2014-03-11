@@ -54,7 +54,7 @@ WebCLPlatform::WebCLPlatform(RefPtr<ComputePlatform> platform)
 {
 }
 
-WebCLGetInfo WebCLPlatform::getInfo(CCenum info, ExceptionCode& ec)
+WebCLGetInfo WebCLPlatform::getInfo(CCenum info, ExceptionObject& exception)
 {
     switch(info) {
     case ComputeContext::PLATFORM_PROFILE:
@@ -66,7 +66,7 @@ WebCLGetInfo WebCLPlatform::getInfo(CCenum info, ExceptionCode& ec)
     case ComputeContext::PLATFORM_EXTENSIONS:
         return WebCLGetInfo(emptyString());
     default:
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return WebCLGetInfo();
     }
 
@@ -74,10 +74,10 @@ WebCLGetInfo WebCLPlatform::getInfo(CCenum info, ExceptionCode& ec)
     return WebCLGetInfo();
 }
 
-Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(CCenum deviceType, ExceptionCode& ec)
+Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(CCenum deviceType, ExceptionObject& exception)
 {
     if (deviceType && !WebCLInputChecker::isValidDeviceType(deviceType)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return Vector<RefPtr<WebCLDevice> >();
     }
 
@@ -91,7 +91,7 @@ Vector<RefPtr<WebCLDevice> > WebCLPlatform::getDevices(CCenum deviceType, Except
     Vector<RefPtr<ComputeDevice> > ccDevices;
     CCerror error = platformObject()->getDeviceIDs(deviceType, ccDevices);
     if (error != ComputeContext::SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return Vector<RefPtr<WebCLDevice> >();
     }
     // New device array fetched. Update the cache.
