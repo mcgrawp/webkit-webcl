@@ -155,6 +155,7 @@ my (
     $workersSupport,
     $xhrTimeoutSupport,
     $xsltSupport,
+    $webclSupport,
 );
 
 my @features = (
@@ -487,6 +488,10 @@ my @features = (
 
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },
+
+  { option => "webcl", desc => "Toggle WebCL support",
+            define => "ENABLE_WEBCL", default => 1, value => \$webclSupport },
+
 );
 
 sub getFeatureOptionList()
