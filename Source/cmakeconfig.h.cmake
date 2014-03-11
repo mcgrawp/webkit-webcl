@@ -126,6 +126,7 @@
 #cmakedefine01 ENABLE_WORKERS
 #cmakedefine01 ENABLE_XHR_TIMEOUT
 #cmakedefine01 ENABLE_XSLT
+#cmakedefine01 ENABLE_WEBCL
 #cmakedefine01 USE_SYSTEM_MALLOC
 #cmakedefine01 WTF_USE_TILED_BACKING_STORE
 

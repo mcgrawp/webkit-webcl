@@ -249,6 +249,23 @@ if (ENABLE_SVG)
     )
 endif ()
 
+if (ENABLE_WEBCL)
+    list(APPEND WebCore_SOURCES
+        bindings/js/JSWebCLCommandQueueCustom.cpp
+        bindings/js/JSWebCLContextCustom.cpp
+        bindings/js/JSWebCLCustom.cpp
+        bindings/js/JSWebCLCustom.h
+        bindings/js/JSWebCLDeviceCustom.cpp
+        bindings/js/JSWebCLEventCustom.cpp
+        bindings/js/JSWebCLKernelCustom.cpp
+        bindings/js/JSWebCLMemoryObjectCustom.cpp
+        bindings/js/JSWebCLPlatformCustom.cpp
+        bindings/js/JSWebCLProgramCustom.cpp
+        bindings/js/JSWebCLSamplerCustom.cpp
+        bindings/js/JSWebCLGLObjectInfoCustom.cpp
+     )
+endif ()
+
 if (ENABLE_WEBGL)
     list(APPEND WebCore_SOURCES
         bindings/js/JSWebGLRenderingContextCustom.cpp
