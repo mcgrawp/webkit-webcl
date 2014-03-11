@@ -4,6 +4,7 @@ DOMCoreException
 EventException
 FileException conditional=BLOB
 RangeException
+WebCLException conditional=WEBCL
 SQLException conditional=SQL_DATABASE
 SVGException conditional=SVG
 XMLHttpRequestException
