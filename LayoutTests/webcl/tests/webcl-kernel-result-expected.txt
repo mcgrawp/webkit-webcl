@@ -1,0 +1,9 @@
+Just test if the kernel is working properly and return the expected result
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS results[0] is 15
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

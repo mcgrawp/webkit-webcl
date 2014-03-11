@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Testing WebCL extension</title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/logger.js"></script>
+<script src="../resources/webcl-proxy.js"></script>
+<script src="../resources/webcl-test-utils.js"></script>
+
+<script>
+
+    function runTest() {
+        try {
+            var i = 0;
+            var proxy = WebCLProxy;
+            if (proxy === undefined) {
+                testFailed("Cannot create proxy object.");
+                return;
+            }
+
+            var extensions = proxy.getSupportedExtensions();
+            for (i = 0; i < extensions.length; ++i) {
+                var originalName = extensions[i];
+                var mixedName = WebCLTestUtils.mixedString(originalName);
+
+                var extensionObj = proxy.getExtension(mixedName);
+                if (!extensionObj) {
+                    testFailed("Failed to get extension: " + originalName + " as " + mixedName);
+                    return;
+                }
+
+                var extensionObj2 = proxy.getExtension(originalName);
+                if (!extensionObj2) {
+                    testFailed("Failed to get extension: " + originalName);
+                    return;
+                }
+
+                if (extensionObj !== extensionObj2) {
+                    testFailed("Same extension should be the same object.");
+                    return;
+                }
+            }
+        } catch (e) {
+            testFailed("WebCL supported extension fail ; Message: " + e.message);
+        }
+    }
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Testing WebCL extension objects.");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

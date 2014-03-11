@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebCL create sampler stress test </title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/webcl-test.js"></script>
+
+<script>
+
+var STRESS_ITERS = 100000;
+
+function runTest() {
+    try {
+        var wclt = WebCLTest;
+        wclt.init(0, 0, "gpu");
+        var platform = wclt.getPlatform(0);
+        var device = wclt.getDevice(0);
+        var devices = wclt.getDevices();
+        var cl = wclt.getCL();
+        var contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_GPU};
+        var context = wclt.createContext(contextProperties);
+
+        var clSampler = null;
+        var i;
+        for (i = 0; i < STRESS_ITERS; i++) {
+            clSampler = context.createSampler(true, cl.ADDRESS_NONE, cl.FILTER_LINEAR);
+            if (clSampler === null || !(clSampler instanceof WebCLSampler)) {
+                testFailed("WebCLSampler was not created properly.");
+                return;
+            }
+            clSampler.release();
+            clSampler = null;
+        }
+        context.release();
+        testPassed("");
+
+    } catch (e) {
+        testFailed("WebCLSampler stress test failed ; Message: " + e.message);
+    }
+}
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Create several WebCLSampler. To pass, it should not crash.");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

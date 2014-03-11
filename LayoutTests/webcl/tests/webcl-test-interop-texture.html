@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Texture Interoperability Test</title>
+
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/kernels.js"></script>
+<script src="../resources/logger.js"></script>
+<script src="../resources/webcl-proxy.js"></script>
+
+<script>
+    if (window.testRunner) {
+        testRunner.overridePreference("WebKitWebGLEnabled", "1");
+    }
+
+    var gl;
+    var programGL;
+    var vboGL;
+    var vboGLTexCoord;
+    var texGLIn;
+    var texGLOut;
+
+    var pixelWidth        = 2;
+    var pixelHeight       = 2;
+    var pixelDepth        = 1;
+    var pixelSizeInBytes  = 4;
+    var texColorData;
+
+    var cl;
+    var context;
+    var cmdQueue;
+    var kernel;
+    var texCLIn;
+    var texCLOut;
+
+    var origin;
+    var region;
+    var kResult;
+    var globalWorkSize;
+
+    function getById(id) {
+        var elem;
+
+        elem = document.getElementById(id);
+        if (!elem) {
+            testFailed("In getById: no id found");
+        }
+
+        return elem.innerHTML;
+    }
+
+    function getCanvasContext(canvas) {
+        try {
+            gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+            gl.viewportWidth = canvas.width;
+            gl.viewportHeight = canvas.height;
+        } catch (e) {
+            testFailed("In getCanvasContext: " + e.message);
+        }
+    }
+
+    function initGL() {
+        var canvas;
+
+        try {
+            canvas = document.getElementById("canvas");
+            getCanvasContext(canvas);
+            initShaders();
+            initGLBuffers();
+        } catch (e) {
+            testFailed("In initGL: " + e.message);
+        }
+    }
+
+    function initGLBuffers() {
+        var vertices;
+        var texCoords;
+        var aPosLoc;
+        var aTexLoc;
+        var sampLoc;
+
+        aPosLoc = gl.getAttribLocation(programGL, "aPos");
+        aTexLoc = gl.getAttribLocation(programGL, "aTexCoord");
+        vertices = [
+            0.5,  0.5,
+            -0.5,  0.5,
+            0.5, -0.5,
+            -0.5, -0.5
+        ];
+        texCoords = [0, 0,  1, 0,  1, 1,  0, 1];
+
+        vboGL = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vboGL);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(aPosLoc);
+        gl.vertexAttribPointer(aPosLoc, 2, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+        vboGLTexCoord = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vboGLTexCoord);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(aTexLoc);
+        gl.vertexAttribPointer(aTexLoc, 2, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+        texGLIn = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texGLIn);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelWidth, pixelHeight, 0,
+                                            gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+
+        texGLOut = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texGLOut);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelWidth, pixelHeight, 0,
+                                            gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    }
+
+    function initShaders() {
+        var shader;
+        var vShaderSrc;
+        var fShaderSrc;
+        var vShader;
+        var fShader;
+
+        programGL = gl.createProgram();
+
+        vShaderSrc = getById("vertex");
+        fShaderSrc = getById("fragment");
+
+        vShader = gl.createShader(gl.VERTEX_SHADER);
+        fShader = gl.createShader(gl.FRAGMENT_SHADER);
+
+        gl.shaderSource(vShader, vShaderSrc);
+        gl.shaderSource(fShader, fShaderSrc);
+
+        gl.compileShader(vShader);
+        if (gl.getShaderParameter(vShader, gl.COMPILE_STATUS) === 0) {
+            testFailed("In vertex shader: " + gl.getShaderInfoLog(shader));
+        }
+
+        gl.compileShader(fShader);
+        if (gl.getShaderParameter(fShader, gl.COMPILE_STATUS) === 0) {
+            testFailed("In fragment shader: " + gl.getShaderInfoLog(shader));
+        }
+
+        gl.attachShader(programGL, vShader);
+        gl.attachShader(programGL, fShader);
+        gl.linkProgram(programGL);
+        gl.useProgram(programGL);
+    }
+
+    function initCLBuffers() {
+        try {
+            texColorData = [
+                255, 255, 255, 255,
+                255, 0,   0,   255,
+                0,   255, 0,   255,
+                0,   0,   255, 255
+            ];
+
+            texCLIn = context.createFromGLTexture(webcl.MEM_READ_ONLY,
+                                                        gl.TEXTURE_2D,
+                                                        0, texGLIn);
+            texCLOut = context.createFromGLTexture(webcl.MEM_WRITE_ONLY,
+                                                        gl.TEXTURE_2D,
+                                                        0, texGLOut);
+
+            texColorData   = new Uint8Array(texColorData);
+            kResult        = new Uint8Array(pixelWidth * pixelHeight * pixelSizeInBytes);
+            origin         = new Int32Array([0, 0, 0]);
+            region         = new Int32Array([pixelWidth, pixelHeight, pixelDepth]);
+            globalWorkSize = new Int32Array([pixelWidth, pixelHeight]);
+        } catch (e) {
+            testFailed("In initCLBuffers: " + e.message);
+        }
+    }
+
+    function initCL() {
+        var contextProperties;
+        var devices;
+        var device;
+        var kernelSrc;
+        var programCL;
+
+        try {
+            cl = webcl;
+            if (!cl) {
+                testFailed("WebCL object is not defined ...");
+            }
+
+            cl = cl.getExtension("KHR_GL_SHARING");
+            if (!cl) {
+                testFailed("GL Extension is not supported");
+            }
+
+            platforms = cl.getPlatforms();
+            if (!platforms.length) {
+                testFailed("Platform is not defined ...");
+            }
+            platform = platforms[0];
+
+            devices = platform.getDevices(cl.DEVICE_TYPE_DEFAULT);
+            if (!devices.length) {
+                testFailed("Devices is not valid");
+            }
+            device = devices[0];
+
+            contextProperties = {platform: platform, devices: devices};
+            context = cl.createContext(contextProperties);
+            if (!context) {
+                testFailed("In initCL: It was not possible to create WebCLContext");
+            }
+
+            kernelSrc = Kernels.copyTexture;
+            if (!kernelSrc) {
+                testFailed("No kernel source");
+            }
+            programCL = context.createProgram(kernelSrc);
+            programCL.build([device]);
+
+            cmdQueue = context.createCommandQueue(device);
+            kernel = programCL.createKernel("copyTex");
+
+            initCLBuffers();
+        } catch (e) {
+            testFailed("In initCL: " + e.message);
+        }
+    }
+
+    function runKernel() {
+        var i;
+
+        try {
+            kernel.setArg(0, texCLIn);
+            kernel.setArg(1, texCLOut);
+
+            gl.finish();
+            cmdQueue.enqueueAcquireGLObjects([texCLIn, texCLOut]);
+            cmdQueue.enqueueWriteImage(texCLIn, true, origin, region, 0,
+                                                               texColorData);
+            cmdQueue.enqueueNDRangeKernel(kernel, null, globalWorkSize, null);
+            cmdQueue.enqueueReleaseGLObjects([texCLIn, texCLOut]);
+            cmdQueue.finish();
+
+            cmdQueue.enqueueReadImage(texCLOut, true, origin, region, 0,
+                                                                   kResult);
+            for (i = 0; i < pixelWidth * pixelHeight * pixelSizeInBytes; i++) {
+                if (texColorData[i] !== kResult[i]) {
+                    testFailed("In runKernel: results are different!");
+                }
+            }
+        } catch (e) {
+            testFailed("In runKernel: " + e.message);
+        }
+    }
+
+    function draw() {
+        gl.clearColor(0, 0, 0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.bindTexture(gl.TEXTURE_2D, texGLOut);
+        gl.bindBuffer(gl.ARRAY_BUFFER, vboGLTexCoord);
+        gl.bindBuffer(gl.ARRAY_BUFFER, vboGL);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    }
+
+    function runTest() {
+        initGL();
+        initCL();
+        runKernel();
+        draw();
+        testPassed("");
+    }
+
+</script>
+
+<script id="vertex" type="x-shader">
+    attribute vec2 aPos;
+    attribute vec2 aTexCoord;
+    varying   vec2 vTC;
+
+    void main(void) {
+        gl_Position = vec4(aPos, 0., 1.);
+        vTC = aTexCoord;
+    }
+</script>
+
+<script id="fragment" type="x-shader">
+#ifdef GL_ES
+precision highp float;
+#endif
+
+    uniform sampler2D samp;
+    varying vec2 vTC;
+
+    void main(void) {
+       gl_FragColor = texture2D(samp, vTC);
+    }
+</script>
+
+</head>
+<body>
+<div id="description"></div>
+<canvas id="canvas" width="200" height="200"></canvas>
+<div id="console"></div>
+<script>
+    description(document.title);
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
