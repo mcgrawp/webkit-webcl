@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Testing WebCLPlatform extensions</title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/webcl-test-utils.js"></script>
+
+<script>
+    function runTest() {
+        try {
+            var cl = webcl;
+            var currentPlatform;
+            var extensions = [];
+            var extensionName;
+            var extensionObject;
+            var extensionObject2;
+            var i;
+            var j;
+            var mixedName;
+            var platforms;
+            var supportedExtensions = [];
+            var testNumber = 1234;
+
+            if (!cl) {
+                testFailed("WebCL is not supported.");
+            }
+
+            platforms = cl.getPlatforms();
+            if (!platforms || platforms.length === 0) {
+                testFailed("WebCL platforms not found.");
+            }
+
+            for (i = 0; i < platforms.length; ++i) {
+                currentPlatform = platforms[i];
+                extensions = currentPlatform.getSupportedExtensions();
+                if (!extensions || extensions.length === 0) {
+                    console.log("There is not WebCLPlatform supported extensions.");
+                    break;
+                }
+
+                for (j = 0; j < extensions.length; ++j) {
+                    extensionName = extensions[j];
+                    mixedName = WebCLTestUtils.mixedString(extensionName);
+
+                    extensionObject = currentPlatform.getExtension(mixedName);
+                    if (!extensionObject) {
+                        console.log("Failed to get WebCLPLatform extension: " + extensionName + " as " + mixedName);
+                        break;
+                    }
+
+                    extensionObject.testNumberProperty = testNumber;
+                    gc();
+
+                    extensionObject2 = currentPlatform.getExtension(extensionName);
+                    if (!extensionObject2) {
+                        testPassed("Failed to get WebCLPLatform extension: " + extensionName);
+                        break;
+                    }
+
+                    if (extensionObject2.testNumberProperty !== testNumber) {
+                        testFailed("Test failed, extension objects are not the same.");
+                        return;
+                    }
+                }
+            }
+        } catch (e) {
+            testFailed("WebCLPlatform supported extensions fail ; Message: " + e.message);
+        }
+    }
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Testing WebCLPlatform supported extensions objects.");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

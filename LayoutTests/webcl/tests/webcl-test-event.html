@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebCLEvent test </title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/kernels.js"></script>
+<script src="../resources/logger.js"></script>
+<script src="../resources/webcl-proxy.js"></script>
+
+<script>
+var count  = 0;
+var nativeEvent;
+var executionStatus;
+
+var clCallback = function eventCallback() {
+    count++;
+};
+
+
+function runTest() {
+
+    var i;
+    var globalWorkSize = new Int32Array(1);
+	var localWorkSize  = new Int32Array(1);
+	var results        = new Uint32Array(1);
+
+    try {
+
+        /* Get WebCLProxy */
+        var proxy = WebCLProxy;
+
+        /* Test WebCLProxy */
+        if (!proxy) {
+            testFailed("WebCLProxy object is not defined ...");
+            return;
+        }
+
+        /* Execution events */
+        executionStatus = [proxy.COMPLETE, proxy.RUNNING, proxy.SUBMITTED, proxy.QUEUED];
+
+
+        /* Get wcl objects */
+        var platform = proxy.getWCLPlatform();
+        var device   = platform.getWCLDevice(proxy.DEVICE_TYPE_GPU);
+        var context  = platform.createWCLContext(device);
+        var queue    = context.createWCLCommandQueue(device, null);
+
+        var kernelSource = Kernels.kernel_item;
+        if (kernelSource === null) {
+            testFailed("No kernel named: " + "kernel_item");
+            return;
+        }
+
+        var program = context.createWCLProgram(kernelSource);
+        program.build();
+
+        var kernel = program.createWCLKernel("kernel_item");
+        // Get the maximum work group size for executing the kernel on the device
+        var workGroupSize = kernel.getWorkGroupInfo(device, proxy.KERNEL_WORK_GROUP_SIZE);
+
+        //Create buffer for output
+        var output = context.createWCLBuffer(proxy.MEM_WRITE_ONLY, Uint32Array.BYTES_PER_ELEMENT, null);
+        globalWorkSize[0] = 1;
+        localWorkSize[0]  = 1;
+
+        kernel.setWCLKernelArgs(0, output);
+
+        var events = [];
+        var testEvent;
+
+        /* Create a event for each execution status */
+        for (i in executionStatus) {
+            events[i] = context.createWCLUserEvent();
+            events[i].setCallback(executionStatus[i], clCallback);
+
+            nativeEvent = events[i].getEventGroup()[0].nativeEvent;
+            shouldBeTrue("nativeEvent instanceof WebCLEvent");
+        }
+
+        var ndRangeDict = {};
+        ndRangeDict.kernel              = kernel;
+        ndRangeDict.globalWorkOffset    = new Int32Array(0);
+        ndRangeDict.globalWorkOffset[0] = 0;
+        ndRangeDict.globalWorkSize      = globalWorkSize;
+        ndRangeDict.localWorkSize       = localWorkSize;
+        ndRangeDict.eventWaitList       = events;
+
+        queue.enqueueNDRangeKernel(ndRangeDict);
+
+        queue.finish();
+
+        shouldBeTrue("count === executionStatus.length");
+
+    } catch (e) {
+        testFailed("WebCLEvent test failed ; Message: " + e.message);
+    }
+}
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Just testing if a WebCLEvent is working properly...");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

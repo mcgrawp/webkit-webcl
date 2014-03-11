@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Image Object Test</title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/kernels.js"></script>
+<script src="../resources/webcl-test-utils.js"></script>
+
+<script>
+
+var cl;
+var platforms;
+var platform;
+var devices;
+
+var context;
+var queue;
+var program;
+var kernel;
+var imgIn;
+var imgOut;
+
+var globalWorkSize;
+var localWorkSize;
+
+var jsResult;
+var kResult;
+
+var data;
+var imgWidth = 2;
+var imgHeight = 2;
+var imgPixelSizeBytes = 4;
+var DATA_SIZE = imgWidth * imgHeight * imgPixelSizeBytes;
+
+function initCL() {
+    var randomVector;
+    var contextProperties;
+    var imgDescriptor;
+    var kSrc;
+    var workGroupSize;
+
+    randomVector = WebCLTestUtils.getRandomVector(DATA_SIZE, 15);
+    data = new Uint8Array(randomVector);
+
+    try {
+        if (webcl === "undefined") {
+            throw (new Error("WebCL is not defined"));
+        }
+
+        cl = webcl;
+        if (cl === null) {
+            throw (new Error("Failed to create webcl object"));
+        }
+
+        contextProperties = {deviceType: cl.DEVICE_TYPE_DEFAULT};
+        context = cl.createContext(contextProperties);
+        if (!context) {
+            throw (new Error("It was not possible to create WebCLContext."));
+        }
+
+        devices = context.getInfo(cl.CONTEXT_DEVICES);
+        device = devices[0];
+
+        imgDescriptor = {};
+        imgDescriptor.width = imgWidth;
+        imgDescriptor.height = imgHeight;
+        imgDescriptor.channelOrder = cl.RGBA;
+        imgDescriptor.channelType = cl.UNSIGNED_INT8;
+
+        kSrc = Kernels.imgSquare;
+        program = context.createProgram(kSrc);
+        queue = context.createCommandQueue(device);
+        imgIn = context.createImage(cl.MEM_READ_ONLY, imgDescriptor);
+        imgOut = context.createImage(cl.MEM_WRITE_ONLY, imgDescriptor);
+        if (!imgIn || !imgOut) {
+            throw (new Error("Failed to alocate buffers."));
+        }
+
+        program.build(devices);
+        kernel = program.createKernel("square");
+        kernel.setArg(0, imgIn);
+        kernel.setArg(1, imgOut);
+
+        globalWorkSize = new Int32Array([imgWidth, imgHeight]);
+        localWorkSize = new Int32Array([imgWidth, imgHeight]);
+        jsResult = new Uint8Array(imgWidth * imgHeight * imgPixelSizeBytes);
+        kResult = new Uint8Array(imgWidth * imgHeight * imgPixelSizeBytes);
+    } catch (e) {
+        throw e;
+    }
+}
+
+function runKernel() {
+    var i;
+    var origin = new Int32Array([0, 0]);
+    var region = new Int32Array([imgWidth, imgHeight]);
+
+    try {
+        queue.enqueueWriteImage(imgIn, true, origin, region, 0, data);
+        queue.enqueueNDRangeKernel(kernel, 0, globalWorkSize, null);
+        queue.enqueueReadImage(imgOut, true, origin, region, 0, kResult);
+        queue.finish();
+
+        for (i = 0; i < DATA_SIZE; i++) {
+            jsResult[i] = data[i] * data[i];
+        }
+
+        for (i = 0; i < DATA_SIZE; i++) {
+            if (kResult[i] !== jsResult[i]) {
+                throw (new Error("running kernel: " +
+                                    kernel.getInfo(cl.KERNEL_FUNCTION_NAME)));
+            }
+        }
+    } catch (e) {
+        throw e;
+    }
+}
+
+function runTest() {
+    try {
+        initCL();
+        runKernel();
+        testPassed("");
+    } catch (e) {
+        testFailed("Test has failed. Message: " + e.message);
+    }
+}
+</script>
+
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description(document.title);
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

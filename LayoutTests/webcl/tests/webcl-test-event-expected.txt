@@ -1,0 +1,9 @@
+Just testing if a WebCLEvent is working properly...
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+FAIL WebCLEvent test failed ; Message: 'null' is not an object (evaluating 'nativeEvent.setCallback')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

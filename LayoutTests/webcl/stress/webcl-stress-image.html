@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebCLImage stress test </title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/webcl-test.js"></script>
+
+<script>
+
+var STRESS_ITERS = 100000;
+
+function runTest() {
+
+    try {
+        var webclTest = WebCLTest;
+        webclTest.init(0, 0, "gpu");
+
+        var cl = webclTest.getCL();
+        var platform = webclTest.getPlatform(0);
+        var devices = webclTest.getDevices();
+
+        var properties = { platform: platform, devices: devices,
+                            deviceType: cl.DEVICE_TYPE_GPU};
+        var context = webclTest.createContext(properties);
+
+        var images = [];
+        var image = null;
+
+        var formats = context.getSupportedImageFormats(cl.MEM_READ_WRITE, cl.MEM_OBJECT_IMAGE2D);
+        formats[0].width = 10;
+        formats[0].height = 10;
+
+        var i;
+        for (i = 0; i < STRESS_ITERS; ++i) {
+            image = context.createImage(cl.MEM_READ_WRITE, formats[0], null);
+            if (image === null || !(image instanceof WebCLImage)) {
+                testFailed("Failed trying create a WebCLImage instance");
+                return;
+            }
+            images.push(image);
+            image = null;
+        }
+
+        image = null;
+        for (i = 0; i < STRESS_ITERS; ++i) {
+            image = images.pop();
+            if (image === null || !(image instanceof WebCLImage)) {
+                testFailed("Failed to when getting WebCLImage");
+                return;
+            }
+            image.release();
+            image = null;
+        }
+
+        context.release();
+
+        testPassed(" ");
+
+    } catch (e) {
+        testFailed("WebCLIMage stress test failed ; Message: " + e.message);
+    }
+}
+
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("WebCLImage stress test.");
+    runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
