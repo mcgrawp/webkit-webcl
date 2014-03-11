@@ -31,7 +31,7 @@
 #if ENABLE(WEBCL)
 
 #include "ComputeExtensions.h"
-#include "ExceptionCode.h"
+#include "WebCLException.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {

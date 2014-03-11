@@ -50,14 +50,14 @@ WebCL::WebCL()
 {
 }
 
-Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec)
+Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionObject& exception)
 {
     if (m_platforms.size())
         return m_platforms;
 
     CCerror error = WebCore::getPlatforms(m_platforms);
     if (error != ComputeContext::SUCCESS) {
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         m_platforms.clear();
         return m_platforms;
     }
@@ -65,10 +65,10 @@ Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionCode& ec)
 }
 
 // FIXME: We currently do not support the asynchronous variant of this method.
-void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCode& ec)
+void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionObject& exception)
 {
     if (!events.size()) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return;
     }
 
@@ -77,7 +77,7 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCo
     if (events[0]->isPlatformObjectNeutralized()
         || !events[0]->holdsValidCLObject()
         || events[0]->isUserEvent()) {
-        ec = WebCLException::INVALID_EVENT_WAIT_LIST;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT_WAIT_LIST, exception);
         return;
     }
     ASSERT(events[0]->context());
@@ -89,12 +89,12 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCo
         if (events[i]->isPlatformObjectNeutralized()
             || !events[i]->holdsValidCLObject()
             || events[i]->isUserEvent()) {
-            ec = WebCLException::INVALID_EVENT_WAIT_LIST;
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT_WAIT_LIST, exception);
             return;
         }
         ASSERT(events[i]->context());
         if (!WebCLInputChecker::compareContext(events[i]->context(), referenceContext)) {
-            ec = WebCLException::INVALID_CONTEXT;
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
             return;
         }
 
@@ -102,123 +102,123 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionCo
     }
 
     CCerror error = ComputeContext::waitForEvents(computeEvents);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+    setExceptionFromComputeErrorCode(error, exception);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCL::createContext(ExceptionObject& exception)
 {
-    return createContext(ComputeContext::DEVICE_TYPE_DEFAULT, ec);
+    return createContext(ComputeContext::DEVICE_TYPE_DEFAULT, exception);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(CCenum deviceType, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCL::createContext(CCenum deviceType, ExceptionObject& exception)
 {
-    getPlatforms(ec);
-    if (ec != WebCLException::SUCCESS)
+    getPlatforms(exception);
+    if (willThrowException(exception))
         return 0;
 
-    return createContext(m_platforms[0].get(), deviceType, ec);
+    return createContext(m_platforms[0].get(), deviceType, exception);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(WebCLPlatform* platform, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCL::createContext(WebCLPlatform* platform, ExceptionObject& exception)
 {
-    return createContext(platform, ComputeContext::DEVICE_TYPE_DEFAULT, ec);
+    return createContext(platform, ComputeContext::DEVICE_TYPE_DEFAULT, exception);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(WebCLPlatform* platform, CCenum deviceType, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCL::createContext(WebCLPlatform* platform, CCenum deviceType, ExceptionObject& exception)
 {
     if (!platform) {
-        ec = WebCLException::INVALID_PLATFORM;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_PLATFORM, exception);
         return 0;
     }
 
     if (!WebCLInputChecker::isValidDeviceType(deviceType)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return 0;
     }
 
-    Vector<RefPtr<WebCLDevice> > devices = platform->getDevices(deviceType, ec);
-    if (ec != WebCLException::SUCCESS)
+    Vector<RefPtr<WebCLDevice> > devices = platform->getDevices(deviceType, exception);
+    if (willThrowException(exception))
         return 0;
 
-    return WebCLContext::create(this, 0 /*glContext*/, platform, devices, ec);
+    return WebCLContext::create(this, 0 /*glContext*/, platform, devices, exception);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(const Vector<RefPtr<WebCLDevice> >& devices, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCL::createContext(const Vector<RefPtr<WebCLDevice> >& devices, ExceptionObject& exception)
 {
     if (!devices.size()) {
-        ec = WebCLException::INVALID_DEVICE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_DEVICE, exception);
         return 0;
     }
 
-    return WebCLContext::create(this, 0 /*glContext*/, devices[0]->platform(), devices, ec);
+    return WebCLContext::create(this, 0 /*glContext*/, devices[0]->platform(), devices, exception);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(WebCLDevice* device, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCL::createContext(WebCLDevice* device, ExceptionObject& exception)
 {
     Vector<RefPtr<WebCLDevice>, 1> devices;
     devices.uncheckedAppend(device);
 
-    return createContext(devices, ec);
+    return createContext(devices, exception);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, ExceptionObject& exception)
 {
     // FIXME: Pick a device that best suits to cl-gl instead of the default one.
-    return createContext(glContext, ComputeContext::DEVICE_TYPE_DEFAULT, ec);
+    return createContext(glContext, ComputeContext::DEVICE_TYPE_DEFAULT, exception);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, CCenum deviceType, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, CCenum deviceType, ExceptionObject& exception)
 {
-    getPlatforms(ec);
-    if (ec != WebCLException::SUCCESS)
+    getPlatforms(exception);
+    if (willThrowException(exception))
         return 0;
 
     // FIXME: Pick a platform that best suites to cl-gl instead of any.
-    return createContext(glContext, m_platforms[0].get(), deviceType, ec);
+    return createContext(glContext, m_platforms[0].get(), deviceType, exception);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, WebCLPlatform* platform, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, WebCLPlatform* platform, ExceptionObject& exception)
 {
     // FIXME: Pick a device that best suits to cl-gl instead of the default one.
-    return createContext(glContext, platform, ComputeContext::DEVICE_TYPE_DEFAULT, ec);
+    return createContext(glContext, platform, ComputeContext::DEVICE_TYPE_DEFAULT, exception);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, WebCLPlatform* platform, CCenum deviceType, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, WebCLPlatform* platform, CCenum deviceType, ExceptionObject& exception)
 {
     if (!platform) {
-        ec = WebCLException::INVALID_PLATFORM;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_PLATFORM, exception);
         return 0;
     }
 
     if (!WebCLInputChecker::isValidDeviceType(deviceType)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return 0;
     }
 
     // FIXME: Pick devices that best suits to cl-gl instead of all.
-    Vector<RefPtr<WebCLDevice> > devices = platform->getDevices(deviceType, ec);
-    if (ec != WebCLException::SUCCESS)
+    Vector<RefPtr<WebCLDevice> > devices = platform->getDevices(deviceType, exception);
+    if (willThrowException(exception))
         return 0;
 
-    return WebCLContext::create(this, glContext, platform, devices, ec);
+    return WebCLContext::create(this, glContext, platform, devices, exception);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, const Vector<RefPtr<WebCLDevice> >& devices, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, const Vector<RefPtr<WebCLDevice> >& devices, ExceptionObject& exception)
 {
     if (!devices.size()) {
-        ec = WebCLException::INVALID_DEVICE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_DEVICE, exception);
         return 0;
     }
 
-    return WebCLContext::create(this, glContext, devices[0]->platform(), devices, ec);
+    return WebCLContext::create(this, glContext, devices[0]->platform(), devices, exception);
 }
 
-PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, WebCLDevice* device, ExceptionCode& ec)
+PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, WebCLDevice* device, ExceptionObject& exception)
 {
     Vector<RefPtr<WebCLDevice>, 1> devices;
     devices.uncheckedAppend(device);
 
-    return createContext(glContext, devices, ec);
+    return createContext(glContext, devices, exception);
 }
 
 void WebCL::trackReleaseableWebCLObject(WeakPtr<WebCLObject> object)

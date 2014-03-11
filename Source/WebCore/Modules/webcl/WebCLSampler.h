@@ -42,8 +42,8 @@ typedef ComputeSampler* ComputeSamplerPtr;
 class WebCLSampler : public WebCLObjectImpl<ComputeSamplerPtr> {
 public:
     virtual ~WebCLSampler();
-    static PassRefPtr<WebCLSampler> create(WebCLContext*, CCbool, CCenum, CCenum, ExceptionCode&);
-    WebCLGetInfo getInfo(CCenum, ExceptionCode&);
+    static PassRefPtr<WebCLSampler> create(WebCLContext*, CCbool, CCenum, CCenum, ExceptionObject&);
+    WebCLGetInfo getInfo(CCenum, ExceptionObject&);
 
 private:
     WebCLSampler(WebCLContext*, ComputeSampler*, CCbool, CCenum, CCenum);

@@ -58,10 +58,10 @@ WebCLMemoryObject::WebCLMemoryObject(WebCLContext* context, ComputeMemoryObject*
     context->trackReleaseableWebCLObject(createWeakPtr());
 }
 
-WebCLGetInfo WebCLMemoryObject::getInfo(CCenum paramName, ExceptionCode& ec)
+WebCLGetInfo WebCLMemoryObject::getInfo(CCenum paramName, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return WebCLGetInfo();
     }
 
@@ -97,12 +97,12 @@ WebCLGetInfo WebCLMemoryObject::getInfo(CCenum paramName, ExceptionCode& ec)
     case ComputeContext::MEM_ASSOCIATED_MEMOBJECT:
         return WebCLGetInfo(m_parentMemObject);
     default:
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return WebCLGetInfo();
     }
 
     ASSERT(err != ComputeContext::SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
     return WebCLGetInfo();
 }
 
@@ -121,15 +121,15 @@ bool WebCLMemoryObject::sharesGLResources() const
 }
 
 #if ENABLE(WEBGL)
-WebCLGLObjectInfo* WebCLMemoryObject::getGLObjectInfo(ExceptionCode& ec)
+WebCLGLObjectInfo* WebCLMemoryObject::getGLObjectInfo(ExceptionObject& exception)
 {
     if (!isExtensionEnabled(m_context.get(), "KHR_gl_sharing")) {
-        ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+        setExtensionsNotEnabledException(exception);
         return 0;
     }
 
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return 0;
     }
 

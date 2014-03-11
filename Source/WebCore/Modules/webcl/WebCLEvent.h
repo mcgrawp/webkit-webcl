@@ -45,10 +45,10 @@ public:
     virtual ~WebCLEvent();
     static PassRefPtr<WebCLEvent> create();
 
-    virtual WebCLGetInfo getInfo(CCenum, ExceptionCode&);
-    WebCLGetInfo getProfilingInfo(CCenum, ExceptionCode&);
+    virtual WebCLGetInfo getInfo(CCenum, ExceptionObject&);
+    WebCLGetInfo getProfilingInfo(CCenum, ExceptionObject&);
 
-    void setCallback(CCenum, PassRefPtr<WebCLCallback>, ExceptionCode&);
+    void setCallback(CCenum, PassRefPtr<WebCLCallback>, ExceptionObject&);
     void setAssociatedCommandQueue(WebCLCommandQueue* commandQueue);
 
     bool isUserEvent() const;

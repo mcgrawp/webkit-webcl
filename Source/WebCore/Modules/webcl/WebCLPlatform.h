@@ -44,8 +44,8 @@ public:
     virtual ~WebCLPlatform();
     static PassRefPtr<WebCLPlatform> create(RefPtr<ComputePlatform>);
 
-    WebCLGetInfo getInfo (CCenum, ExceptionCode&);
-    Vector<RefPtr<WebCLDevice> > getDevices(CCenum, ExceptionCode&);
+    WebCLGetInfo getInfo (CCenum, ExceptionObject&);
+    Vector<RefPtr<WebCLDevice> > getDevices(CCenum, ExceptionObject&);
 
     ComputePlatform* platformObject() const { return m_platformObject.get(); }
 
