@@ -44,13 +44,13 @@ JSValue JSWebCLMemoryObject::getInfo(JSC::ExecState* exec)
         return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
-    WebCLMemoryObject* memObj = static_cast<WebCLMemoryObject*>(impl());
+    WebCLMemoryObject& memObj = impl();
     if (exec->hadException())
         return jsUndefined();
     unsigned mem_info  = exec->argument(0).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
-    WebCLGetInfo info = memObj->getInfo(mem_info, ec);
+    WebCLGetInfo info = memObj.getInfo(mem_info, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

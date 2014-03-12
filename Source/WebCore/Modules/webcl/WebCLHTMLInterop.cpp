@@ -37,8 +37,7 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "SharedBuffer.h"
-#include <wtf/Uint8ClampedArray.h>
-
+#include <runtime/Uint8ClampedArray.h>
 
 namespace WebCore {
 

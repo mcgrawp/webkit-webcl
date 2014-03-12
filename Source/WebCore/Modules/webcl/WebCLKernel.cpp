@@ -41,14 +41,14 @@
 #include "WebCLMemoryObject.h"
 #include "WebCLSampler.h"
 
-#include <wtf/ArrayBufferView.h>
-#include <wtf/Float32Array.h>
-#include <wtf/Int16Array.h>
-#include <wtf/Int32Array.h>
-#include <wtf/Int8Array.h>
-#include <wtf/Uint16Array.h>
-#include <wtf/Uint32Array.h>
-#include <wtf/Uint8Array.h>
+#include <runtime/ArrayBufferView.h>
+#include <runtime/Float32Array.h>
+#include <runtime/Int16Array.h>
+#include <runtime/Int32Array.h>
+#include <runtime/Int8Array.h>
+#include <runtime/Uint16Array.h>
+#include <runtime/Uint32Array.h>
+#include <runtime/Uint8Array.h>
 
 namespace WebCore {
 
@@ -247,7 +247,7 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
     String accessQualifier = m_argumentInfoProvider.argumentsInfo()[index]->addressQualifier();
     bool hasLocalQualifier = accessQualifier == "local";
     if (hasLocalQualifier) {
-        if (bufferView->getType() != ArrayBufferView::TypeUint32) {
+        if (bufferView->getType() != JSC::TypeUint32) {
             ec = WebCLException::INVALID_ARG_VALUE;
             return;
         }
@@ -270,36 +270,36 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionCod
     // FIXME: Add support for LONG, ULONG, HALF and DOUBLE types.
     // These need Int/Uint64Array, as well as Float16Array.
     switch(bufferView->getType()) {
-    case (ArrayBufferView::TypeFloat32): // FLOAT
+    case (JSC::TypeFloat32): // FLOAT
         bufferData = static_cast<Float32Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 4;
         break;
-    case (ArrayBufferView::TypeUint32): // UINT
+    case (JSC::TypeUint32): // UINT
         bufferData = static_cast<Uint32Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 4;
         // For Long data type, input 
         if (isLong)
             arrayLength = arrayLength / 2;
         break;
-    case (ArrayBufferView::TypeInt32):  // INT
+    case (JSC::TypeInt32):  // INT
         bufferData = static_cast<Int32Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 4;
         if (isLong)
             arrayLength = arrayLength / 2;
         break;
-    case (ArrayBufferView::TypeUint16): // USHORT
+    case (JSC::TypeUint16): // USHORT
         bufferData = static_cast<Uint16Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 2;
         break;
-    case (ArrayBufferView::TypeInt16): // SHORT
+    case (JSC::TypeInt16): // SHORT
         bufferData = static_cast<Int16Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 2;
         break;
-    case (ArrayBufferView::TypeUint8): // UCHAR
+    case (JSC::TypeUint8): // UCHAR
         bufferData = static_cast<Uint8Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 1;
         break;
-    case (ArrayBufferView::TypeInt8): // CHAR
+    case (JSC::TypeInt8): // CHAR
         bufferData = static_cast<Int8Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 1;
         break;

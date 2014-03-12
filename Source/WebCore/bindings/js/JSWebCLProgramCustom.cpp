@@ -42,12 +42,12 @@ JSValue JSWebCLProgram::getInfo(JSC::ExecState* exec)
         return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
-    WebCLProgram* program = static_cast<WebCLProgram*>(impl());
+    WebCLProgram& program = impl();
     unsigned programInfo  = exec->argument(0).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
 
-    WebCLGetInfo info = program->getInfo(programInfo, ec);
+    WebCLGetInfo info = program.getInfo(programInfo, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -61,14 +61,14 @@ JSValue JSWebCLProgram::getBuildInfo(JSC::ExecState* exec)
         return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
-    WebCLProgram* program = static_cast<WebCLProgram*>(impl());
+    WebCLProgram& program = impl();
     WebCLDevice* device  = toWebCLDevice(exec->argument(0));
     if (exec->hadException())
         return jsUndefined();
     unsigned buildInfo  = exec->argument(1).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
-    WebCLGetInfo info = program->getBuildInfo(device, buildInfo, ec);
+    WebCLGetInfo info = program.getBuildInfo(device, buildInfo, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

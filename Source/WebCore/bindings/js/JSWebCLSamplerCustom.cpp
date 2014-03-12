@@ -45,8 +45,8 @@ JSValue JSWebCLSampler::getInfo(JSC::ExecState* exec)
         return jsUndefined();
 
     ExceptionCode ec = 0;
-    WebCLSampler* sampler = static_cast<WebCLSampler*>(impl());
-    WebCLGetInfo info = sampler->getInfo(infoName, ec);
+    WebCLSampler& sampler = impl();
+    WebCLGetInfo info = sampler.getInfo(infoName, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

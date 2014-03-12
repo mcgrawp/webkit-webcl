@@ -31,9 +31,6 @@
 
 #include "JSWebCLCustom.h"
 
-#include "JSFloat32Array.h"
-#include "JSInt32Array.h"
-#include "JSUint8Array.h"
 #include "JSWebCL.h"
 #include "JSWebCLCommandQueue.h"
 #include "JSWebCLDevice.h"

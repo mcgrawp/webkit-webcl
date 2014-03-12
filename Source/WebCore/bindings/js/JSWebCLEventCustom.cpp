@@ -45,13 +45,13 @@ JSValue JSWebCLEvent::getInfo(JSC::ExecState* exec)
         return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
-    WebCLEvent* eventObj = static_cast<WebCLEvent*>(impl());
+    WebCLEvent& eventObj = impl();
     if (exec->hadException())
         return jsUndefined();
-    unsigned eventInfo  = exec->argument(0).toInt32(exec);
+    unsigned eventInfo = exec->argument(0).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
-    WebCLGetInfo info = eventObj->getInfo(eventInfo, ec);
+    WebCLGetInfo info = eventObj.getInfo(eventInfo, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -65,13 +65,13 @@ JSValue JSWebCLEvent::getProfilingInfo(JSC::ExecState* exec)
         return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
-    WebCLEvent* eventObj = static_cast<WebCLEvent*>(impl());
+    WebCLEvent& eventObj = impl();
     if (exec->hadException())
         return jsUndefined();
     unsigned eventInfo = exec->argument(0).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
-    WebCLGetInfo info = eventObj->getProfilingInfo(eventInfo, ec);
+    WebCLGetInfo info = eventObj.getProfilingInfo(eventInfo, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

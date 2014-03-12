@@ -42,12 +42,12 @@ JSValue JSWebCLPlatform::getInfo(JSC::ExecState* exec)
     if (exec->argumentCount() != 1)
         return throwSyntaxError(exec);
 
-    WebCLPlatform* platform = static_cast<WebCLPlatform*>(impl());
+    WebCLPlatform& platform = impl();
     unsigned platformInfo = exec->argument(0).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
     ExceptionCode ec = 0;
-    WebCLGetInfo info = platform->getInfo(platformInfo, ec);
+    WebCLGetInfo info = platform.getInfo(platformInfo, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

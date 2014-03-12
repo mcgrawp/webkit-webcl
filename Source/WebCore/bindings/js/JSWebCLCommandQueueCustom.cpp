@@ -46,13 +46,13 @@ JSValue JSWebCLCommandQueue::getInfo(JSC::ExecState* exec)
         return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
-    WebCLCommandQueue* queue = static_cast<WebCLCommandQueue*>(impl());
+    WebCLCommandQueue& queue = impl();
     if (exec->hadException())
         return jsUndefined();
     unsigned queueInfo = exec->argument(0).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
-    WebCLGetInfo info = queue->getInfo(queueInfo, ec);
+    WebCLGetInfo info = queue.getInfo(queueInfo, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

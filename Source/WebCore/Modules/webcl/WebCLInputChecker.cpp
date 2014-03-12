@@ -36,7 +36,7 @@
 #include "WebCLImage.h"
 #include "WebCLImageDescriptor.h"
 #include "WebCLKernel.h"
-#include <wtf/ArrayBufferView.h>
+#include <runtime/ArrayBufferView.h>
 
 namespace WebCore {
 namespace WebCLInputChecker {
@@ -237,21 +237,21 @@ bool isValidDataSizeForArrayBufferView(unsigned long size, ArrayBufferView* arra
 
     unsigned bytesPerElement = 1;
     switch (arrayBufferView->getType()) {
-        case ArrayBufferView::TypeInt8:
-        case ArrayBufferView::TypeUint8:
-        case ArrayBufferView::TypeUint8Clamped:
+        case JSC::TypeInt8:
+        case JSC::TypeUint8:
+        case JSC::TypeUint8Clamped:
             bytesPerElement = 1;
             break;
-        case ArrayBufferView::TypeInt16:
-        case ArrayBufferView::TypeUint16:
+        case JSC::TypeInt16:
+        case JSC::TypeUint16:
             bytesPerElement = 2;
             break;
-        case ArrayBufferView::TypeInt32:
-        case ArrayBufferView::TypeUint32:
-        case ArrayBufferView::TypeFloat32:
+        case JSC::TypeInt32:
+        case JSC::TypeUint32:
+        case JSC::TypeFloat32:
             bytesPerElement = 4;
             break;
-        case ArrayBufferView::TypeFloat64:
+        case JSC::TypeFloat64:
             bytesPerElement = 8;
             break;
         default:

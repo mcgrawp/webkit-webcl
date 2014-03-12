@@ -45,7 +45,7 @@
 #include "WebCLKernel.h"
 #include "WebCLMemoryObject.h"
 #include "WebCLProgram.h"
-#include <wtf/Int32Array.h>
+#include <runtime/Int32Array.h>
 
 namespace WebCore {
 
