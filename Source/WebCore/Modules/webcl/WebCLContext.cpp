@@ -388,8 +388,8 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLVideoElement*
         ec = WebCLException::INVALID_HOST_PTR;
         return 0;
     }
-    CCuint width =  video->width();
-    CCuint height = video->height();
+    CCuint width =  video->videoWidth();
+    CCuint height = video->videoHeight();
     RefPtr<Image> image = videoFrameToImage(video);
 
     if (!image || !image->data()) {
@@ -578,26 +578,29 @@ PassRefPtr<Image> WebCLContext::videoFrameToImage(HTMLVideoElement* video)
 }
 
 WebCLContext::LRUImageBufferCache::LRUImageBufferCache(int capacity)
-    : m_buffers(adoptArrayPtr(new OwnPtr<ImageBuffer>[capacity]))
+    : m_buffers(std::make_unique<std::unique_ptr<ImageBuffer>[]>(capacity))
     , m_capacity(capacity)
 {
 }
 
 ImageBuffer* WebCLContext::LRUImageBufferCache::imageBuffer(const IntSize& size)
 {
-    int i = 0;
+    int i;
     for (i = 0; i < m_capacity; ++i) {
         ImageBuffer* buf = m_buffers[i].get();
         if (!buf)
             break;
+        if (buf->logicalSize() != size)
+            continue;
         bubbleToFront(i);
         return buf;
     }
-    OwnPtr<ImageBuffer> temp = ImageBuffer::create(size);
+    std::unique_ptr<ImageBuffer> temp = ImageBuffer::create(size, 1);
     if (!temp)
         return 0;
     i = std::min(m_capacity - 1, i);
-    m_buffers[i] = temp.release();
+    m_buffers[i] = std::move(temp);
+
     ImageBuffer* buf = m_buffers[i].get();
     bubbleToFront(i);
     return buf;

@@ -30,7 +30,7 @@
 
 #if ENABLE(WEBCL)
 
-#include "JSDictionary.h"
+#include "JSDOMGlobalObject.h"
 #include "JSWebCLContext.h"
 #include "JSWebCLImage.h"
 #include "WebCLCallback.h"

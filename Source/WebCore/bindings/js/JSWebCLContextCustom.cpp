@@ -31,13 +31,14 @@
 
 #include "JSWebCLContext.h"
 
-#include "JSArrayBuffer.h"
-#include "JSArrayBufferView.h"
+#include "JSDictionary.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
 #include "JSHTMLVideoElement.h"
 #include "JSImageData.h"
 #include "JSWebCLCustom.h"
+
+#include <runtime/ArrayBufferView.h>
 
 using namespace JSC;
 using namespace std;
@@ -52,13 +53,13 @@ JSValue JSWebCLContext::getInfo(JSC::ExecState* exec)
         return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
-    WebCLContext* context = static_cast<WebCLContext*>(impl());
+    WebCLContext& context = impl();
     if (exec->hadException())
         return jsUndefined();
     unsigned contextInfo  = exec->argument(0).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
-    WebCLGetInfo info = context->getInfo(contextInfo, ec);
+    WebCLGetInfo info = context.getInfo(contextInfo, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -67,27 +68,27 @@ JSValue JSWebCLContext::getInfo(JSC::ExecState* exec)
 }
 
 // JSDictionary helper functions
-static inline void setChannelOrder(WebCLImageDescriptor* descriptor, const long& channelOrder)
+static inline void setChannelOrder(WebCLImageDescriptor* descriptor, const unsigned& channelOrder)
 {
     descriptor->setChannelOrder(channelOrder);
 }
 
-static inline void setChannelType(WebCLImageDescriptor* descriptor, const long& channelType)
+static inline void setChannelType(WebCLImageDescriptor* descriptor, const unsigned& channelType)
 {
     descriptor->setChannelType(channelType);
 }
 
-static inline void setWidth(WebCLImageDescriptor* descriptor, const unsigned long& width)
+static inline void setWidth(WebCLImageDescriptor* descriptor, const unsigned& width)
 {
     descriptor->setWidth(width);
 }
 
-static inline void setHeight(WebCLImageDescriptor* descriptor, const unsigned long& height)
+static inline void setHeight(WebCLImageDescriptor* descriptor, const unsigned& height)
 {
     descriptor->setHeight(height);
 }
 
-static inline void setRowPitch(WebCLImageDescriptor* descriptor, const unsigned long& rowPitch)
+static inline void setRowPitch(WebCLImageDescriptor* descriptor, const unsigned& rowPitch)
 {
     descriptor->setRowPitch(rowPitch);
 }
@@ -103,16 +104,16 @@ JSValue JSWebCLContext::createImage(JSC::ExecState* exec)
     RefPtr<WebCLImage> webCLImage;
 
     JSValue inputData = exec->argument(1);
-    if (inputData.inherits(&JSHTMLVideoElement::s_info)) {
+    if (inputData.inherits(JSHTMLVideoElement::info())) {
         RefPtr<HTMLVideoElement> videoElement = toHTMLVideoElement(exec->argument(1));
         webCLImage = m_impl->createImage(flags, videoElement.get(), ec);
-    } else if (inputData.inherits(&JSHTMLImageElement::s_info)) {
+    } else if (inputData.inherits(JSHTMLImageElement::info())) {
         RefPtr<HTMLImageElement> imageElement = toHTMLImageElement(exec->argument(1));
         webCLImage = m_impl->createImage(flags, imageElement.get(), ec);
-    } else if (inputData.inherits(&JSHTMLCanvasElement::s_info)) {
+    } else if (inputData.inherits(JSHTMLCanvasElement::info())) {
         RefPtr<HTMLCanvasElement> canvasElement = toHTMLCanvasElement(exec->argument(1));
         webCLImage = m_impl->createImage(flags, canvasElement.get(), ec);
-    } else if (inputData.inherits(&JSImageData::s_info)) {
+    } else if (inputData.inherits(JSImageData::info())) {
         RefPtr<ImageData> imageData = toImageData(exec->argument(1));
         webCLImage = m_impl->createImage(flags, imageData.get(), ec);
     } else {
@@ -139,7 +140,7 @@ JSValue JSWebCLContext::createImage(JSC::ExecState* exec)
 
         RefPtr<ArrayBufferView> buffer;
         if (exec->argumentCount() == 3) {
-            if (!exec->argument(2).inherits(&JSArrayBufferView::s_info))
+            if (!exec->argument(2).inherits(JSArrayBufferView::info()))
                 return throwSyntaxError(exec);
 
             buffer = toArrayBufferView(exec->argument(2));

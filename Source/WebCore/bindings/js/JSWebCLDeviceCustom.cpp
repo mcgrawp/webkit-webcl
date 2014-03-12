@@ -45,12 +45,12 @@ JSValue JSWebCLDevice::getInfo(JSC::ExecState* exec)
     if (exec->argumentCount() != 1)
         return throwSyntaxError(exec);
 
-    WebCLDevice* device = static_cast<WebCLDevice*>(impl());
+    WebCLDevice& device = impl();
     unsigned deviceType = exec->argument(0).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
     ExceptionCode ec = 0;
-    WebCLGetInfo info = device->getInfo(deviceType, ec);
+    WebCLGetInfo info = device.getInfo(deviceType, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

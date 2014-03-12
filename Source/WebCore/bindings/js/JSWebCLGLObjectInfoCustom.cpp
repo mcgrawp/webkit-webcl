@@ -47,15 +47,15 @@ class WebGLTexture;
 
 JSValue JSWebCLGLObjectInfo::glObject(ExecState* exec) const
 {
-    WebCLGLObjectInfo* info = impl();
+    WebCLGLObjectInfo& info = impl();
 
-    switch(info->type()) {
+    switch(info.type()) {
     case ComputeContext::GL_OBJECT_BUFFER:
-        return toJS(exec, globalObject(), static_cast<WebGLBuffer*>(info->glObject()));
+        return toJS(exec, globalObject(), static_cast<WebGLBuffer*>(info.glObject()));
     case ComputeContext::GL_OBJECT_TEXTURE2D:
-        return toJS(exec, globalObject(), static_cast<WebGLTexture*>(info->glObject()));
+        return toJS(exec, globalObject(), static_cast<WebGLTexture*>(info.glObject()));
     case ComputeContext::GL_OBJECT_RENDERBUFFER:
-        return toJS(exec, globalObject(), static_cast<WebGLRenderbuffer*>(info->glObject()));
+        return toJS(exec, globalObject(), static_cast<WebGLRenderbuffer*>(info.glObject()));
     }
 
     ASSERT_NOT_REACHED();

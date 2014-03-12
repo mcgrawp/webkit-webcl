@@ -49,13 +49,13 @@ JSValue JSWebCLKernel::getInfo(JSC::ExecState* exec)
         return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
-    WebCLKernel* kernel = static_cast<WebCLKernel*>(impl());
+    WebCLKernel& kernel = impl();
     if (exec->hadException())
         return jsUndefined();
     unsigned kernelInfo  = exec->argument(0).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
-    WebCLGetInfo info = kernel->getInfo(kernelInfo, ec);
+    WebCLGetInfo info = kernel.getInfo(kernelInfo, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -69,14 +69,14 @@ JSValue JSWebCLKernel::getWorkGroupInfo(JSC::ExecState* exec)
         return throwSyntaxError(exec);
 
     ExceptionCode ec = 0;
-    WebCLKernel* kernel = static_cast<WebCLKernel*>(impl());
+    WebCLKernel& kernel = impl();
     WebCLDevice* device  = toWebCLDevice(exec->argument(0));
     if (exec->hadException())
         return jsUndefined();
     unsigned workInfo  = exec->argument(1).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
-    WebCLGetInfo info = kernel->getWorkGroupInfo(device, workInfo, ec);
+    WebCLGetInfo info = kernel.getWorkGroupInfo(device, workInfo, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
