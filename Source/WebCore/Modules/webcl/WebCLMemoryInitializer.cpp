@@ -45,7 +45,7 @@ namespace WebCore {
 #define RETURN_IF_ERROR(errorCode)                                               \
 {                                                                                \
     if (errorCode != ComputeContext::SUCCESS) {                                  \
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(errorCode); \
+        setExceptionFromComputeErrorCode(errorCode, exception);                  \
         return;                                                                  \
     }                                                                            \
 }
@@ -81,7 +81,7 @@ WebCLMemoryInitializer::~WebCLMemoryInitializer()
     delete m_kernelChar16;
 }
 
-void WebCLMemoryInitializer::ensureMemoryInitialization(WebCLMemoryObject* memoryObject, WebCLCommandQueue* commandQueue, ExceptionCode& ec)
+void WebCLMemoryInitializer::ensureMemoryInitialization(WebCLMemoryObject* memoryObject, WebCLCommandQueue* commandQueue, ExceptionObject& exception)
 {
     CCerror error = ComputeContext::SUCCESS;
 
@@ -145,24 +145,24 @@ void WebCLMemoryInitializer::ensureMemoryInitialization(WebCLMemoryObject* memor
     RETURN_IF_ERROR(error);
 }
 
-void WebCLMemoryInitializer::commandQueueCreated(WebCLCommandQueue* queue, ExceptionCode& ec)
+void WebCLMemoryInitializer::commandQueueCreated(WebCLCommandQueue* queue, ExceptionObject& exception)
 {
     if (!queue)
         return;
 
     m_queuesForMemoryInitialization.append(queue->createWeakPtrForLazyInitialization());
-    processPendingMemoryInitializationList(ec);
+    processPendingMemoryInitializationList(exception);
 }
 
-void WebCLMemoryInitializer::bufferCreated(WebCLBuffer* buffer, ExceptionCode& ec)
+void WebCLMemoryInitializer::bufferCreated(WebCLBuffer* buffer, ExceptionObject& exception)
 {
     if (!buffer)
         return;
 
-    initializeOrQueueMemoryInitializationOfMemoryObject(buffer, ec);
+    initializeOrQueueMemoryInitializationOfMemoryObject(buffer, exception);
 }
 
-void WebCLMemoryInitializer::processPendingMemoryInitializationList(ExceptionCode& ec)
+void WebCLMemoryInitializer::processPendingMemoryInitializationList(ExceptionObject& exception)
 {
     if (!m_buffersPendingMemoryInitialization.size())
         return;
@@ -171,7 +171,7 @@ void WebCLMemoryInitializer::processPendingMemoryInitializationList(ExceptionCod
     for (size_t i = 0; queue && i < m_buffersPendingMemoryInitialization.size(); ++i) {
         WebCLBuffer* buffer = m_buffersPendingMemoryInitialization[i].get();
         if (buffer && !buffer->isPlatformObjectNeutralized())
-            ensureMemoryInitialization(buffer, queue, ec);
+            ensureMemoryInitialization(buffer, queue, exception);
     }
     m_buffersPendingMemoryInitialization.clear();
 }
@@ -186,7 +186,7 @@ WebCLCommandQueue* WebCLMemoryInitializer::validCommandQueueForMemoryInitializat
     return 0;
 }
 
-void WebCLMemoryInitializer::initializeOrQueueMemoryInitializationOfMemoryObject(WebCLBuffer* buffer, ExceptionCode& ec)
+void WebCLMemoryInitializer::initializeOrQueueMemoryInitializationOfMemoryObject(WebCLBuffer* buffer, ExceptionObject& exception)
 {
     WebCLCommandQueue* queue = validCommandQueueForMemoryInitialization();
     if (!queue) {
@@ -194,7 +194,7 @@ void WebCLMemoryInitializer::initializeOrQueueMemoryInitializationOfMemoryObject
         return;
     }
 
-    ensureMemoryInitialization(buffer, queue, ec);
+    ensureMemoryInitialization(buffer, queue, exception);
 }
 
 } // namespace WebCore

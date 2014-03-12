@@ -40,13 +40,13 @@ class WebGLBuffer;
 class WebCLBuffer : public WebCLMemoryObject {
 public:
     ~WebCLBuffer();
-    static PassRefPtr<WebCLBuffer> create(WebCLContext*, CCenum, CCuint sizeInBytes, void*, ExceptionCode&);
+    static PassRefPtr<WebCLBuffer> create(WebCLContext*, CCenum, CCuint sizeInBytes, void*, ExceptionObject&);
 
 #if ENABLE(WEBGL)
-    static PassRefPtr<WebCLBuffer> create(WebCLContext*, CCenum, WebGLBuffer*, ExceptionCode&);
+    static PassRefPtr<WebCLBuffer> create(WebCLContext*, CCenum, WebGLBuffer*, ExceptionObject&);
 #endif
 
-    PassRefPtr<WebCLBuffer> createSubBuffer(CCenum memFlags, CCuint origin, CCuint sizeInBytes, ExceptionCode&);
+    PassRefPtr<WebCLBuffer> createSubBuffer(CCenum memFlags, CCuint origin, CCuint sizeInBytes, ExceptionObject&);
 
     WeakPtr<WebCLBuffer> createWeakPtrForLazyInitialization() { return m_weakFactoryForLazyInitialization.createWeakPtr(); }
 

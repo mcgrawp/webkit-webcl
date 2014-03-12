@@ -56,10 +56,10 @@ WebCLDevice::WebCLDevice(RefPtr<ComputeDevice> device, WebCLPlatform* platform)
 {
 }
 
-WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
+WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionObject& exception)
 {
     if (!WebCLInputChecker::isValidDeviceInfoType(infoType)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return WebCLGetInfo();
     }
 
@@ -192,10 +192,10 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionCode& ec)
     case ComputeContext::DEVICE_PLATFORM:
         return WebCLGetInfo(m_platform);
     default:
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
     }
     ASSERT(err != ComputeContext::SUCCESS);
-    ec = WebCLException::computeContextErrorToWebCLExceptionCode(err);
+    setExceptionFromComputeErrorCode(err, exception);
     return WebCLGetInfo();
 }
 

@@ -45,16 +45,16 @@ class WebGLTexture;
 class WebCLImage : public WebCLMemoryObject {
 public:
     ~WebCLImage();
-    static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, PassRefPtr<WebCLImageDescriptor>, void*, ExceptionCode&);
+    static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, PassRefPtr<WebCLImageDescriptor>, void*, ExceptionObject&);
 
 #if ENABLE(WEBGL)
-    static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, WebGLRenderbuffer* webGLRenderbuffer, ExceptionCode&);
-    static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, CCenum textureTarget, CCenum miplevel, WebGLTexture*, ExceptionCode&);
+    static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, WebGLRenderbuffer* webGLRenderbuffer, ExceptionObject&);
+    static PassRefPtr<WebCLImage> create(WebCLContext*, CCenum flags, CCenum textureTarget, CCenum miplevel, WebGLTexture*, ExceptionObject&);
 
-    int getGLTextureInfo(CCenum paramName, ExceptionCode&);
+    int getGLTextureInfo(CCenum paramName, ExceptionObject&);
 #endif
 
-    WebCLImageDescriptor* getInfo(ExceptionCode&);
+    WebCLImageDescriptor* getInfo(ExceptionObject&);
     const CCImageFormat& imageFormat() const;
     const WebCLImageDescriptor* imageDescriptor() const
     {

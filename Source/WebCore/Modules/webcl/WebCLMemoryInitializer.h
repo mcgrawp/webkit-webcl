@@ -31,7 +31,7 @@
 #if ENABLE(WEBCL)
 
 #include "ComputeTypes.h"
-#include "ExceptionCode.h"
+#include "WebCLException.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -50,15 +50,15 @@ public:
     WebCLMemoryInitializer(WebCLContext*);
     ~WebCLMemoryInitializer();
 
-    void bufferCreated(WebCLBuffer*, ExceptionCode&);
-    void commandQueueCreated(WebCLCommandQueue*, ExceptionCode&);
+    void bufferCreated(WebCLBuffer*, ExceptionObject&);
+    void commandQueueCreated(WebCLCommandQueue*, ExceptionObject&);
 
 private:
-    void ensureMemoryInitialization(WebCLMemoryObject*, WebCLCommandQueue*, ExceptionCode&);
+    void ensureMemoryInitialization(WebCLMemoryObject*, WebCLCommandQueue*, ExceptionObject&);
 
-    void processPendingMemoryInitializationList(ExceptionCode&);
+    void processPendingMemoryInitializationList(ExceptionObject&);
     WebCLCommandQueue* validCommandQueueForMemoryInitialization() const;
-    void initializeOrQueueMemoryInitializationOfMemoryObject(WebCLBuffer*, ExceptionCode&);
+    void initializeOrQueueMemoryInitializationOfMemoryObject(WebCLBuffer*, ExceptionObject&);
 
 private:
     WebCLContext* m_context;

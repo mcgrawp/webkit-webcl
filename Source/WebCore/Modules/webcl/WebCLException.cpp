@@ -279,6 +279,16 @@ WebCLException::WebCLExceptionCode WebCLException::computeContextErrorToWebCLExc
     }
 }
 
+void setExceptionFromComputeErrorCode(int computeContextError, ExceptionCode& ec) {
+    ec = WebCLException::computeContextErrorToWebCLExceptionCode(computeContextError);
+}
+void setExtensionsNotEnabledException(ExceptionCode& ec) {
+    ec = WebCLException::WEBCL_EXTENSION_NOT_ENABLED;
+}
+bool willThrowException(ExceptionCode &ec) {
+    return (ec != WebCLException::SUCCESS);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

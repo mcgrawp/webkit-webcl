@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+#define ExceptionObject ExceptionCode
+
 class WebCLException : public ExceptionBase {
 public:
     static PassRefPtr<WebCLException> create(const ExceptionCodeDescription& description)
@@ -111,6 +113,11 @@ private:
     {
     }
 };
+
+void setExceptionFromComputeErrorCode(int computeContextError, ExceptionCode& ec);
+void setExtensionsNotEnabledException(ExceptionCode& ec);
+bool willThrowException(ExceptionCode &ec);
+
 
 } // namespace WebCore
 

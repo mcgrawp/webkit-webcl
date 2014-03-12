@@ -43,13 +43,13 @@ WebCLBuffer::~WebCLBuffer()
 {
 }
 
-PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, CCuint sizeInBytes, void* data, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, CCuint sizeInBytes, void* data, ExceptionObject& exception)
 {
     CCerror error = ComputeContext::SUCCESS;
     ComputeMemoryObject* buffer = context->computeContext()->createBuffer(memoryFlags, sizeInBytes, data, error);
     if (error != ComputeContext::SUCCESS) {
         delete buffer;
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
 
@@ -57,7 +57,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memory
 }
 
 #if ENABLE(WEBGL)
-PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, WebGLBuffer* webGLBuffer, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, WebGLBuffer* webGLBuffer, ExceptionObject& exception)
 {
     Platform3DObject platform3DObject = webGLBuffer->object();
     ASSERT(platform3DObject);
@@ -65,7 +65,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memory
     ComputeMemoryObject* buffer = context->computeContext()->createFromGLBuffer(memoryFlags, platform3DObject, error);
     if (error != ComputeContext::SUCCESS) {
         delete buffer;
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
     RefPtr<WebCLBuffer> clglBuffer = adoptRef(new WebCLBuffer(context, buffer, webGLBuffer->byteLength()));
@@ -80,20 +80,20 @@ WebCLBuffer::WebCLBuffer(WebCLContext* context, ComputeMemoryObject* buffer, CCu
 {
 }
 
-PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(CCenum memoryFlags, CCuint origin, CCuint sizeInBytes, ExceptionCode& ec)
+PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(CCenum memoryFlags, CCuint origin, CCuint sizeInBytes, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return 0;
     }
 
     if (m_parentMemObject) {
-        ec = WebCLException::INVALID_MEM_OBJECT;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return 0;
     }
 
     if (!WebCLInputChecker::isValidMemoryObjectFlag(memoryFlags)) {
-        ec = WebCLException::INVALID_VALUE;
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return 0;
     }
 
@@ -103,7 +103,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(CCenum memoryFlags, CCuint 
 
     if (error != ComputeContext::SUCCESS) {
         delete computeSubBuffer;
-        ec = WebCLException::computeContextErrorToWebCLExceptionCode(error);
+        setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
     RefPtr<WebCLBuffer> subBuffer = adoptRef(new WebCLBuffer(m_context.get(), computeSubBuffer, sizeInBytes, this));
