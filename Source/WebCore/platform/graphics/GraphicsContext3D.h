@@ -62,6 +62,7 @@ OBJC_CLASS CALayer;
 OBJC_CLASS WebGLLayer;
 #elif PLATFORM(GTK) || PLATFORM(EFL)
 typedef unsigned int GLuint;
+typedef int GLint;
 #endif
 
 #if PLATFORM(IOS)
