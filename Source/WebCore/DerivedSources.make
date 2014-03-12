@@ -41,6 +41,7 @@ VPATH = \
     $(WebCore)/Modules/quota \
     $(WebCore)/Modules/speech \
     $(WebCore)/Modules/webaudio \
+    $(WebCore)/Modules/webcl \
     $(WebCore)/Modules/webdatabase \
     $(WebCore)/Modules/websockets \
     $(WebCore)/bindings/generic \
@@ -188,6 +189,25 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/AnalyserNode.idl \
     $(WebCore)/Modules/webaudio/WaveShaperNode.idl \
     $(WebCore)/Modules/webaudio/PeriodicWave.idl \
+    $(WebCore)/Modules/webcl/DOMWindowWebCLEnvironment.idl \
+    $(WebCore)/Modules/webcl/WebCL.idl \
+    $(WebCore)/Modules/webcl/WebCLBuffer.idl \
+    $(WebCore)/Modules/webcl/WebCLCommandQueue.idl \
+    $(WebCore)/Modules/webcl/WebCLGLObjectInfo.idl \
+    $(WebCore)/Modules/webcl/WebCLContext.idl \
+    $(WebCore)/Modules/webcl/WebCLImage.idl \
+    $(WebCore)/Modules/webcl/WebCLImageDescriptor.idl \
+    $(WebCore)/Modules/webcl/WebCLDevice.idl \
+    $(WebCore)/Modules/webcl/WebCLKernel.idl \
+    $(WebCore)/Modules/webcl/WebCLKernelArgInfo.idl \
+    $(WebCore)/Modules/webcl/WebCLEvent.idl \
+    $(WebCore)/Modules/webcl/WebCLUserEvent.idl \
+    $(WebCore)/Modules/webcl/WebCLException.idl \
+    $(WebCore)/Modules/webcl/WebCLMemoryObject.idl \
+    $(WebCore)/Modules/webcl/WebCLCallback.idl \
+    $(WebCore)/Modules/webcl/WebCLPlatform.idl \
+    $(WebCore)/Modules/webcl/WebCLProgram.idl \
+    $(WebCore)/Modules/webcl/WebCLSampler.idl \
     $(WebCore)/Modules/webdatabase/DOMWindowWebDatabase.idl \
     $(WebCore)/Modules/webdatabase/Database.idl \
     $(WebCore)/Modules/webdatabase/DatabaseCallback.idl \

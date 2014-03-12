@@ -153,6 +153,7 @@ my (
     $webTimingSupport,
     $xhrTimeoutSupport,
     $xsltSupport,
+    $webclSupport,
     $ftlJITSupport,
     $forceCLoop,
 );
@@ -469,6 +470,9 @@ my @features = (
 
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },
+
+    { option => "webcl", desc => "Toggle WebCL support",
+      define => "ENABLE_WEBCL", default => 1, value => \$webclSupport },
 
     { option => "ftl-jit", desc => "Toggle FTLJIT support",
       define => "ENABLE_FTL_JIT", default => 0, value => \$ftlJITSupport },
