@@ -316,8 +316,8 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLImage
     return createBufferBase(memoryFlags, bufferSize, hostPtr, exception);
 }
 
-PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat& imageFormat,
-    void* data, ExceptionObject& exception)
+PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, CCuint channelOrder,
+    CCuint channelType, void* data, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
@@ -337,7 +337,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint widt
     ASSERT(data);
     flags |= ComputeContext::MEM_COPY_HOST_PTR;
 
-    RefPtr<WebCLImageDescriptor> imageDescriptor = WebCLImageDescriptor::create(width, height, rowPitch, imageFormat);
+    RefPtr<WebCLImageDescriptor> imageDescriptor = WebCLImageDescriptor::create(width, height, rowPitch, channelOrder, channelType);
     return WebCLImage::create(this, flags, imageDescriptor.release(), data, exception);
 }
 
@@ -355,8 +355,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement
 
     CCuint width = srcCanvas->width();
     CCuint height = srcCanvas->height();
-    CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, hostPtr, exception);
+    return createImage2DBase(flags, width, height, 0 /* rowPitch */, ComputeContext::RGBA, ComputeContext::UNORM_INT8, hostPtr, exception);
 }
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLImageElement* srcImage, ExceptionObject& exception)
@@ -374,8 +373,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLImageElement*
     CCuint width = srcImage->width();
     CCuint height = srcImage->height();
 
-    CCImageFormat srcImageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBase(flags, width, height, 0 /* rowPitch */, srcImageFormat, hostPtr, exception);
+    return createImage2DBase(flags, width, height, 0 /* rowPitch */, ComputeContext::RGBA, ComputeContext::UNORM_INT8, hostPtr, exception);
 }
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLVideoElement* video, ExceptionObject& exception)
@@ -404,8 +402,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLVideoElement*
         return 0;
     }
 
-    CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, imageData, exception);
+    return createImage2DBase(flags, width, height, 0 /* rowPitch */, ComputeContext::RGBA, ComputeContext::UNORM_INT8, imageData, exception);
 }
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, ImageData* srcPixels, ExceptionObject& exception)
@@ -422,8 +419,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, ImageData* srcPix
 
     CCuint width = srcPixels->width();
     CCuint height = srcPixels->height();
-    CCImageFormat imageFormat = {ComputeContext::RGBA, ComputeContext::UNORM_INT8};
-    return createImage2DBase(flags, width, height, 0 /* rowPitch */, imageFormat, hostPtr, exception);
+    return createImage2DBase(flags, width, height, 0 /* rowPitch */, ComputeContext::RGBA, ComputeContext::UNORM_INT8, hostPtr, exception);
 }
 
 unsigned WebCLContext::numberOfChannelsForChannelOrder(CCenum order)
@@ -522,8 +518,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescrip
         buffer = ArrayBuffer::create(width * height * numberOfChannels * bytesPerChannel, 1);
     }
 
-    CCImageFormat imageFormat = {channelOrder, channelType};
-    return createImage2DBase(flags, width, height, rowPitch, imageFormat, buffer->data(), exception);
+    return createImage2DBase(flags, width, height, rowPitch, channelOrder, channelType, buffer->data(), exception);
 }
 
 PassRefPtr<WebCLSampler> WebCLContext::createSampler(CCbool normCoords, CCenum addressingMode, CCenum filterMode, ExceptionObject& exception)
