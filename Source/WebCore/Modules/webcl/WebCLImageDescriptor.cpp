@@ -37,8 +37,9 @@ WebCLImageDescriptor::~WebCLImageDescriptor()
 {
 }
 
-PassRefPtr<WebCLImageDescriptor> WebCLImageDescriptor::create(CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat& imageFormat)
+PassRefPtr<WebCLImageDescriptor> WebCLImageDescriptor::create(CCuint width, CCuint height, CCuint rowPitch, CCuint channelOrder, CCuint channelType)
 {
+    CCImageFormat imageFormat = {channelOrder, channelType};
     return adoptRef(new WebCLImageDescriptor(width, height, rowPitch, imageFormat));
 }
 

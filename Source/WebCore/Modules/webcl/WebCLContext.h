@@ -131,7 +131,7 @@ public:
 private:
     WebCLContext(WebCL*, ComputeContext*, const Vector<RefPtr<WebCLDevice> >&, HashSet<String>&);
 
-    PassRefPtr<WebCLImage> createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, const CCImageFormat&, void*, ExceptionObject&);
+    PassRefPtr<WebCLImage> createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, CCuint channelOrder, CCuint channelType, void*, ExceptionObject&);
     PassRefPtr<WebCLBuffer> createBufferBase(CCenum memoryFlags, CCuint size, void* data, ExceptionObject&);
 
     bool isExtensionEnabled(const String& name) const;
