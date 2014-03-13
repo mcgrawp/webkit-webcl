@@ -166,7 +166,7 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
         // NOTE: This can be slow, depending the number of 'devices' available.
         for (size_t i = 0; i < webCLDevices.size(); ++i) {
             WebCLGetInfo info = webCLDevices[i]->getInfo(ComputeContext::DEVICE_QUEUE_PROPERTIES, exception);
-            if (exception == WebCLException::SUCCESS
+            if (!willThrowException(exception)
                 && (info.getUnsignedInt() == static_cast<unsigned>(properties) || !properties)) {
                 webCLDevice = webCLDevices[i];
                 break;
@@ -244,7 +244,7 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBufferBase(CCenum memoryFlags, CCuin
 
     RefPtr<WebCLBuffer> buffer = WebCLBuffer::create(this, memoryFlags, size, hostPtr, exception);
     if (needsInitialization && buffer) {
-        ASSERT(exception == WebCLException::SUCCESS);
+        ASSERT(!willThrowException(exception));
         postCreateBuffer(buffer.get(), exception);
     }
 
