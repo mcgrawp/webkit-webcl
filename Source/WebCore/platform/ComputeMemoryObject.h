@@ -43,7 +43,7 @@ class ComputeMemoryObject {
 public:
     ComputeMemoryObject(ComputeContext*, CCMemoryFlags, size_t sizeInBytes, void* data, CCerror&);
     ComputeMemoryObject(ComputeContext*, CCMemoryFlags, size_t width, size_t height, CCuint rowPitch, const CCImageFormat&, void* data, CCerror&);
-    ComputeMemoryObject(ComputeContext*, CCMemoryFlags, GLuint bufferId, GLBufferSourceType, CCerror&);
+    ComputeMemoryObject(ComputeContext*, CCMemoryFlags, GC3Duint bufferId, GLBufferSourceType, CCerror&);
     ComputeMemoryObject(ComputeContext*, CCMemoryFlags, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror&);
 
     ~ComputeMemoryObject();
