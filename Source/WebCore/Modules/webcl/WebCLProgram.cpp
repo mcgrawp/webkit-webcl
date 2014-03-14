@@ -53,7 +53,7 @@ PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const Strin
 {
     CCerror error = 0;
 
-    ComputeProgram* computeProgram = context->computeContext()->createProgram(programSource, exception);
+    ComputeProgram* computeProgram = context->computeContext()->createProgram(programSource, error);
     if (error != ComputeContext::SUCCESS) {
         delete computeProgram;
         setExceptionFromComputeErrorCode(error, exception);
