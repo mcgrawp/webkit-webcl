@@ -84,7 +84,7 @@ ComputeMemoryObject::ComputeMemoryObject(ComputeContext* context, CCMemoryFlags 
 #endif
 }
 
-ComputeMemoryObject::ComputeMemoryObject(ComputeContext* context, CCMemoryFlags flags, GLuint bufferId, GLBufferSourceType type, CCerror& error)
+ComputeMemoryObject::ComputeMemoryObject(ComputeContext* context, CCMemoryFlags flags, GC3Duint bufferId, GLBufferSourceType type, CCerror& error)
 {
     CCint memoryType = computeMemoryTypeToCL(flags);
     if (type == GLBuffer)
