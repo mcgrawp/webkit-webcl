@@ -400,7 +400,7 @@ ComputeMemoryObject* ComputeContext::createImage2D(CCMemoryFlags flags, size_t w
     return new ComputeMemoryObject(this, flags, width, height, rowPitch, imageFormat, data, error);
 }
 
-ComputeMemoryObject* ComputeContext::createFromGLBuffer(CCMemoryFlags flags, GLuint bufferId, CCerror& error)
+ComputeMemoryObject* ComputeContext::createFromGLBuffer(CCMemoryFlags flags, GC3Duint bufferId, CCerror& error)
 {
     return new ComputeMemoryObject(this, flags, bufferId, GLBuffer, error);
 }

@@ -345,7 +345,7 @@ public:
 
     ComputeMemoryObject* createBuffer(CCMemoryFlags type, size_t, void* data, CCerror&);
     ComputeMemoryObject* createImage2D(CCMemoryFlags type, size_t width, size_t height, CCuint rowPitch, const CCImageFormat&, void* data, CCerror&);
-    ComputeMemoryObject* createFromGLBuffer(CCMemoryFlags type, GLuint bufferId, CCerror&);
+    ComputeMemoryObject* createFromGLBuffer(CCMemoryFlags type, GC3Duint bufferId, CCerror&);
     ComputeMemoryObject* createFromGLRenderbuffer(CCMemoryFlags type, GC3Duint renderbufferId, CCerror&);
     ComputeMemoryObject* createFromGLTexture2D(CCMemoryFlags type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror&);
 
