@@ -86,6 +86,7 @@ public:
 
     WebCLGetInfo getInfo(CCenum flag, ExceptionObject&);
 
+    Vector<RefPtr<WebCLImageDescriptor> > getSupportedImageFormats(ExceptionObject&);
     Vector<RefPtr<WebCLImageDescriptor> > getSupportedImageFormats(CCenum memFlag, ExceptionObject&);
 
     PassRefPtr<WebCLBuffer> createBuffer(CCenum memFlags, CCuint sizeInBytes, ArrayBufferView*, ExceptionObject&);
