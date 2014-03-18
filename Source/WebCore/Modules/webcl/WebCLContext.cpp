@@ -607,6 +607,11 @@ void WebCLContext::LRUImageBufferCache::bubbleToFront(int idx)
         m_buffers[i].swap(m_buffers[i-1]);
 }
 
+Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(ExceptionObject &exception)
+{
+    return getSupportedImageFormats(ComputeContext::MEM_READ_WRITE, exception);
+}
+
 Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(CCenum memoryFlags, ExceptionObject &exception)
 {
     Vector<RefPtr<WebCLImageDescriptor> > imageDescriptors;
