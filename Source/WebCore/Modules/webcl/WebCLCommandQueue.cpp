@@ -1154,6 +1154,9 @@ void WebCLCommandQueue::enqueueMarker(WebCLEvent* event, ExceptionObject& except
 
 bool WebCLCommandQueue::isExtensionEnabled(WebCLContext* context, const String& name) const
 {
+    if (equalIgnoringCase(name, "KHR_gl_sharing"))
+        return context->isGLCapableContext();
+
     return context->isExtensionEnabled(name);
 };
 
@@ -1172,6 +1175,10 @@ void WebCLCommandQueue::enqueueAcquireGLObjects(const Vector<RefPtr<WebCLMemoryO
 
     Vector<ComputeMemoryObject*> computeMemoryObjects;
     for (size_t i = 0; i < memoryObjects.size(); ++i) {
+        if (!WebCLInputChecker::validateWebCLObject(memoryObjects[i].get())) {
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
+            return;
+        }
         if (!memoryObjects[i]->sharesGLResources()) {
             setExceptionFromComputeErrorCode(ComputeContext::INVALID_GL_OBJECT, exception);
             return;
@@ -1206,6 +1213,10 @@ void WebCLCommandQueue::enqueueReleaseGLObjects(const Vector<RefPtr<WebCLMemoryO
 
     Vector<ComputeMemoryObject*> computeMemoryObjects;
     for (size_t i = 0; i < memoryObjects.size(); ++i) {
+        if (!WebCLInputChecker::validateWebCLObject(memoryObjects[i].get())) {
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
+            return;
+        }
         if (!memoryObjects[i]->sharesGLResources()) {
             setExceptionFromComputeErrorCode(ComputeContext::INVALID_GL_OBJECT, exception);
             return;

@@ -128,9 +128,11 @@ public:
     {
         return m_devices;
     }
+    WebGLRenderingContext* getGLContext(ExceptionObject&) const;
+    bool isGLCapableContext() const;
 
 private:
-    WebCLContext(WebCL*, ComputeContext*, const Vector<RefPtr<WebCLDevice> >&, HashSet<String>&);
+    WebCLContext(WebCL*, ComputeContext*, const Vector<RefPtr<WebCLDevice> >&, WebGLRenderingContext*, HashSet<String>&);
 
     PassRefPtr<WebCLImage> createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, CCuint channelOrder, CCuint channelType, void*, ExceptionObject&);
     PassRefPtr<WebCLBuffer> createBufferBase(CCenum memoryFlags, CCuint size, void* data, ExceptionObject&);
@@ -144,9 +146,9 @@ private:
 
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
 
-private:
     WebCL* m_webCL;
     Vector<RefPtr<WebCLDevice> > m_devices;
+    WebGLRenderingContext* m_glContext;
 
     Vector<WeakPtr<WebCLObject> > m_descendantWebCLObjects;
 

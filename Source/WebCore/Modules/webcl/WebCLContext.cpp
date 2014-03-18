@@ -109,15 +109,16 @@ PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, WebGLRenderingContex
         return 0;
     }
 
-    RefPtr<WebCLContext> context = adoptRef(new WebCLContext(webCL, computeContext, devices, enabledExtensions));
+    RefPtr<WebCLContext> context = adoptRef(new WebCLContext(webCL, computeContext, devices, glContext, enabledExtensions));
     return context.release();
 }
 
-WebCLContext::WebCLContext(WebCL* webCL, ComputeContext* computeContext, const Vector<RefPtr<WebCLDevice> >& devices, HashSet<String>& enabledExtensions)
+WebCLContext::WebCLContext(WebCL* webCL, ComputeContext* computeContext, const Vector<RefPtr<WebCLDevice> >& devices, WebGLRenderingContext* glContext, HashSet<String>& enabledExtensions)
     : WebCLObjectImpl(computeContext)
     , m_videoCache(4) // FIXME: Why '4'?
     , m_webCL(webCL)
     , m_devices(devices)
+    , m_glContext(glContext)
     , m_memoryInitializer(this)
     , m_enabledExtensions(enabledExtensions)
 {
@@ -639,6 +640,23 @@ Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(CCe
     return imageDescriptors;
 }
 
+WebGLRenderingContext* WebCLContext::getGLContext(ExceptionObject& exception) const
+{
+    if (!isGLCapableContext()) {
+        setExtensionsNotEnabledException(exception);
+        return 0;
+    }
+    return m_glContext;
+}
+
+bool WebCLContext::isGLCapableContext() const
+{
+    if (!isExtensionEnabled("KHR_gl_sharing"))
+        return false;
+
+    return !!m_glContext;
+}
+
 void WebCLContext::trackReleaseableWebCLObject(WeakPtr<WebCLObject> object)
 {
     m_descendantWebCLObjects.append(object);
@@ -663,7 +681,7 @@ void WebCLContext::releaseAll()
 #if ENABLE(WEBGL)
 PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(CCenum flags, WebGLBuffer* webGLBuffer, ExceptionObject& exception)
 {
-    if (!isExtensionEnabled("KHR_gl_sharing")) {
+    if (!isGLCapableContext()) {
         setExtensionsNotEnabledException(exception);
         return 0;
     }
@@ -678,12 +696,17 @@ PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(CCenum flags, WebGLBuff
         return 0;
     }
 
+    if (!WebCLInputChecker::isValidMemoryObjectFlag(flags)) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
+        return 0;
+    }
+
     return WebCLBuffer::create(this, flags, webGLBuffer, exception);
 }
 
 PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderbuffer(CCenum flags, WebGLRenderbuffer* renderbuffer, ExceptionObject& exception)
 {
-    if (!isExtensionEnabled("KHR_gl_sharing")) {
+    if (!isGLCapableContext()) {
         setExtensionsNotEnabledException(exception);
         return 0;
     }
@@ -703,7 +726,7 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderbuffer(CCenum flags, WebG
 
 PassRefPtr<WebCLImage> WebCLContext::createFromGLTexture(CCenum flags, CCenum textureTarget, GC3Dint miplevel, WebGLTexture* texture, ExceptionObject& exception)
 {
-    if (!isExtensionEnabled("KHR_gl_sharing")) {
+    if (!isGLCapableContext()) {
         setExtensionsNotEnabledException(exception);
         return 0;
     }
@@ -715,6 +738,11 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLTexture(CCenum flags, CCenum te
 
     if (!texture) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
+        return 0;
+    }
+
+    if (!WebCLInputChecker::isValidMemoryObjectFlag(flags)) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return 0;
     }
 
