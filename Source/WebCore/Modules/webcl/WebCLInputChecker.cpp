@@ -327,8 +327,8 @@ bool isValidRegionForHostPtr(const Vector<CCuint>& region, size_t rowPitch, cons
     */
     size_t imageBytesPerPixel = WebCLContext::bytesPerChannelType(descriptor->channelType())
         * WebCLContext::numberOfChannelsForChannelOrder(descriptor->channelOrder());
-    rowPitch = rowPitch ? rowPitch : region[0];
-    if (rowPitch * region[1] * imageBytesPerPixel > length)
+    rowPitch = rowPitch ? rowPitch : region[0] * imageBytesPerPixel;
+    if (rowPitch * region[1] > length)
         return false;
 
     size_t regionArea = region[0] * region[1];
