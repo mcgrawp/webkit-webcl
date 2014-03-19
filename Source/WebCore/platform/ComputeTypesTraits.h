@@ -70,8 +70,7 @@ struct ComputeInfo<Func, T, Vector<U, inlineCapacity> >
         if (error != SUCCESS)
             return error;
         paramSize = paramSize / sizeof(U);
-        if (!param->tryReserveCapacity(paramSize))
-            return OUT_OF_HOST_MEMORY;
+        param->reserveCapacity(paramSize);
         param->resize(paramSize);
 
         return func(computeType, name, param->size() * sizeof(U), static_cast<void*>(param->data()), NULL);
@@ -120,8 +119,7 @@ struct ComputeInfoWithAdditinalCLType<Func, T, U, Vector<V, inlineCapacity> > {
         if (error != SUCCESS)
             return error;
         paramSize = paramSize / sizeof(V);
-        if (!param->tryReserveCapacity(paramSize))
-            return OUT_OF_HOST_MEMORY;
+        param->reserveCapacity(paramSize);
         param->resize(paramSize);
 
         return func(computeType, supportingComputeType, name, param->size() * sizeof(V), static_cast<void*>(param->data()), 0);

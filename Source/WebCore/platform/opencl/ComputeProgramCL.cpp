@@ -75,10 +75,7 @@ Vector<ComputeKernel*> ComputeProgram::createKernelsInProgram(CCerror& error)
         // FIXME: Having '0' kernels is an error?
         return computeKernels;
     }
-    if (!kernels.tryReserveCapacity(numberOfKernels)) {
-        error = OUT_OF_HOST_MEMORY;
-        return computeKernels;
-    }
+    kernels.reserveCapacity(numberOfKernels);
     kernels.resize(numberOfKernels);
 
     error = clCreateKernelsInProgram(m_program, numberOfKernels, kernels.data(), 0);

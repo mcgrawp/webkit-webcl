@@ -427,8 +427,7 @@ CCerror ComputeContext::supportedImageFormats(CCMemoryFlags type, CCMemoryObject
     if (clError != CL_SUCCESS)
         return clError;
 
-    if (!imageFormatsOut.tryReserveCapacity(numberOfSupportedImageFormats))
-        return OUT_OF_HOST_MEMORY;
+    imageFormatsOut.reserveCapacity(numberOfSupportedImageFormats);
     imageFormatsOut.resize(numberOfSupportedImageFormats);
 
     clError = clGetSupportedImageFormats(m_clContext, type, imageType, numberOfSupportedImageFormats, imageFormatsOut.data(), 0);
