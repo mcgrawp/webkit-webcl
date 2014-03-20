@@ -62,16 +62,14 @@ CCerror ComputePlatform::getPlatformIDs(Vector<RefPtr<ComputePlatform> >& comput
         return clError;
 
     Vector<CCPlatformID> clPlatforms;
-    if (!clPlatforms.tryReserveCapacity(numberOfPlatforms))
-        return OUT_OF_HOST_MEMORY;
+    clPlatforms.reserveCapacity(numberOfPlatforms);
     clPlatforms.resize(numberOfPlatforms);
 
     clError = clGetPlatformIDs(numberOfPlatforms, clPlatforms.data(), 0);
     if (clError != CL_SUCCESS)
         return clError;
 
-    if (!computePlatforms.tryReserveCapacity(numberOfPlatforms))
-        return OUT_OF_HOST_MEMORY;
+    computePlatforms.reserveCapacity(numberOfPlatforms);
     computePlatforms.resize(numberOfPlatforms);
 
     for (size_t i = 0; i < numberOfPlatforms; ++i)
@@ -88,16 +86,14 @@ CCerror ComputePlatform::getDeviceIDs(CCDeviceType deviceType, Vector<RefPtr<Com
         return clError;
 
     Vector<CCDeviceID> clDevices;
-    if (!clDevices.tryReserveCapacity(numberOfDevices))
-        return OUT_OF_HOST_MEMORY;
+    clDevices.reserveCapacity(numberOfDevices);
     clDevices.resize(numberOfDevices);
 
     clError = clGetDeviceIDs(m_platform, deviceType, numberOfDevices, clDevices.data(), 0);
     if (clError != CL_SUCCESS)
         return clError;
 
-    if (!computeDevices.tryReserveCapacity(numberOfDevices))
-        return OUT_OF_HOST_MEMORY;
+    computeDevices.reserveCapacity(numberOfDevices);
     computeDevices.resize(numberOfDevices);
 
     for (size_t i = 0; i < numberOfDevices; ++i)

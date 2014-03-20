@@ -18,6 +18,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/quota"
     "${WEBCORE_DIR}/Modules/vibration"
     "${WEBCORE_DIR}/Modules/webaudio"
+    "${WEBCORE_DIR}/Modules/webcl"
     "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/Modules/websockets"
     "${WEBCORE_DIR}/accessibility"
@@ -138,6 +139,7 @@ set(WebCore_IDL_INCLUDES
     Modules/speech
     Modules/vibration
     Modules/webaudio
+    Modules/webcl
     Modules/webdatabase
     Modules/websockets
     bindings/generic
@@ -277,6 +279,26 @@ set(WebCore_IDL_FILES
     Modules/webaudio/PeriodicWave.idl
     Modules/webaudio/ScriptProcessorNode.idl
     Modules/webaudio/WaveShaperNode.idl
+    
+    Modules/webcl/DOMWindowWebCLEnvironment.idl
+    Modules/webcl/WebCLBuffer.idl
+    Modules/webcl/WebCLCallback.idl
+    Modules/webcl/WebCLCommandQueue.idl
+    Modules/webcl/WebCLContext.idl
+    Modules/webcl/WebCLDevice.idl
+    Modules/webcl/WebCLEvent.idl
+    Modules/webcl/WebCLException.idl
+    Modules/webcl/WebCLGLObjectInfo.idl
+    Modules/webcl/WebCL.idl
+    Modules/webcl/WebCLImageDescriptor.idl
+    Modules/webcl/WebCLImage.idl
+    Modules/webcl/WebCLKernelArgInfo.idl
+    Modules/webcl/WebCLKernel.idl
+    Modules/webcl/WebCLMemoryObject.idl
+    Modules/webcl/WebCLPlatform.idl
+    Modules/webcl/WebCLProgram.idl
+    Modules/webcl/WebCLSampler.idl
+    Modules/webcl/WebCLUserEvent.idl
 
     Modules/webdatabase/DOMWindowWebDatabase.idl
     Modules/webdatabase/Database.idl
@@ -938,6 +960,30 @@ set(WebCore_SOURCES
     Modules/webaudio/WaveShaperDSPKernel.cpp
     Modules/webaudio/WaveShaperNode.cpp
     Modules/webaudio/WaveShaperProcessor.cpp
+
+    Modules/webcl/DOMWindowWebCLEnvironment.cpp
+    Modules/webcl/WebCLBuffer.cpp
+    Modules/webcl/WebCLCommandQueue.cpp
+    Modules/webcl/WebCLContext.cpp
+    Modules/webcl/WebCL.cpp
+    Modules/webcl/WebCLDevice.cpp
+    Modules/webcl/WebCLEvent.cpp
+    Modules/webcl/WebCLException.cpp
+    Modules/webcl/WebCLExtensionsAccessor.cpp
+    Modules/webcl/WebCLGetInfo.cpp
+    Modules/webcl/WebCLGLObjectInfo.cpp
+    Modules/webcl/WebCLHTMLInterop.cpp
+    Modules/webcl/WebCLImage.cpp
+    Modules/webcl/WebCLImageDescriptor.cpp
+    Modules/webcl/WebCLInputChecker.cpp
+    Modules/webcl/WebCLKernelArgInfoProvider.cpp
+    Modules/webcl/WebCLKernel.cpp
+    Modules/webcl/WebCLMemoryInitializer.cpp
+    Modules/webcl/WebCLMemoryObject.cpp
+    Modules/webcl/WebCLPlatform.cpp
+    Modules/webcl/WebCLProgram.cpp
+    Modules/webcl/WebCLSampler.cpp
+    Modules/webcl/WebCLUserEvent.cpp
 
     Modules/webdatabase/ChangeVersionWrapper.cpp
     Modules/webdatabase/DOMWindowWebDatabase.cpp

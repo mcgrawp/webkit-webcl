@@ -265,6 +265,25 @@ if (ENABLE_WEB_AUDIO)
     )
 endif ()
 
+if (ENABLE_WEBCL)
+    list(APPEND WebCore_SOURCES
+#        bindings/js/JSCustomWebCLFinishCallback.cpp
+        bindings/js/JSWebCLCommandQueueCustom.cpp
+        bindings/js/JSWebCLContextCustom.cpp
+        bindings/js/JSWebCLCustom.cpp
+        bindings/js/JSWebCLCustom.h
+        bindings/js/JSWebCLDeviceCustom.cpp
+        bindings/js/JSWebCLEventCustom.cpp
+        bindings/js/JSWebCLGLCustom.cpp
+        bindings/js/JSWebCLGLObjectInfoCustom.cpp
+        bindings/js/JSWebCLKernelCustom.cpp
+        bindings/js/JSWebCLMemoryObjectCustom.cpp
+        bindings/js/JSWebCLPlatformCustom.cpp
+        bindings/js/JSWebCLProgramCustom.cpp
+        bindings/js/JSWebCLSamplerCustom.cpp
+    )
+endif()
+
 if (ENABLE_MEDIA_STREAM)
     list(APPEND WebCore_SOURCES
         bindings/js/JSMediaSourceStatesCustom.cpp
