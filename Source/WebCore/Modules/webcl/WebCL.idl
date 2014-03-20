@@ -339,20 +339,17 @@ typedef long CLint;
     [RaisesException] void waitForEvents(sequence<WebCLEvent> events);
 
 #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
-    // FIXME: All constants below have have to have [CustomGetter]
-    // extended attribute, so we can check if cl-gl interop is enabled
-    // before returning their values.
-    const CLint INVALID_GL_OBJECT                         = -60;
-    const CLint INVALID_MIP_LEVEL                         = -62;
+    [CustomGetter] readonly attribute CLenum INVALID_GL_OBJECT;
+    [CustomGetter] readonly attribute CLenum INVALID_MIP_LEVEL;
 
-    const CLenum COMMAND_ACQUIRE_GL_OBJECTS                = 0x11FF;
-    const CLenum COMMAND_RELEASE_GL_OBJECTS                = 0x1200;
+    [CustomGetter] readonly attribute CLenum COMMAND_ACQUIRE_GL_OBJECTS;
+    [CustomGetter] readonly attribute CLenum COMMAND_RELEASE_GL_OBJECTS;
 
-    const CLenum GL_OBJECT_BUFFER                          = 0x2000;
-    const CLenum GL_OBJECT_TEXTURE2D                       = 0x2001;
-    const CLenum GL_OBJECT_RENDERBUFFER                    = 0x2003;
+    [CustomGetter] readonly attribute CLenum GL_OBJECT_BUFFER;
+    [CustomGetter] readonly attribute CLenum GL_OBJECT_TEXTURE2D;
+    [CustomGetter] readonly attribute CLenum GL_OBJECT_RENDERBUFFER;
 
-    const CLenum GL_TEXTURE_TARGET                         = 0x2004;
-    const CLenum GL_MIPMAP_LEVEL                           = 0x2005;
+    [CustomGetter] readonly attribute CLenum GL_TEXTURE_TARGET;
+    [CustomGetter] readonly attribute CLenum GL_MIPMAP_LEVEL;
 #endif
 };

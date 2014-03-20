@@ -47,6 +47,69 @@ namespace WebCore {
 
 class WebCLGetInfo;
 
+JSValue JSWebCL::iNVALID_GL_OBJECT(JSC::ExecState*) const
+{
+    if(impl()->isEnabledExtension("KHR_gl_sharing"))
+        return jsNumber(-60);
+    return jsUndefined();
+}
+
+JSValue JSWebCL::iNVALID_MIP_LEVEL(JSC::ExecState*) const
+{
+    if(impl()->isEnabledExtension("KHR_gl_sharing"))
+        return jsNumber(-62);
+    return jsUndefined();
+}
+
+JSValue JSWebCL::cOMMAND_ACQUIRE_GL_OBJECTS(JSC::ExecState*) const
+{
+    if(impl()->isEnabledExtension("KHR_gl_sharing"))
+        return jsNumber(0x11FF);
+    return jsUndefined();
+}
+
+JSValue JSWebCL::cOMMAND_RELEASE_GL_OBJECTS(JSC::ExecState*) const
+{
+    if(impl()->isEnabledExtension("KHR_gl_sharing"))
+        return jsNumber(0x1200);
+    return jsUndefined();
+}
+
+JSValue JSWebCL::gL_OBJECT_BUFFER(JSC::ExecState*) const
+{
+    if(impl()->isEnabledExtension("KHR_gl_sharing"))
+        return jsNumber(0x2000);
+    return jsUndefined();
+}
+
+JSValue JSWebCL::gL_OBJECT_TEXTURE2D(JSC::ExecState*) const
+{
+    if(impl()->isEnabledExtension("KHR_gl_sharing"))
+        return jsNumber(0x2001);
+    return jsUndefined();
+}
+
+JSValue JSWebCL::gL_OBJECT_RENDERBUFFER(JSC::ExecState*) const
+{
+    if(impl()->isEnabledExtension("KHR_gl_sharing"))
+        return jsNumber(0x2003);
+    return jsUndefined();
+}
+
+JSValue JSWebCL::gL_TEXTURE_TARGET(JSC::ExecState*) const
+{
+    if(impl()->isEnabledExtension("KHR_gl_sharing"))
+        return jsNumber(0x2004);
+    return jsUndefined();
+}
+
+JSValue JSWebCL::gL_MIPMAP_LEVEL(JSC::ExecState*) const
+{
+    if(impl()->isEnabledExtension("KHR_gl_sharing"))
+        return jsNumber(0x2005);
+    return jsUndefined();
+}
+
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebCLGetInfo& info)
 {
     switch (info.getType()) {
