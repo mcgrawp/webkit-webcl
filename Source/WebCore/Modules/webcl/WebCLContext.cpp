@@ -721,6 +721,11 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderbuffer(CCenum flags, WebG
         return 0;
     }
 
+    if (!WebCLInputChecker::isValidMemoryObjectFlag(flags)) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
+        return 0;
+    }
+
     return WebCLImage::create(this, flags, renderbuffer, exception);
 }
 
