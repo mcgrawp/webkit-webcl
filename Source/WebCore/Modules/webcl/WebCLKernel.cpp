@@ -277,9 +277,13 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionObj
     case (JSC::TypeUint32): // UINT
         bufferData = static_cast<Uint32Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 4;
-        // For Long data type, input 
+        // For Long data type, input
         if (isLong)
+#if CPU(BIG_ENDIAN) && CPU(X86_X64)
+            bufferData = swapElementsForBigEndian(arrayLength, bufferView);
+#else
             arrayLength = arrayLength / 2;
+#endif
         break;
     case (JSC::TypeInt32):  // INT
         bufferData = static_cast<Int32Array*>(bufferView)->data();
@@ -362,6 +366,21 @@ bool WebCLKernel::isValidVectorLength(size_t arrayLength)
     }
     return false;
 }
+
+#if CPU(BIG_ENDIAN) && CPU(X86_X64)
+inline void* swapElementsForBigEndian(size_t& arrayLength, ArrayBufferView* bufferView)
+{
+    arrayLength = arrayLength / 2;
+    Vector<CCulong> uLongBuffer(arrayLength);
+    for(size_t i = 0; i < arrayLength * 2; i += 2) {
+        CCuint low, high;
+        low = static_cast<Uint32Array*>(bufferView)->item(i);
+        high = static_cast<Uint32Array*>(bufferView)->item(i+1);
+        uLongBuffer[i/2] = ((CCulong)low << 32) | high;
+    }
+    return uLongBuffer.releaseBuffer().leakPtr();
+}
+#endif
 
 } // namespace WebCore
 
