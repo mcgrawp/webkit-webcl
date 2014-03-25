@@ -71,12 +71,13 @@ WebCLGetInfo WebCLDevice::getInfo(CCenum infoType, ExceptionObject& exception)
         return WebCLGetInfo(String("WebCL 1.0"));
     case ComputeContext::DEVICE_OPENCL_C_VERSION:
         return WebCLGetInfo(String("WebCL C 1.0"));
-    case ComputeContext::DEVICE_VENDOR_ID: // Vendor specific. Will return a empty string.
-    case ComputeContext::DRIVER_VERSION:
+    case ComputeContext::DRIVER_VERSION: // Vendor specific. Will return a empty string.
     case ComputeContext::DEVICE_NAME:
     case ComputeContext::DEVICE_VENDOR:
     case ComputeContext::DEVICE_EXTENSIONS:
         return WebCLGetInfo(emptyString());
+    case ComputeContext::DEVICE_VENDOR_ID: // Vendor specific.
+        return WebCLGetInfo(static_cast<CCuint>(0));
     case ComputeContext::DEVICE_IMAGE_SUPPORT:
     case ComputeContext::DEVICE_AVAILABLE:
     case ComputeContext::DEVICE_COMPILER_AVAILABLE:
