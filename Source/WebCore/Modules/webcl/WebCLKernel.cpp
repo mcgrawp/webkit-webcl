@@ -52,6 +52,18 @@
 
 namespace WebCore {
 
+#if CPU(BIG_ENDIAN) && CPU(X86_X64)
+inline void swapElementsForBigEndian(size_t& arrayLength, ArrayBufferView* bufferView, Vector<CCulong>& uLongBuffer)
+{
+    for(size_t i = 0; i < arrayLength * 2; i += 2) {
+        CCuint low, high;
+        low = static_cast<Uint32Array*>(bufferView)->item(i);
+        high = static_cast<Uint32Array*>(bufferView)->item(i+1);
+        uLongBuffer[i/2] = ((CCulong)low << 32) | high;
+    }
+}
+#endif
+
 WebCLKernel::~WebCLKernel()
 {
     releasePlatformObject();
@@ -266,6 +278,7 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionObj
 
     void* bufferData = 0;
     size_t arrayLength = 0;
+    Vector<CCulong> uLongBuffer;
     bool isLong  = m_argumentInfoProvider.argumentsInfo()[index]->typeName().contains("long");
     // FIXME: Add support for LONG, ULONG, HALF and DOUBLE types.
     // These need Int/Uint64Array, as well as Float16Array.
@@ -277,9 +290,23 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionObj
     case (JSC::TypeUint32): // UINT
         bufferData = static_cast<Uint32Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 4;
-        // For Long data type, input 
-        if (isLong)
+        // For Long data type, input
+
+        /* WebCL spec says 64-bit integers must be represented as pairs of 32-bit
+        unsigned integers. The low-order 32 bits are stored in the first element of
+        each pair, and the high-order 32 bits in the second element. As little endian
+        architecture follows the same format, it is automatically taken care of. For
+        Big endian architecture, order for 32 bit uint elements need to be swapped
+        before passing to OpenCL. */
+
+        if (isLong) {
             arrayLength = arrayLength / 2;
+#if CPU(BIG_ENDIAN)
+            uLongBuffer.resize(arrayLength);
+            swapElementsForBigEndian(arrayLength, bufferView, uLongBuffer);
+            bufferData = uLongBuffer.data();
+#endif
+        }
         break;
     case (JSC::TypeInt32):  // INT
         bufferData = static_cast<Int32Array*>(bufferView)->data();
