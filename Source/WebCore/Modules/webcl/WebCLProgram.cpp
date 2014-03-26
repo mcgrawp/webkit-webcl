@@ -144,6 +144,12 @@ PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, Exc
         return 0;
     }
 
+    CCuint kernelNameMaxLength = 256;
+    if (kernelName.length() > kernelNameMaxLength) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_KERNEL_NAME, exception);
+        return 0;
+    }
+
     return WebCLKernel::create(m_context.get(), this, kernelName, exception);
 }
 

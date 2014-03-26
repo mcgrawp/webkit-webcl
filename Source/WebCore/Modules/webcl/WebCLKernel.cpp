@@ -82,6 +82,12 @@ Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* c
     Vector<char> functionName;
     for (size_t i = 0 ; i < computeKernels.size(); i++) {
         error = computeKernels[i]->getKernelInfo(ComputeContext::KERNEL_FUNCTION_NAME, &functionName);
+        CCuint kernelNameMaxLength = 256;
+        if (functionName.size() > kernelNameMaxLength) {
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_KERNEL_NAME, exception);
+            return Vector<RefPtr<WebCLKernel> >();
+        }
+
         if (error != ComputeContext::SUCCESS) {
             setExceptionFromComputeErrorCode(error, exception);
             kernels.clear();
