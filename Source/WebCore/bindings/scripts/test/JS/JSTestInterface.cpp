@@ -787,7 +787,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplementalMetho
 EncodedJSValue jsTestInterfaceIMPLEMENTSCONSTANT1(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(1)));
+    return JSValue::encode(jsNumber(1));
 }
 
 #endif
@@ -795,7 +795,7 @@ EncodedJSValue jsTestInterfaceIMPLEMENTSCONSTANT1(ExecState* exec, JSObject*, En
 EncodedJSValue jsTestInterfaceIMPLEMENTSCONSTANT2(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(2)));
+    return JSValue::encode(jsNumber(2));
 }
 
 #endif
@@ -803,7 +803,7 @@ EncodedJSValue jsTestInterfaceIMPLEMENTSCONSTANT2(ExecState* exec, JSObject*, En
 EncodedJSValue jsTestInterfaceSUPPLEMENTALCONSTANT1(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(1)));
+    return JSValue::encode(jsNumber(1));
 }
 
 #endif
@@ -811,7 +811,7 @@ EncodedJSValue jsTestInterfaceSUPPLEMENTALCONSTANT1(ExecState* exec, JSObject*, 
 EncodedJSValue jsTestInterfaceSUPPLEMENTALCONSTANT2(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(2)));
+    return JSValue::encode(jsNumber(2));
 }
 
 #endif
