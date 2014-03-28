@@ -115,7 +115,6 @@ PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, WebGLRenderingContex
 
 WebCLContext::WebCLContext(WebCL* webCL, ComputeContext* computeContext, const Vector<RefPtr<WebCLDevice> >& devices, WebGLRenderingContext* glContext, HashSet<String>& enabledExtensions)
     : WebCLObjectImpl(computeContext)
-    , m_videoCache(4) // FIXME: Why '4'?
     , m_webCL(webCL)
     , m_devices(devices)
     , m_glContext(glContext)
@@ -383,27 +382,16 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLVideoElement*
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return 0;
     }
-    if (!video) {
-        setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
+
+    void* hostPtr = 0;
+    size_t videoSize = 0;
+    WebCLHTMLInterop::extractDataFromVideo(video, hostPtr, videoSize, exception);
+    if (willThrowException(exception))
         return 0;
-    }
+
     CCuint width =  video->videoWidth();
     CCuint height = video->videoHeight();
-    RefPtr<Image> image = videoFrameToImage(video);
-
-    if (!image || !image->data()) {
-        setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
-        return 0;
-    }
-    SharedBuffer* sharedBuffer = image->data();
-    void* imageData = (void*)sharedBuffer->data();
-
-    if (!imageData) {
-        setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
-        return 0;
-    }
-
-    return createImage2DBase(flags, width, height, 0 /* rowPitch */, ComputeContext::RGBA, ComputeContext::UNORM_INT8, imageData, exception);
+    return createImage2DBase(flags, width, height, 0 /* rowPitch */, ComputeContext::RGBA, ComputeContext::UNORM_INT8, hostPtr, exception);
 }
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, ImageData* srcPixels, ExceptionObject& exception)
@@ -555,57 +543,6 @@ PassRefPtr<WebCLUserEvent> WebCLContext::createUserEvent(ExceptionObject& except
     }
 
     return WebCLUserEvent::create(this, exception);
-}
-
-
-// FIXME:: Should be a static local function.
-PassRefPtr<Image> WebCLContext::videoFrameToImage(HTMLVideoElement* video)
-{
-    if (!video || !video->videoWidth() || !video->videoHeight())
-        return 0;
-    IntSize size(video->videoWidth(), video->videoHeight());
-    ImageBuffer* buf = m_videoCache.imageBuffer(size);
-    if (!buf)
-        return 0;
-    IntRect destRect(0, 0, size.width(), size.height());
-    // FIXME: Turn this into a GPU-GPU texture copy instead of CPU readback.
-    video->paintCurrentFrameInContext(buf->context(), destRect);
-    return buf->copyImage();
-}
-
-WebCLContext::LRUImageBufferCache::LRUImageBufferCache(int capacity)
-    : m_buffers(std::make_unique<std::unique_ptr<ImageBuffer>[]>(capacity))
-    , m_capacity(capacity)
-{
-}
-
-ImageBuffer* WebCLContext::LRUImageBufferCache::imageBuffer(const IntSize& size)
-{
-    int i;
-    for (i = 0; i < m_capacity; ++i) {
-        ImageBuffer* buf = m_buffers[i].get();
-        if (!buf)
-            break;
-        if (buf->logicalSize() != size)
-            continue;
-        bubbleToFront(i);
-        return buf;
-    }
-    std::unique_ptr<ImageBuffer> temp = ImageBuffer::create(size, 1);
-    if (!temp)
-        return 0;
-    i = std::min(m_capacity - 1, i);
-    m_buffers[i] = std::move(temp);
-
-    ImageBuffer* buf = m_buffers[i].get();
-    bubbleToFront(i);
-    return buf;
-}
-
-void WebCLContext::LRUImageBufferCache::bubbleToFront(int idx)
-{
-    for (int i = idx; i > 0; --i)
-        m_buffers[i].swap(m_buffers[i-1]);
 }
 
 Vector<RefPtr<WebCLImageDescriptor> > WebCLContext::getSupportedImageFormats(ExceptionObject &exception)

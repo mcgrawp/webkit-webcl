@@ -41,6 +41,10 @@ inline bool WebCLExtensionsAccessor<T>::enableExtension(const String& name)
         m_enabledExtensions.add("WEBCL_html_image");
         return true;
     }
+    if (equalIgnoringCase(name, "WEBCL_html_video")) {
+        m_enabledExtensions.add("WEBCL_html_video");
+        return true;
+    }
     if (equalIgnoringCase(name, "KHR_gl_sharing")) {
 #if ENABLE(WEBGL)
         bool khrGLSharing = m_accessor ? ComputeExtensions::get().supports("cl_khr_gl_sharing", m_accessor)
@@ -59,6 +63,7 @@ Vector<String> WebCLExtensionsAccessor<T>::getSupportedExtensions()
     Vector<String> result;
     // WEBCL_html_image is always enabled in WebKit.
     result.append("WEBCL_html_image");
+    result.append("WEBCL_html_video");
 
     if (m_accessor) {
 #if ENABLE(WEBGL)

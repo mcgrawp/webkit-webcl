@@ -34,10 +34,10 @@
 #include "CachedImage.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLVideoElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "SharedBuffer.h"
-#include <runtime/Uint8ClampedArray.h>
 
 namespace WebCore {
 
@@ -94,6 +94,48 @@ void WebCLHTMLInterop::extractDataFromImageData(ImageData* srcPixels, void*& hos
         return;
     }
 }
+
+void WebCLHTMLInterop::extractDataFromVideo(HTMLVideoElement* video, void*& hostPtr, size_t& videoSize, ExceptionObject& exception)
+{
+    if (!video) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
+        return;
+    }
+
+    RefPtr<Image> image = videoFrameToImage(video);
+    if (!image) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
+        return;
+    }
+
+    Vector<uint8_t> data;
+    CCerror error = ComputeContext::CCPackImageData(image.get(), GraphicsContext3D::HtmlDomVideo, video->videoWidth(), video->videoHeight(), data);
+    if (error != ComputeContext::SUCCESS) {
+        setExceptionFromComputeErrorCode(error, exception);
+        return;
+    }
+    hostPtr = data.data();
+    videoSize = data.size();
+
+    if (!hostPtr || !videoSize) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
+        return;
+    }
 }
 
+PassRefPtr<Image> WebCLHTMLInterop::videoFrameToImage(HTMLVideoElement* video)
+{
+    if (!video || !video->videoWidth() || !video->videoHeight())
+        return 0;
+    IntSize size(video->videoWidth(), video->videoHeight());
+    // FIXME :: Need to cache the ImageBuffer objects.
+    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(size, 1);
+    if (!imageBuffer)
+        return 0;
+    IntRect destRect(0, 0, size.width(), size.height());
+    // FIXME: Turn this into a GPU-GPU texture copy instead of CPU readback.
+    video->paintCurrentFrameInContext(imageBuffer->context(), destRect);
+    return imageBuffer->copyImage();
+}
+}
 #endif

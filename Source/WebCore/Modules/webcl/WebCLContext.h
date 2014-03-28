@@ -105,18 +105,6 @@ public:
     PassRefPtr<WebCLImage> createFromGLTexture(CCenum memoryFlags, CCenum textureTarget, GC3Dint miplevel, WebGLTexture*, ExceptionObject&);
 #endif
 
-    class LRUImageBufferCache {
-    public:
-        LRUImageBufferCache(int capacity);
-        // The pointer returned is owned by the image buffer map.
-        ImageBuffer* imageBuffer(const IntSize&);
-    private:
-        void bubbleToFront(int idx);
-        std::unique_ptr<std::unique_ptr<ImageBuffer>[]> m_buffers;
-        int m_capacity;
-    };
-    LRUImageBufferCache m_videoCache;
-
     ComputeContext* computeContext() const { return platformObject(); }
 
     void trackReleaseableWebCLObject(WeakPtr<WebCLObject>);
@@ -143,8 +131,6 @@ private:
 
     void postCreateCommandQueue(WebCLCommandQueue*, ExceptionObject&);
     void postCreateBuffer(WebCLBuffer*, ExceptionObject&);
-
-    PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
 
     WebCL* m_webCL;
     Vector<RefPtr<WebCLDevice> > m_devices;

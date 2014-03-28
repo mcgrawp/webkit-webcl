@@ -36,6 +36,7 @@ namespace WebCore {
 
 class HTMLCanvasElement;
 class HTMLImageElement;
+class HTMLVideoElement;
 class ImageData;
 
 class WebCLHTMLInterop {
@@ -43,8 +44,13 @@ public:
     static void extractDataFromCanvas(HTMLCanvasElement*, void*& hostPtr, size_t& canvasSize, ExceptionObject&);
     static void extractDataFromImage(HTMLImageElement*, void*& hostPtr, size_t& canvasSize, ExceptionObject&);
     static void extractDataFromImageData(ImageData*, void*& hostPtr, size_t& pixelSize, ExceptionObject&);
+    static void extractDataFromVideo(HTMLVideoElement*, void*& hostPtr, size_t& videoSize, ExceptionObject&);
+private:
+    static PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
 };
-}
 
-#endif
+} // namespace WebCore
+
+#endif // ENABLE(WEBCL)
+
 #endif // WebCLHTMLInterop
