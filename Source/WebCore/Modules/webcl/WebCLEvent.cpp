@@ -133,7 +133,7 @@ WebCLGetInfo WebCLEvent::getProfilingInfo(CCenum paramName, ExceptionObject& exc
         CCulong eventProfilingInfo = 0;
         err = platformObject()->getEventProfilingInfo(paramName, &eventProfilingInfo);
         if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(static_cast<unsigned>(eventProfilingInfo));
+            return WebCLGetInfo(eventProfilingInfo);
         }
         break;
     default:
