@@ -59,26 +59,6 @@ JSValue JSWebCLEvent::getInfo(JSC::ExecState* exec)
     return toJS(exec, globalObject(), info);
 }
 
-JSValue JSWebCLEvent::getProfilingInfo(JSC::ExecState* exec)
-{
-    if (exec->argumentCount() != 1)
-        return throwSyntaxError(exec);
-
-    ExceptionCode ec = 0;
-    WebCLEvent& eventObj = impl();
-    if (exec->hadException())
-        return jsUndefined();
-    unsigned eventInfo = exec->argument(0).toInt32(exec);
-    if (exec->hadException())
-        return jsUndefined();
-    WebCLGetInfo info = eventObj.getProfilingInfo(eventInfo, ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-    return toJS(exec, globalObject(), info);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)

@@ -46,7 +46,7 @@ public:
     static PassRefPtr<WebCLEvent> create();
 
     virtual WebCLGetInfo getInfo(CCenum, ExceptionObject&);
-    WebCLGetInfo getProfilingInfo(CCenum, ExceptionObject&);
+    CCulong getProfilingInfo(CCenum, ExceptionObject&);
 
     void setCallback(CCenum, PassRefPtr<WebCLCallback>, ExceptionObject&);
     void setAssociatedCommandQueue(WebCLCommandQueue* commandQueue);

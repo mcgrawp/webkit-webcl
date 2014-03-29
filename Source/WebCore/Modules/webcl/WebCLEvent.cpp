@@ -112,16 +112,16 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionObject& exception)
     return WebCLGetInfo();
 }
 
-WebCLGetInfo WebCLEvent::getProfilingInfo(CCenum paramName, ExceptionObject& exception)
+CCulong WebCLEvent::getProfilingInfo(CCenum paramName, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT, exception);
-        return WebCLGetInfo();
+        return 0;
     }
 
     if (isUserEvent()) {
         setExceptionFromComputeErrorCode(ComputeContext::PROFILING_INFO_NOT_AVAILABLE, exception);
-        return WebCLGetInfo();
+        return 0;
     }
 
     CCerror err = 0;
@@ -133,17 +133,17 @@ WebCLGetInfo WebCLEvent::getProfilingInfo(CCenum paramName, ExceptionObject& exc
         CCulong eventProfilingInfo = 0;
         err = platformObject()->getEventProfilingInfo(paramName, &eventProfilingInfo);
         if (err == ComputeContext::SUCCESS)
-            return WebCLGetInfo(eventProfilingInfo);
+            return eventProfilingInfo;
         }
         break;
     default:
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return WebCLGetInfo();
+        return 0;
     }
 
     ASSERT(err != ComputeContext::SUCCESS);
     setExceptionFromComputeErrorCode(err, exception);
-    return WebCLGetInfo();
+    return 0;
 }
 
 void WebCLEvent::setAssociatedCommandQueue(WebCLCommandQueue* commandQueue)
