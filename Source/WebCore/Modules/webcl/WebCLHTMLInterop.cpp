@@ -128,14 +128,57 @@ PassRefPtr<Image> WebCLHTMLInterop::videoFrameToImage(HTMLVideoElement* video)
     if (!video || !video->videoWidth() || !video->videoHeight())
         return 0;
     IntSize size(video->videoWidth(), video->videoHeight());
-    // FIXME :: Need to cache the ImageBuffer objects.
-    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(size, 1);
-    if (!imageBuffer)
+    ImageBuffer* imageBufferObject = m_generatedImageCache.imageBuffer(size);
+    if (!imageBufferObject)
         return 0;
     IntRect destRect(0, 0, size.width(), size.height());
     // FIXME: Turn this into a GPU-GPU texture copy instead of CPU readback.
-    video->paintCurrentFrameInContext(imageBuffer->context(), destRect);
-    return imageBuffer->copyImage();
+    video->paintCurrentFrameInContext(imageBufferObject->context(), destRect);
+    return imageBufferObject->copyImage();
 }
+
+WebCLHTMLInterop::WebCLHTMLInterop(int capacity)
+    : m_generatedImageCache(capacity)
+{
+}
+
+// Caching ImageBuffer
+// FIXME :: Reuse WebGL code from WebGLRenderingContext.
+WebCLHTMLInterop::LRUImageBufferCache::LRUImageBufferCache(int capacity)
+    : m_buffers(std::make_unique<std::unique_ptr<ImageBuffer>[]>(capacity))
+    , m_capacity(capacity)
+{
+}
+
+void WebCLHTMLInterop::LRUImageBufferCache::bubbleToFront(int idx)
+{
+    for (int i = idx; i > 0; --i)
+        m_buffers[i].swap(m_buffers[i-1]);
+}
+
+ImageBuffer* WebCLHTMLInterop::LRUImageBufferCache::imageBuffer(const IntSize& size)
+{
+    int i;
+    for (i = 0; i < m_capacity; ++i) {
+        ImageBuffer* buf = m_buffers[i].get();
+        if (!buf)
+            break;
+        if (buf->logicalSize() != size)
+            continue;
+        bubbleToFront(i);
+        return buf;
+    }
+
+    std::unique_ptr<ImageBuffer> temp = ImageBuffer::create(size, 1);
+    if (!temp)
+        return 0;
+    i = std::min(m_capacity - 1, i);
+    m_buffers[i] = std::move(temp);
+
+    ImageBuffer* buf = m_buffers[i].get();
+    bubbleToFront(i);
+    return buf;
+}
+
 }
 #endif

@@ -41,12 +41,24 @@ class ImageData;
 
 class WebCLHTMLInterop {
 public:
+    WebCLHTMLInterop(int capacity);
     static void extractDataFromCanvas(HTMLCanvasElement*, void*& hostPtr, size_t& canvasSize, ExceptionObject&);
     static void extractDataFromImage(HTMLImageElement*, void*& hostPtr, size_t& canvasSize, ExceptionObject&);
     static void extractDataFromImageData(ImageData*, void*& hostPtr, size_t& pixelSize, ExceptionObject&);
-    static void extractDataFromVideo(HTMLVideoElement*, void*& hostPtr, size_t& videoSize, ExceptionObject&);
+    void extractDataFromVideo(HTMLVideoElement*, void*& hostPtr, size_t& videoSize, ExceptionObject&);
 private:
-    static PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
+    PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
+    // Fixed-size cache of reusable image buffers for extractDataFromVideo calls.
+    class LRUImageBufferCache {
+        public:
+            LRUImageBufferCache(int capacity);
+            ImageBuffer* imageBuffer(const IntSize&);
+        private:
+            std::unique_ptr<std::unique_ptr<ImageBuffer>[]> m_buffers;
+            int m_capacity;
+            void bubbleToFront(int idx);
+    };
+    LRUImageBufferCache m_generatedImageCache;
 };
 
 } // namespace WebCore

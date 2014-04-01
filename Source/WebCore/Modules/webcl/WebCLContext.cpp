@@ -120,8 +120,11 @@ WebCLContext::WebCLContext(WebCL* webCL, ComputeContext* computeContext, const V
     , m_glContext(glContext)
     , m_memoryInitializer(this)
     , m_enabledExtensions(enabledExtensions)
+    , m_HTMLInteropObject(0)
 {
     webCL->trackReleaseableWebCLObject(createWeakPtr());
+    if (isExtensionEnabled("WEBCL_html_video"))
+        m_HTMLInteropObject = new WebCLHTMLInterop(4);
 }
 
 WebCLGetInfo WebCLContext::getInfo(CCenum paramName, ExceptionObject& exception)
@@ -378,6 +381,11 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLImageElement*
 
 PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLVideoElement* video, ExceptionObject& exception)
 {
+    if (!isExtensionEnabled("WEBCL_html_video")) {
+        setExtensionsNotEnabledException(exception);
+        return 0;
+    }
+
     if (ComputeContext::MEM_READ_ONLY != flags) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return 0;
@@ -385,7 +393,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLVideoElement*
 
     void* hostPtr = 0;
     size_t videoSize = 0;
-    WebCLHTMLInterop::extractDataFromVideo(video, hostPtr, videoSize, exception);
+    m_HTMLInteropObject->extractDataFromVideo(video, hostPtr, videoSize, exception);
     if (willThrowException(exception))
         return 0;
 

@@ -56,6 +56,7 @@ class WebCLImageDescriptor;
 class WebCLProgram;
 class WebCLSampler;
 class WebCLUserEvent;
+class WebCLHTMLInterop;
 #if ENABLE(WEBGL)
 class WebGLBuffer;
 class WebGLRenderingContext;
@@ -140,6 +141,7 @@ private:
 
     WebCLMemoryInitializer m_memoryInitializer;
     HashSet<String> m_enabledExtensions;
+    WebCLHTMLInterop* m_HTMLInteropObject;
 };
 
 } // namespace WebCore
