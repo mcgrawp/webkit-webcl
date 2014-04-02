@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>WebCLGL instanceof tests.</title>
+<title>WebCL (gl-extension) instanceof tests.</title>
 <script type="text/javascript" src="../resources/js-test-pre.js"></script>
 <script type="text/javascript">
 
@@ -14,7 +14,7 @@ var platform;
 var devices;
 var device;
 var gl;
-var extension;
+var enableGLExtension;
 var context;
 var commandQueue;
 var buffer;
@@ -44,47 +44,42 @@ function runTest() {
         devices = platform.getDevices();
         device = devices[0];
 
-        extension = cl.getExtension("KHR_GL_SHARING");
-        if (!extension) {
-            testFailed("GL extension is not available");
-        }
-        /* Test instance of WebCLGL */
-        shouldBeTrue('extension instanceof WebCLGL');
-        contextProperties = {platform: platform, devices: devices,
-                             deviceType: cl.DEVICE_TYPE_GPU};
+        enableGLExtension = cl.enableExtension("KHR_GL_SHARING");
+        shouldBeTrue('enableGLExtension');
 
-        context = extension.createContext(contextProperties);
-        shouldBeTrue('context instanceof WebCLGLContext');
+        /* Test instance of WebCLContext */
+        context = cl.createContext(gl, device);
+        shouldBeTrue('context instanceof WebCLContext');
 
-        /* Test instance of WebCLGLCommandQueue */
+        /* Test instance of WebCLCommandQueue */
         commandQueue = context.createCommandQueue(device);
-        shouldBeTrue('commandQueue instanceof WebCLGLCommandQueue');
+        shouldBeTrue('commandQueue instanceof WebCLCommandQueue');
 
         glBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, glBuffer);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-        /* Test instance of WebCLGLBuffer */
+        /* Test instance of WebCLBuffer */
         buffer = context.createFromGLBuffer(cl.MEM_READ_ONLY, glBuffer);
-        shouldBeTrue('buffer instanceof WebCLGLBuffer');
+        shouldBeTrue('buffer instanceof WebCLBuffer');
 
         glRenderbuffer = gl.createRenderbuffer();
         gl.bindRenderbuffer(gl.RENDERBUFFER, glRenderbuffer);
         gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, 1, 1);
         gl.bindRenderbuffer(gl.RENDERBUFFER, null);
 
-        /* Test instance of WebCLGLImage from Render Buffer */
+        /* Test instance of WebCLImage from Render Buffer */
         render = context.createFromGLRenderbuffer(cl.MEM_READ_ONLY, glRenderbuffer);
-        shouldBeTrue('render instanceof WebCLGLImage');
+        shouldBeTrue('render instanceof WebCLImage');
 
         glTexture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
         gl.bindTexture(gl.TEXTURE_2D, null);
 
-        /* Test instance of WebCLGLImage from Texture */
+        /* Test instance of WebCLImage from Texture */
         texture = context.createFromGLTexture(cl.MEM_READ_ONLY, gl.TEXTURE_2D, 0, glTexture);
-        shouldBeTrue('texture instanceof WebCLGLImage');
+        shouldBeTrue('texture instanceof WebCLImage');
 
         /* If here, all tests passed */
         testPassed("");
@@ -102,7 +97,7 @@ function runTest() {
 <canvas id="canvas" style="width: 50px; height: 50px;"> </canvas>
 <script>
         description(document.title);
-        debug("Run instanceof tests for all WebCLGL objects");
+        debug("Run instanceof tests for all WebCL gl-extension objects");
         runTest();
 </script>
 <script src="../resources/js-test-post.js"></script>
