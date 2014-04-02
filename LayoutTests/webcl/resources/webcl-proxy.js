@@ -84,8 +84,8 @@
              *
              * @param {name} Extension's name
              */
-            getExtension : function (name) {
-                return nativeWebCL.getExtension(name);
+            enableExtension : function (name) {
+                return nativeWebCL.enableExtension(name);
             }
         };
 
@@ -266,7 +266,6 @@
                 var contextGroup;
                 var nativeExtension;
                 var nativeContext;
-                var nativeProperties;
                 var i;
                 var ex;
 
@@ -278,10 +277,13 @@
                 }
 
                 if (interop) {
-                    nativeExtension = nativeWebCL.getExtension("KHR_GL_SHARING");
+                    nativeExtension = nativeWebCL.enableExtension("KHR_GL_SHARING");
                     if (!nativeExtension) {
-                        throw new Error("GL Extension is not supported");
+                        throw new Error("KHR_GL_SHARING extension is not supported");
                     }
+
+                    var canvas = document.getElementById("canvas");
+                    var gl = canvas.getContext("experimental-webgl");
                 }
 
                 console.info("wcDevice: ", wclDevice);
@@ -298,21 +300,15 @@
                 console.group("deviceGroup");
 
                 for (i in deviceGroup) {
-                    nativeProperties = {};
-                    nativeProperties.platform = deviceGroup[i].nativePlatform;
-                    nativeProperties.devices = deviceGroup[i].nativeDevices;
-                    nativeProperties.deviceType = nativeWebCL.DEVICE_TYPE_DEFAULT;
-
-                    console.info("nativeProperties: ", nativeProperties);
 
                     try {
                         if (!interop) {
-                            nativeContext = nativeWebCL.createContext(nativeProperties);
+                            nativeContext = nativeWebCL.createContext(deviceGroup[i].nativeDevices);
                         } else {
-                                nativeContext = nativeExtension.createContext(nativeProperties);
+                            nativeContext = nativeWebCL.createContext(gl, deviceGroup[i].nativeDevices);
                         }
                     } catch(e) {
-                        throw new Error("Create Context Exception; Message: ", e.message);
+                        throw new Error("Create Context Exception; Message: " + e.message);
                     }
 
                     console.info("nativeContext: ", nativeContext);
@@ -1575,6 +1571,7 @@
                 var nativeKernel;
                 var nativeEvent;
                 var nativeEventList;
+                var workDim;
                 var offset;
                 var globalSize;
                 var localSize;
@@ -1597,20 +1594,27 @@
                         throw ex;
                     }
 
+                    if (args.workDim === null ||
+                            args.workDim === undefined) {
+                        ex = new Error("No workDim in the arguments.");
+                        console.error("Invalid arguments", ex);
+                        throw ex;
+                    }
+
                     if (!(args.globalWorkOffset === null ||
-                            args.globalWorkOffset instanceof Int32Array)) {
+                            args.globalWorkOffset instanceof Array)) {
                         ex = new Error("No offset in the arguments.");
                         console.error("Invalid arguments", ex);
                         throw ex;
                     }
 
-                    if (!(args.globalWorkSize instanceof Int32Array)) {
+                    if (!(args.globalWorkSize instanceof Array)) {
                         ex = new Error("No globalWorkSize in the arguments.");
                         console.error("Invalid arguments", ex);
                         throw ex;
                     }
 
-                    if (!(args.localWorkSize === null || args.localWorkSize instanceof Int32Array)) {
+                    if (args.localWorkSize && !(args.localWorkSize instanceof Array)) {
                         ex = new Error("No globalWorkSize in the arguments.");
                         console.error("Invalid arguments", ex);
                         throw ex;
@@ -1637,9 +1641,9 @@
                 } catch (e) {
                     throw e;
                 }
-
                 wclKernel =   args.kernel;
                 kernelGroup = wclKernel.getKernelGroup();
+                workDim =     args.workDim;
                 offset =      args.globalWorkOffset;
                 globalSize =  args.globalWorkSize;
                 localSize =   args.localWorkSize;
@@ -1668,7 +1672,7 @@
 
                     nativeCommandQueue = queueGroup[i].nativeCommandQueue;
                     try {
-                        nativeCommandQueue.enqueueNDRangeKernel(nativeKernel,
+                        nativeCommandQueue.enqueueNDRangeKernel(nativeKernel, workDim,
                                     offset, globalSize, localSize, nativeEvent);
                     } catch (e) {
                         throw e;
@@ -1954,9 +1958,8 @@
              *
              * @param {status} - execution status
              * @param {notify} - function to be executed
-             * @param optional {userData}
              */
-            setCallback : function (status, notify, userData) {
+            setCallback : function (status, notify) {
                 var nativeEvent;
                 var i;
 
@@ -1967,11 +1970,30 @@
                     nativeEvent = eventGroup[i].nativeEvent;
                     console.info("nativeEvent", nativeEvent);
 
-                    nativeEvent.setCallback(status, notify, userData);
+                    nativeEvent.setCallback(status, notify);
                 }
 
                 console.timeEnd("WCLEvent::setCallback");
                 console.groupEnd();
+            },
+
+            setStatus : function (status) {
+                var nativeEvent;
+                var i;
+
+                console.group("WCLEvent::setStatus");
+                console.time("WCLEvent::setStatus");
+
+                for (i in eventGroup) {
+                    nativeEvent = eventGroup[i].nativeEvent;
+                    console.info("nativeEvent", nativeEvent);
+
+                    nativeEvent.setStatus(status);
+                }
+
+                console.timeEnd("WCLEvent::setStatus");
+                console.groupEnd();
+
             }
         };
     }
