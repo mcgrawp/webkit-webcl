@@ -12,8 +12,10 @@
     var err;                                    // error code returned from API calls
     var results = new Uint32Array(1);           // results returned from device
     var output;                                 // output
-    var globalWorkSize = new Int32Array(1);     // global domain size for our calculation
-    var localWorkSize = new Int32Array(1);      // local domain size for our calculation
+    var workDim;
+    var globalWorkOffset;
+    var globalWorkSize;                         // global domain size for our calculation
+    var localWorkSize;                          // local domain size for our calculation
 
     function runTest() {
         try {
@@ -43,17 +45,21 @@
 
             //Create buffer for output
             output = context.createWCLBuffer(proxy.MEM_WRITE_ONLY, Uint32Array.BYTES_PER_ELEMENT, null);
-            globalWorkSize[0] = 1;
-            localWorkSize[0] = 1;
+            globalWorkOffset = [];
+            globalWorkSize = new Array(workGroupSize.length);
+            for (i = 0; i < workGroupSize.length; i++) {
+                globalWorkSize[i] = workGroupSize[i];
+            }
+            localWorkSize = [];
 
             kernel.setWCLKernelArgs(0, output);
 
             var ndRangeDict = {};
             ndRangeDict.kernel = kernel;
-            ndRangeDict.globalWorkOffset = new Int32Array(0);
+            ndRangeDict.workDim = workGroupSize.length;
+            ndRangeDict.globalWorkOffset = globalWorkOffset;
             ndRangeDict.globalWorkSize = globalWorkSize;
             ndRangeDict.localWorkSize = localWorkSize;
-            ndRangeDict.globalWorkOffset[0] = 0;
             queue.enqueueNDRangeKernel(ndRangeDict);
 
 
