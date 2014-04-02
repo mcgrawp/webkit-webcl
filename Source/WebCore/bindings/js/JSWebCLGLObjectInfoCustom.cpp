@@ -37,15 +37,13 @@
 #include "JSWebGLRenderbuffer.h"
 #include "JSWebGLTexture.h"
 
-using namespace JSC;
-
 namespace WebCore {
 
 class WebGLBuffer;
 class WebGLRenderbuffer;
 class WebGLTexture;
 
-JSValue JSWebCLGLObjectInfo::glObject(ExecState* exec) const
+JSC::JSValue JSWebCLGLObjectInfo::glObject(JSC::ExecState* exec) const
 {
     WebCLGLObjectInfo& info = impl();
 
@@ -59,7 +57,7 @@ JSValue JSWebCLGLObjectInfo::glObject(ExecState* exec) const
     }
 
     ASSERT_NOT_REACHED();
-    return jsNull();
+    return JSC::jsNull();
 }
 
 } // namespace WebCore

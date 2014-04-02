@@ -33,31 +33,13 @@
 
 #include "JSWebCLCustom.h"
 
-using namespace JSC;
-using namespace std;
-
 namespace WebCore {
 
 class WebCLGetInfo;
 
 JSValue JSWebCLCommandQueue::getInfo(JSC::ExecState* exec)
 {
-    if (exec->argumentCount() != 1)
-        return throwSyntaxError(exec);
-
-    ExceptionCode ec = 0;
-    WebCLCommandQueue& queue = impl();
-    if (exec->hadException())
-        return jsUndefined();
-    unsigned queueInfo = exec->argument(0).toInt32(exec);
-    if (exec->hadException())
-        return jsUndefined();
-    WebCLGetInfo info = queue.getInfo(queueInfo, ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-    return toJS(exec, globalObject(), info);
+    return WebCLGetInfoMethodCustom<JSWebCLCommandQueue, WebCLCommandQueue>(exec, this);
 }
 
 } // namespace WebCore

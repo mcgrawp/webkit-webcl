@@ -37,21 +37,7 @@ namespace WebCore {
 
 JSValue JSWebCLSampler::getInfo(JSC::ExecState* exec)
 {
-    if (exec->argumentCount() != 1)
-        return throwSyntaxError(exec);
-
-    unsigned infoName = exec->argument(0).toInt32(exec);
-    if (exec->hadException())
-        return jsUndefined();
-
-    ExceptionCode ec = 0;
-    WebCLSampler& sampler = impl();
-    WebCLGetInfo info = sampler.getInfo(infoName, ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-    return toJS(exec, globalObject(), info);
+    return WebCLGetInfoMethodCustom<JSWebCLSampler, WebCLSampler>(exec, this);
 }
 
 } // namespace WebCore

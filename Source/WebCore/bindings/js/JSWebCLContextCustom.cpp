@@ -40,31 +40,13 @@
 
 #include <runtime/ArrayBufferView.h>
 
-using namespace JSC;
-using namespace std;
-
 namespace WebCore {
 
 class WebCLGetInfo;
 
 JSValue JSWebCLContext::getInfo(JSC::ExecState* exec)
 {
-    if (exec->argumentCount() != 1)
-        return throwSyntaxError(exec);
-
-    ExceptionCode ec = 0;
-    WebCLContext& context = impl();
-    if (exec->hadException())
-        return jsUndefined();
-    unsigned contextInfo  = exec->argument(0).toInt32(exec);
-    if (exec->hadException())
-        return jsUndefined();
-    WebCLGetInfo info = context.getInfo(contextInfo, ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-    return toJS(exec, globalObject(), info);
+    return WebCLGetInfoMethodCustom<JSWebCLContext, WebCLContext>(exec, this);
 }
 
 // JSDictionary helper functions

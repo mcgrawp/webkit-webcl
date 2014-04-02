@@ -39,20 +39,7 @@ class WebCLGetInfo;
 
 JSValue JSWebCLPlatform::getInfo(JSC::ExecState* exec)
 {
-    if (exec->argumentCount() != 1)
-        return throwSyntaxError(exec);
-
-    WebCLPlatform& platform = impl();
-    unsigned platformInfo = exec->argument(0).toInt32(exec);
-    if (exec->hadException())
-        return jsUndefined();
-    ExceptionCode ec = 0;
-    WebCLGetInfo info = platform.getInfo(platformInfo, ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-    return toJS(exec, globalObject(), info);
+    return WebCLGetInfoMethodCustom<JSWebCLPlatform, WebCLPlatform>(exec, this);
 }
 
 } // namespace WebCore

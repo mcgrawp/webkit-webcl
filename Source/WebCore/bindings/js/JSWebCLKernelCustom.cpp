@@ -34,33 +34,14 @@
 #include "JSWebCLCustom.h"
 #include "JSWebCLDevice.h"
 
-using namespace JSC;
-using namespace std;
-
 namespace WebCore {
 
-class WebCLDevice;
 class WebCLGetInfo;
 class WebCLKernel;
 
 JSValue JSWebCLKernel::getInfo(JSC::ExecState* exec)
 {
-    if (exec->argumentCount() != 1)
-        return throwSyntaxError(exec);
-
-    ExceptionCode ec = 0;
-    WebCLKernel& kernel = impl();
-    if (exec->hadException())
-        return jsUndefined();
-    unsigned kernelInfo  = exec->argument(0).toInt32(exec);
-    if (exec->hadException())
-        return jsUndefined();
-    WebCLGetInfo info = kernel.getInfo(kernelInfo, ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-    return toJS(exec, globalObject(), info);
+    return WebCLGetInfoMethodCustom<JSWebCLKernel, WebCLKernel>(exec, this);
 }
 
 JSValue JSWebCLKernel::getWorkGroupInfo(JSC::ExecState* exec)

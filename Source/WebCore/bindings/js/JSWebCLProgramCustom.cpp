@@ -38,21 +38,7 @@ namespace WebCore {
 
 JSValue JSWebCLProgram::getInfo(JSC::ExecState* exec)
 {
-    if (exec->argumentCount() != 1)
-        return throwSyntaxError(exec);
-
-    ExceptionCode ec = 0;
-    WebCLProgram& program = impl();
-    unsigned programInfo  = exec->argument(0).toInt32(exec);
-    if (exec->hadException())
-        return jsUndefined();
-
-    WebCLGetInfo info = program.getInfo(programInfo, ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-    return toJS(exec, globalObject(), info);
+    return WebCLGetInfoMethodCustom<JSWebCLProgram, WebCLProgram>(exec, this);
 }
 
 JSValue JSWebCLProgram::getBuildInfo(JSC::ExecState* exec)

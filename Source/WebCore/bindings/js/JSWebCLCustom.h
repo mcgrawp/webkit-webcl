@@ -40,7 +40,6 @@
 
 using namespace JSC;
 
-
 namespace WebCore {
 
 class WebCLExtension;
@@ -49,6 +48,27 @@ class DOMGlobalObject;
 
 JSValue toJS(ExecState*, JSDOMGlobalObject*, const WebCLGetInfo&);
 JSValue toJS(ExecState*, JSDOMGlobalObject*, WebCLExtension*);
+
+template <class Custom, class Impl>
+JSValue WebCLGetInfoMethodCustom(JSC::ExecState* exec, Custom* custom)
+{
+    if (exec->argumentCount() != 1)
+        return throwSyntaxError(exec);
+
+    ExceptionCode ec = 0;
+    Impl& impl = custom->impl();
+    if (exec->hadException())
+        return jsUndefined();
+    unsigned info  = exec->argument(0).toInt32(exec);
+    if (exec->hadException())
+        return jsUndefined();
+    WebCLGetInfo webCLInfo = impl.getInfo(info, ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+    return toJS(exec, custom->globalObject(), webCLInfo);
+}
 
 } // namespace WebCore
 
