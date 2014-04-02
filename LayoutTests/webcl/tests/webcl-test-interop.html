@@ -132,7 +132,6 @@
             program.build();
             kernel = program.createWCLKernel("compute_sin");
 
-            globalWorkSize = new Int32Array(1);
             results = new Float32Array(numElems);
         } catch (e) {
             testFailed("WebCL kernel result test failed ; Message: " + e.message);
@@ -150,7 +149,7 @@
             // create buffer for interoperability
             vboBufferCL = context.createFromGLBuffer(proxy.MEM_READ_WRITE, vboBuffer);
 
-            globalWorkSize[0] = numElems;
+            globalWorkSize = [numElems];
 
             seq = (seq + 1) % canvas.width;
             kernel.setWCLKernelArgs(0, vboBufferCL);
@@ -168,9 +167,10 @@
 
             ndRangeArgs = {};
             ndRangeArgs.kernel = kernel;
-            ndRangeArgs.globalWorkOffset = null;
+            ndRangeArgs.workDim = globalWorkSize.length;
+            ndRangeArgs.globalWorkOffset = [];
             ndRangeArgs.globalWorkSize = globalWorkSize;
-            ndRangeArgs.localWorkSize = null;
+            ndRangeArgs.localWorkSize = [];
             queue.enqueueNDRangeKernel(ndRangeArgs);
 
             queue.enqueueReleaseGLObjects(acquireGLArgs);

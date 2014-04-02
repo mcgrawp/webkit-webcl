@@ -173,9 +173,9 @@
 
             texColorData   = new Uint8Array(texColorData);
             kResult        = new Uint8Array(pixelWidth * pixelHeight * pixelSizeInBytes);
-            origin         = new Int32Array([0, 0, 0]);
-            region         = new Int32Array([pixelWidth, pixelHeight, pixelDepth]);
-            globalWorkSize = new Int32Array([pixelWidth, pixelHeight]);
+            origin         = [0, 0];
+            region         = [pixelWidth, pixelHeight];
+            globalWorkSize = [pixelWidth, pixelHeight];
         } catch (e) {
             testFailed("In initCLBuffers: " + e.message);
         }
@@ -194,8 +194,8 @@
                 testFailed("WebCL object is not defined ...");
             }
 
-            cl = cl.getExtension("KHR_GL_SHARING");
-            if (!cl) {
+            ext = cl.enableExtension("KHR_GL_SHARING");
+            if (!ext) {
                 testFailed("GL Extension is not supported");
             }
 
@@ -211,8 +211,7 @@
             }
             device = devices[0];
 
-            contextProperties = {platform: platform, devices: devices};
-            context = cl.createContext(contextProperties);
+            context = cl.createContext(gl, devices);
             if (!context) {
                 testFailed("In initCL: It was not possible to create WebCLContext");
             }
@@ -244,7 +243,7 @@
             cmdQueue.enqueueAcquireGLObjects([texCLIn, texCLOut]);
             cmdQueue.enqueueWriteImage(texCLIn, true, origin, region, 0,
                                                                texColorData);
-            cmdQueue.enqueueNDRangeKernel(kernel, null, globalWorkSize, null);
+            cmdQueue.enqueueNDRangeKernel(kernel, globalWorkSize.length, [], globalWorkSize, []);
             cmdQueue.enqueueReleaseGLObjects([texCLIn, texCLOut]);
             cmdQueue.finish();
 
