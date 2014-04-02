@@ -43,7 +43,7 @@
                     extensionName = extensions[j];
                     mixedName = WebCLTestUtils.mixedString(extensionName);
 
-                    extensionObject = currentPlatform.getExtension(mixedName);
+                    extensionObject = currentPlatform.enableExtension(mixedName);
                     if (!extensionObject) {
                         console.log("Failed to get WebCLPLatform extension: " + extensionName + " as " + mixedName);
                         break;
@@ -51,17 +51,6 @@
 
                     extensionObject.testNumberProperty = testNumber;
                     gc();
-
-                    extensionObject2 = currentPlatform.getExtension(extensionName);
-                    if (!extensionObject2) {
-                        testPassed("Failed to get WebCLPLatform extension: " + extensionName);
-                        break;
-                    }
-
-                    if (extensionObject2.testNumberProperty !== testNumber) {
-                        testFailed("Test failed, extension objects are not the same.");
-                        return;
-                    }
                 }
             }
         } catch (e) {

@@ -63,8 +63,7 @@ function runTest() {
             return;
         }
 
-        contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_ALL};
-        context1 = cl.createContext(contextProperties);
+        context1 = cl.createContext(platform, cl.DEVICE_TYPE_ALL);
         if (!context1) {
             testFailed("Failed to create WebCLContext 1.");
             return;
@@ -111,17 +110,17 @@ function runTest() {
         }
 
         /* Releasing context: all its descendant objects should be released also */
-        context1.release();
-        shouldBeNull("context1");
-        shouldBeNull("buffer1");
-        shouldBeNull("commandQueue1");
-        shouldBeNull("program1");
-        shouldBeNull("image1");
-        shouldBeNull("sampler1");
-        shouldBeNull("userEvent1");
+        context1.releaseAll();
+        shouldThrow("context1.getInfo(cl.CONTEXT_DEVICES)");
+        shouldThrow("buffer1.getInfo(cl.MEM_SIZE)");
+        shouldThrow("commandQueue1.getInfo(cl.QUEUE_DEVICE)");
+        shouldThrow("program1.getInfo(cl.PROGRAM_CONTEXT)");
+        shouldThrow("image1.getInfo()");
+        shouldThrow("sampler1.getInfo(cl.SAMPLER_CONTEXT)");
+        shouldThrow("userEvent1.getInfo(cl.EVENT_CONTEXT)");
 
         /* Releasing WebCL objects: all copies should be released also */
-        context2 = cl.createContext(contextProperties);
+        context2 = cl.createContext(platform, cl.DEVICE_TYPE_ALL);
         if (!context2) {
             testFailed("Failed to create WebCLContext 2.");
             return;
@@ -135,8 +134,8 @@ function runTest() {
 
         bufferCopy = buffer2;
         buffer2.release();
-        shouldBeNull("buffer2");
-        shouldBeNull("bufferCopy");
+        shouldThrow("buffer2.getInfo(cl.MEM_SIZE)");
+        shouldThrow("bufferCopy.getInfo(cl.MEM_SIZE)");
 
         commandQueue2 = context2.createCommandQueue(devices[0], null);
         if (!commandQueue2) {
@@ -146,8 +145,8 @@ function runTest() {
 
         commandQueueCopy = commandQueue2;
         commandQueue2.release();
-        shouldBeNull("commandQueue2");
-        shouldBeNull("commandQueueCopy");
+        shouldThrow("commandQueue2.getInfo(cl.QUEUE_CONTEXT)");
+        shouldThrow("commandQueueCopy.getInfo(cl.QUEUE_CONTEXT)");
 
         program2 = context2.createProgram(kernelSource);
         if (!program2) {
@@ -157,8 +156,8 @@ function runTest() {
 
         programCopy = program2;
         program2.release();
-        shouldBeNull("program2");
-        shouldBeNull("programCopy");
+        shouldThrow("program2.getInfo(cl.PROGRAM_CONTEXT)");
+        shouldThrow("programCopy.getInfo(cl.PROGRAM_CONTEXT)");
 
         image2 = context2.createImage(cl.MEM_READ_WRITE, imgDescriptor);
         if (!image2) {
@@ -168,10 +167,10 @@ function runTest() {
 
         imageCopy = image2;
         image2.release();
-        shouldBeNull("image2");
-        shouldBeNull("imageCopy");
+        shouldThrow("image2.getInfo()");
+        shouldThrow("imageCopy.getiInfo()");
 
-        sampler2 = context2.createSampler(cl.FALSE, cl.ADDRESS_NONE, cl.FILTER_LINEAR);
+        sampler2 = context2.createSampler(cl.FALSE, cl.ADDRESS_CLAMP, cl.FILTER_LINEAR);
         if (!sampler2) {
             testFailed("Failed to create WebCLSampler 2");
             return;
@@ -179,8 +178,8 @@ function runTest() {
 
         samplerCopy = sampler2;
         sampler2.release();
-        shouldBeNull("sampler2");
-        shouldBeNull("samplerCopy");
+        shouldThrow("sampler2.getInfo(cl.SAMPLER_CONTEXT)");
+        shouldThrow("samplerCopy.getInfo(cl.SAMPLER_CONTEXT)");
 
         userEvent2 = context2.createUserEvent();
         if (!userEvent2) {
@@ -190,11 +189,11 @@ function runTest() {
 
         eventCopy = userEvent2;
         userEvent2.release();
-        shouldBeNull("userEvent2");
-        shouldBeNull("eventCopy");
+        shouldThrow("userEvent2.getInfo(cl.EVENT_CONTEXT)");
+        shouldThrow("eventCopy.getInfo(cl.EVENT_CONTEXT)");
 
         context2.release();
-        shouldBeNull("context2");
+        shouldThrow("context2.getInfo(cl.CONTEXT_DEVICES)");
 
     } catch (e) {
         testFailed("Test WebCL resource management has failed; Message: " + e.message);

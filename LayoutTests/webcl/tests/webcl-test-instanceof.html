@@ -46,9 +46,7 @@ function runTest() {
         shouldBeTrue('device instanceof WebCLDevice');
 
         /* Test instance of WebCLContext */
-        contextProperties = { platform: platform, devices: devices,
-                                deviceType: cl.DEVICE_TYPE_ALL};
-        context = cl.createContext(contextProperties);
+        context = cl.createContext(platform, cl.DEVICE_TYPE_ALL);
         shouldBeTrue('context instanceof WebCLContext');
 
         webclEvent = context.createUserEvent();

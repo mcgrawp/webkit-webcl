@@ -53,8 +53,7 @@ function initCL() {
             throw (new Error("Failed to create webcl object"));
         }
 
-        contextProperties = {deviceType: cl.DEVICE_TYPE_DEFAULT};
-        context = cl.createContext(contextProperties);
+        context = cl.createContext(cl.DEVICE_TYPE_DEFAULT);
         if (!context) {
             throw (new Error("It was not possible to create WebCLContext."));
         }
@@ -93,12 +92,12 @@ function initCL() {
 
 function runKernel() {
     var i;
-    var origin = new Int32Array([0, 0]);
-    var region = new Int32Array([imgWidth, imgHeight]);
+    var origin = [0, 0];
+    var region = [imgWidth, imgHeight];
 
     try {
         queue.enqueueWriteImage(imgIn, true, origin, region, 0, data);
-        queue.enqueueNDRangeKernel(kernel, 0, globalWorkSize, null);
+        queue.enqueueNDRangeKernel(kernel, globalWorkSize.length, [], globalWorkSize, []);
         queue.enqueueReadImage(imgOut, true, origin, region, 0, kResult);
         queue.finish();
 

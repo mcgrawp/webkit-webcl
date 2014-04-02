@@ -56,26 +56,10 @@ function runTest() {
             originalName = extensions[j];
             mixedName = WebCLTestUtils.mixedString(originalName);
 
-            objectExtension1 = device.getExtension(mixedName);
+            objectExtension1 = device.enableExtension(mixedName);
 
             if (!objectExtension1) {
-                testFailed("Failed to get extension " + originalName + " as " + mixedName);
-                return;
-            }
-
-            objectExtension2 = device.getExtension(originalName);
-
-            if (!objectExtension2) {
-                testFailed("Failed to get extension " + originalName);
-                return;
-            }
-
-            /* Create an arbitrary property in objectExtension1 to check in
-               in objectExtension2 */
-            objectExtension1.newProperty = true;
-
-            if (!objectExtension2.newProperty) {
-                testFailed("Same extension (" + originalName + ") should be the same object.");
+                testFailed("Failed to enable extension " + originalName + " as " + mixedName);
                 return;
             }
         }

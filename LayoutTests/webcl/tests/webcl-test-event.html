@@ -21,9 +21,9 @@ var clCallback = function eventCallback() {
 function runTest() {
 
     var i;
-    var globalWorkSize = new Int32Array(1);
-	var localWorkSize  = new Int32Array(1);
-	var results        = new Uint32Array(1);
+    var globalWorkSize;
+	var localWorkSize;
+	var results;
 
     try {
 
@@ -37,7 +37,7 @@ function runTest() {
         }
 
         /* Execution events */
-        executionStatus = [proxy.COMPLETE, proxy.RUNNING, proxy.SUBMITTED, proxy.QUEUED];
+        executionStatus = [proxy.COMPLETE];
 
 
         /* Get wcl objects */
@@ -61,27 +61,29 @@ function runTest() {
 
         //Create buffer for output
         var output = context.createWCLBuffer(proxy.MEM_WRITE_ONLY, Uint32Array.BYTES_PER_ELEMENT, null);
-        globalWorkSize[0] = 1;
-        localWorkSize[0]  = 1;
+        globalWorkOffset = [];
+        globalWorkSize = new Array(workGroupSize.length);
+        for (i = 0; i < workGroupSize.length; i++) {
+            globalWorkSize[i] = workGroupSize[i];
+        }
+        localWorkSize = [];
 
         kernel.setWCLKernelArgs(0, output);
 
         var events = [];
         var testEvent;
 
-        /* Create a event for each execution status */
-        for (i in executionStatus) {
-            events[i] = context.createWCLUserEvent();
-            events[i].setCallback(executionStatus[i], clCallback);
+        events[0] = context.createWCLUserEvent();
+        events[0].setStatus(proxy.COMPLETE);
+        events[0].setCallback(proxy.COMPLETE, clCallback);
 
-            nativeEvent = events[i].getEventGroup()[0].nativeEvent;
-            shouldBeTrue("nativeEvent instanceof WebCLEvent");
-        }
+        nativeEvent = events[0].getEventGroup()[0].nativeEvent;
+        shouldBeTrue("nativeEvent instanceof WebCLEvent");
 
         var ndRangeDict = {};
         ndRangeDict.kernel              = kernel;
-        ndRangeDict.globalWorkOffset    = new Int32Array(0);
-        ndRangeDict.globalWorkOffset[0] = 0;
+        ndRangeDict.workDim             = workGroupSize.length;
+        ndRangeDict.globalWorkOffset    = globalWorkOffset;
         ndRangeDict.globalWorkSize      = globalWorkSize;
         ndRangeDict.localWorkSize       = localWorkSize;
         ndRangeDict.eventWaitList       = events;

@@ -24,20 +24,17 @@ function runTest() {
             return;
         }
 
-        context = cl.createContext({deviceType: cl.DEVICE_TYPE_DEFAULT});
+        context = cl.createContext(cl.DEVICE_TYPE_DEFAULT);
         if (!context) {
             testFailed("Failed to create WebCLContext");
             return;
         }
 
-        contextProperties = context.getInfo(cl.CONTEXT_PROPERTIES);
-        devices = contextProperties.devices;
-        platform = contextProperties.platform;
-        deviceType = contextProperties.deviceType;
-        shouldBeTrue("devices.length > 0");
-        shouldBeTrue("devices[0] instanceof WebCLDevice")
-        shouldBeTrue("platform instanceof WebCLPlatform");
-        shouldBeTrue("deviceType === cl.DEVICE_TYPE_DEFAULT");
+        contextDevices = context.getInfo(cl.CONTEXT_DEVICES);
+        contextDevicesCount = context.getInfo(cl.CONTEXT_NUM_DEVICES);
+        devices = contextDevices;
+        shouldBeTrue("devices.length === contextDevicesCount");
+        shouldBeTrue("devices[0] instanceof WebCLDevice");
 
     } catch (e) {
         testFailed("Test WebCLContextProperties has failed; Message: " + e.message);

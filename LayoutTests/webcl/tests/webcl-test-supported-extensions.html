@@ -24,20 +24,9 @@
                 var originalName = extensions[i];
                 var mixedName = WebCLTestUtils.mixedString(originalName);
 
-                var extensionObj = proxy.getExtension(mixedName);
+                var extensionObj = proxy.enableExtension(mixedName);
                 if (!extensionObj) {
-                    testFailed("Failed to get extension: " + originalName + " as " + mixedName);
-                    return;
-                }
-
-                var extensionObj2 = proxy.getExtension(originalName);
-                if (!extensionObj2) {
-                    testFailed("Failed to get extension: " + originalName);
-                    return;
-                }
-
-                if (extensionObj !== extensionObj2) {
-                    testFailed("Same extension should be the same object.");
+                    testFailed("Failed to enable extension: " + originalName + " as " + mixedName);
                     return;
                 }
             }

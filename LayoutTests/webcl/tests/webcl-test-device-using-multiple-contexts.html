@@ -35,8 +35,10 @@ var inputMult_B;
 var outputMult;
 
 
-var globalWorkSize = new Int32Array(1);
-var localWorkSize = new Int32Array(1);
+var workDim;
+var globalWorkOffset;
+var globalWorkSize;
+var localWorkSize;
 var results = new Int32Array(DATA_SIZE);
 
 function runTest() {
@@ -65,16 +67,15 @@ function runTest() {
             return;
         }
         platform = platforms[0];
-        devices = platform.getDevices();
+        devices = platform.getDevices(cl.DEVICE_TYPE_DEFAULT);
         numDevices = devices.length;
         if (numDevices === 0) {
             testFailed("No devices available");
             return;
         }
 
-        var contextProperties = {platform: platform, devices: devices, deviceType: cl.DEVICE_TYPE_DEFAULT};
-        contextSum = cl.createContext(contextProperties);
-        contextMult = cl.createContext(contextProperties);
+        contextSum = cl.createContext(platform, cl.DEVICE_TYPE_DEFAULT);
+        contextMult = cl.createContext(platform, cl.DEVICE_TYPE_DEFAULT);
         if (!contextSum || !contextMult) {
             testFailed("It was not possible to create WebCLContexts.");
             return;
@@ -126,11 +127,13 @@ function runTest() {
         kernelMult.setArg(2, outputMult);
         kernelMult.setArg(3, new Uint32Array([DATA_SIZE]));
 
-        globalWorkSize[0] = DATA_SIZE;
+        globalWorkOffset = [];
+        globalWorkSize = [DATA_SIZE];
+        workDim = globalWorkSize.length;
 
         var workGroupSize = kernelSum.getWorkGroupInfo(devices[0], cl.KERNEL_WORK_GROUP_SIZE);
-        localWorkSize[0] = workGroupSize;
-        queueSum.enqueueNDRangeKernel(kernelSum, 0, globalWorkSize, localWorkSize);
+        localWorkSize = [];
+        queueSum.enqueueNDRangeKernel(kernelSum, workDim, globalWorkOffset, globalWorkSize, localWorkSize);
         queueSum.finish();
         queueSum.enqueueReadBuffer(outputSum, true, 0, Int32Array.BYTES_PER_ELEMENT * DATA_SIZE, results);
         for (i = 0; i < DATA_SIZE; i++) {
@@ -141,13 +144,13 @@ function runTest() {
         }
 
         workGroupSize = kernelMult.getWorkGroupInfo(devices[0], cl.KERNEL_WORK_GROUP_SIZE);
-        localWorkSize[0] = workGroupSize;
-        queueMult.enqueueNDRangeKernel(kernelMult, 0, globalWorkSize, localWorkSize);
+        localWorkSize = [];
+        queueMult.enqueueNDRangeKernel(kernelMult, workDim, globalWorkOffset, globalWorkSize, localWorkSize);
         queueMult.finish();
         queueMult.enqueueReadBuffer(outputMult, true, 0, Int32Array.BYTES_PER_ELEMENT * DATA_SIZE, results);
         for (i = 0; i < DATA_SIZE; i++) {
             if (results[i] !== (data[i] * data[i])) {
-                testFailed("Test has failed for kernel: " + kernelSum.getInfo(cl.KERNEL_FUNCTION_NAME));
+                testFailed("Test has failed for kernel: " + kernelMult.getInfo(cl.KERNEL_FUNCTION_NAME));
                 break;
             }
         }
