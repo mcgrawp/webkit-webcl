@@ -35,7 +35,8 @@ typedef unsigned long CLuint;
 
     [StrictTypeChecking, RaisesException] WebCLKernelArgInfo getArgInfo(CLuint index);
 
-    [RaisesException] void setArg(CLuint index, WebCLMemoryObject value);
+    [RaisesException] void setArg(CLuint index, WebCLImage value);
+    [RaisesException] void setArg(CLuint index, WebCLBuffer value);
     [RaisesException] void setArg(CLuint index, WebCLSampler value);
     [RaisesException] void setArg(CLuint index, ArrayBufferView value);
 

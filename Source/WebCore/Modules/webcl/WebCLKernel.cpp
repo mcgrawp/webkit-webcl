@@ -32,13 +32,14 @@
 #include "WebCLKernel.h"
 
 #include "ComputeDevice.h"
+#include "WebCLBuffer.h"
 #include "WebCLCommandQueue.h"
 #include "WebCLContext.h"
+#include "WebCLException.h"
 #include "WebCLGetInfo.h"
+#include "WebCLImage.h"
 #include "WebCLImageDescriptor.h"
 #include "WebCLProgram.h"
-#include "WebCLException.h"
-#include "WebCLMemoryObject.h"
 #include "WebCLSampler.h"
 
 #include <runtime/ArrayBufferView.h>
@@ -184,14 +185,14 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
     return WebCLGetInfo();
 }
 
-void WebCLKernel::setArg(CCuint index, WebCLMemoryObject* memoryObject, ExceptionObject& exception)
+void WebCLKernel::setArg(CCuint index, WebCLBuffer* buffer, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_KERNEL, exception);
         return;
     }
 
-    if (!WebCLInputChecker::validateWebCLObject(memoryObject)) {
+    if (!WebCLInputChecker::validateWebCLObject(buffer)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
@@ -201,10 +202,31 @@ void WebCLKernel::setArg(CCuint index, WebCLMemoryObject* memoryObject, Exceptio
         return;
     }
 
-    CCerror err = platformObject()->setKernelArg(index, memoryObject->platformObject());
+    // FIXME :: Need to check if kernel expects a WebCLBuffer at index.
+    CCerror err = platformObject()->setKernelArg(index, buffer->platformObject());
     setExceptionFromComputeErrorCode(err, exception);
 }
 
+void WebCLKernel::setArg(CCuint index, WebCLImage* image, ExceptionObject& exception)
+{
+    if (isPlatformObjectNeutralized()) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_KERNEL, exception);
+        return;
+    }
+
+    if (!WebCLInputChecker::validateWebCLObject(image)) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
+        return;
+    }
+
+    if (!WebCLInputChecker::isValidKernelArgIndex(this, index)) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_INDEX, exception);
+        return;
+    }
+    // FIXME :: Need to check if kernel expects a WebCLImage at index.
+    CCerror err = platformObject()->setKernelArg(index, image->platformObject());
+    setExceptionFromComputeErrorCode(err, exception);
+}
 void WebCLKernel::setArg(CCuint index, WebCLSampler* sampler, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {

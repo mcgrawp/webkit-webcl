@@ -36,7 +36,6 @@
 #include "WebCLInputChecker.h"
 #include "WebCLKernelArgInfoProvider.h"
 #include "WebCLKernelArgInfo.h"
-#include "WebCLMemoryObject.h"
 #include "WebCLObject.h"
 
 #include <wtf/RefCounted.h>
@@ -47,12 +46,13 @@ class ArrayBufferView;
 
 namespace WebCore {
 
+class WebCLBuffer;
 class WebCLContext;
 class WebCLDevice;
 class WebCLGetInfo;
+class WebCLImage;
 class WebCLKernel;
 class WebCLKernelArgInfo;
-class WebCLMemoryObject;
 class WebCLProgram;
 class WebCLSampler;
 
@@ -66,7 +66,8 @@ public:
     WebCLGetInfo getInfo(CCenum, ExceptionObject&);
     WebCLGetInfo getWorkGroupInfo(WebCLDevice*, CCenum, ExceptionObject&);
 
-    void setArg(CCuint index, WebCLMemoryObject*, ExceptionObject&);
+    void setArg(CCuint index, WebCLBuffer*, ExceptionObject&);
+    void setArg(CCuint index, WebCLImage*, ExceptionObject&);
     void setArg(CCuint index, WebCLSampler*, ExceptionObject&);
     void setArg(CCuint index, ArrayBufferView*, ExceptionObject&);
 
