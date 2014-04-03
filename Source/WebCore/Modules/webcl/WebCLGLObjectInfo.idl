@@ -26,6 +26,7 @@
  */
 
 typedef unsigned long CLenum;
+typedef long CLint;
 
 [
     Conditional=WEBCL&WEBGL,
@@ -33,4 +34,6 @@ typedef unsigned long CLenum;
 ] interface WebCLGLObjectInfo {
     readonly attribute CLenum type;
     [CustomGetter] readonly attribute any glObject;
+    [CustomGetter] readonly attribute GLenum textureTarget;  // 'undefined' if there is no texture associated
+    [CustomGetter] readonly attribute CLint mipmapLevel;     // 'undefined' if there is no texture associated
 };

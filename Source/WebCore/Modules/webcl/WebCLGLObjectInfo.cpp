@@ -35,13 +35,15 @@
 
 namespace WebCore {
 
-PassRefPtr<WebCLGLObjectInfo> WebCLGLObjectInfo::create(int glObjectType, WebGLObject* glObject)
+PassRefPtr<WebCLGLObjectInfo> WebCLGLObjectInfo::create(int glObjectType, int textureTarget, int mipmapLevel, WebGLObject* glObject)
 {
-    return adoptRef(new WebCLGLObjectInfo(glObjectType, glObject));
+    return adoptRef(new WebCLGLObjectInfo(glObjectType, textureTarget, mipmapLevel, glObject));
 }
 
-WebCLGLObjectInfo::WebCLGLObjectInfo(int glObjectType, WebGLObject* glObject)
+WebCLGLObjectInfo::WebCLGLObjectInfo(int glObjectType, int textureTarget, int mipmapLevel, WebGLObject* glObject)
     : m_type(glObjectType)
+    , m_textureTarget(textureTarget)
+    , m_mipmapLevel(mipmapLevel)
     , m_glObject(glObject)
 {
 }
@@ -49,6 +51,16 @@ WebCLGLObjectInfo::WebCLGLObjectInfo(int glObjectType, WebGLObject* glObject)
 int WebCLGLObjectInfo::type() const
 {
     return m_type;
+}
+
+int WebCLGLObjectInfo::textureTarget() const
+{
+    return m_textureTarget;
+}
+
+int WebCLGLObjectInfo::mipmapLevel() const
+{
+    return m_mipmapLevel;
 }
 
 WebGLObject* WebCLGLObjectInfo::glObject() const

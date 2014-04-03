@@ -113,7 +113,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(CCenum memoryFlags, CCuint 
 #if ENABLE(WEBGL)
 void WebCLBuffer::cacheGLObjectInfo(WebGLBuffer* webGLBuffer)
 {
-    m_objectInfo = WebCLGLObjectInfo::create(ComputeContext::GL_OBJECT_BUFFER, webGLBuffer);
+    m_objectInfo = WebCLGLObjectInfo::create(ComputeContext::GL_OBJECT_BUFFER, 0 /*textureTarget*/, 0 /*mipmapLevel*/, webGLBuffer);
 }
 #endif
 

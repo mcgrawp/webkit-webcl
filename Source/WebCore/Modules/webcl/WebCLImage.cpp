@@ -83,7 +83,7 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, W
 
     RefPtr<WebCLImageDescriptor> imageDescriptor = WebCLImageDescriptor::create(width, height);
     RefPtr<WebCLImage> imageObject = adoptRef(new WebCLImage(context, memoryObject, imageDescriptor.release()));
-    imageObject->cacheGLObjectInfo(ComputeContext::GL_OBJECT_RENDERBUFFER, webGLRenderbuffer);
+    imageObject->cacheGLObjectInfo(ComputeContext::GL_OBJECT_RENDERBUFFER, 0 /*textureTarget*/, 0 /*miplevel*/, webGLRenderbuffer);
     return imageObject.release();
 }
 
@@ -111,7 +111,7 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, C
     // FIXME: Format is wrong here. It should have been gotten from WebGLTexture as well.
     RefPtr<WebCLImageDescriptor> imageDescriptor = WebCLImageDescriptor::create(width, height);
     RefPtr<WebCLImage> imageObject = adoptRef(new WebCLImage(context, memoryObject, imageDescriptor));
-    imageObject->cacheGLObjectInfo(ComputeContext::GL_OBJECT_TEXTURE2D, webGLTexture);
+    imageObject->cacheGLObjectInfo(ComputeContext::GL_OBJECT_TEXTURE2D, textureTarget, miplevel, webGLTexture);
     return imageObject.release();
 }
 
@@ -148,9 +148,9 @@ int WebCLImage::getGLTextureInfo(CCenum textureInfoType, ExceptionObject& except
     return 0;
 }
 
-void WebCLImage::cacheGLObjectInfo(CCenum type, WebGLObject* glObject)
+void WebCLImage::cacheGLObjectInfo(CCenum type, int textureTarget, int mipmapLevel, WebGLObject* glObject)
 {
-    m_objectInfo = WebCLGLObjectInfo::create(type, glObject);
+    m_objectInfo = WebCLGLObjectInfo::create(type, textureTarget, mipmapLevel, glObject);
 }
 #endif
 

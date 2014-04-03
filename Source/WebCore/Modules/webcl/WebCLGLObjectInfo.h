@@ -42,15 +42,19 @@ class WebCLGLObjectInfo : public RefCounted<WebCLGLObjectInfo>
 public:
     ~WebCLGLObjectInfo() { }
 
-    static PassRefPtr<WebCLGLObjectInfo> create(int objectType, WebGLObject*);
+    static PassRefPtr<WebCLGLObjectInfo> create(int objectType, int textureTarget, int mipmapLevel, WebGLObject*);
 
     int type() const;
+    int textureTarget() const;
+    int mipmapLevel() const;
     WebGLObject* glObject() const;
 
 private:
-    WebCLGLObjectInfo(int objectType, WebGLObject*);
+    WebCLGLObjectInfo(int objectType, int textureTarget, int mipmapLevel, WebGLObject*);
 
     int m_type;
+    int m_textureTarget;
+    int m_mipmapLevel;
     WebGLObject* m_glObject;
 };
 

@@ -65,7 +65,7 @@ private:
     WebCLImage(WebCLContext*, ComputeMemoryObject*, PassRefPtr<WebCLImageDescriptor>);
 
 #if ENABLE(WEBGL)
-    void cacheGLObjectInfo(CCenum type, WebGLObject*);
+    void cacheGLObjectInfo(CCenum type, int textureTarget, int mipmapLevel, WebGLObject*);
 #endif
 
     RefPtr<WebCLImageDescriptor> m_imageDescriptor;

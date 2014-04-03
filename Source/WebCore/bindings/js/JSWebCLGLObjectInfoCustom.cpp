@@ -60,6 +60,26 @@ JSC::JSValue JSWebCLGLObjectInfo::glObject(JSC::ExecState* exec) const
     return JSC::jsNull();
 }
 
+JSC::JSValue JSWebCLGLObjectInfo::textureTarget(JSC::ExecState*) const
+{
+    WebCLGLObjectInfo& info = impl();
+
+    if (info.type() == ComputeContext::GL_OBJECT_TEXTURE2D)
+        return JSC::jsNumber(info.textureTarget());
+
+    return JSC::jsUndefined();
+}
+
+JSC::JSValue JSWebCLGLObjectInfo::mipmapLevel(JSC::ExecState*) const
+{
+    WebCLGLObjectInfo& info = impl();
+
+    if (info.type() == ComputeContext::GL_OBJECT_TEXTURE2D)
+        return JSC::jsNumber(info.mipmapLevel());
+
+    return JSC::jsUndefined();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBCL)
