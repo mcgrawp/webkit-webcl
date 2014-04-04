@@ -530,8 +530,13 @@ Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState* exec, JSC::JSValue value, 
 }
 
 template <class T>
-Vector<T> toNativeArray(JSC::ExecState* exec, JSC::JSValue value)
+Vector<T> toNativeArray(JSC::ExecState* exec, JSC::JSValue value, bool acceptsNull = false)
 {
+    JSC::JSObject* object = value.getObject();
+    Vector<T> result;
+    if (!object && acceptsNull)
+        return result;
+
     unsigned length = 0;
     if (isJSArray(value)) {
         JSC::JSArray* array = asArray(value);
@@ -539,8 +544,6 @@ Vector<T> toNativeArray(JSC::ExecState* exec, JSC::JSValue value)
     } else
         toJSSequence(exec, value, length);
 
-    JSC::JSObject* object = value.getObject();
-    Vector<T> result;
     result.reserveInitialCapacity(length);
     typedef NativeValueTraits<T> TraitsType;
 

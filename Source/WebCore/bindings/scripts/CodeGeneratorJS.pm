@@ -3722,7 +3722,13 @@ sub JSValueToNative
             AddToImplIncludes("JS${arrayOrSequenceType}.h");
             return "(toRefPtrNativeArray<${arrayOrSequenceType}, JS${arrayOrSequenceType}>(exec, $value, &to${arrayOrSequenceType}))";
         }
-        return "toNativeArray<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">(exec, $value)";
+
+        my $isNullable = $signature->isNullable;
+        if ($isNullable) {
+            return "toNativeArray<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">(exec, $value, true /*isNullable*/)";
+        } else {
+            return "toNativeArray<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">(exec, $value)";
+        }
     }
 
     if ($codeGenerator->IsEnumType($type)) {
