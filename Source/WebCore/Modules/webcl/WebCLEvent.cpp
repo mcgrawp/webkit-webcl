@@ -58,7 +58,7 @@ WebCLEvent::WebCLEvent(PassRefPtr<ComputeEvent> event)
 
 WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionObject& exception)
 {
-    if (isPlatformObjectNeutralized()) {
+    if (isPlatformObjectNeutralized() || !holdsValidCLObject()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT, exception);
         return WebCLGetInfo();
     }
@@ -66,9 +66,6 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionObject& exception)
     CCerror err = 0;
     switch (paramName) {
     case ComputeContext::EVENT_COMMAND_EXECUTION_STATUS: {
-        if (!holdsValidCLObject())
-            return WebCLGetInfo(-1);
-
         CCint ccExecStatus = 0;
         err = platformObject()->getEventInfo(paramName, &ccExecStatus);
         if (err == ComputeContext::SUCCESS)
@@ -76,9 +73,6 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionObject& exception)
         break;
     }
     case ComputeContext::EVENT_COMMAND_TYPE: {
-        if (!holdsValidCLObject())
-            return WebCLGetInfo();
-
         CCCommandType ccCommandType = 0;
         err= platformObject()->getEventInfo(paramName, &ccCommandType);
         if (err == ComputeContext::SUCCESS)
@@ -86,18 +80,12 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionObject& exception)
         break;
     }
     case ComputeContext::EVENT_CONTEXT: {
-        if (!holdsValidCLObject())
-            return WebCLGetInfo();
-
         ASSERT(m_commandQueue);
         ASSERT(m_commandQueue->context());
         ASSERT(!isUserEvent());
         return WebCLGetInfo(m_commandQueue->context());
     }
     case ComputeContext::EVENT_COMMAND_QUEUE: {
-        if (!holdsValidCLObject())
-            return WebCLGetInfo();
-
         ASSERT(m_commandQueue);
         ASSERT(!isUserEvent());
         return WebCLGetInfo(m_commandQueue.get());
@@ -114,7 +102,7 @@ WebCLGetInfo WebCLEvent::getInfo(CCenum paramName, ExceptionObject& exception)
 
 CCulong WebCLEvent::getProfilingInfo(CCenum paramName, ExceptionObject& exception)
 {
-    if (isPlatformObjectNeutralized()) {
+    if (isPlatformObjectNeutralized() || !holdsValidCLObject()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT, exception);
         return 0;
     }
