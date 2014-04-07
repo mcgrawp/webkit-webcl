@@ -32,6 +32,16 @@
 
 namespace WebCore {
 
+PassRefPtr<ComputeEvent> ComputeEvent::create()
+{
+    return adoptRef(new ComputeEvent);
+}
+
+PassRefPtr<ComputeEvent> ComputeEvent::create(ComputeContext* context, CCerror& error)
+{
+    return adoptRef(new ComputeEvent(context, error));
+}
+
 ComputeEvent::ComputeEvent(ComputeContext* context, CCerror& error)
 {
     m_event = clCreateUserEvent(context->context(), &error);

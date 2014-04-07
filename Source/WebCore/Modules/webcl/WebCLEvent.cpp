@@ -47,11 +47,11 @@ WebCLEvent::~WebCLEvent()
 
 PassRefPtr<WebCLEvent> WebCLEvent::create()
 {
-    return adoptRef(new WebCLEvent(new ComputeEvent));
+    return adoptRef(new WebCLEvent(ComputeEvent::create()));
 }
 
-WebCLEvent::WebCLEvent(ComputeEvent* event)
-    : WebCLObjectImpl(event)
+WebCLEvent::WebCLEvent(PassRefPtr<ComputeEvent> event)
+    : WebCLObjectImpl2(event)
     , m_commandQueue(0)
 {
 }

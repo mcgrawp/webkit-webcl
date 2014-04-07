@@ -340,7 +340,7 @@ public:
 
     PassRefPtr<ComputeCommandQueue> createCommandQueue(ComputeDevice*, CCCommandQueueProperties, CCerror&);
     PassRefPtr<ComputeProgram> createProgram(const String& programSource, CCerror&);
-    ComputeEvent* createUserEvent(CCerror&);
+    PassRefPtr<ComputeEvent> createUserEvent(CCerror&);
     ComputeSampler* createSampler(CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
 
     ComputeMemoryObject* createBuffer(CCMemoryFlags type, size_t, void* data, CCerror&);

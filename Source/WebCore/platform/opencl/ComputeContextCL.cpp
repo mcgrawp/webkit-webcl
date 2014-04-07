@@ -380,9 +380,9 @@ PassRefPtr<ComputeCommandQueue> ComputeContext::createCommandQueue(ComputeDevice
     return ComputeCommandQueue::create(this, device, properties, error);
 }
 
-ComputeEvent* ComputeContext::createUserEvent(CCerror& error)
+PassRefPtr<ComputeEvent> ComputeContext::createUserEvent(CCerror& error)
 {
-    return new ComputeEvent(this, error);
+    return ComputeEvent::create(this, error);
 }
 
 PassRefPtr<ComputeProgram> ComputeContext::createProgram(const String& programSource, CCerror& error)
