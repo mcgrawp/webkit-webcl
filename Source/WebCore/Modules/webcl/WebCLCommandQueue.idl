@@ -41,7 +41,7 @@ typedef unsigned long CLuint;
             [EnforceRange] CLuint bufferOffset,
             [EnforceRange] CLuint bufferSize,
             ArrayBufferView ptr,
-            [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
     [RaisesException] void enqueueWriteBuffer(WebCLBuffer bufferId,
@@ -143,10 +143,10 @@ typedef unsigned long CLuint;
 
     [RaisesException] void enqueueNDRangeKernel(WebCLKernel kernel,
             [StrictTypeChecking, EnforceRange] CLuint workDim,
-            [Default=Undefined] sequence<CLuint> offsets,
+            [Default=Undefined] sequence<CLuint>? offsets,
             sequence<CLuint> globalWorkSize,
-            [Default=Undefined] sequence<CLuint> localWorkSize,
-            [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            [Default=Undefined] sequence<CLuint>? localWorkSize,
+            [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
     [RaisesException] void enqueueWriteImage(WebCLImage image,
