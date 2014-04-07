@@ -58,9 +58,8 @@ WebCLCommandQueue::~WebCLCommandQueue()
 PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, CCenum properties, WebCLDevice* webCLDevice, ExceptionObject& exception)
 {
     CCerror error = ComputeContext::SUCCESS;
-    ComputeCommandQueue* computeCommandQueue = context->computeContext()->createCommandQueue(webCLDevice->platformObject(), properties, error);
+    PassRefPtr<ComputeCommandQueue> computeCommandQueue = context->computeContext()->createCommandQueue(webCLDevice->platformObject(), properties, error);
     if (error != ComputeContext::SUCCESS) {
-        delete computeCommandQueue;
         setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
@@ -69,8 +68,8 @@ PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, C
     return queue.release();
 }
 
-WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, ComputeCommandQueue *computeCommandQueue, WebCLDevice* webCLDevice)
-    : WebCLObjectImpl(computeCommandQueue)
+WebCLCommandQueue::WebCLCommandQueue(WebCLContext* context, PassRefPtr<ComputeCommandQueue> computeCommandQueue, WebCLDevice* webCLDevice)
+    : WebCLObjectImpl2(computeCommandQueue)
     , m_context(context)
     , m_device(webCLDevice)
     , m_weakFactoryForLazyInitialization(this)

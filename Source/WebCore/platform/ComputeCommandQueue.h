@@ -31,7 +31,7 @@
 #include "ComputeTypes.h"
 #include "ComputeTypesTraits.h"
 
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -42,9 +42,9 @@ class ComputeEvent;
 class ComputeMemoryObject;
 class ComputeKernel;
 
-class ComputeCommandQueue {
+class ComputeCommandQueue : public RefCounted<ComputeCommandQueue> {
 public:
-    ComputeCommandQueue(ComputeContext*, ComputeDevice*, CCCommandQueueProperties, CCerror&);
+    static PassRefPtr<ComputeCommandQueue> create(ComputeContext*, ComputeDevice*, CCCommandQueueProperties, CCerror&);
     ~ComputeCommandQueue();
 
     CCerror enqueueNDRangeKernel(ComputeKernel*, CCuint globalWorkItemDimensions, const Vector<size_t>& globalWorkOffset,
@@ -95,6 +95,8 @@ public:
 
     CCerror releaseCommandQueue();
 private:
+    ComputeCommandQueue(ComputeContext*, ComputeDevice*, CCCommandQueueProperties, CCerror&);
+
     static CCerror getCommandQueueInfoBase(CCCommandQueue, CCCommandQueueInfoType, size_t, void *data, size_t* actualSize);
 
     CCCommandQueue m_commandQueue;

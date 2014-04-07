@@ -338,8 +338,8 @@ public:
 
     static CCerror waitForEvents(const Vector<ComputeEvent* >&);
 
-    ComputeCommandQueue* createCommandQueue(ComputeDevice*, CCCommandQueueProperties, CCerror&);
-    ComputeProgram* createProgram(const String& programSource, CCerror&);
+    PassRefPtr<ComputeCommandQueue> createCommandQueue(ComputeDevice*, CCCommandQueueProperties, CCerror&);
+    PassRefPtr<ComputeProgram> createProgram(const String& programSource, CCerror&);
     ComputeEvent* createUserEvent(CCerror&);
     ComputeSampler* createSampler(CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
 

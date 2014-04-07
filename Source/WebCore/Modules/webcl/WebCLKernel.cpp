@@ -61,20 +61,20 @@ WebCLKernel::~WebCLKernel()
 PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, WebCLProgram* program, const String& kernelName, ExceptionObject& exception)
 {
     CCerror error = ComputeContext::SUCCESS;
-    ComputeKernel* computeKernel = program->computeProgram()->createKernel(kernelName, error);
+    PassRefPtr<ComputeKernel> computeKernel = program->computeProgram()->createKernel(kernelName, error);
     if (error != ComputeContext::SUCCESS) {
-        delete computeKernel;
         setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
     return adoptRef(new WebCLKernel(context, program, computeKernel, kernelName));
 }
 
+// FIXME: Move to WebCLProgram class.
 Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* context, WebCLProgram* program, ExceptionObject& exception)
 {
     CCerror error = ComputeContext::SUCCESS;
-    Vector<ComputeKernel*> computeKernels = program->computeProgram()->createKernelsInProgram(error);
-    Vector<RefPtr<WebCLKernel> > kernels;
+    Vector<RefPtr<ComputeKernel>> computeKernels = program->computeProgram()->createKernelsInProgram(error);
+    Vector<RefPtr<WebCLKernel>> kernels;
     if (error != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(error, exception);
         return kernels;
@@ -89,14 +89,14 @@ Vector<RefPtr<WebCLKernel> > WebCLKernel::createKernelsInProgram(WebCLContext* c
             return kernels;
         }
 
-        kernels.append(adoptRef(new WebCLKernel(context, program, computeKernels[i], String(functionName.data()))));
+        kernels.append(adoptRef(new WebCLKernel(context, program, computeKernels[i].release(), String(functionName.data()))));
     }
 
     return kernels;
 }
 
-WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, ComputeKernel* kernel, const String& kernelName)
-    : WebCLObjectImpl(kernel)
+WebCLKernel::WebCLKernel(WebCLContext* context, WebCLProgram* program, PassRefPtr<ComputeKernel> kernel, const String& kernelName)
+    : WebCLObjectImpl2(kernel)
     , m_context(context)
     , m_program(program)
     , m_kernelName(kernelName)

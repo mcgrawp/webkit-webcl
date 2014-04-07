@@ -56,8 +56,7 @@ class WebCLKernelArgInfo;
 class WebCLProgram;
 class WebCLSampler;
 
-typedef ComputeKernel* ComputeKernelPtr;
-class WebCLKernel : public WebCLObjectImpl<ComputeKernelPtr> {
+class WebCLKernel : public WebCLObjectImpl2<ComputeKernel> {
 public:
     virtual ~WebCLKernel();
     static PassRefPtr<WebCLKernel> create(WebCLContext*, WebCLProgram*, const String&, ExceptionObject&);
@@ -85,7 +84,7 @@ public:
     }
 
 private:
-    WebCLKernel(WebCLContext*, WebCLProgram*, ComputeKernel*, const String&);
+    WebCLKernel(WebCLContext*, WebCLProgram*, PassRefPtr<ComputeKernel>, const String&);
 
     static bool isValidVectorLength(size_t arrayLength);
 

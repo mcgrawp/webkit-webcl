@@ -375,9 +375,9 @@ CCerror ComputeContext::waitForEvents(const Vector<ComputeEvent*>& events)
     return clError;
 }
 
-ComputeCommandQueue* ComputeContext::createCommandQueue(ComputeDevice* device, CCCommandQueueProperties properties, CCerror& error)
+PassRefPtr<ComputeCommandQueue> ComputeContext::createCommandQueue(ComputeDevice* device, CCCommandQueueProperties properties, CCerror& error)
 {
-    return new ComputeCommandQueue(this, device, properties, error);
+    return ComputeCommandQueue::create(this, device, properties, error);
 }
 
 ComputeEvent* ComputeContext::createUserEvent(CCerror& error)
@@ -385,9 +385,9 @@ ComputeEvent* ComputeContext::createUserEvent(CCerror& error)
     return new ComputeEvent(this, error);
 }
 
-ComputeProgram* ComputeContext::createProgram(const String& programSource, CCerror& error)
+PassRefPtr<ComputeProgram> ComputeContext::createProgram(const String& programSource, CCerror& error)
 {
-    return new ComputeProgram(this, programSource, error);
+    return ComputeProgram::create(this, programSource, error);
 }
 
 ComputeMemoryObject* ComputeContext::createBuffer(CCMemoryFlags type, size_t size, void* data, CCerror& error)

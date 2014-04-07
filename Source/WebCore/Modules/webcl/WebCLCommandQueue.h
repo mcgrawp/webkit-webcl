@@ -48,8 +48,7 @@ class WebCLKernel;
 class WebCLMemoryObject;
 class WebCLCallback;
 
-typedef ComputeCommandQueue* ComputeCommandQueuePtr;
-class WebCLCommandQueue : public WebCLObjectImpl<ComputeCommandQueuePtr> {
+class WebCLCommandQueue : public WebCLObjectImpl2<ComputeCommandQueue> {
 public:
     ~WebCLCommandQueue();
     static PassRefPtr<WebCLCommandQueue> create(WebCLContext*, CCenum queueProperties, WebCLDevice*, ExceptionObject&);
@@ -138,11 +137,11 @@ public:
     // Override for isPlatformObjectNeutralized() to add check for queue blocked by Async Finish() call.
     bool isPlatformObjectNeutralized() const
     {
-        return WebCLObjectImpl::isPlatformObjectNeutralized() || m_isQueueBlockedByFinish;
+        return WebCLObjectImpl2::isPlatformObjectNeutralized() || m_isQueueBlockedByFinish;
     };
 
 private:
-    WebCLCommandQueue(WebCLContext*, ComputeCommandQueue*, WebCLDevice*);
+    WebCLCommandQueue(WebCLContext*, PassRefPtr<ComputeCommandQueue>, WebCLDevice*);
 
     void enqueueWriteBufferBase(WebCLBuffer*, CCbool blockingWrite, CCuint, CCuint, void* hostPtr, size_t hostPtrLength,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionObject&);

@@ -75,10 +75,9 @@ WebCLMemoryInitializer::WebCLMemoryInitializer(WebCLContext* context)
 
 WebCLMemoryInitializer::~WebCLMemoryInitializer()
 {
-    // FIXME: Use OwnPtr.
-    delete m_program;
-    delete m_kernelChar;
-    delete m_kernelChar16;
+    m_program.clear();
+    m_kernelChar.clear();
+    m_kernelChar16.clear();
 }
 
 void WebCLMemoryInitializer::ensureMemoryInitialization(WebCLMemoryObject* memoryObject, WebCLCommandQueue* commandQueue, ExceptionObject& exception)
@@ -86,7 +85,7 @@ void WebCLMemoryInitializer::ensureMemoryInitialization(WebCLMemoryObject* memor
     CCerror error = ComputeContext::SUCCESS;
 
     if (!m_program) {
-        m_program = new ComputeProgram(m_context->computeContext(), programSource, error);
+        m_program = ComputeProgram::create(m_context->computeContext(), programSource, error);
         RETURN_IF_ERROR(error);
 
         Vector<ComputeDevice*> computeDevices;
@@ -95,10 +94,10 @@ void WebCLMemoryInitializer::ensureMemoryInitialization(WebCLMemoryObject* memor
         error = m_program->buildProgram(computeDevices, emptyString(), 0 /*pfnNotify*/, 0 /*userData*/);
         RETURN_IF_ERROR(error);
 
-        m_kernelChar16 = new ComputeKernel(m_program, "init16", error);
+        m_kernelChar16 = ComputeKernel::create(m_program.get(), "init16", error);
         RETURN_IF_ERROR(error);
 
-        m_kernelChar = new ComputeKernel(m_program, "init", error);
+        m_kernelChar = ComputeKernel::create(m_program.get(), "init", error);
         RETURN_IF_ERROR(error);
     }
 
@@ -115,7 +114,7 @@ void WebCLMemoryInitializer::ensureMemoryInitialization(WebCLMemoryObject* memor
         Vector<size_t> globalWorkOffset;
         Vector<size_t> localWorkSize;
 
-        error = commandQueue->platformObject()->enqueueNDRangeKernel(m_kernelChar16, globalWorkSize.size(), globalWorkOffset, globalWorkSize, localWorkSize, Vector<ComputeEvent*>(), 0 /*ComputeEvent*/);
+        error = commandQueue->platformObject()->enqueueNDRangeKernel(m_kernelChar16.get(), globalWorkSize.size(), globalWorkOffset, globalWorkSize, localWorkSize, Vector<ComputeEvent*>(), 0 /*ComputeEvent*/);
         RETURN_IF_ERROR(error);
     }
 
@@ -137,7 +136,7 @@ void WebCLMemoryInitializer::ensureMemoryInitialization(WebCLMemoryObject* memor
         Vector<size_t> globalWorkOffset;
         Vector<size_t> localWorkSize;
 
-        error = commandQueue->platformObject()->enqueueNDRangeKernel(m_kernelChar, globalWorkSize.size(), globalWorkOffset, globalWorkSize, localWorkSize, Vector<ComputeEvent*>(), 0 /*ComputeEvent*/);
+        error = commandQueue->platformObject()->enqueueNDRangeKernel(m_kernelChar.get(), globalWorkSize.size(), globalWorkOffset, globalWorkSize, localWorkSize, Vector<ComputeEvent*>(), 0 /*ComputeEvent*/);
         RETURN_IF_ERROR(error);
     }
 

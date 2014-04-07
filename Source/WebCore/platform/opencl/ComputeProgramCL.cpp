@@ -33,6 +33,11 @@
 
 namespace WebCore {
 
+PassRefPtr<ComputeProgram> ComputeProgram::create(ComputeContext* context, const String& programSource, CCerror& error)
+{
+    return adoptRef(new ComputeProgram(context, programSource, error));
+}
+
 ComputeProgram::ComputeProgram(ComputeContext* context, const String& programSource, CCerror& error)
 {
     const CString& programSourceCString = programSource.utf8();
@@ -56,14 +61,14 @@ CCerror ComputeProgram::buildProgram(const Vector<ComputeDevice*>& devices, cons
     return clBuildProgram(m_program, devices.size(), clDevices.data(), optionsPtr, notifyFunction, userData);
 }
 
-ComputeKernel* ComputeProgram::createKernel(const String& kernelName, CCerror& error)
+PassRefPtr<ComputeKernel> ComputeProgram::createKernel(const String& kernelName, CCerror& error)
 {
-    return new ComputeKernel(this, kernelName.utf8().data(), error);
+    return ComputeKernel::create(this, kernelName.utf8().data(), error);
 }
 
-Vector<ComputeKernel*> ComputeProgram::createKernelsInProgram(CCerror& error)
+Vector<RefPtr<ComputeKernel>> ComputeProgram::createKernelsInProgram(CCerror& error)
 {
-    Vector<ComputeKernel* > computeKernels;
+    Vector<RefPtr<ComputeKernel>> computeKernels;
 
     CCuint numberOfKernels = 0;
     Vector<CCKernel> kernels;
@@ -82,7 +87,7 @@ Vector<ComputeKernel*> ComputeProgram::createKernelsInProgram(CCerror& error)
 
     computeKernels.resize(numberOfKernels);
     for (size_t i = 0; i < numberOfKernels; ++i)
-        computeKernels[i] = new ComputeKernel(kernels[i]);
+        computeKernels[i] = ComputeKernel::create(kernels[i]);
 
     return computeKernels;
 }

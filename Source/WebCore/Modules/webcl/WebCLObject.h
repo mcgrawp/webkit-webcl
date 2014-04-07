@@ -101,6 +101,48 @@ private:
     bool m_isReleased;
 };
 
+template <class T>
+class WebCLObjectImpl2 : public WebCLObject {
+public:
+    virtual ~WebCLObjectImpl2() { }
+
+    T* platformObject() const { return m_platformObject.get(); }
+
+    virtual bool isReleased() const { return m_isReleased; }
+
+    virtual void release() { releasePlatformObject(); }
+
+    virtual void releasePlatformObject()
+    {
+        if (isPlatformObjectNeutralized())
+            return;
+
+        //delete m_platformObject;
+        m_platformObject.clear();
+        m_isReleased = true;
+    }
+
+    virtual bool isPlatformObjectNeutralized() const
+    {
+        ASSERT(!!platformObject() != isReleased());
+        return isReleased();
+    }
+
+protected:
+    WebCLObjectImpl2(PassRefPtr<T> object)
+        : m_platformObject(object)
+        , m_isReleased(false)
+    {
+    }
+
+    virtual void releasePlatformObjectImpl() { }
+
+private:
+    RefPtr<T> m_platformObject;
+    bool m_isReleased;
+};
+
+
 } // WebCore
 
 #endif // ENABLE(WEBCL)

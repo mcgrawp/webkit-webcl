@@ -74,6 +74,12 @@ bool validateWebCLObject(WebCLObjectImpl<T>* object)
     return object && !object->isPlatformObjectNeutralized();
 }
 
+template<class T>
+bool validateWebCLObject(WebCLObjectImpl2<T>* object)
+{
+    return object && !object->isPlatformObjectNeutralized();
+}
+
 }
 }
 

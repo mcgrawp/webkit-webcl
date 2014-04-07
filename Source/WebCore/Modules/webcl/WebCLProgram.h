@@ -43,8 +43,7 @@ class WebCLDevice;
 class WebCLGetInfo;
 class WebCLKernel;
 
-typedef ComputeProgram* ComputeProgramPtr;
-class WebCLProgram : public WebCLObjectImpl<ComputeProgramPtr> {
+class WebCLProgram : public WebCLObjectImpl2<ComputeProgram> {
 public:
     virtual ~WebCLProgram();
     static PassRefPtr<WebCLProgram> create(WebCLContext*, const String& programSource, ExceptionObject&);
@@ -62,7 +61,7 @@ public:
     const String& sourceWithCommentsStripped();
 
 private:
-    WebCLProgram(WebCLContext*, ComputeProgram*, const String&);
+    WebCLProgram(WebCLContext*, PassRefPtr<ComputeProgram>, const String&);
     void ccDeviceListFromWebCLDeviceList(const Vector<RefPtr<WebCLDevice> >&, Vector<ComputeDevice*>&, ExceptionObject&);
 
     static void callbackProxyOnMainThread(void* userData);
