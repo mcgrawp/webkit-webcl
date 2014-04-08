@@ -63,6 +63,26 @@ static cl_mem_flags computeMemoryTypeToCL(int memoryType)
     return clMemoryType;
 }
 
+PassRefPtr<ComputeMemoryObject> ComputeMemoryObject::create(ComputeContext* context, CCMemoryFlags flags, size_t size, void* data, CCerror& error)
+{
+    return adoptRef(new ComputeMemoryObject(context, flags, size, data, error));
+}
+
+PassRefPtr<ComputeMemoryObject> ComputeMemoryObject::create(ComputeContext* context, CCMemoryFlags flags, size_t width, size_t height, CCuint rowPitch, const CCImageFormat& imageFormat, void* data, CCerror& error)
+{
+    return adoptRef(new ComputeMemoryObject(context, flags, width, height, rowPitch, imageFormat, data, error));
+}
+
+PassRefPtr<ComputeMemoryObject> ComputeMemoryObject::create(ComputeContext* context, CCMemoryFlags flags, GC3Duint bufferId, GLBufferSourceType type, CCerror& error)
+{
+    return adoptRef(new ComputeMemoryObject(context, flags, bufferId, type, error));
+}
+
+PassRefPtr<ComputeMemoryObject> ComputeMemoryObject::create(ComputeContext* context, CCMemoryFlags flags, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror& error)
+{
+    return adoptRef(new ComputeMemoryObject(context, flags, textureTarget, mipLevel, texture, error));
+}
+
 ComputeMemoryObject::~ComputeMemoryObject()
 {
     clReleaseMemObject(m_memoryObject);
@@ -108,10 +128,10 @@ ComputeMemoryObject::ComputeMemoryObject(PlatformComputeObject memoryObject)
 {
 }
 
-ComputeMemoryObject* ComputeMemoryObject::createSubBuffer(CCMemoryFlags flags, CCBufferCreateType bufferCreateType, CCBufferRegion* bufferRegion, CCerror& error)
+PassRefPtr<ComputeMemoryObject> ComputeMemoryObject::createSubBuffer(CCMemoryFlags flags, CCBufferCreateType bufferCreateType, CCBufferRegion* bufferRegion, CCerror& error)
 {
     PlatformComputeObject memoryObject = clCreateSubBuffer(m_memoryObject, flags, bufferCreateType, bufferRegion, &error);
-    return new ComputeMemoryObject(memoryObject);
+    return adoptRef(new ComputeMemoryObject(memoryObject));
 }
 
 CCerror ComputeMemoryObject::getImageInfoBase(PlatformComputeObject image, CCImageInfoType infoType, size_t sizeOfData, void* data, size_t* retSize)

@@ -51,7 +51,7 @@ public:
     WeakPtr<WebCLBuffer> createWeakPtrForLazyInitialization() { return m_weakFactoryForLazyInitialization.createWeakPtr(); }
 
 private:
-    WebCLBuffer(WebCLContext*, ComputeMemoryObject*, CCuint sizeInBytes, WebCLBuffer* parentBuffer = 0);
+    WebCLBuffer(WebCLContext*, PassRefPtr<ComputeMemoryObject>, CCuint sizeInBytes, WebCLBuffer* parentBuffer = 0);
 
 #if ENABLE(WEBGL)
     void cacheGLObjectInfo(WebGLBuffer*);

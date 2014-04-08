@@ -390,34 +390,34 @@ PassRefPtr<ComputeProgram> ComputeContext::createProgram(const String& programSo
     return ComputeProgram::create(this, programSource, error);
 }
 
-ComputeMemoryObject* ComputeContext::createBuffer(CCMemoryFlags type, size_t size, void* data, CCerror& error)
+PassRefPtr<ComputeMemoryObject> ComputeContext::createBuffer(CCMemoryFlags type, size_t size, void* data, CCerror& error)
 {
-    return new ComputeMemoryObject(this, type, size, data, error);
+    return ComputeMemoryObject::create(this, type, size, data, error);
 }
 
-ComputeMemoryObject* ComputeContext::createImage2D(CCMemoryFlags flags, size_t width, size_t height, CCuint rowPitch, const CCImageFormat& imageFormat, void* data, CCerror& error)
+PassRefPtr<ComputeMemoryObject> ComputeContext::createImage2D(CCMemoryFlags flags, size_t width, size_t height, CCuint rowPitch, const CCImageFormat& imageFormat, void* data, CCerror& error)
 {
-    return new ComputeMemoryObject(this, flags, width, height, rowPitch, imageFormat, data, error);
+    return ComputeMemoryObject::create(this, flags, width, height, rowPitch, imageFormat, data, error);
 }
 
-ComputeMemoryObject* ComputeContext::createFromGLBuffer(CCMemoryFlags flags, GC3Duint bufferId, CCerror& error)
+PassRefPtr<ComputeMemoryObject> ComputeContext::createFromGLBuffer(CCMemoryFlags flags, GC3Duint bufferId, CCerror& error)
 {
-    return new ComputeMemoryObject(this, flags, bufferId, GLBuffer, error);
+    return ComputeMemoryObject::create(this, flags, bufferId, GLBuffer, error);
 }
 
-ComputeMemoryObject* ComputeContext::createFromGLRenderbuffer(CCMemoryFlags flags, GC3Duint renderbufferId, CCerror& error)
+PassRefPtr<ComputeMemoryObject> ComputeContext::createFromGLRenderbuffer(CCMemoryFlags flags, GC3Duint renderbufferId, CCerror& error)
 {
-    return new ComputeMemoryObject(this, flags, renderbufferId, GLRenderbuffer, error);
+    return ComputeMemoryObject::create(this, flags, renderbufferId, GLRenderbuffer, error);
 }
 
-ComputeMemoryObject* ComputeContext::createFromGLTexture2D(CCMemoryFlags flags, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror& error)
+PassRefPtr<ComputeMemoryObject> ComputeContext::createFromGLTexture2D(CCMemoryFlags flags, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror& error)
 {
-    return new ComputeMemoryObject(this, flags, textureTarget, mipLevel, texture, error);
+    return ComputeMemoryObject::create(this, flags, textureTarget, mipLevel, texture, error);
 }
 
-ComputeSampler* ComputeContext::createSampler(CCbool normalizedCoords, CCAddressingMode addressingMode, CCFilterMode filterMode, CCerror& error)
+PassRefPtr<ComputeSampler> ComputeContext::createSampler(CCbool normalizedCoords, CCAddressingMode addressingMode, CCFilterMode filterMode, CCerror& error)
 {
-    return new ComputeSampler(this, normalizedCoords, addressingMode, filterMode, error);
+    return ComputeSampler::create(this, normalizedCoords, addressingMode, filterMode, error);
 }
 
 CCerror ComputeContext::supportedImageFormats(CCMemoryFlags type, CCMemoryObjectType imageType, Vector<CCImageFormat>& imageFormatsOut)
