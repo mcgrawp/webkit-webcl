@@ -41,7 +41,7 @@ typedef unsigned long GLenum;
     [RaisesException] sequence<WebCLImageDescriptor> getSupportedImageFormats();
     [RaisesException] sequence<WebCLImageDescriptor> getSupportedImageFormats(CLenum memFlags);
 
-    [StrictTypeChecking, RaisesException] WebCLCommandQueue createCommandQueue([Default=Undefined] optional WebCLDevice device, [Default=Undefined] optional CLenum prop);
+    [StrictTypeChecking, RaisesException] WebCLCommandQueue createCommandQueue([Default=Undefined] optional WebCLDevice? device, [Default=Undefined] optional CLenum prop);
 
     [RaisesException] WebCLProgram createProgram(DOMString kernelSource);
 
