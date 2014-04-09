@@ -35,6 +35,16 @@
 
 namespace WebCore {
 
+PassRefPtr<ComputeKernel> ComputeKernel::create(ComputeProgram* program, const String& kernelName, CCerror& error)
+{
+    return adoptRef(new ComputeKernel(program, kernelName, error));
+}
+
+PassRefPtr<ComputeKernel> ComputeKernel::create(CCKernel kernel)
+{
+    return adoptRef(new ComputeKernel(kernel));
+}
+
 ComputeKernel::ComputeKernel(ComputeProgram* program, const String& kernelName, CCerror& error)
 {
     m_kernel = clCreateKernel(program->program(), kernelName.utf8().data(), &error);

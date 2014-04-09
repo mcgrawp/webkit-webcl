@@ -32,6 +32,7 @@
 #include "ComputeTypes.h"
 #include "ComputeTypesTraits.h"
 
+#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -40,10 +41,11 @@ class ComputeMemoryObject;
 class ComputeProgram;
 class ComputeSampler;
 
-class ComputeKernel {
+class ComputeKernel : public RefCounted<ComputeKernel> {
 public:
-    ComputeKernel(ComputeProgram*, const String& kernelName, CCerror&);
-    ComputeKernel(CCKernel);
+    static PassRefPtr<ComputeKernel> create(ComputeProgram*, const String& kernelName, CCerror&);
+    static PassRefPtr<ComputeKernel> create(CCKernel);
+
     ~ComputeKernel();
 
     CCerror setKernelArg(CCuint argIndex, ComputeMemoryObject*);
@@ -69,6 +71,8 @@ public:
     CCerror release();
 
 private:
+    ComputeKernel(ComputeProgram*, const String& kernelName, CCerror&);
+    ComputeKernel(CCKernel);
 
     static CCerror getKernelInfoBase(CCKernel, CCKernelInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getWorkGroupInfoBase(CCKernel, CCDeviceID, CCKernelWorkGroupInfoType, size_t, void *data, size_t* actualSize);

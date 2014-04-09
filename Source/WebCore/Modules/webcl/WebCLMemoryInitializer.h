@@ -62,9 +62,9 @@ private:
 
 private:
     WebCLContext* m_context;
-    ComputeProgram* m_program;
-    ComputeKernel* m_kernelChar;
-    ComputeKernel* m_kernelChar16;
+    RefPtr<ComputeProgram> m_program;
+    RefPtr<ComputeKernel> m_kernelChar;
+    RefPtr<ComputeKernel> m_kernelChar16;
 
     Vector<WeakPtr<WebCLBuffer> > m_buffersPendingMemoryInitialization;
     Vector<WeakPtr<WebCLCommandQueue> > m_queuesForMemoryInitialization;

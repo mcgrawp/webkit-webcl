@@ -45,16 +45,15 @@ WebCLUserEvent::~WebCLUserEvent()
 PassRefPtr<WebCLUserEvent> WebCLUserEvent::create(WebCLContext* context, ExceptionObject& exception)
 {
     CCerror userEventError = 0;
-    ComputeEvent* userEvent = context->computeContext()->createUserEvent(userEventError);
-    if (!userEvent) {
-        ASSERT(userEventError != ComputeContext::SUCCESS);
+    PassRefPtr<ComputeEvent> userEvent = context->computeContext()->createUserEvent(userEventError);
+    if (userEventError != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(userEventError, exception);
         return 0;
     }
     return adoptRef(new WebCLUserEvent(context, userEvent));
 }
 
-WebCLUserEvent::WebCLUserEvent(WebCLContext* context, ComputeEvent* event)
+WebCLUserEvent::WebCLUserEvent(WebCLContext* context, PassRefPtr<ComputeEvent> event)
     : WebCLEvent(event)
     , m_context(context)
     , m_eventStatusSituation(StatusUnset)

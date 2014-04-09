@@ -68,8 +68,7 @@ class WebGLTexture;
 // other WebCL classes have as platformObject() a native opencl type. However
 // WebCLContext has as platformObject() an abstraction called ComputeContext
 
-typedef ComputeContext* ComputeContextPtr;
-class WebCLContext : public WebCLObjectImpl<ComputeContextPtr> {
+class WebCLContext : public WebCLObjectImpl<ComputeContext> {
 public:
     virtual ~WebCLContext();
 
@@ -121,7 +120,7 @@ public:
     bool isGLCapableContext() const;
 
 private:
-    WebCLContext(WebCL*, ComputeContext*, const Vector<RefPtr<WebCLDevice> >&, WebGLRenderingContext*, HashSet<String>&);
+    WebCLContext(WebCL*, PassRefPtr<ComputeContext>, const Vector<RefPtr<WebCLDevice> >&, WebGLRenderingContext*, HashSet<String>&);
 
     PassRefPtr<WebCLImage> createImage2DBase(CCenum flags, CCuint width, CCuint height, CCuint rowPitch, CCuint channelOrder, CCuint channelType, void*, ExceptionObject&);
     PassRefPtr<WebCLBuffer> createBufferBase(CCenum memoryFlags, CCuint size, void* data, ExceptionObject&);

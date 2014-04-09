@@ -48,8 +48,7 @@ class WebCLKernel;
 class WebCLMemoryObject;
 class WebCLCallback;
 
-typedef ComputeCommandQueue* ComputeCommandQueuePtr;
-class WebCLCommandQueue : public WebCLObjectImpl<ComputeCommandQueuePtr> {
+class WebCLCommandQueue : public WebCLObjectImpl<ComputeCommandQueue> {
 public:
     ~WebCLCommandQueue();
     static PassRefPtr<WebCLCommandQueue> create(WebCLContext*, CCenum queueProperties, WebCLDevice*, ExceptionObject&);
@@ -142,7 +141,7 @@ public:
     };
 
 private:
-    WebCLCommandQueue(WebCLContext*, ComputeCommandQueue*, WebCLDevice*);
+    WebCLCommandQueue(WebCLContext*, PassRefPtr<ComputeCommandQueue>, WebCLDevice*);
 
     void enqueueWriteBufferBase(WebCLBuffer*, CCbool blockingWrite, CCuint, CCuint, void* hostPtr, size_t hostPtrLength,
         const Vector<RefPtr<WebCLEvent> >&, WebCLEvent*, ExceptionObject&);

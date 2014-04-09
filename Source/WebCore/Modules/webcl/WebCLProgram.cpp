@@ -53,9 +53,8 @@ PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const Strin
 {
     CCerror error = 0;
 
-    ComputeProgram* computeProgram = context->computeContext()->createProgram(programSource, error);
+    PassRefPtr<ComputeProgram> computeProgram = context->computeContext()->createProgram(programSource, error);
     if (error != ComputeContext::SUCCESS) {
-        delete computeProgram;
         setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
@@ -63,7 +62,7 @@ PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const Strin
     return adoptRef(new WebCLProgram(context, computeProgram, programSource));
 }
 
-WebCLProgram::WebCLProgram(WebCLContext*context, ComputeProgram* program, const String& programSource)
+WebCLProgram::WebCLProgram(WebCLContext*context, PassRefPtr<ComputeProgram> program, const String& programSource)
     : WebCLObjectImpl(program)
     , m_context(context)
     , m_programSource(programSource)

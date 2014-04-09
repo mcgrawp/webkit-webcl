@@ -31,13 +31,16 @@
 #include "ComputeTypes.h"
 #include "ComputeTypesTraits.h"
 
+#include <wtf/RefCounted.h>
+
 namespace WebCore {
 
 class ComputeContext;
 
-class ComputeSampler {
+class ComputeSampler : public RefCounted<ComputeSampler> {
 public:
-    ComputeSampler(ComputeContext*, CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
+    static PassRefPtr<ComputeSampler> create(ComputeContext*, CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
+
     ~ComputeSampler();
 
     CCSampler sampler() const
@@ -54,6 +57,8 @@ public:
     CCerror release();
 
 private:
+    ComputeSampler(ComputeContext*, CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
+
     static CCerror getSamplerInfoBase(CCSampler, CCSamplerInfoType, size_t, void *data, size_t* actualSize);
 
     CCSampler m_sampler;

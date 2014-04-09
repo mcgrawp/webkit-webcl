@@ -38,15 +38,14 @@ class ComputeSampler;
 class WebCLGetInfo;
 class WebCLContext;
 
-typedef ComputeSampler* ComputeSamplerPtr;
-class WebCLSampler : public WebCLObjectImpl<ComputeSamplerPtr> {
+class WebCLSampler : public WebCLObjectImpl<ComputeSampler> {
 public:
     virtual ~WebCLSampler();
     static PassRefPtr<WebCLSampler> create(WebCLContext*, CCbool, CCenum, CCenum, ExceptionObject&);
     WebCLGetInfo getInfo(CCenum, ExceptionObject&);
 
 private:
-    WebCLSampler(WebCLContext*, ComputeSampler*, CCbool, CCenum, CCenum);
+    WebCLSampler(WebCLContext*, PassRefPtr<ComputeSampler>, CCbool, CCenum, CCenum);
 
     CCbool m_normCoords;
     CCenum m_addressingMode;

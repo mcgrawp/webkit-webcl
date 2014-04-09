@@ -49,7 +49,7 @@ public:
     virtual WebCLContext* context() const;
 
 private:
-    WebCLUserEvent(WebCLContext*, ComputeEvent*);
+    WebCLUserEvent(WebCLContext*, PassRefPtr<ComputeEvent>);
 
     RefPtr<WebCLContext> m_context;
     enum EventStatusSituation m_eventStatusSituation;

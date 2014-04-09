@@ -31,14 +31,17 @@
 #include "ComputeTypes.h"
 #include "ComputeTypesTraits.h"
 
+#include <wtf/RefCounted.h>
+
 namespace WebCore {
 
 class ComputeContext;
 
-class ComputeEvent {
+class ComputeEvent : public RefCounted<ComputeEvent> {
 public:
-    ComputeEvent();
-    ComputeEvent(ComputeContext*, CCerror&);
+    static PassRefPtr<ComputeEvent> create();
+    static PassRefPtr<ComputeEvent> create(ComputeContext*, CCerror&);
+
     ~ComputeEvent();
 
     CCerror setEventCallback(CCenum eventCommandExecStatus, pfnEventNotify callback, void* userData);
@@ -72,6 +75,9 @@ public:
     CCerror release();
 
 private:
+    ComputeEvent();
+    ComputeEvent(ComputeContext*, CCerror&);
+
     static CCerror getEventInfoBase(CCEvent, CCEventInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getEventProfilingInfoBase(CCEvent, CCEventProfilingInfoType, size_t, void *data, size_t* actualSize);
 

@@ -65,7 +65,7 @@ class WebCLObjectImpl : public WebCLObject {
 public:
     virtual ~WebCLObjectImpl() { }
 
-    T platformObject() const { return m_platformObject; }
+    T* platformObject() const { return m_platformObject.get(); }
 
     virtual bool isReleased() const { return m_isReleased; }
 
@@ -76,8 +76,7 @@ public:
         if (isPlatformObjectNeutralized())
             return;
 
-        delete m_platformObject;
-        m_platformObject = 0;
+        m_platformObject.clear();
         m_isReleased = true;
     }
 
@@ -88,7 +87,7 @@ public:
     }
 
 protected:
-    WebCLObjectImpl(T object)
+    WebCLObjectImpl(PassRefPtr<T> object)
         : m_platformObject(object)
         , m_isReleased(false)
     {
@@ -97,9 +96,10 @@ protected:
     virtual void releasePlatformObjectImpl() { }
 
 private:
-    T m_platformObject;
+    RefPtr<T> m_platformObject;
     bool m_isReleased;
 };
+
 
 } // WebCore
 

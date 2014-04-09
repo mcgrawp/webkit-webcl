@@ -47,8 +47,7 @@ class ComputePlatform;
 class ComputeProgram;
 class ComputeSampler;
 
-class ComputeContext {
-    WTF_MAKE_NONCOPYABLE(ComputeContext);
+class ComputeContext : public RefCounted<ComputeContext> {
 public:
     enum {
         SUCCESS = 0,
@@ -333,21 +332,22 @@ public:
         GL_MIPMAP_LEVEL = 0x2005,
     };
 
+    static PassRefPtr<ComputeContext> create(const Vector<ComputeDevice*>&, ComputePlatform*, GraphicsContext3D*, CCerror&);
     ComputeContext(const Vector<ComputeDevice*>&, ComputePlatform*, GraphicsContext3D*, CCerror&);
     ~ComputeContext();
 
     static CCerror waitForEvents(const Vector<ComputeEvent* >&);
 
-    ComputeCommandQueue* createCommandQueue(ComputeDevice*, CCCommandQueueProperties, CCerror&);
-    ComputeProgram* createProgram(const String& programSource, CCerror&);
-    ComputeEvent* createUserEvent(CCerror&);
-    ComputeSampler* createSampler(CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
+    PassRefPtr<ComputeCommandQueue> createCommandQueue(ComputeDevice*, CCCommandQueueProperties, CCerror&);
+    PassRefPtr<ComputeProgram> createProgram(const String& programSource, CCerror&);
+    PassRefPtr<ComputeEvent> createUserEvent(CCerror&);
+    PassRefPtr<ComputeSampler> createSampler(CCbool normalizedCoords, CCAddressingMode, CCFilterMode, CCerror&);
 
-    ComputeMemoryObject* createBuffer(CCMemoryFlags type, size_t, void* data, CCerror&);
-    ComputeMemoryObject* createImage2D(CCMemoryFlags type, size_t width, size_t height, CCuint rowPitch, const CCImageFormat&, void* data, CCerror&);
-    ComputeMemoryObject* createFromGLBuffer(CCMemoryFlags type, GC3Duint bufferId, CCerror&);
-    ComputeMemoryObject* createFromGLRenderbuffer(CCMemoryFlags type, GC3Duint renderbufferId, CCerror&);
-    ComputeMemoryObject* createFromGLTexture2D(CCMemoryFlags type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror&);
+    PassRefPtr<ComputeMemoryObject> createBuffer(CCMemoryFlags type, size_t, void* data, CCerror&);
+    PassRefPtr<ComputeMemoryObject> createImage2D(CCMemoryFlags type, size_t width, size_t height, CCuint rowPitch, const CCImageFormat&, void* data, CCerror&);
+    PassRefPtr<ComputeMemoryObject> createFromGLBuffer(CCMemoryFlags type, GC3Duint bufferId, CCerror&);
+    PassRefPtr<ComputeMemoryObject> createFromGLRenderbuffer(CCMemoryFlags type, GC3Duint renderbufferId, CCerror&);
+    PassRefPtr<ComputeMemoryObject> createFromGLTexture2D(CCMemoryFlags type, GC3Denum textureTarget, GC3Dint mipLevel, GC3Duint texture, CCerror&);
 
     CCerror supportedImageFormats(CCMemoryFlags, CCMemoryObjectType, Vector<CCImageFormat>&);
 

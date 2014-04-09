@@ -32,6 +32,11 @@
 
 namespace WebCore {
 
+PassRefPtr<ComputeSampler> ComputeSampler::create(ComputeContext* context, CCbool normalizedCoords, CCAddressingMode addressingMode, CCFilterMode filterMode, CCerror& error)
+{
+    return adoptRef(new ComputeSampler(context, normalizedCoords, addressingMode, filterMode, error));
+}
+
 ComputeSampler::ComputeSampler(ComputeContext* context, CCbool normalizedCoords, CCAddressingMode addressingMode, CCFilterMode filterMode, CCerror& error)
 {
     m_sampler = clCreateSampler(context->context(), normalizedCoords, addressingMode, filterMode, &error);

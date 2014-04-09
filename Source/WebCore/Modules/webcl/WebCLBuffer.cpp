@@ -46,9 +46,8 @@ WebCLBuffer::~WebCLBuffer()
 PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memoryFlags, CCuint sizeInBytes, void* data, ExceptionObject& exception)
 {
     CCerror error = ComputeContext::SUCCESS;
-    ComputeMemoryObject* buffer = context->computeContext()->createBuffer(memoryFlags, sizeInBytes, data, error);
+    PassRefPtr<ComputeMemoryObject> buffer = context->computeContext()->createBuffer(memoryFlags, sizeInBytes, data, error);
     if (error != ComputeContext::SUCCESS) {
-        delete buffer;
         setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
@@ -62,9 +61,8 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memory
     Platform3DObject platform3DObject = webGLBuffer->object();
     ASSERT(platform3DObject);
     CCerror error = ComputeContext::SUCCESS;
-    ComputeMemoryObject* buffer = context->computeContext()->createFromGLBuffer(memoryFlags, platform3DObject, error);
+    PassRefPtr<ComputeMemoryObject> buffer = context->computeContext()->createFromGLBuffer(memoryFlags, platform3DObject, error);
     if (error != ComputeContext::SUCCESS) {
-        delete buffer;
         setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
@@ -74,7 +72,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memory
 }
 #endif
 
-WebCLBuffer::WebCLBuffer(WebCLContext* context, ComputeMemoryObject* buffer, CCuint sizeInBytes, WebCLBuffer* parentBuffer)
+WebCLBuffer::WebCLBuffer(WebCLContext* context, PassRefPtr<ComputeMemoryObject> buffer, CCuint sizeInBytes, WebCLBuffer* parentBuffer)
     : WebCLMemoryObject(context, buffer, sizeInBytes, parentBuffer)
     , m_weakFactoryForLazyInitialization(this)
 {
@@ -99,10 +97,9 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(CCenum memoryFlags, CCuint 
 
     CCBufferRegion bufferCreateInfo = {origin, sizeInBytes};
     CCerror error = 0;
-    ComputeMemoryObject* computeSubBuffer = platformObject()->createSubBuffer(memoryFlags, ComputeContext::BUFFER_CREATE_TYPE_REGION, &bufferCreateInfo, error);
+    PassRefPtr<ComputeMemoryObject> computeSubBuffer = platformObject()->createSubBuffer(memoryFlags, ComputeContext::BUFFER_CREATE_TYPE_REGION, &bufferCreateInfo, error);
 
     if (error != ComputeContext::SUCCESS) {
-        delete computeSubBuffer;
         setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }

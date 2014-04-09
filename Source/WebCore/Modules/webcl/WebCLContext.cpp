@@ -102,9 +102,8 @@ PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, WebGLRenderingContex
     ComputePlatform* computePlatform = platform ? platform->platformObject() : 0;
     GraphicsContext3D* graphicsContext3D = glContext ? glContext->graphicsContext3D() : 0;
 
-    ComputeContext* computeContext = new ComputeContext(ccDevices, computePlatform, graphicsContext3D, error);
+    PassRefPtr<ComputeContext> computeContext = ComputeContext::create(ccDevices, computePlatform, graphicsContext3D, error);
     if (error != ComputeContext::SUCCESS) {
-        delete computeContext;
         setExceptionFromComputeErrorCode(error, exception);
         return 0;
     }
@@ -113,7 +112,7 @@ PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, WebGLRenderingContex
     return context.release();
 }
 
-WebCLContext::WebCLContext(WebCL* webCL, ComputeContext* computeContext, const Vector<RefPtr<WebCLDevice> >& devices, WebGLRenderingContext* glContext, HashSet<String>& enabledExtensions)
+WebCLContext::WebCLContext(WebCL* webCL, PassRefPtr<ComputeContext> computeContext, const Vector<RefPtr<WebCLDevice> >& devices, WebGLRenderingContext* glContext, HashSet<String>& enabledExtensions)
     : WebCLObjectImpl(computeContext)
     , m_webCL(webCL)
     , m_devices(devices)

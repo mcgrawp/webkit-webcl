@@ -32,6 +32,7 @@
 #include "ComputeTypes.h"
 #include "ComputeTypesTraits.h"
 
+#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,16 +40,15 @@ namespace WebCore {
 class ComputeContext;
 class ComputeKernel;
 
-class ComputeProgram {
+class ComputeProgram : public RefCounted<ComputeProgram> {
 public:
-
-    ComputeProgram(ComputeContext*, const String& programSource, CCerror&);
+    static PassRefPtr<ComputeProgram> create(ComputeContext*, const String& programSource, CCerror&);
     ~ComputeProgram();
 
     CCerror buildProgram(const Vector<ComputeDevice*>& devices, const String& options, pfnNotify notifyFunction, void* userData);
 
-    ComputeKernel* createKernel(const String& kernelName, CCerror&);
-    Vector<ComputeKernel*> createKernelsInProgram(CCerror&);
+    PassRefPtr<ComputeKernel> createKernel(const String& kernelName, CCerror&);
+    Vector<RefPtr<ComputeKernel>> createKernelsInProgram(CCerror&);
 
     template <typename T>
     CCerror getProgramInfo(CCProgramInfoType infoType, T* data)
@@ -70,6 +70,8 @@ public:
     CCerror release();
 
 private:
+    ComputeProgram(ComputeContext*, const String& programSource, CCerror&);
+
     static CCerror getProgramInfoBase(CCProgram, CCProgramInfoType, size_t, void *data, size_t* actualSize);
     static CCerror getBuildInfoBase(CCProgram, CCDeviceID, CCProgramBuildInfoType, size_t, void *data, size_t* actualSize);
 

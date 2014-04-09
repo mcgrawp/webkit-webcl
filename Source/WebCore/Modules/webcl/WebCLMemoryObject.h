@@ -39,11 +39,10 @@ class ComputeMemoryObject;
 class WebCLContext;
 class WebCLGetInfo;
 
-typedef ComputeMemoryObject* ComputeMemoryObjectPtr;
-class WebCLMemoryObject : public WebCLObjectImpl<ComputeMemoryObjectPtr> {
+class WebCLMemoryObject : public WebCLObjectImpl<ComputeMemoryObject> {
 public:
     virtual ~WebCLMemoryObject();
-    static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, ComputeMemoryObject*, CCuint sizeInBytes);
+    static PassRefPtr<WebCLMemoryObject> create(WebCLContext*, PassRefPtr<ComputeMemoryObject>, CCuint sizeInBytes);
 
     WebCLGetInfo getInfo(CCenum, ExceptionObject&);
 #if ENABLE(WEBGL)
@@ -61,7 +60,7 @@ public:
     bool isExtensionEnabled(WebCLContext*, const String& name) const;
 
 protected:
-    WebCLMemoryObject(WebCLContext*, ComputeMemoryObject*, CCuint sizeInBytes, WebCLMemoryObject* = 0);
+    WebCLMemoryObject(WebCLContext*, PassRefPtr<ComputeMemoryObject>, CCuint sizeInBytes, WebCLMemoryObject* = 0);
 
     RefPtr<WebCLContext> m_context;
     //FIXME: We need to decide what to do with parent mem objects
