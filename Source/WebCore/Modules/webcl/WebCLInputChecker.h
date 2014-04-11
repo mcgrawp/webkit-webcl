@@ -31,6 +31,7 @@
 #if ENABLE(WEBCL)
 
 #include "WebCLObject.h"
+#include <runtime/ArrayBufferView.h>
 
 namespace WTF {
 class ArrayBufferView;

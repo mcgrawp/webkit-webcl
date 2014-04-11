@@ -37,6 +37,7 @@
 #include "WebCLMemoryInitializer.h"
 #include "WebCLMemoryObject.h"
 #include "WebCLObject.h"
+#include <runtime/ArrayBufferView.h>
 #include <wtf/HashSet.h>
 
 namespace WebCore {

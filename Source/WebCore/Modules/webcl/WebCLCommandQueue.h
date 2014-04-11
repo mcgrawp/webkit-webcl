@@ -32,6 +32,7 @@
 
 #include "ComputeCommandQueue.h"
 #include "WebCLObject.h"
+#include <runtime/ArrayBufferView.h>
 
 namespace WebCore {
 

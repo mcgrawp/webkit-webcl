@@ -38,6 +38,7 @@
 #include "WebCLKernelArgInfo.h"
 #include "WebCLObject.h"
 
+#include <runtime/ArrayBufferView.h>
 #include <wtf/RefCounted.h>
 
 namespace WTF {
