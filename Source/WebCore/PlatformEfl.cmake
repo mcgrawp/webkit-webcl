@@ -14,6 +14,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/efl"
     "${WEBCORE_DIR}/plugins/efl"
+    "${WEBCORE_DIR}/platform/opencl"
 )
 
 list(APPEND WebCore_SOURCES
@@ -186,6 +187,30 @@ if (ENABLE_BATTERY_STATUS)
     list(APPEND WebCore_LIBRARIES ${DBUS_LIBRARIES})
 endif ()
 
+
+if (ENABLE_WEBCL)
+    list(APPEND WebCore_SOURCES
+        platform/opencl/ComputeCommandQueueCL.cpp
+        platform/opencl/ComputeContextCL.cpp
+        platform/opencl/ComputeDeviceCL.cpp
+        platform/opencl/ComputeEventCL.cpp
+        platform/opencl/ComputeExtensionsCL.cpp
+        platform/opencl/ComputeKernelCL.cpp
+        platform/opencl/ComputeMemoryObjectCL.cpp
+        platform/opencl/ComputePlatformCL.cpp
+        platform/opencl/ComputeProgramCL.cpp
+        platform/opencl/ComputeSamplerCL.cpp
+    )
+    if (OPENCL_FOUND)
+        list(APPEND WebCore_INCLUDE_DIRECTORIES
+            ${OPENCL_INCLUDE_DIRS}
+        )
+        list(APPEND WebCore_LIBRARIES
+            ${OPENCL_LIBRARIES}
+        )
+    endif ()
+endif ()
+
 if (ENABLE_NETSCAPE_PLUGIN_API)
     list(APPEND WebCore_SOURCES
         plugins/efl/PluginPackageEfl.cpp
@@ -288,6 +313,8 @@ endif ()
 
 if (WTF_USE_3D_GRAPHICS)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/graphics/egl"
+        "${WEBCORE_DIR}/platform/graphics/glx"
         "${WEBCORE_DIR}/platform/graphics/opengl"
         "${WEBCORE_DIR}/platform/graphics/surfaces"
         "${WEBCORE_DIR}/platform/graphics/surfaces/efl"
@@ -303,6 +330,7 @@ if (WTF_USE_3D_GRAPHICS)
     endif ()
 
     list(APPEND WebCore_SOURCES
+        platform/graphics/GLContext.cpp
         platform/graphics/cairo/DrawingBufferCairo.cpp
 
         platform/graphics/efl/GraphicsContext3DEfl.cpp
@@ -327,6 +355,7 @@ if (WTF_USE_3D_GRAPHICS)
 
     if (WTF_USE_EGL)
         list(APPEND WebCore_SOURCES
+            platform/graphics/egl/GLContextEGL.cpp
             platform/graphics/surfaces/egl/EGLConfigSelector.cpp
             platform/graphics/surfaces/egl/EGLContext.cpp
             platform/graphics/surfaces/egl/EGLHelper.cpp
@@ -335,6 +364,7 @@ if (WTF_USE_3D_GRAPHICS)
         )
     else ()
         list(APPEND WebCore_SOURCES
+            platform/graphics/glx/GLContextGLX.cpp
             platform/graphics/surfaces/glx/GLXContext.cpp
             platform/graphics/surfaces/glx/GLXSurface.cpp
         )
