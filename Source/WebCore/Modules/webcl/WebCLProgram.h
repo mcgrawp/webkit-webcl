@@ -77,6 +77,7 @@ private:
     RefPtr<WebCLContext> m_context;
     String m_programSource;
     String m_programSourceWithCommentsStripped;
+    bool m_isProgramBuilt;
 };
 
 } // namespace WebCore

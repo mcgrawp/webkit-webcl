@@ -66,6 +66,7 @@ WebCLProgram::WebCLProgram(WebCLContext*context, PassRefPtr<ComputeProgram> prog
     : WebCLObjectImpl(program)
     , m_context(context)
     , m_programSource(programSource)
+    , m_isProgramBuilt(false)
 {
     context->trackReleaseableWebCLObject(createWeakPtr());
 }
@@ -143,6 +144,11 @@ PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, Exc
         return 0;
     }
 
+    if (!m_isProgramBuilt) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_PROGRAM_EXECUTABLE, exception);
+        return 0;
+    }
+
     return WebCLKernel::create(m_context.get(), this, kernelName, exception);
 }
 
@@ -150,6 +156,11 @@ Vector<RefPtr<WebCLKernel> > WebCLProgram::createKernelsInProgram(ExceptionObjec
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_PROGRAM, exception);
+        return Vector<RefPtr<WebCLKernel> >();
+    }
+
+    if (!m_isProgramBuilt) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_PROGRAM_EXECUTABLE, exception);
         return Vector<RefPtr<WebCLKernel> >();
     }
 
@@ -250,6 +261,8 @@ void WebCLProgram::build(const Vector<RefPtr<WebCLDevice> >& devices, const Stri
 
     CCerror err = platformObject()->buildProgram(ccDevices, buildOptions, callbackProxyPtr, m_callback ? this : 0);
     setExceptionFromComputeErrorCode(err, exception);
+    if (!willThrowException(exception))
+        m_isProgramBuilt =  true;
 }
 
 // FIXME: Guard this change under !VALIDATOR_INTEGRATION.
