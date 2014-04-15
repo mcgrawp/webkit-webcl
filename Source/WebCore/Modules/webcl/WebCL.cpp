@@ -28,13 +28,14 @@
 #include "config.h"
 
 #if ENABLE(WEBCL)
-
 #include "WebCL.h"
 
 #include "ComputeEvent.h"
+#include "WebCLCallback.h"
 #include "WebCLContext.h"
 #include "WebCLDevice.h"
 #include "WebCLEvent.h"
+#include <wtf/MainThread.h>
 
 using namespace JSC;
 
@@ -64,8 +65,7 @@ Vector<RefPtr<WebCLPlatform> > WebCL::getPlatforms(ExceptionObject& exception)
     return m_platforms;
 }
 
-// FIXME: We currently do not support the asynchronous variant of this method.
-void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionObject& exception)
+static inline void validateWebCLEventList(const Vector<RefPtr<WebCLEvent> >& events, ExceptionObject& exception)
 {
     if (!events.size()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
@@ -73,22 +73,25 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionOb
     }
 
     // So if the event being waited on has not been initialized (1) or is an user
-    // event (2), we would hand the browser.
+    // event (2), we would hang the browser.
+    // Also as per [http://www.khronos.org/bugzilla/show_bug.cgi?id=1127], if a event is already being waited for(isWaitedOn())
+    // throw INVALID_EVENT_WAIT_LIST.
     if (events[0]->isPlatformObjectNeutralized()
         || !events[0]->holdsValidCLObject()
-        || events[0]->isUserEvent()) {
+        || events[0]->isUserEvent()
+        || events[0]->isWaitedOn()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT_WAIT_LIST, exception);
         return;
     }
+
     ASSERT(events[0]->context());
-    WebCLContext* referenceContext  = events[0]->context();
-    Vector<ComputeEvent*> computeEvents;
-    computeEvents.append(events[0]->platformObject());
+    WebCLContext* referenceContext = events[0]->context();
 
     for (size_t i = 1; i < events.size(); ++i) {
         if (events[i]->isPlatformObjectNeutralized()
             || !events[i]->holdsValidCLObject()
-            || events[i]->isUserEvent()) {
+            || events[i]->isUserEvent()
+            || events[i]->isWaitedOn()) {
             setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT_WAIT_LIST, exception);
             return;
         }
@@ -97,12 +100,70 @@ void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, ExceptionOb
             setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
             return;
         }
-
-        computeEvents.append(events[i]->platformObject());
     }
+    // Blocking the events at this point till the OpenCL clWaitForEvents() returns on new Thread.
+    // Need to block in main thread function to avoid delay caused in spawning a new Thread.
+    for (size_t i = 0; i < events.size(); ++i)
+        events[i]->setIsBeingWaitedOn(true);
+}
+
+void WebCL::callbackProxyOnMainThread(void* userData)
+{
+    WebCLCallback* callback = static_cast<WebCLCallback*>(userData);
+    ASSERT(callback);
+    callback->handleEvent();
+    callbackRegisterQueue().remove(callback);
+}
+
+void WebCL::threadStarterWebCL(void* data)
+{
+    WebCLCallback* callback = static_cast<WebCLCallback*>(data);
+    ASSERT(callback);
+    // On the new Thread, wait for waitForEventsImpl() AKA OpenCL clWaitForEvents to complete.
+    // And then call the callback method on the Main Thread.
+
+    Vector<RefPtr<WebCLEvent> > webCLEvents = callbackRegisterQueue().get(callback);
+    ExceptionObject exception;
+    waitForEventsImpl(webCLEvents, exception);
+    // FIXME :: Exception from OpenCL is lost. [http://www.khronos.org/bugzilla/show_bug.cgi?id=1164]
+    if (willThrowException(exception)) {
+        callbackRegisterQueue().remove(callback);
+        return;
+    }
+
+    if (!isMainThread()) {
+        callOnMainThread(callbackProxyOnMainThread, data);
+        return;
+    }
+    callbackProxyOnMainThread(data);
+}
+
+void WebCL::waitForEventsImpl(const Vector<RefPtr<WebCLEvent> >& webCLEvents, ExceptionObject& exception)
+{
+    Vector<ComputeEvent*> computeEvents;
+    for (size_t i = 0; i < webCLEvents.size(); ++i)
+        computeEvents.append(webCLEvents[i]->platformObject());
 
     CCerror error = ComputeContext::waitForEvents(computeEvents);
     setExceptionFromComputeErrorCode(error, exception);
+    for (size_t i = 0; i < webCLEvents.size(); i++)
+        webCLEvents[i]->setIsBeingWaitedOn(false);
+}
+
+void WebCL::waitForEvents(const Vector<RefPtr<WebCLEvent> >& events, PassRefPtr<WebCLCallback> callback, ExceptionObject& exception)
+{
+    validateWebCLEventList(events, exception);
+    if (willThrowException(exception))
+        return;
+
+    if (callback) {
+        // Store the callback, eventList to HashTable and call threadStarterWebCL.
+        RefPtr<WebCLCallback> cb = callback;
+        callbackRegisterQueue().set(cb, events);
+        WTF::ThreadIdentifier threadID = createThread(WebCL::threadStarterWebCL, cb.get(), "webCLWaitForEvents");
+        detachThread(threadID);
+    } else
+        waitForEventsImpl(events, exception);
 }
 
 PassRefPtr<WebCLContext> WebCL::createContext(ExceptionObject& exception)

@@ -57,6 +57,15 @@ public:
     bool holdsValidCLObject() const;
 
     virtual bool isPlatformObjectNeutralized() const;
+    bool isWaitedOn() const
+    {
+        return m_isWaitedOn;
+    }
+
+    void setIsBeingWaitedOn(bool value)
+    {
+        m_isWaitedOn = value;
+    }
 
 protected:
     WebCLEvent(PassRefPtr<ComputeEvent>);
@@ -74,6 +83,7 @@ private:
     }
 
     RefPtr<WebCLCommandQueue> m_commandQueue;
+    bool m_isWaitedOn;
 };
 
 } // namespace WebCore

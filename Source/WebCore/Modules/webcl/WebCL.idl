@@ -335,8 +335,7 @@ typedef long CLint;
 
     void releaseAll();
 
-    // FIXME: Lacks the last optional WebCLCallback whenFinished parameter.
-    [RaisesException] void waitForEvents(sequence<WebCLEvent> events);
+    [RaisesException] void waitForEvents(sequence<WebCLEvent> events, [Default=Undefined] optional WebCLCallback whenFinished);
 
 #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
     // FIXME: All constants below have have to have [CustomGetter]

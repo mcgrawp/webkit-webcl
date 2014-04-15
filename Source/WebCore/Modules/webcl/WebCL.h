@@ -30,6 +30,8 @@
 
 #if ENABLE(WEBCL)
 
+#include "WebCLCallback.h"
+#include "WebCLEvent.h"
 #include "WebCLException.h"
 #include "WebCLInputChecker.h"
 #include "WebCLPlatform.h"
@@ -37,7 +39,6 @@
 namespace WebCore {
 
 class WebCLContext;
-class WebCLEvent;
 class WebGLRenderingContext;
 
 class WebCL : public RefCounted<WebCL> , public WebCLExtensionsAccessor<> {
@@ -47,7 +48,7 @@ public:
 
     Vector<RefPtr<WebCLPlatform> > getPlatforms(ExceptionObject&);
 
-    void waitForEvents(const Vector<RefPtr<WebCLEvent> >&, ExceptionObject&);
+    void waitForEvents(const Vector<RefPtr<WebCLEvent> >&, PassRefPtr<WebCLCallback>, ExceptionObject&);
 
     PassRefPtr<WebCLContext> createContext(ExceptionObject&);
     PassRefPtr<WebCLContext> createContext(CCenum deviceType, ExceptionObject&);
@@ -68,6 +69,17 @@ public:
     void releaseAll();
 private:
     WebCL();
+
+    typedef HashMap<RefPtr<WebCLCallback>, Vector<RefPtr<WebCLEvent> > > WebCLCallbackRegisterQueue;
+    static WebCLCallbackRegisterQueue& callbackRegisterQueue()
+    {
+        DEFINE_STATIC_LOCAL(WebCLCallbackRegisterQueue, instance, ());
+        return instance;
+    }
+
+    static void threadStarterWebCL(void* data);
+    static void callbackProxyOnMainThread(void* userData);
+    static void waitForEventsImpl(const Vector<RefPtr<WebCLEvent> >&, ExceptionObject&);
 
     Vector<WeakPtr<WebCLObject> > m_descendantWebCLObjects;
     Vector<RefPtr<WebCLPlatform> > m_platforms;

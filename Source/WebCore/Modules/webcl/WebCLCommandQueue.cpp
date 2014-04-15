@@ -740,6 +740,11 @@ void WebCLCommandQueue::finishImpl(ExceptionObject& exception)
 void WebCLCommandQueue::callbackProxyOnMainThread(void* userData)
 {
     WebCLCommandQueue* commandQueue = reinterpret_cast<WebCLCommandQueue*>(userData);
+    // spec says "If a callback function is associated with a WebCL
+    // object that is subsequently released, the callback will no longer be invoked.
+    if (!commandQueue || commandQueue->WebCLObjectImpl::isPlatformObjectNeutralized())
+        return;
+
     ASSERT(commandQueue->m_finishCallBack);
     commandQueue->m_finishCallBack->handleEvent();
     // Finish() call returned, unblock the queue.
