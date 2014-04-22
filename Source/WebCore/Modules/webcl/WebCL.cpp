@@ -132,7 +132,7 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLPlatform* platform, CCenum de
     }
 
     if (!WebCLInputChecker::isValidDeviceType(deviceType)) {
-        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_DEVICE_TYPE, exception);
         return 0;
     }
 
@@ -146,7 +146,7 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLPlatform* platform, CCenum de
 PassRefPtr<WebCLContext> WebCL::createContext(const Vector<RefPtr<WebCLDevice> >& devices, ExceptionObject& exception)
 {
     if (!devices.size()) {
-        setExceptionFromComputeErrorCode(ComputeContext::INVALID_DEVICE, exception);
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
         return 0;
     }
 
