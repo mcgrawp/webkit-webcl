@@ -41,7 +41,7 @@ typedef unsigned long CLuint;
             [EnforceRange] CLuint bufferOffset,
             [EnforceRange] CLuint bufferSize,
             ArrayBufferView ptr,
-            [Default=Undefined] optional sequence<WebCLEvent> eventWaitList,
+            [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
     [RaisesException] void enqueueWriteBuffer(WebCLBuffer bufferId,
