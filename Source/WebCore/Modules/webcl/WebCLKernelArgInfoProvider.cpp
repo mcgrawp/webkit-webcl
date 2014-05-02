@@ -36,9 +36,14 @@
 
 namespace WebCore {
 
-static bool isASCIILineBreakOrStarCharacter(UChar c)
+static bool isASCIILineBreakCharacter(UChar c)
 {
-    return c == '\r' || c == '\n' || c == '*';
+    return c == '\r' || c == '\n';
+}
+
+static bool isStarCharacter(UChar c)
+{
+    return c == '*';
 }
 
 inline bool isEmptySpace(UChar character)
@@ -125,7 +130,7 @@ void WebCLKernelArgInfoProvider::ensureInfo()
     Vector<String> argumentStrVector;
     argumentListStr.split(",", argumentStrVector);
     for (size_t i = 0; i < argumentStrVector.size(); ++i) {
-        argumentStrVector[i] = argumentStrVector[i].removeCharacters(isASCIILineBreakOrStarCharacter);
+        argumentStrVector[i] = argumentStrVector[i].removeCharacters(isASCIILineBreakCharacter);
         argumentStrVector[i] = argumentStrVector[i].stripWhiteSpace();
         parseAndAppendDeclaration(argumentStrVector[i]);
     }
@@ -147,6 +152,17 @@ void WebCLKernelArgInfoProvider::parseAndAppendDeclaration(const String& argumen
 {
     Vector<String> declarationStrVector;
     argumentDeclaration.split(" ", declarationStrVector);
+    DEFINE_STATIC_LOCAL(AtomicString, Asterisk, (" * ", AtomicString::ConstructFromLiteral));
+    // For "type<spaces>*" which is a valid dataType, we need to prepend "*" token to previous token.
+    if (argumentDeclaration.contains(Asterisk)) {
+        for (size_t i = declarationStrVector.size() - 1; i > 1; i--) {
+            if (declarationStrVector[i] == "*") {
+                declarationStrVector[i - 1].append("*");
+                declarationStrVector.remove(i);
+                break;
+            }
+        }
+    }
 
     String name = extractName(declarationStrVector);
     String type = extractType(declarationStrVector);
@@ -154,10 +170,13 @@ void WebCLKernelArgInfoProvider::parseAndAppendDeclaration(const String& argumen
 
     DEFINE_STATIC_LOCAL(AtomicString, image2d_t, ("image2d_t", AtomicString::ConstructFromLiteral));
     String accessQualifier = (type == image2d_t) ? extractAccessQualifier(declarationStrVector) : "none";
-
     prependUnsignedIfNeeded(declarationStrVector, type);
 
-    m_argumentInfoVector.append(WebCLKernelArgInfo::create(addressQualifier, accessQualifier, type, name));
+    bool isPointerType = type.contains("*");
+    // As per the specification, remove the "*" from pointer data-types.
+    type = type.removeCharacters(isStarCharacter);
+
+    m_argumentInfoVector.append(WebCLKernelArgInfo::create(addressQualifier, accessQualifier, type, name, isPointerType));
 }
 
 String WebCLKernelArgInfoProvider::extractAddressQualifier(Vector<String>& declarationStrVector)
