@@ -60,6 +60,7 @@ public:
     String addressQualifier() const { return m_addressQualifier; }
     String accessQualifier() const { return m_accessQualifier; }
     WebCLKernelTypes type() const { return m_types; }
+    bool hasLocalAddressQualifier() const { return m_hasLocalAddressQualifier; }
 
 private:
     WebCLKernelArgInfo(const String& addressQualifier, const String& accessQualifier, const String& type, const String& name, const bool isPointerType)
@@ -69,12 +70,14 @@ private:
         , m_name(name)
     {
         m_types = extractTypeEnum(m_type, isPointerType);
+        m_hasLocalAddressQualifier = (m_addressQualifier == "local");
     }
     String m_addressQualifier;
     String m_accessQualifier;
     String m_type;
     String m_name;
     WebCLKernelTypes m_types;
+    bool m_hasLocalAddressQualifier;
 
     static inline WebCLKernelTypes extractTypeEnum(const String& typeName, bool isPointerType)
     {

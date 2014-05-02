@@ -87,7 +87,7 @@ public:
 private:
     WebCLKernel(WebCLContext*, WebCLProgram*, PassRefPtr<ComputeKernel>, const String&);
 
-    static bool isValidVectorLength(size_t arrayLength);
+    static bool isValidVectorLength(String, size_t arrayLength);
 
     RefPtr<WebCLContext> m_context;
     RefPtr<WebCLProgram> m_program;

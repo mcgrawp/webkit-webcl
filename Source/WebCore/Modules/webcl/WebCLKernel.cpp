@@ -197,15 +197,11 @@ WebCLGetInfo WebCLKernel::getWorkGroupInfo(WebCLDevice* device, CCenum paramName
     return WebCLGetInfo();
 }
 
+typedef WebCLKernelArgInfo::WebCLKernelTypes kernelTypeEnum;
 void WebCLKernel::setArg(CCuint index, WebCLBuffer* buffer, ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_KERNEL, exception);
-        return;
-    }
-
-    if (!WebCLInputChecker::validateWebCLObject(buffer)) {
-        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
         return;
     }
 
@@ -214,7 +210,18 @@ void WebCLKernel::setArg(CCuint index, WebCLBuffer* buffer, ExceptionObject& exc
         return;
     }
 
-    // FIXME :: Need to check if kernel expects a WebCLBuffer at index.
+    if (!WebCLInputChecker::validateWebCLObject(buffer)) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
+        return;
+    }
+
+    WebCLKernelArgInfo* argInfo = getArgInfo(index, exception);
+    // OpenCL mandates addressQualifier & "*" for cl_mem AKA buffer inputs.
+    if (!argInfo || argInfo->addressQualifier().isEmpty() || argInfo->type() != kernelTypeEnum::BUFFER) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
+        return;
+    }
+
     CCerror err = platformObject()->setKernelArg(index, buffer->platformObject());
     setExceptionFromComputeErrorCode(err, exception);
 }
@@ -235,7 +242,13 @@ void WebCLKernel::setArg(CCuint index, WebCLImage* image, ExceptionObject& excep
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_INDEX, exception);
         return;
     }
-    // FIXME :: Need to check if kernel expects a WebCLImage at index.
+
+    WebCLKernelArgInfo* argInfo = getArgInfo(index, exception);
+    if (!argInfo || argInfo->type() != kernelTypeEnum::IMAGE) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
+        return;
+    }
+
     CCerror err = platformObject()->setKernelArg(index, image->platformObject());
     setExceptionFromComputeErrorCode(err, exception);
 }
@@ -253,6 +266,12 @@ void WebCLKernel::setArg(CCuint index, WebCLSampler* sampler, ExceptionObject& e
 
     if (!WebCLInputChecker::isValidKernelArgIndex(this, index)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_INDEX, exception);
+        return;
+    }
+
+    WebCLKernelArgInfo* argInfo = getArgInfo(index, exception);
+    if (!argInfo || argInfo->type() != kernelTypeEnum::SAMPLER) {
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
         return;
     }
 
@@ -278,9 +297,8 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionObj
         return;
     }
 
-    String accessQualifier = m_argumentInfoProvider.argumentsInfo()[index]->addressQualifier();
-    bool hasLocalQualifier = accessQualifier == "local";
-    if (hasLocalQualifier) {
+    WebCLKernelArgInfo* argInfo = getArgInfo(index, exception);
+    if (argInfo->hasLocalAddressQualifier()) {
         if (bufferView->getType() != JSC::TypeUint32) {
             setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
             return;
@@ -301,15 +319,24 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionObj
     void* bufferData = 0;
     size_t arrayLength = 0;
     Vector<CCulong> uLongBuffer;
-    bool isLong  = m_argumentInfoProvider.argumentsInfo()[index]->typeName().contains("long");
+    kernelTypeEnum type = argInfo->type();
+
     // FIXME: Add support for LONG, ULONG, HALF and DOUBLE types.
     // These need Int/Uint64Array, as well as Float16Array.
     switch(bufferView->getType()) {
     case (JSC::TypeFloat32): // FLOAT
+        if (type != kernelTypeEnum::FLOAT) {
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
+            return;
+        }
         bufferData = static_cast<Float32Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 4;
         break;
     case (JSC::TypeUint32): // UINT
+        if (!(type == kernelTypeEnum::ULONG || type == kernelTypeEnum::UINT)) {
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
+            return;
+        }
         bufferData = static_cast<Uint32Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 4;
         // For Long data type, input
@@ -321,7 +348,7 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionObj
            Big endian architecture, order for 32 bit uint elements need to be swapped
            before passing to OpenCL. */
 
-        if (isLong) {
+        if (type == kernelTypeEnum::ULONG) {
             arrayLength = arrayLength / 2;
 #if CPU(BIG_ENDIAN)
             uLongBuffer.resize(arrayLength);
@@ -331,34 +358,54 @@ void WebCLKernel::setArg(CCuint index, ArrayBufferView* bufferView, ExceptionObj
         }
         break;
     case (JSC::TypeInt32):  // INT
+        if (!(type == kernelTypeEnum::LONG || type == kernelTypeEnum::INT)) {
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
+            return;
+        }
         bufferData = static_cast<Int32Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 4;
-        if (isLong)
+        if (type == kernelTypeEnum::LONG)
             arrayLength = arrayLength / 2;
         break;
     case (JSC::TypeUint16): // USHORT
+        if (type != kernelTypeEnum::USHORT) {
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
+            return;
+        }
         bufferData = static_cast<Uint16Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 2;
         break;
     case (JSC::TypeInt16): // SHORT
+        if (type != kernelTypeEnum::SHORT) {
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
+            return;
+        }
         bufferData = static_cast<Int16Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 2;
         break;
     case (JSC::TypeUint8): // UCHAR
+        if (type != kernelTypeEnum::UCHAR) {
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
+            return;
+        }
         bufferData = static_cast<Uint8Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 1;
         break;
     case (JSC::TypeInt8): // CHAR
+        if (type != kernelTypeEnum::CHAR) {
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
+            return;
+        }
         bufferData = static_cast<Int8Array*>(bufferView)->data();
         arrayLength = bufferView->byteLength() / 1;
         break;
     default:
         ASSERT_NOT_REACHED();
-        setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
+        setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
         return;
     }
 
-    if (!isValidVectorLength(arrayLength)) {
+    if (!isValidVectorLength(argInfo->typeName(), arrayLength)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_VALUE, exception);
         return;
     }
@@ -397,8 +444,12 @@ unsigned WebCLKernel::numberOfArguments()
     return m_argumentInfoProvider.argumentsInfo().size();
 }
 
-bool WebCLKernel::isValidVectorLength(size_t arrayLength)
+bool WebCLKernel::isValidVectorLength(String typeName, size_t arrayLength)
 {
+    // FIXME :: Any better way to parse vector length from TypeName ?
+    if (arrayLength > 1 && !typeName.contains(String::number(arrayLength)))
+        return false;
+
     switch (arrayLength) {
     case 1:
     case 2:
