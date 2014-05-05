@@ -36,7 +36,7 @@ typedef unsigned long CLuint;
 
     [StrictTypeChecking, Custom, RaisesException] void getInfo(CLenum queuenfo);
 
-    [RaisesException] void enqueueWriteBuffer(WebCLBuffer bufferId,
+    [StrictTypeChecking, RaisesException] void enqueueWriteBuffer(WebCLBuffer bufferId,
             CLboolean blockingWrite,
             [EnforceRange] CLuint bufferOffset,
             [EnforceRange] CLuint bufferSize,
@@ -44,28 +44,28 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueWriteBuffer(WebCLBuffer bufferId,
+    [StrictTypeChecking, RaisesException] void enqueueWriteBuffer(WebCLBuffer bufferId,
             CLboolean blockingWrite,
             [EnforceRange] CLuint bufferOffset,
             ImageData srcPixels,
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueWriteBuffer(WebCLBuffer bufferId,
+    [StrictTypeChecking, RaisesException] void enqueueWriteBuffer(WebCLBuffer bufferId,
             CLboolean blockingWrite,
             [EnforceRange] CLuint bufferOffset,
             HTMLImageElement srcImage,
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-   [RaisesException] void enqueueWriteBuffer(WebCLBuffer bufferId,
+   [StrictTypeChecking, RaisesException] void enqueueWriteBuffer(WebCLBuffer bufferId,
             CLboolean blockingWrite,
             [EnforceRange] CLuint bufferOffset,
             HTMLCanvasElement srcCanvas,
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueWriteBufferRect(WebCLBuffer bufferId,
+    [StrictTypeChecking, RaisesException] void enqueueWriteBufferRect(WebCLBuffer bufferId,
             CLboolean blockingWrite,
             sequence<CLuint> sourceOrigin,
             sequence<CLuint> targetOrigin,
@@ -78,7 +78,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueWriteBufferRect(WebCLBuffer bufferId,
+    [StrictTypeChecking, RaisesException] void enqueueWriteBufferRect(WebCLBuffer bufferId,
             CLboolean blockingWrite,
             sequence<CLuint> sourceOrigin,
             sequence<CLuint> targetOrigin,
@@ -89,7 +89,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueWriteBufferRect(WebCLBuffer bufferId,
+    [StrictTypeChecking, RaisesException] void enqueueWriteBufferRect(WebCLBuffer bufferId,
             CLboolean blockingWrite,
             sequence<CLuint> sourceOrigin,
             sequence<CLuint> targetOrigin,
@@ -100,7 +100,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueWriteBufferRect(WebCLBuffer bufferId,
+    [StrictTypeChecking, RaisesException] void enqueueWriteBufferRect(WebCLBuffer bufferId,
             CLboolean blockingWrite,
             sequence<CLuint> sourceOrigin,
             sequence<CLuint> targetOrigin,
@@ -111,7 +111,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueReadBuffer(WebCLBuffer buffer,
+    [StrictTypeChecking, RaisesException] void enqueueReadBuffer(WebCLBuffer buffer,
             CLboolean blockingRead,
             [EnforceRange] CLuint bufferOffset,
             [EnforceRange] CLuint numBytes,
@@ -119,7 +119,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueReadBufferRect(WebCLBuffer buffer,
+    [StrictTypeChecking, RaisesException] void enqueueReadBufferRect(WebCLBuffer buffer,
             CLboolean blockingRead,
             sequence<CLuint> bufferOrigin,
             sequence<CLuint> hostOrigin,
@@ -132,7 +132,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-   [RaisesException] void enqueueReadImage(WebCLImage image,
+   [StrictTypeChecking, RaisesException] void enqueueReadImage(WebCLImage image,
             CLboolean blockingRead,
             sequence<CLuint> origin,
             sequence<CLuint> region,
@@ -141,7 +141,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueNDRangeKernel(WebCLKernel kernel,
+    [StrictTypeChecking, RaisesException] void enqueueNDRangeKernel(WebCLKernel kernel,
             [StrictTypeChecking, EnforceRange] CLuint workDim,
             [Default=Undefined] sequence<CLuint>? globalWorkOffset,
             sequence<CLuint> globalWorkSize,
@@ -149,7 +149,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueWriteImage(WebCLImage image,
+    [StrictTypeChecking, RaisesException] void enqueueWriteImage(WebCLImage image,
             CLboolean blockingWrite,
             sequence<CLuint> origin,
             sequence<CLuint> region,
@@ -158,7 +158,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueWriteImage(WebCLImage image,
+    [StrictTypeChecking, RaisesException] void enqueueWriteImage(WebCLImage image,
             CLboolean blockingWrite,
             sequence<CLuint> origin,
             sequence<CLuint> region,
@@ -166,7 +166,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueWriteImage(WebCLImage image,
+    [StrictTypeChecking, RaisesException] void enqueueWriteImage(WebCLImage image,
             CLboolean blockingWrite,
             sequence<CLuint> origin,
             sequence<CLuint> region,
@@ -174,7 +174,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueWriteImage(WebCLImage image,
+    [StrictTypeChecking, RaisesException] void enqueueWriteImage(WebCLImage image,
             CLboolean blockingWrite,
             sequence<CLuint> origin,
             sequence<CLuint> region,
@@ -183,7 +183,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional WebCLEvent? event);
 
 
-    [RaisesException] void enqueueCopyBuffer(WebCLBuffer sourceBuffer,
+    [StrictTypeChecking, RaisesException] void enqueueCopyBuffer(WebCLBuffer sourceBuffer,
             WebCLBuffer targetBuffer,
             [EnforceRange] CLuint sourceOffset,
             [EnforceRange] CLuint targetOffset,
@@ -191,7 +191,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueCopyBufferRect(WebCLBuffer sourceBuffer,
+    [StrictTypeChecking, RaisesException] void enqueueCopyBufferRect(WebCLBuffer sourceBuffer,
             WebCLBuffer targetBuffer,
             sequence<CLuint> sourceOrigin,
             sequence<CLuint> targetOrigin,
@@ -203,7 +203,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueCopyImage(WebCLImage sourceImage,
+    [StrictTypeChecking, RaisesException] void enqueueCopyImage(WebCLImage sourceImage,
             WebCLImage targetImage,
             sequence<CLuint> sourceOrigin,
             sequence<CLuint> targetOrigin,
@@ -211,7 +211,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueCopyImageToBuffer(WebCLImage sourceImage,
+    [StrictTypeChecking, RaisesException] void enqueueCopyImageToBuffer(WebCLImage sourceImage,
             WebCLBuffer targetBuffer,
             sequence<CLuint> sourceOrigin,
             sequence<CLuint> region,
@@ -219,7 +219,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueCopyBufferToImage(WebCLBuffer sourceBuffer,
+    [StrictTypeChecking, RaisesException] void enqueueCopyBufferToImage(WebCLBuffer sourceBuffer,
             WebCLImage targetImage,
             [EnforceRange] CLuint sourceOffset,
             sequence<CLuint> targetOrigin,
@@ -227,17 +227,17 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueWaitForEvents(sequence<WebCLEvent> eventWaitList);
+    [StrictTypeChecking, RaisesException] void enqueueWaitForEvents(sequence<WebCLEvent> eventWaitList);
 
-    [RaisesException] void enqueueBarrier();
+    [StrictTypeChecking, RaisesException] void enqueueBarrier();
 
-    [RaisesException] void enqueueMarker(WebCLEvent event);
+    [StrictTypeChecking, RaisesException] void enqueueMarker(WebCLEvent event);
 
-    [RaisesException] void finish([Default=Undefined] optional WebCLCallback whenFinished);
+    [StrictTypeChecking, RaisesException] void finish([Default=Undefined] optional WebCLCallback whenFinished);
 
-    [RaisesException] void flush();
+    [StrictTypeChecking, RaisesException] void flush();
 
-    [RaisesException] void enqueueReadBuffer(WebCLBuffer bufferId,
+    [StrictTypeChecking, RaisesException] void enqueueReadBuffer(WebCLBuffer bufferId,
             CLboolean blockingRead,
             [EnforceRange] CLuint bufferOffset,
             [EnforceRange] CLuint numBytes,
@@ -245,7 +245,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueReadBufferRect(WebCLBuffer buffer,
+    [StrictTypeChecking, RaisesException] void enqueueReadBufferRect(WebCLBuffer buffer,
             CLboolean blockingRead,
             sequence<CLuint> bufferOrigin,
             sequence<CLuint> dstOrigin,
@@ -256,7 +256,7 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
             [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueReadImage(WebCLImage image,
+    [StrictTypeChecking, RaisesException] void enqueueReadImage(WebCLImage image,
             CLboolean blockingRead,
             sequence<CLuint> origin,
             sequence<CLuint> region,
@@ -265,11 +265,11 @@ typedef unsigned long CLuint;
             [Default=Undefined] optional WebCLEvent? event);
 
 #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
-    [RaisesException] void enqueueAcquireGLObjects(sequence<WebCLMemoryObject> memObjects,
+    [StrictTypeChecking, RaisesException] void enqueueAcquireGLObjects(sequence<WebCLMemoryObject> memObjects,
         [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
         [Default=Undefined] optional WebCLEvent? event);
 
-    [RaisesException] void enqueueReleaseGLObjects(sequence<WebCLMemoryObject> memObjects,
+    [StrictTypeChecking, RaisesException] void enqueueReleaseGLObjects(sequence<WebCLMemoryObject> memObjects,
         [Default=Undefined] optional sequence<WebCLEvent>? eventWaitList,
         [Default=Undefined] optional WebCLEvent? event);
 #endif

@@ -33,10 +33,10 @@ typedef unsigned long CLenum;
     JSGenerateToJSObject,
     JSGenerateToNativeObject
 ] interface WebCLImage : WebCLMemoryObject {
-    [RaisesException] WebCLImageDescriptor getInfo();
+    [StrictTypeChecking, RaisesException] WebCLImageDescriptor getInfo();
 
 #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
-    [RaisesException] GLint getGLTextureInfo (CLenum param);
-    [RaisesException] WebCLGLObjectInfo getGLObjectInfo();
+    [StrictTypeChecking, RaisesException] GLint getGLTextureInfo (CLenum param);
+    [StrictTypeChecking, RaisesException] WebCLGLObjectInfo getGLObjectInfo();
 #endif
 };

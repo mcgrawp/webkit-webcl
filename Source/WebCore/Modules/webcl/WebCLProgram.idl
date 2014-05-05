@@ -33,7 +33,7 @@ typedef unsigned long CLenum;
     [StrictTypeChecking, Custom, RaisesException] any getInfo (CLenum name);
     [StrictTypeChecking, Custom, RaisesException] any getBuildInfo(WebCLDevice device, CLenum name);
 
-    [RaisesException] WebCLKernel createKernel(DOMString kernelName);
+    [StrictTypeChecking, RaisesException] WebCLKernel createKernel(DOMString kernelName);
 
     [StrictTypeChecking, RaisesException] sequence<WebCLKernel> createKernelsInProgram();
 

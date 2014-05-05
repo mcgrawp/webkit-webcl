@@ -35,10 +35,10 @@ typedef unsigned long CLuint;
 
     [StrictTypeChecking, RaisesException] WebCLKernelArgInfo getArgInfo(CLuint index);
 
-    [RaisesException] void setArg(CLuint index, WebCLImage value);
-    [RaisesException] void setArg(CLuint index, WebCLBuffer value);
-    [RaisesException] void setArg(CLuint index, WebCLSampler value);
-    [RaisesException] void setArg(CLuint index, ArrayBufferView value);
+    [StrictTypeChecking, RaisesException] void setArg(CLuint index, WebCLImage value);
+    [StrictTypeChecking, RaisesException] void setArg(CLuint index, WebCLBuffer value);
+    [StrictTypeChecking, RaisesException] void setArg(CLuint index, WebCLSampler value);
+    [StrictTypeChecking, RaisesException] void setArg(CLuint index, ArrayBufferView value);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     void release();

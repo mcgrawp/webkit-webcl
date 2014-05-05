@@ -308,7 +308,7 @@ typedef long CLint;
     const CLenum PROFILING_COMMAND_START                    = 0x1282;
     const CLenum PROFILING_COMMAND_END                      = 0x1283;
 
-    [RaisesException] sequence<WebCLPlatform> getPlatforms();
+    [StrictTypeChecking, RaisesException] sequence<WebCLPlatform> getPlatforms();
 
     [StrictTypeChecking] sequence<DOMString> getSupportedExtensions();
     [StrictTypeChecking] boolean enableExtension(DOMString extensionName);
@@ -335,7 +335,7 @@ typedef long CLint;
 
     void releaseAll();
 
-    [RaisesException] void waitForEvents(sequence<WebCLEvent> events, [Default=Undefined] optional WebCLCallback whenFinished);
+    [StrictTypeChecking, RaisesException] void waitForEvents(sequence<WebCLEvent> events, [Default=Undefined] optional WebCLCallback whenFinished);
 
 #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
     // FIXME: All constants below have have to have [CustomGetter]
