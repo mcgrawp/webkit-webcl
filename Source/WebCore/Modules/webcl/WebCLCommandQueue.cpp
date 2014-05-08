@@ -61,7 +61,7 @@ PassRefPtr<WebCLCommandQueue> WebCLCommandQueue::create(WebCLContext* context, C
     PassRefPtr<ComputeCommandQueue> computeCommandQueue = context->computeContext()->createCommandQueue(webCLDevice->platformObject(), properties, error);
     if (error != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(error, exception);
-        return 0;
+        return nullptr;
     }
 
     RefPtr<WebCLCommandQueue> queue = adoptRef(new WebCLCommandQueue(context, computeCommandQueue, webCLDevice));
@@ -137,7 +137,7 @@ void WebCLCommandQueue::ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLE
 ComputeEvent* WebCLCommandQueue::computeEventFromWebCLEventIfApplicable(WebCLEvent* event, ExceptionObject& exception)
 {
     if (!event)
-        return 0;
+        return nullptr;
 
     // Throw an exception if:
     // #1 - Event has been released.
@@ -147,7 +147,7 @@ ComputeEvent* WebCLCommandQueue::computeEventFromWebCLEventIfApplicable(WebCLEve
         || event->holdsValidCLObject()
         || event->isUserEvent()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT, exception);
-        return 0;
+        return nullptr;
     }
 
     event->setAssociatedCommandQueue(this);

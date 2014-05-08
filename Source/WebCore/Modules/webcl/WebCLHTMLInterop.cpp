@@ -126,11 +126,11 @@ void WebCLHTMLInterop::extractDataFromVideo(HTMLVideoElement* video, void*& host
 PassRefPtr<Image> WebCLHTMLInterop::videoFrameToImage(HTMLVideoElement* video)
 {
     if (!video || !video->videoWidth() || !video->videoHeight())
-        return 0;
+        return nullptr;
     IntSize size(video->videoWidth(), video->videoHeight());
     ImageBuffer* imageBufferObject = m_generatedImageCache.imageBuffer(size);
     if (!imageBufferObject)
-        return 0;
+        return nullptr;
     IntRect destRect(0, 0, size.width(), size.height());
     // FIXME: Turn this into a GPU-GPU texture copy instead of CPU readback.
     video->paintCurrentFrameInContext(imageBufferObject->context(), destRect);
@@ -171,7 +171,7 @@ ImageBuffer* WebCLHTMLInterop::LRUImageBufferCache::imageBuffer(const IntSize& s
 
     std::unique_ptr<ImageBuffer> temp = ImageBuffer::create(size, 1);
     if (!temp)
-        return 0;
+        return nullptr;
     i = std::min(m_capacity - 1, i);
     m_buffers[i] = std::move(temp);
 

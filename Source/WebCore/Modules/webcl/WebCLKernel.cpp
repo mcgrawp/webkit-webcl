@@ -76,7 +76,7 @@ PassRefPtr<WebCLKernel> WebCLKernel::create(WebCLContext* context, WebCLProgram*
     PassRefPtr<ComputeKernel> computeKernel = program->computeProgram()->createKernel(kernelName, error);
     if (error != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(error, exception);
-        return 0;
+        return nullptr;
     }
     return adoptRef(new WebCLKernel(context, program, computeKernel, kernelName));
 }
@@ -418,12 +418,12 @@ WebCLKernelArgInfo* WebCLKernel::getArgInfo(CCuint index, ExceptionObject& excep
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_KERNEL, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!WebCLInputChecker::isValidKernelArgIndex(this, index)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_ARG_INDEX, exception);
-        return 0;
+        return nullptr; 
     }
 
     return m_argumentInfoProvider.argumentsInfo().at(index).get();

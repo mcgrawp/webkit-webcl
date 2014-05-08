@@ -125,12 +125,12 @@ WebCLGLObjectInfo* WebCLMemoryObject::getGLObjectInfo(ExceptionObject& exception
 {
     if (!isExtensionEnabled(m_context.get(), "KHR_gl_sharing")) {
         setExtensionsNotEnabledException(exception);
-        return 0;
+        return nullptr;
     }
 
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
-        return 0;
+        return nullptr;
     }
 
     return m_objectInfo.get();

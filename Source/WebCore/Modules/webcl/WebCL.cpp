@@ -175,7 +175,7 @@ PassRefPtr<WebCLContext> WebCL::createContext(CCenum deviceType, ExceptionObject
 {
     getPlatforms(exception);
     if (willThrowException(exception))
-        return 0;
+        return nullptr;
 
     return createContext(m_platforms[0].get(), deviceType, exception);
 }
@@ -189,17 +189,17 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebCLPlatform* platform, CCenum de
 {
     if (!platform) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_PLATFORM, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!WebCLInputChecker::isValidDeviceType(deviceType)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_DEVICE_TYPE, exception);
-        return 0;
+        return nullptr;
     }
 
     Vector<RefPtr<WebCLDevice> > devices = platform->getDevices(deviceType, exception);
     if (willThrowException(exception))
-        return 0;
+        return nullptr;
 
     return WebCLContext::create(this, 0 /*glContext*/, platform, devices, exception);
 }
@@ -208,7 +208,7 @@ PassRefPtr<WebCLContext> WebCL::createContext(const Vector<RefPtr<WebCLDevice> >
 {
     if (!devices.size()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     return WebCLContext::create(this, 0 /*glContext*/, devices[0]->platform(), devices, exception);
@@ -232,7 +232,7 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, 
 {
     getPlatforms(exception);
     if (willThrowException(exception))
-        return 0;
+        return nullptr;
 
     // FIXME: Pick a platform that best suites to cl-gl instead of any.
     return createContext(glContext, m_platforms[0].get(), deviceType, exception);
@@ -248,18 +248,18 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, 
 {
     if (!platform) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_PLATFORM, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!WebCLInputChecker::isValidDeviceType(deviceType)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     // FIXME: Pick devices that best suits to cl-gl instead of all.
     Vector<RefPtr<WebCLDevice> > devices = platform->getDevices(deviceType, exception);
     if (willThrowException(exception))
-        return 0;
+        return nullptr;
 
     return WebCLContext::create(this, glContext, platform, devices, exception);
 }
@@ -268,7 +268,7 @@ PassRefPtr<WebCLContext> WebCL::createContext(WebGLRenderingContext* glContext, 
 {
     if (!devices.size()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_DEVICE, exception);
-        return 0;
+        return nullptr;
     }
 
     return WebCLContext::create(this, glContext, devices[0]->platform(), devices, exception);

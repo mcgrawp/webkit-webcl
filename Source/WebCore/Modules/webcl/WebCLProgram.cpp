@@ -56,7 +56,7 @@ PassRefPtr<WebCLProgram> WebCLProgram::create(WebCLContext* context, const Strin
     PassRefPtr<ComputeProgram> computeProgram = context->computeContext()->createProgram(programSource, error);
     if (error != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(error, exception);
-        return 0;
+        return nullptr;
     }
 
     return adoptRef(new WebCLProgram(context, computeProgram, programSource));
@@ -141,12 +141,12 @@ PassRefPtr<WebCLKernel> WebCLProgram::createKernel(const String& kernelName, Exc
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_PROGRAM, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!m_isProgramBuilt) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_PROGRAM_EXECUTABLE, exception);
-        return 0;
+        return nullptr;
     }
 
     return WebCLKernel::create(m_context.get(), this, kernelName, exception);

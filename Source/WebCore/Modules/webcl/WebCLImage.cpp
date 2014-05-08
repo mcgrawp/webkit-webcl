@@ -50,7 +50,7 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, P
         imageDescriptor->height(), imageDescriptor->rowPitch(), imageDescriptor->imageFormat(), data, error);
     if (error != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(error, exception);
-        return 0;
+        return nullptr;
     }
 
     return adoptRef(new WebCLImage(context, memoryObject, imageDescriptor));
@@ -64,7 +64,7 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, W
     GLuint renderbufferID = webGLRenderbuffer->object();
     if (!renderbufferID) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_GL_OBJECT, exception);
-        return 0;
+        return nullptr;
     }
 
     GC3Dsizei width = webGLRenderbuffer->getWidth();
@@ -74,7 +74,7 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, W
     PassRefPtr<ComputeMemoryObject> memoryObject = context->computeContext()->createFromGLRenderbuffer(flags, renderbufferID, error);
     if (error != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(error, exception);
-        return 0;
+        return nullptr;
     }
 
     // FIXME: Format is wrong here. It should have been gotten from WebGLRenderbuffer as well.
@@ -92,7 +92,7 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, C
     GLuint textureID = webGLTexture->object();
     if (!textureID) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_GL_OBJECT, exception);
-        return 0;
+        return nullptr;
     }
 
     GC3Dsizei width = webGLTexture->getWidth(textureTarget, miplevel);
@@ -102,7 +102,7 @@ PassRefPtr<WebCLImage> WebCLImage::create(WebCLContext* context, CCenum flags, C
     PassRefPtr<ComputeMemoryObject> memoryObject = context->computeContext()->createFromGLTexture2D(flags, textureTarget, miplevel, textureID, error);
     if (error != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(error, exception);
-        return 0;
+        return nullptr;
     }
 
     // FIXME: Format is wrong here. It should have been gotten from WebGLTexture as well.
@@ -165,7 +165,7 @@ WebCLImageDescriptor* WebCLImage::getInfo(ExceptionObject& exception)
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
-        return 0;
+        return nullptr;
     }
 
     return m_imageDescriptor.get();

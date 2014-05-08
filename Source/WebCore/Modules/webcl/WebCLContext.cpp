@@ -79,7 +79,7 @@ PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, WebGLRenderingContex
     // If WebGLRenderingContext is sent and KHR_gl_sharing is not Enabled, throw WEBCL_EXTENSION_NOT_ENABLED.
     if (glContext && !enabledExtensions.contains("KHR_gl_sharing")) {
         setExtensionsNotEnabledException(exception);
-        return 0;
+        return nullptr;
     }
 
     Vector<ComputeDevice*> ccDevices;
@@ -87,12 +87,12 @@ PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, WebGLRenderingContex
         RefPtr<WebCLDevice> device = devices[i];
         if (!device) {
             setExceptionFromComputeErrorCode(ComputeContext::INVALID_DEVICE, exception);
-            return 0;
+            return nullptr;
         }
 
         if (device->platform()->platformObject() != platform->platformObject()) {
             setExceptionFromComputeErrorCode(ComputeContext::INVALID_DEVICE, exception);
-            return 0;
+            return nullptr;
         }
 
         ccDevices.append(devices[i]->platformObject());
@@ -105,7 +105,7 @@ PassRefPtr<WebCLContext> WebCLContext::create(WebCL* webCL, WebGLRenderingContex
     PassRefPtr<ComputeContext> computeContext = ComputeContext::create(ccDevices, computePlatform, graphicsContext3D, error);
     if (error != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(error, exception);
-        return 0;
+        return nullptr;
     }
 
     RefPtr<WebCLContext> context = adoptRef(new WebCLContext(webCL, computeContext, devices, glContext, enabledExtensions));
@@ -154,12 +154,12 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!WebCLInputChecker::isValidCommandQueueProperty(properties)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     RefPtr<WebCLDevice> webCLDevice;
@@ -174,7 +174,7 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
                 break;
             } else {
                 setExceptionFromComputeErrorCode(ComputeContext::INVALID_QUEUE_PROPERTIES, exception);
-                return 0;
+                return nullptr;
             }
         }
         //FIXME: Spec needs to say what we need to do here
@@ -189,7 +189,7 @@ PassRefPtr<WebCLCommandQueue> WebCLContext::createCommandQueue(WebCLDevice* devi
         }
         if (i == m_devices.size()) {
             setExceptionFromComputeErrorCode(ComputeContext::INVALID_DEVICE, exception);
-            return 0;
+            return nullptr;
         }
     }
 
@@ -202,12 +202,12 @@ PassRefPtr<WebCLProgram> WebCLContext::createProgram(const String& programSource
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!programSource.length()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     return WebCLProgram::create(this, programSource, exception);
@@ -233,11 +233,11 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBufferBase(CCenum memoryFlags, CCuin
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
-        return 0;
+        return nullptr;
     }
     if (!WebCLInputChecker::isValidMemoryObjectFlag(memoryFlags)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     bool needsInitialization = !hostPtr;
@@ -259,12 +259,12 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, CCuint si
     if (hostPtr) {
         if (hostPtr->byteLength() < size) {
             setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
-            return 0;
+            return nullptr;
         }
 
         if (!hostPtr->buffer()) {
             setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
-            return 0;
+            return nullptr;
         }
         buffer = hostPtr->buffer();
     }
@@ -276,14 +276,14 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, ImageData
 {
     if (!isExtensionEnabled("WEBCL_html_image")) {
         setExtensionsNotEnabledException(exception);
-        return 0;
+        return nullptr;
     }
 
     void* hostPtr = 0;
     size_t pixelSize = 0;
     WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, exception);
     if (willThrowException(exception))
-        return 0;
+        return nullptr;
 
     return createBufferBase(memoryFlags, pixelSize, hostPtr, exception);
 }
@@ -292,13 +292,13 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLCanva
 {
     if (!isExtensionEnabled("WEBCL_html_image")) {
         setExtensionsNotEnabledException(exception);
-        return 0;
+        return nullptr;
     }
     void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, exception);
     if (willThrowException(exception))
-        return 0;
+        return nullptr;
 
     return createBufferBase(memoryFlags, canvasSize, hostPtr, exception);
 }
@@ -307,13 +307,13 @@ PassRefPtr<WebCLBuffer> WebCLContext::createBuffer(CCenum memoryFlags, HTMLImage
 {
     if (!isExtensionEnabled("WEBCL_html_image")) {
         setExtensionsNotEnabledException(exception);
-        return 0;
+        return nullptr;
     }
     void* hostPtr = 0;
     size_t bufferSize = 0;
     WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, bufferSize, exception);
     if (willThrowException(exception))
-        return 0;
+        return nullptr;
 
     return createBufferBase(memoryFlags, bufferSize, hostPtr, exception);
 }
@@ -323,17 +323,17 @@ PassRefPtr<WebCLImage> WebCLContext::createImage2DBase(CCenum flags, CCuint widt
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!width || !height) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_IMAGE_SIZE, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!WebCLInputChecker::isValidMemoryObjectFlag(flags)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     ASSERT(data);
@@ -347,13 +347,13 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLCanvasElement
 {
     if (!isExtensionEnabled("WEBCL_html_image")) {
         setExtensionsNotEnabledException(exception);
-        return 0;
+        return nullptr;
     }
     void* hostPtr = 0;
     size_t canvasSize = 0;
     WebCLHTMLInterop::extractDataFromCanvas(srcCanvas, hostPtr, canvasSize, exception);
     if (willThrowException(exception))
-        return 0;
+        return nullptr;
 
     CCuint width = srcCanvas->width();
     CCuint height = srcCanvas->height();
@@ -364,13 +364,13 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLImageElement*
 {
     if (!isExtensionEnabled("WEBCL_html_image")) {
         setExtensionsNotEnabledException(exception);
-        return 0;
+        return nullptr;
     }
     void* hostPtr = 0;
     size_t bufferSize = 0;
     WebCLHTMLInterop::extractDataFromImage(srcImage, hostPtr, bufferSize, exception);
     if (willThrowException(exception))
-        return 0;
+        return nullptr;
 
     CCuint width = srcImage->width();
     CCuint height = srcImage->height();
@@ -382,19 +382,19 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, HTMLVideoElement*
 {
     if (!isExtensionEnabled("WEBCL_html_video")) {
         setExtensionsNotEnabledException(exception);
-        return 0;
+        return nullptr;
     }
 
     if (ComputeContext::MEM_READ_ONLY != flags) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     void* hostPtr = 0;
     size_t videoSize = 0;
     m_HTMLInteropObject->extractDataFromVideo(video, hostPtr, videoSize, exception);
     if (willThrowException(exception))
-        return 0;
+        return nullptr;
 
     CCuint width =  video->videoWidth();
     CCuint height = video->videoHeight();
@@ -405,13 +405,13 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, ImageData* srcPix
 {
     if (!isExtensionEnabled("WEBCL_html_image")) {
         setExtensionsNotEnabledException(exception);
-        return 0;
+        return nullptr;
     }
     void* hostPtr = 0;
     size_t pixelSize = 0;
     WebCLHTMLInterop::extractDataFromImageData(srcPixels, hostPtr, pixelSize, exception);
     if (willThrowException(exception))
-        return 0;
+        return nullptr;
 
     CCuint width = srcPixels->width();
     CCuint height = srcPixels->height();
@@ -476,7 +476,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescrip
 {
     if (!descriptor) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_IMAGE_FORMAT_DESCRIPTOR, exception);
-        return 0;
+        return nullptr;
     }
 
     CCuint width =  descriptor->width();
@@ -487,7 +487,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescrip
 
     if (!WebCLInputChecker::isValidChannelOrder(channelOrder) || !WebCLInputChecker::isValidChannelType(channelType)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_IMAGE_FORMAT_DESCRIPTOR, exception);
-        return 0;
+        return nullptr;
     }
     unsigned numberOfChannels = numberOfChannelsForChannelOrder(channelOrder);
     unsigned bytesPerChannel = bytesPerChannelType(channelType);
@@ -495,7 +495,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescrip
     // If rowPitch is specified, must be hostPtr != 0 & rowPitch > width * bytesPerPixel.
     if (rowPitch && (!hostPtr || rowPitch < (width * numberOfChannels * bytesPerChannel))) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_IMAGE_SIZE, exception);
-        return 0;
+        return nullptr;
     }
 
     RefPtr<ArrayBuffer> buffer;
@@ -506,7 +506,7 @@ PassRefPtr<WebCLImage> WebCLContext::createImage(CCenum flags, WebCLImageDescrip
         if ((rowPitch && byteLength < (rowPitch * height))
             || byteLength < (width * height * numberOfChannels * bytesPerChannel)) {
             setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
-            return 0;
+            return nullptr;
         }
         buffer = hostPtr->buffer();
     } else {
@@ -521,22 +521,22 @@ PassRefPtr<WebCLSampler> WebCLContext::createSampler(CCbool normCoords, CCenum a
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!WebCLInputChecker::isValidAddressingMode(addressingMode)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!WebCLInputChecker::isValidFilterMode(filterMode)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!normCoords && (addressingMode == ComputeContext::ADDRESS_REPEAT || addressingMode == ComputeContext::ADDRESS_MIRRORED_REPEAT)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     return WebCLSampler::create(this, normCoords, addressingMode, filterMode, exception);
@@ -546,7 +546,7 @@ PassRefPtr<WebCLUserEvent> WebCLContext::createUserEvent(ExceptionObject& except
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
-        return 0;
+        return nullptr;
     }
 
     return WebCLUserEvent::create(this, exception);
@@ -588,7 +588,7 @@ WebGLRenderingContext* WebCLContext::getGLContext(ExceptionObject& exception) co
 {
     if (!isGLCapableContext()) {
         setExtensionsNotEnabledException(exception);
-        return 0;
+        return nullptr;
     }
     return m_glContext;
 }
@@ -627,22 +627,22 @@ PassRefPtr<WebCLBuffer> WebCLContext::createFromGLBuffer(CCenum flags, WebGLBuff
 {
     if (!isGLCapableContext()) {
         setExtensionsNotEnabledException(exception);
-        return 0;
+        return nullptr;
     }
 
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!webGLBuffer || !webGLBuffer->object()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!WebCLInputChecker::isValidMemoryObjectFlag(flags)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     return WebCLBuffer::create(this, flags, webGLBuffer, exception);
@@ -652,22 +652,22 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLRenderbuffer(CCenum flags, WebG
 {
     if (!isGLCapableContext()) {
         setExtensionsNotEnabledException(exception);
-        return 0;
+        return nullptr;
     }
 
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!renderbuffer) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!WebCLInputChecker::isValidMemoryObjectFlag(flags)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     return WebCLImage::create(this, flags, renderbuffer, exception);
@@ -677,22 +677,22 @@ PassRefPtr<WebCLImage> WebCLContext::createFromGLTexture(CCenum flags, CCenum te
 {
     if (!isGLCapableContext()) {
         setExtensionsNotEnabledException(exception);
-        return 0;
+        return nullptr;
     }
 
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_CONTEXT, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!texture) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_HOST_PTR, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!WebCLInputChecker::isValidMemoryObjectFlag(flags)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     return WebCLImage::create(this, flags, textureTarget, miplevel, texture, exception);

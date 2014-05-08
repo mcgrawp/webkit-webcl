@@ -49,7 +49,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memory
     PassRefPtr<ComputeMemoryObject> buffer = context->computeContext()->createBuffer(memoryFlags, sizeInBytes, data, error);
     if (error != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(error, exception);
-        return 0;
+        return nullptr;
     }
 
     return adoptRef(new WebCLBuffer(context, buffer, sizeInBytes));
@@ -64,7 +64,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::create(WebCLContext* context, CCenum memory
     PassRefPtr<ComputeMemoryObject> buffer = context->computeContext()->createFromGLBuffer(memoryFlags, platform3DObject, error);
     if (error != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(error, exception);
-        return 0;
+        return nullptr;
     }
     RefPtr<WebCLBuffer> clglBuffer = adoptRef(new WebCLBuffer(context, buffer, webGLBuffer->byteLength()));
     clglBuffer->cacheGLObjectInfo(webGLBuffer);
@@ -82,17 +82,17 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(CCenum memoryFlags, CCuint 
 {
     if (isPlatformObjectNeutralized()) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
-        return 0;
+        return nullptr;
     }
 
     if (m_parentMemObject) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_MEM_OBJECT, exception);
-        return 0;
+        return nullptr;
     }
 
     if (!WebCLInputChecker::isValidMemoryObjectFlag(memoryFlags)) {
         setExceptionFromComputeErrorCode(ComputeContext::INVALID_VALUE, exception);
-        return 0;
+        return nullptr;
     }
 
     CCBufferRegion bufferCreateInfo = {origin, sizeInBytes};
@@ -101,7 +101,7 @@ PassRefPtr<WebCLBuffer> WebCLBuffer::createSubBuffer(CCenum memoryFlags, CCuint 
 
     if (error != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(error, exception);
-        return 0;
+        return nullptr;
     }
     RefPtr<WebCLBuffer> subBuffer = adoptRef(new WebCLBuffer(m_context.get(), computeSubBuffer, sizeInBytes, this));
     return subBuffer.release();

@@ -47,7 +47,7 @@ PassRefPtr<WebCLSampler> WebCLSampler::create(WebCLContext* context, CCbool norm
     PassRefPtr<ComputeSampler> computeSampler = context->computeContext()->createSampler(normCoords, addressingMode, filterMode, error);
     if (error != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(error, exception);
-        return 0;
+        return nullptr;
     }
 
     return adoptRef(new WebCLSampler(context, computeSampler, normCoords, addressingMode, filterMode));

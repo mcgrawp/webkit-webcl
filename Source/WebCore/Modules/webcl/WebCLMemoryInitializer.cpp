@@ -182,7 +182,7 @@ WebCLCommandQueue* WebCLMemoryInitializer::validCommandQueueForMemoryInitializat
         if (queue && !queue->isPlatformObjectNeutralized())
             return queue;
     }
-    return 0;
+    return nullptr;
 }
 
 void WebCLMemoryInitializer::initializeOrQueueMemoryInitializationOfMemoryObject(WebCLBuffer* buffer, ExceptionObject& exception)

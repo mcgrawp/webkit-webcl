@@ -48,7 +48,7 @@ PassRefPtr<WebCLUserEvent> WebCLUserEvent::create(WebCLContext* context, Excepti
     PassRefPtr<ComputeEvent> userEvent = context->computeContext()->createUserEvent(userEventError);
     if (userEventError != ComputeContext::SUCCESS) {
         setExceptionFromComputeErrorCode(userEventError, exception);
-        return 0;
+        return nullptr;
     }
     return adoptRef(new WebCLUserEvent(context, userEvent));
 }
