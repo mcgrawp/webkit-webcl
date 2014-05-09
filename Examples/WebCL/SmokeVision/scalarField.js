@@ -103,12 +103,12 @@ ScalarField.prototype.draw = function (viewer) {
 
     volumeRayMarchingKernel.setArg(0, pixelBuffer);
     volumeRayMarchingKernel.setArg(1, scalarBuffer);
-    volumeRayMarchingKernel.setArg(2, new Uint32Array([canvas.width]));
-    volumeRayMarchingKernel.setArg(3, new Uint32Array([canvas.height]));
+    volumeRayMarchingKernel.setArg(2, new Int32Array([canvas.width]));
+    volumeRayMarchingKernel.setArg(3, new Int32Array([canvas.height]));
     volumeRayMarchingKernel.setArg(4, new Float32Array([((canvas.height / 2) / Math.tan(Math.PI / 8))]));
     volumeRayMarchingKernel.setArg(5, new Float32Array([-cubePos]));
     volumeRayMarchingKernel.setArg(6, new Float32Array([2.0]));
-    volumeRayMarchingKernel.setArg(7, new Uint32Array([this.dim]));
+    volumeRayMarchingKernel.setArg(7, new Int32Array([this.dim]));
     volumeRayMarchingKernel.setArg(8, new Float32Array([ds]));
 
     try {

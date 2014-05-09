@@ -150,20 +150,15 @@ static void prependUnsignedIfNeeded(Vector<String>& declarationStrVector, String
 
 void WebCLKernelArgInfoProvider::parseAndAppendDeclaration(const String& argumentDeclaration)
 {
-    Vector<String> declarationStrVector;
-    argumentDeclaration.split(" ", declarationStrVector);
-    DEFINE_STATIC_LOCAL(AtomicString, Asterisk, (" * ", AtomicString::ConstructFromLiteral));
-    // For "type<spaces>*" which is a valid dataType, we need to prepend "*" token to previous token.
-    if (argumentDeclaration.contains(Asterisk)) {
-        for (size_t i = declarationStrVector.size() - 1; i > 1; i--) {
-            if (declarationStrVector[i] == "*") {
-                declarationStrVector[i - 1].append("*");
-                declarationStrVector.remove(i);
-                break;
-            }
-        }
-    }
+    // "*" is used to indicate pointer data type, setting isPointerType flag if "*" is present in argumentDeclaration.
+    // Since we parse only valid & buildable OpenCL kernels, * in argumentDeclaration must be associated with type only.
+    bool isPointerType = false;
+    if (argumentDeclaration.contains("*"))
+        isPointerType = true;
 
+    Vector<String> declarationStrVector;
+    // As per the specification, remove the "*" from pointer data-types and then spilt the argumentDeclaration.
+    argumentDeclaration.removeCharacters(isStarCharacter).split(" ", declarationStrVector);
     String name = extractName(declarationStrVector);
     String type = extractType(declarationStrVector);
     String addressQualifier = extractAddressQualifier(declarationStrVector);
@@ -171,10 +166,6 @@ void WebCLKernelArgInfoProvider::parseAndAppendDeclaration(const String& argumen
     DEFINE_STATIC_LOCAL(AtomicString, image2d_t, ("image2d_t", AtomicString::ConstructFromLiteral));
     String accessQualifier = (type == image2d_t) ? extractAccessQualifier(declarationStrVector) : "none";
     prependUnsignedIfNeeded(declarationStrVector, type);
-
-    bool isPointerType = type.contains("*");
-    // As per the specification, remove the "*" from pointer data-types.
-    type = type.removeCharacters(isStarCharacter);
 
     m_argumentInfoVector.append(WebCLKernelArgInfo::create(addressQualifier, accessQualifier, type, name, isPointerType));
 }
