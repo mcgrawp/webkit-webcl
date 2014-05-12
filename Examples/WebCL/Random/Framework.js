@@ -327,7 +327,7 @@ Framework = (function(){
         },
 
         createContext : function() {
-            this.context = webcl.createContext();
+            this.context = webcl.createContext([this.selectedDevice]);
         },
 
         createProgram : function(/*String scritp tag ID */ idSrc) {
