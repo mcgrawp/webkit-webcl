@@ -159,6 +159,12 @@ WebCLImage::WebCLImage(WebCLContext* context, PassRefPtr<ComputeMemoryObject> im
     CCint err = platformObject()->getMemoryObjectInfo(ComputeContext::MEM_SIZE, &memorySizeValue);
     if (err == ComputeContext::SUCCESS)
         m_sizeInBytes = memorySizeValue;
+
+    size_t actualRowPitch = 0;
+    err = platformObject()->getImageInfo(ComputeContext::IMAGE_ROW_PITCH, &actualRowPitch);
+    if (err == ComputeContext::SUCCESS)
+        m_imageDescriptor->setRowPitch(actualRowPitch);
+
 }
 
 WebCLImageDescriptor* WebCLImage::getInfo(ExceptionObject& exception)
