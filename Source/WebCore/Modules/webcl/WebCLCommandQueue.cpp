@@ -120,7 +120,7 @@ void WebCLCommandQueue::ccEventListFromWebCLEventList(const Vector<RefPtr<WebCLE
         }
 
         if (criteria == DoNotAcceptUserEvent && event->isUserEvent()) {
-            setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT, exception);
+            setExceptionFromComputeErrorCode(ComputeContext::INVALID_EVENT_WAIT_LIST, exception);
             return;
         }
 
